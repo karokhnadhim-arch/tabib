@@ -2,7 +2,7 @@ import 'app_localizations.dart';
 
 /// The translations for Arabic (`ar`).
 class AppLocalizationsAr extends AppLocalizations {
-  AppLocalizationsAr([String locale = 'ar']) : super(locale);
+  AppLocalizationsAr([super.locale = 'ar']);
 
   @override
   String get appTitle => 'Tabib';
@@ -598,7 +598,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get manageProfile => 'إدارة الملف الشخصي';
 
   @override
-  String get manageProfileHint => 'تحديث الصورة والسيرة ومعلومات العيادة والجدول';
+  String get manageProfileHint =>
+      'تحديث الصورة والسيرة ومعلومات العيادة والجدول';
 
   @override
   String get profilePhotoUrl => 'رابط صورة الملف الشخصي';

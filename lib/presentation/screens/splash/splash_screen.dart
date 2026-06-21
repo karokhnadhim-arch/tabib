@@ -60,9 +60,9 @@ class _SplashScreenState extends State<SplashScreen>
             children: [
               const MedicalLogo(size: 100, showLabel: false),
               const SizedBox(height: 24),
-              Text(
+              const Text(
                 AppConstants.appName,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
                   fontSize: 36,
                   fontWeight: FontWeight.bold,

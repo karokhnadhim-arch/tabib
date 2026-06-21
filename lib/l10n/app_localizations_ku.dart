@@ -2,7 +2,7 @@ import 'app_localizations.dart';
 
 /// The translations for Kurdish (`ku`).
 class AppLocalizationsKu extends AppLocalizations {
-  AppLocalizationsKu([String locale = 'ku']) : super(locale);
+  AppLocalizationsKu([super.locale = 'ku']);
 
   @override
   String get appTitle => 'Tabib';
@@ -261,7 +261,8 @@ class AppLocalizationsKu extends AppLocalizations {
   String get firebaseNotConfigured => 'Firebase ڕێکنەخراوە';
 
   @override
-  String get firebaseSetupHint => 'flutterfire configure جێبەجێ بکە. README بخوێنەوە.';
+  String get firebaseSetupHint =>
+      'flutterfire configure جێبەجێ بکە. README بخوێنەوە.';
 
   @override
   String get adminDashboard => 'داشبۆردی بەڕێوەبەر';
@@ -574,7 +575,8 @@ class AppLocalizationsKu extends AppLocalizations {
   String get createDoctorAccount => 'دروستکردنی هەژماری دکتۆر';
 
   @override
-  String get createDoctorAccountHint => 'دکتۆری نوێ بە زانیاری چوونەژوورەوە زیاد بکە';
+  String get createDoctorAccountHint =>
+      'دکتۆری نوێ بە زانیاری چوونەژوورەوە زیاد بکە';
 
   @override
   String get createSecretaryAccount => 'دروستکردنی هەژماری سکرتێر';
@@ -586,7 +588,8 @@ class AppLocalizationsKu extends AppLocalizations {
   String get linkedDoctor => 'دکتۆری بەستراو';
 
   @override
-  String get linkedDoctorRequired => 'دکتۆرێک هەڵبژێرە کە ئەم سکرتێرە یارمەتی دەدات';
+  String get linkedDoctorRequired =>
+      'دکتۆرێک هەڵبژێرە کە ئەم سکرتێرە یارمەتی دەدات';
 
   @override
   String get accountCreated => 'هەژمار بە سەرکەوتوویی دروست کرا';
@@ -598,7 +601,8 @@ class AppLocalizationsKu extends AppLocalizations {
   String get manageProfile => 'بەڕێوەبردنی پڕۆفایل';
 
   @override
-  String get manageProfileHint => 'وێنە، بایۆ، زانیاری نۆرینگە و خشتەی کار نوێ بکەرەوە';
+  String get manageProfileHint =>
+      'وێنە، بایۆ، زانیاری نۆرینگە و خشتەی کار نوێ بکەرەوە';
 
   @override
   String get profilePhotoUrl => 'ناونیشانی وێنەی پڕۆفایل';
@@ -610,7 +614,8 @@ class AppLocalizationsKu extends AppLocalizations {
   String get removePhoto => 'لابردنی وێنە';
 
   @override
-  String get photoUploadHint => 'وێنەیەک لە ئامێرەکەت هەڵبژێرە، یان بەستەر لە خوارەوە بنووسە';
+  String get photoUploadHint =>
+      'وێنەیەک لە ئامێرەکەت هەڵبژێرە، یان بەستەر لە خوارەوە بنووسە';
 
   @override
   String get orPastePhotoUrl => 'یان بەستەری وێنە بنووسە';

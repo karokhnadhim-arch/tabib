@@ -24,7 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _confirmController = TextEditingController();
 
   bool _loading = false;
-  bool _obscurePassword = true;
+  final bool _obscurePassword = true;
   String? _error;
 
   @override
@@ -142,7 +142,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         prefixIcon: Icons.lock_outline,
                         obscureText: _obscurePassword,
                         validator: (v) {
-                          if (v == null || v.length < 6) return l10n.weakPassword;
+                          if (v == null || v.length < 6)
+                            return l10n.weakPassword;
                           return null;
                         },
                       ),

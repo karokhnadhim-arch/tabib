@@ -100,16 +100,17 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            Align(
+            const Align(
               alignment: AlignmentDirectional.centerEnd,
               child: Padding(
-                padding: const EdgeInsets.only(top: 8, right: 8),
-                child: const LanguagePicker(),
+                padding: EdgeInsets.only(top: 8, right: 8),
+                child: LanguagePicker(),
               ),
             ),
             LoginHero(
               title: l10n.appTitle,
-              subtitle: isStaff ? l10n.loginPromptStaff : l10n.loginPromptPatient,
+              subtitle:
+                  isStaff ? l10n.loginPromptStaff : l10n.loginPromptPatient,
               accentColor: accent,
             ),
             Expanded(
@@ -145,7 +146,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ],
                                 selected: {_mode},
-                                onSelectionChanged: (value) => _onModeChanged(value.first),
+                                onSelectionChanged: (value) =>
+                                    _onModeChanged(value.first),
                               ),
                               const SizedBox(height: 24),
                               if (isStaff) ...[
@@ -178,8 +180,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                           ? Icons.visibility_outlined
                                           : Icons.visibility_off_outlined,
                                     ),
-                                    onPressed: () =>
-                                        setState(() => _obscurePassword = !_obscurePassword),
+                                    onPressed: () => setState(() =>
+                                        _obscurePassword = !_obscurePassword),
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -195,7 +197,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   prefixIcon: Icons.person_outline,
                                   textCapitalization: TextCapitalization.words,
                                   validator: (value) {
-                                    if (value == null || value.trim().length < 2) {
+                                    if (value == null ||
+                                        value.trim().length < 2) {
                                       return l10n.invalidName;
                                     }
                                     return null;
@@ -207,9 +210,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                   label: l10n.phoneNumber,
                                   prefixIcon: Icons.phone_outlined,
                                   keyboardType: TextInputType.phone,
-                                  autofillHints: const [AutofillHints.telephoneNumber],
+                                  autofillHints: const [
+                                    AutofillHints.telephoneNumber
+                                  ],
                                   validator: (value) {
-                                    if (value == null || value.trim().length < 10) {
+                                    if (value == null ||
+                                        value.trim().length < 10) {
                                       return l10n.invalidPhone;
                                     }
                                     return null;
@@ -229,12 +235,14 @@ class _LoginScreenState extends State<LoginScreen> {
                             padding: const EdgeInsets.all(12),
                             child: Row(
                               children: [
-                                Icon(Icons.error_outline, color: Colors.red.shade700, size: 20),
+                                Icon(Icons.error_outline,
+                                    color: Colors.red.shade700, size: 20),
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
                                     _error!,
-                                    style: TextStyle(color: Colors.red.shade700),
+                                    style:
+                                        TextStyle(color: Colors.red.shade700),
                                   ),
                                 ),
                               ],
@@ -269,7 +277,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: () => context.go('/'),
                         child: Text(
                           l10n.appSubtitle,
-                          style: TextStyle(color: AppTheme.primary),
+                          style: const TextStyle(color: AppTheme.primary),
                         ),
                       ),
                     ],

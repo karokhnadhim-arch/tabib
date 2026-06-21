@@ -9,23 +9,23 @@ class DemoModeBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
+    return const Material(
       color: AppTheme.medicalGreen,
       child: SafeArea(
         top: true,
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: Row(
             children: [
-              const Icon(Icons.science_outlined, color: Colors.white, size: 20),
-              const SizedBox(width: 8),
+              Icon(Icons.science_outlined, color: Colors.white, size: 20),
+              SizedBox(width: 8),
               Expanded(
                 child: Text(
                   'دۆخی تاقیکردنەوە — Firebase ڕێکنەخراوە. '
                   'بەڕێوەبەر: ${AuthService.demoAdminEmail} / ${AuthService.demoPassword} · '
                   'دکتۆر: ${AuthService.demoDoctorEmail} / ${AuthService.demoPassword}',
-                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                  style: TextStyle(color: Colors.white, fontSize: 12),
                 ),
               ),
             ],

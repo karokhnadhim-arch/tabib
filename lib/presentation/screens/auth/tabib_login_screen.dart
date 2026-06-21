@@ -154,10 +154,11 @@ class _TabibLoginScreenState extends State<TabibLoginScreen> {
               height: 200,
               title: l10n.appTitle,
               subtitle: l10n.appSubtitle,
-              actions: [
-                const LanguagePicker(iconColor: Colors.white),
+              actions: const [
+                LanguagePicker(iconColor: Colors.white),
               ],
-              leading: const Center(child: MedicalLogo(size: 56, showLabel: false)),
+              leading:
+                  const Center(child: MedicalLogo(size: 56, showLabel: false)),
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -263,8 +264,8 @@ class _TabibLoginScreenState extends State<TabibLoginScreen> {
                                   ? Icons.visibility_outlined
                                   : Icons.visibility_off_outlined,
                             ),
-                            onPressed: () =>
-                                setState(() => _obscurePassword = !_obscurePassword),
+                            onPressed: () => setState(
+                                () => _obscurePassword = !_obscurePassword),
                           ),
                           validator: (v) {
                             if (v == null || v.isEmpty) {
@@ -440,7 +441,8 @@ class _RoleCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
           child: Column(
             children: [
-              Icon(icon, color: selected ? color : Colors.grey.shade600, size: 26),
+              Icon(icon,
+                  color: selected ? color : Colors.grey.shade600, size: 26),
               const SizedBox(height: 6),
               Text(
                 label,
