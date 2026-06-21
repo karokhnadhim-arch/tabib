@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../services/auth_service.dart';
 import '../../providers/app_providers.dart';
 
 class NotificationsScreen extends StatefulWidget {
@@ -15,15 +14,6 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final auth = context.read<AuthService>();
-      context.read<NotificationProvider>().watch(auth.patientId);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);

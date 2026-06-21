@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../core/constants/firestore_limits.dart';
 import '../../models/notification.dart';
 import '../../domain/repositories/repositories.dart';
 
@@ -15,6 +16,7 @@ class FirestoreNotificationRepository implements NotificationRepository {
         .collection('notifications')
         .where('userId', isEqualTo: userId)
         .orderBy('createdAt', descending: true)
+        .limit(FirestoreLimits.notificationsPageSize)
         .snapshots()
         .map((snap) => snap.docs
             .map((d) => AppNotification.fromFirestore(d.id, d.data()))

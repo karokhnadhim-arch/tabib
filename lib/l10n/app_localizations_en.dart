@@ -391,7 +391,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noAppointmentsAvailable => 'No appointments available right now';
 
   @override
-  String get appointmentDate => 'Date & time';
+  String get appointmentDate => 'Appointment date';
 
   @override
   String get statusAvailable => 'Available';
@@ -569,4 +569,222 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get statusFollowUp => 'Follow-up';
+
+  @override
+  String get createDoctorAccount => 'Create doctor account';
+
+  @override
+  String get createDoctorAccountHint => 'Add a new doctor with login credentials';
+
+  @override
+  String get createSecretaryAccount => 'Create secretary account';
+
+  @override
+  String get createSecretaryAccountHint => 'Add a secretary linked to a doctor';
+
+  @override
+  String get linkedDoctor => 'Linked doctor';
+
+  @override
+  String get linkedDoctorRequired => 'Select the doctor this secretary assists';
+
+  @override
+  String get accountCreated => 'Account created successfully';
+
+  @override
+  String get editProfile => 'Edit profile';
+
+  @override
+  String get manageProfile => 'Manage your profile';
+
+  @override
+  String get manageProfileHint => 'Update photo, bio, clinic details, and schedule';
+
+  @override
+  String get profilePhotoUrl => 'Profile photo URL';
+
+  @override
+  String get uploadPhoto => 'Upload photo';
+
+  @override
+  String get removePhoto => 'Remove photo';
+
+  @override
+  String get photoUploadHint => 'Pick an image from your device, or paste a URL below';
+
+  @override
+  String get orPastePhotoUrl => 'Or paste image URL';
+
+  @override
+  String get photoTooLarge => 'Image is too large (max 512 KB)';
+
+  @override
+  String get workingHours => 'Working hours';
+
+  @override
+  String get workingHoursKu => 'Working hours (Kurdish)';
+
+  @override
+  String get workingHoursAr => 'Working hours (Arabic)';
+
+  @override
+  String get workingHoursEn => 'Working hours (English)';
+
+  @override
+  String get contactInfo => 'Contact information';
+
+  @override
+  String get useCurrentLocation => 'Use current location';
+
+  @override
+  String get personalInfo => 'Personal information';
+
+  @override
+  String get professionalInfo => 'Professional details';
+
+  @override
+  String get clinicInfo => 'Clinic information';
+
+  @override
+  String get scheduleInfo => 'Schedule';
+
+  @override
+  String get aboutDoctor => 'About the doctor';
+
+  @override
+  String get academicDegree => 'Academic degree';
+
+  @override
+  String get academicDegreeKu => 'Degree (Kurdish)';
+
+  @override
+  String get academicDegreeAr => 'Degree (Arabic)';
+
+  @override
+  String get academicDegreeEn => 'Degree (English)';
+
+  @override
+  String get clinicNameKu => 'Clinic name (Kurdish)';
+
+  @override
+  String get clinicNameAr => 'Clinic name (Arabic)';
+
+  @override
+  String get clinicNameEn => 'Clinic name (English)';
+
+  @override
+  String get whatsappNumber => 'WhatsApp number';
+
+  @override
+  String get workingDays => 'Working days';
+
+  @override
+  String get languagesSpoken => 'Languages spoken';
+
+  @override
+  String get languagesHint => 'e.g. Kurdish, Arabic, English';
+
+  @override
+  String get dayMonday => 'Mon';
+
+  @override
+  String get dayTuesday => 'Tue';
+
+  @override
+  String get dayWednesday => 'Wed';
+
+  @override
+  String get dayThursday => 'Thu';
+
+  @override
+  String get dayFriday => 'Fri';
+
+  @override
+  String get daySaturday => 'Sat';
+
+  @override
+  String get daySunday => 'Sun';
+
+  @override
+  String get openWhatsApp => 'Message on WhatsApp';
+
+  @override
+  String get fullName => 'Full name';
+
+  @override
+  String get viewPublicProfile => 'View public profile';
+
+  @override
+  String get viewPublicProfileHint => 'See how patients view your profile';
+
+  @override
+  String get availableTodayToggle => 'Available for appointments today';
+
+  @override
+  String get showToPatients => 'Show to patients';
+
+  @override
+  String get consultationFee => 'Consultation fee';
+
+  @override
+  String consultationFeeAmount(String amount) {
+    return '$amount IQD';
+  }
+
+  @override
+  String get clinicPhotos => 'Clinic photos';
+
+  @override
+  String get clinicPhotosHint => 'Paste image URLs separated by commas';
+
+  @override
+  String get live => 'LIVE';
+
+  @override
+  String get liveQueueProgress => 'Live queue updates automatically';
+
+  @override
+  String get patientsBeforeMe => 'Patients before me';
+
+  @override
+  String get appointmentStatusLabel => 'Appointment status';
+
+  @override
+  String get queueStatusWaiting => 'Waiting';
+
+  @override
+  String get queueStatusInDoctorRoom => 'In doctor room';
+
+  @override
+  String get queueStatusSentForTests => 'Sent for tests';
+
+  @override
+  String get queueStatusFollowUp => 'Follow up';
+
+  @override
+  String get queueStatusCompleted => 'Completed';
+
+  @override
+  String get queueStatusAbsent => 'Absent';
+
+  @override
+  String get queueStatusCancelled => 'Cancelled';
+
+  @override
+  String get queueNotifyFourRemaining => 'Almost your turn';
+
+  @override
+  String get queueNotifyFourRemainingBody => 'Only 4 patients remain before you.';
+
+  @override
+  String get queueNotifyTwoRemaining => 'Get ready';
+
+  @override
+  String get queueNotifyTwoRemainingBody => 'Only 2 patients remain before you.';
+
+  @override
+  String get queueNotifyYourTurn => 'Your turn now';
+
+  @override
+  String get queueNotifyYourTurnBody => 'Please proceed to the doctor room.';
 }

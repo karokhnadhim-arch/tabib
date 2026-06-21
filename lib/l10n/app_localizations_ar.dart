@@ -391,7 +391,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noAppointmentsAvailable => 'لا توجد مواعيد متاحة حالياً';
 
   @override
-  String get appointmentDate => 'التاريخ والوقت';
+  String get appointmentDate => 'تاريخ الموعد';
 
   @override
   String get statusAvailable => 'متاح';
@@ -569,4 +569,222 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get statusFollowUp => 'مراجعة';
+
+  @override
+  String get createDoctorAccount => 'إنشاء حساب طبيب';
+
+  @override
+  String get createDoctorAccountHint => 'إضافة طبيب جديد ببيانات الدخول';
+
+  @override
+  String get createSecretaryAccount => 'إنشاء حساب سكرتير';
+
+  @override
+  String get createSecretaryAccountHint => 'إضافة سكرتير مرتبط بطبيب';
+
+  @override
+  String get linkedDoctor => 'الطبيب المرتبط';
+
+  @override
+  String get linkedDoctorRequired => 'اختر الطبيب الذي يساعده السكرتير';
+
+  @override
+  String get accountCreated => 'تم إنشاء الحساب بنجاح';
+
+  @override
+  String get editProfile => 'تعديل الملف الشخصي';
+
+  @override
+  String get manageProfile => 'إدارة الملف الشخصي';
+
+  @override
+  String get manageProfileHint => 'تحديث الصورة والسيرة ومعلومات العيادة والجدول';
+
+  @override
+  String get profilePhotoUrl => 'رابط صورة الملف الشخصي';
+
+  @override
+  String get uploadPhoto => 'رفع صورة';
+
+  @override
+  String get removePhoto => 'إزالة الصورة';
+
+  @override
+  String get photoUploadHint => 'اختر صورة من جهازك أو الصق رابطاً أدناه';
+
+  @override
+  String get orPastePhotoUrl => 'أو الصق رابط الصورة';
+
+  @override
+  String get photoTooLarge => 'الصورة كبيرة جداً (الحد الأقصى 512 ك.ب)';
+
+  @override
+  String get workingHours => 'ساعات العمل';
+
+  @override
+  String get workingHoursKu => 'ساعات العمل (كردي)';
+
+  @override
+  String get workingHoursAr => 'ساعات العمل (عربي)';
+
+  @override
+  String get workingHoursEn => 'ساعات العمل (إنجليزي)';
+
+  @override
+  String get contactInfo => 'معلومات الاتصال';
+
+  @override
+  String get useCurrentLocation => 'استخدام الموقع الحالي';
+
+  @override
+  String get personalInfo => 'المعلومات الشخصية';
+
+  @override
+  String get professionalInfo => 'التفاصيل المهنية';
+
+  @override
+  String get clinicInfo => 'معلومات العيادة';
+
+  @override
+  String get scheduleInfo => 'جدول العمل';
+
+  @override
+  String get aboutDoctor => 'عن الطبيب';
+
+  @override
+  String get academicDegree => 'الدرجة العلمية';
+
+  @override
+  String get academicDegreeKu => 'الدرجة (كردي)';
+
+  @override
+  String get academicDegreeAr => 'الدرجة (عربي)';
+
+  @override
+  String get academicDegreeEn => 'الدرجة (إنجليزي)';
+
+  @override
+  String get clinicNameKu => 'اسم العيادة (كردي)';
+
+  @override
+  String get clinicNameAr => 'اسم العيادة (عربي)';
+
+  @override
+  String get clinicNameEn => 'اسم العيادة (إنجليزي)';
+
+  @override
+  String get whatsappNumber => 'رقم واتساب';
+
+  @override
+  String get workingDays => 'أيام العمل';
+
+  @override
+  String get languagesSpoken => 'اللغات المتحدثة';
+
+  @override
+  String get languagesHint => 'مثال: كردي، عربي، إنجليزي';
+
+  @override
+  String get dayMonday => 'إث';
+
+  @override
+  String get dayTuesday => 'ثل';
+
+  @override
+  String get dayWednesday => 'أر';
+
+  @override
+  String get dayThursday => 'خم';
+
+  @override
+  String get dayFriday => 'جم';
+
+  @override
+  String get daySaturday => 'سب';
+
+  @override
+  String get daySunday => 'أح';
+
+  @override
+  String get openWhatsApp => 'مراسلة على واتساب';
+
+  @override
+  String get fullName => 'الاسم الكامل';
+
+  @override
+  String get viewPublicProfile => 'عرض الملف العام';
+
+  @override
+  String get viewPublicProfileHint => 'شاهد كيف يرى المرضى ملفك';
+
+  @override
+  String get availableTodayToggle => 'متاح للمواعيد اليوم';
+
+  @override
+  String get showToPatients => 'إظهار للمرضى';
+
+  @override
+  String get consultationFee => 'رسوم الاستشارة';
+
+  @override
+  String consultationFeeAmount(String amount) {
+    return '$amount د.ع';
+  }
+
+  @override
+  String get clinicPhotos => 'صور العيادة';
+
+  @override
+  String get clinicPhotosHint => 'ألصق روابط الصور مفصولة بفواصل';
+
+  @override
+  String get live => 'مباشر';
+
+  @override
+  String get liveQueueProgress => 'تحديثات الطابور تلقائياً';
+
+  @override
+  String get patientsBeforeMe => 'المرضى قبلي';
+
+  @override
+  String get appointmentStatusLabel => 'حالة الموعد';
+
+  @override
+  String get queueStatusWaiting => 'انتظار';
+
+  @override
+  String get queueStatusInDoctorRoom => 'في غرفة الطبيب';
+
+  @override
+  String get queueStatusSentForTests => 'أُرسل للفحوصات';
+
+  @override
+  String get queueStatusFollowUp => 'مراجعة';
+
+  @override
+  String get queueStatusCompleted => 'مكتمل';
+
+  @override
+  String get queueStatusAbsent => 'غائب';
+
+  @override
+  String get queueStatusCancelled => 'ملغى';
+
+  @override
+  String get queueNotifyFourRemaining => 'اقترب دورك';
+
+  @override
+  String get queueNotifyFourRemainingBody => 'بقي 4 مرضى قبلك.';
+
+  @override
+  String get queueNotifyTwoRemaining => 'استعد';
+
+  @override
+  String get queueNotifyTwoRemainingBody => 'بقي مريضان قبلك.';
+
+  @override
+  String get queueNotifyYourTurn => 'دورك الآن';
+
+  @override
+  String get queueNotifyYourTurnBody => 'تفضل إلى غرفة الطبيب.';
 }

@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/responsive.dart';
 import '../../../core/widgets/medical_ui.dart';
-import '../../../core/widgets/responsive_scaffold.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/appointment.dart';
 import '../../../models/queue_entry.dart';
@@ -32,11 +31,12 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final auth = context.read<AuthService>();
       context.read<AppointmentProvider>().watchPatient(auth.patientId);
       context.read<NotificationProvider>().watch(auth.patientId);
       context.read<QueueService>().watchPatientQueue(auth.patientId);
+      await context.read<ClinicDataService>().ensureCatalogLoaded();
     });
   }
 
@@ -125,7 +125,8 @@ class _HomeTab extends StatelessWidget {
             subtitle: l10n.appSubtitle,
             actions: [
               IconButton(
-                icon: const Icon(Icons.notifications_outlined, color: Colors.white),
+                icon: const Icon(Icons.notifications_outlined,
+                    color: Colors.white),
                 onPressed: () => context.push('/notifications'),
               ),
               const LanguagePicker(),
@@ -201,20 +202,38 @@ class _HomeTab extends StatelessWidget {
   }
 }
 
-class _ActiveQueueBanner extends StatelessWidget {
+class _ActiveQueueBanner extends StatefulWidget {
   const _ActiveQueueBanner({required this.entry, required this.onTap});
 
   final QueueEntry entry;
   final VoidCallback onTap;
 
   @override
+  State<_ActiveQueueBanner> createState() => _ActiveQueueBannerState();
+}
+
+class _ActiveQueueBannerState extends State<_ActiveQueueBanner> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.entry.doctorId.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.read<QueueService>().watchDoctorQueue(widget.entry.doctorId);
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    context.read<QueueService>().stopWatchingDoctorQueue(widget.entry.doctorId);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final queue = context.watch<QueueService>();
-    if (entry.doctorId.isNotEmpty) {
-      context.read<QueueService>().watchDoctorQueue(entry.doctorId);
-    }
-    final current = queue.currentServingNumber(entry.doctorId) ?? 0;
+    final current = queue.currentServingNumber(widget.entry.doctorId) ?? 0;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -226,7 +245,7 @@ class _ActiveQueueBanner extends StatelessWidget {
           side: BorderSide(color: AppTheme.medicalGreen.withOpacity(0.3)),
         ),
         child: InkWell(
-          onTap: onTap,
+          onTap: widget.onTap,
           borderRadius: BorderRadius.circular(16),
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -243,8 +262,9 @@ class _ActiveQueueBanner extends StatelessWidget {
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        '${l10n.queueNumber}: ${entry.position} • ${l10n.currentQueueNumber}: $current',
-                        style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
+                        '${l10n.queueNumber}: ${widget.entry.position} • ${l10n.currentQueueNumber}: $current',
+                        style: TextStyle(
+                            color: Colors.grey.shade700, fontSize: 13),
                       ),
                     ],
                   ),

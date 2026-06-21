@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../../core/utils/subscription_manager.dart';
 import '../../models/chat_message.dart';
 import '../../domain/entities/entities.dart';
 import '../../domain/repositories/repositories.dart';
@@ -10,18 +11,24 @@ class AppointmentProvider extends ChangeNotifier {
       : _repository = repository;
 
   final AppointmentRepository _repository;
+  final SubscriptionManager _subscriptions = SubscriptionManager();
 
   List<Appointment> _appointments = [];
   bool _loading = false;
   String? _error;
+  String? _watchKey;
 
   List<Appointment> get appointments => List.unmodifiable(_appointments);
   bool get isLoading => _loading;
   String? get error => _error;
 
-  void watchPatient(String patientId) {
+  void _bind(String key, Stream<List<Appointment>> stream) {
+    if (_watchKey == key) return;
+    _watchKey = key;
     _loading = true;
-    _repository.watchPatientAppointments(patientId).listen(
+    _subscriptions.replace(
+      'appointments',
+      stream,
       (list) {
         _appointments = list;
         _loading = false;
@@ -36,55 +43,31 @@ class AppointmentProvider extends ChangeNotifier {
     );
   }
 
-  void watchDoctor(String doctorId) {
-    _loading = true;
-    _repository.watchDoctorAppointments(doctorId).listen(
-      (list) {
-        _appointments = list;
-        _loading = false;
-        _error = null;
-        notifyListeners();
-      },
-      onError: (Object e) {
-        _loading = false;
-        _error = e.toString();
-        notifyListeners();
-      },
-    );
-  }
+  void watchPatient(String patientId) =>
+      _bind('patient:$patientId', _repository.watchPatientAppointments(patientId));
 
-  void watchClinic(String clinicId) {
-    _loading = true;
-    _repository.watchClinicAppointments(clinicId).listen(
-      (list) {
-        _appointments = list;
-        _loading = false;
-        _error = null;
-        notifyListeners();
-      },
-      onError: (Object e) {
-        _loading = false;
-        _error = e.toString();
-        notifyListeners();
-      },
-    );
-  }
+  void watchDoctor(String doctorId) =>
+      _bind('doctor:$doctorId', _repository.watchDoctorAppointments(doctorId));
+
+  void watchClinic(String clinicId) =>
+      _bind('clinic:$clinicId', _repository.watchClinicAppointments(clinicId));
 
   void watchDailySchedule(String clinicId, DateTime date) {
-    _loading = true;
-    _repository.watchDailySchedule(clinicId, date).listen(
-      (list) {
-        _appointments = list;
-        _loading = false;
-        _error = null;
-        notifyListeners();
-      },
-      onError: (Object e) {
-        _loading = false;
-        _error = e.toString();
-        notifyListeners();
-      },
-    );
+    final dayKey =
+        '${clinicId}_${date.year}${date.month}${date.day}';
+    _bind('daily:$dayKey', _repository.watchDailySchedule(clinicId, date));
+  }
+
+  void stopWatching() {
+    _subscriptions.cancel('appointments');
+    _watchKey = null;
+    _appointments = [];
+  }
+
+  @override
+  void dispose() {
+    _subscriptions.cancelAll();
+    super.dispose();
   }
 
   Future<String?> book({
@@ -153,17 +136,23 @@ class NotificationProvider extends ChangeNotifier {
       : _repository = repository;
 
   final NotificationRepository _repository;
+  final SubscriptionManager _subscriptions = SubscriptionManager();
 
   List<AppNotification> _notifications = [];
   bool _loading = false;
+  String? _watchUserId;
 
   List<AppNotification> get notifications => List.unmodifiable(_notifications);
   int get unreadCount => _notifications.where((n) => !n.read).length;
   bool get isLoading => _loading;
 
   void watch(String userId) {
+    if (_watchUserId == userId) return;
+    _watchUserId = userId;
     _loading = true;
-    _repository.watchUserNotifications(userId).listen(
+    _subscriptions.replace(
+      'notifications',
+      _repository.watchUserNotifications(userId),
       (list) {
         _notifications = list;
         _loading = false;
@@ -176,7 +165,31 @@ class NotificationProvider extends ChangeNotifier {
     );
   }
 
+  void stopWatching() {
+    _subscriptions.cancel('notifications');
+    _watchUserId = null;
+  }
+
+  @override
+  void dispose() {
+    _subscriptions.cancelAll();
+    super.dispose();
+  }
+
   Future<void> markRead(String id) => _repository.markAsRead(id);
+
+  Future<void> send({
+    required String userId,
+    required String title,
+    required String body,
+    String? type,
+  }) =>
+      _repository.sendNotification(
+        userId: userId,
+        title: title,
+        body: body,
+        type: type,
+      );
 }
 
 class PrescriptionProvider extends ChangeNotifier {
@@ -184,16 +197,22 @@ class PrescriptionProvider extends ChangeNotifier {
       : _repository = repository;
 
   final PrescriptionRepository _repository;
+  final SubscriptionManager _subscriptions = SubscriptionManager();
 
   List<Prescription> _prescriptions = [];
   bool _loading = false;
+  String? _watchKey;
 
   List<Prescription> get prescriptions => List.unmodifiable(_prescriptions);
   bool get isLoading => _loading;
 
   void watchPatient(String patientId) {
+    if (_watchKey == 'patient:$patientId') return;
+    _watchKey = 'patient:$patientId';
     _loading = true;
-    _repository.watchPatientPrescriptions(patientId).listen(
+    _subscriptions.replace(
+      'prescriptions',
+      _repository.watchPatientPrescriptions(patientId),
       (list) {
         _prescriptions = list;
         _loading = false;
@@ -207,8 +226,12 @@ class PrescriptionProvider extends ChangeNotifier {
   }
 
   void watchDoctor(String doctorId) {
+    if (_watchKey == 'doctor:$doctorId') return;
+    _watchKey = 'doctor:$doctorId';
     _loading = true;
-    _repository.watchDoctorPrescriptions(doctorId).listen(
+    _subscriptions.replace(
+      'prescriptions',
+      _repository.watchDoctorPrescriptions(doctorId),
       (list) {
         _prescriptions = list;
         _loading = false;
@@ -219,6 +242,12 @@ class PrescriptionProvider extends ChangeNotifier {
         notifyListeners();
       },
     );
+  }
+
+  @override
+  void dispose() {
+    _subscriptions.cancelAll();
+    super.dispose();
   }
 
   Future<void> write({
@@ -246,19 +275,23 @@ class ChatProvider extends ChangeNotifier {
       : _repository = repository;
 
   final ChatRepository _repository;
+  final SubscriptionManager _subscriptions = SubscriptionManager();
 
   List<ChatMessage> _messages = [];
   bool _loading = false;
+  String? _watchKey;
 
   List<ChatMessage> get messages => List.unmodifiable(_messages);
   bool get isLoading => _loading;
 
   void watch({required String clinicId, required String patientId}) {
+    final key = '$clinicId:$patientId';
+    if (_watchKey == key) return;
+    _watchKey = key;
     _loading = true;
-    _repository.watchConversation(
-      clinicId: clinicId,
-      patientId: patientId,
-    ).listen(
+    _subscriptions.replace(
+      'chat',
+      _repository.watchConversation(clinicId: clinicId, patientId: patientId),
       (list) {
         _messages = list;
         _loading = false;
@@ -269,6 +302,18 @@ class ChatProvider extends ChangeNotifier {
         notifyListeners();
       },
     );
+  }
+
+  void stopWatching() {
+    _subscriptions.cancel('chat');
+    _watchKey = null;
+    _messages = [];
+  }
+
+  @override
+  void dispose() {
+    _subscriptions.cancelAll();
+    super.dispose();
   }
 
   Future<void> send({

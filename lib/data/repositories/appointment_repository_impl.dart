@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../core/constants/firestore_limits.dart';
 import '../../models/appointment.dart';
 import '../../models/visit_status.dart';
 import '../../models/notification.dart';
@@ -20,24 +21,37 @@ class FirestoreAppointmentRepository implements AppointmentRepository {
     return _appointments
         .where('patientId', isEqualTo: patientId)
         .orderBy('dateTime', descending: true)
+        .limit(FirestoreLimits.appointmentsPageSize)
         .snapshots()
         .map(_mapSnapshot);
   }
 
   @override
   Stream<List<Appointment>> watchDoctorAppointments(String doctorId) {
+    final from = DateTime.now().subtract(
+      const Duration(days: FirestoreLimits.upcomingAppointmentsDays),
+    );
     return _appointments
         .where('doctorId', isEqualTo: doctorId)
+        .where('dateTime', isGreaterThanOrEqualTo: Timestamp.fromDate(from))
         .orderBy('dateTime')
+        .limit(FirestoreLimits.appointmentsPageSize)
         .snapshots()
         .map(_mapSnapshot);
   }
 
   @override
   Stream<List<Appointment>> watchClinicAppointments(String clinicId) {
+    final from = DateTime.now().subtract(const Duration(days: 1));
+    final to = DateTime.now().add(
+      const Duration(days: FirestoreLimits.upcomingAppointmentsDays),
+    );
     return _appointments
         .where('clinicId', isEqualTo: clinicId)
+        .where('dateTime', isGreaterThanOrEqualTo: Timestamp.fromDate(from))
+        .where('dateTime', isLessThan: Timestamp.fromDate(to))
         .orderBy('dateTime')
+        .limit(FirestoreLimits.appointmentsPageSize)
         .snapshots()
         .map(_mapSnapshot);
   }
@@ -51,6 +65,7 @@ class FirestoreAppointmentRepository implements AppointmentRepository {
         .where('dateTime', isGreaterThanOrEqualTo: Timestamp.fromDate(start))
         .where('dateTime', isLessThan: Timestamp.fromDate(end))
         .orderBy('dateTime')
+        .limit(FirestoreLimits.dailyScheduleMax)
         .snapshots()
         .map(_mapSnapshot);
   }

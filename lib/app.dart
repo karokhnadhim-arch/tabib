@@ -21,6 +21,7 @@ import 'services/backend/clinic_backend.dart';
 import 'services/backend/firestore_clinic_backend.dart';
 import 'services/backend/in_memory_clinic_backend.dart';
 import 'services/clinic_data_service.dart';
+import 'services/firebase_bootstrap.dart';
 import 'services/locale_service.dart';
 import 'services/queue_service.dart';
 
@@ -65,7 +66,7 @@ class _TabibAppState extends State<TabibApp> {
   @override
   void initState() {
     super.initState();
-    _demoMode = !widget.firebaseReady;
+    _demoMode = FirebaseBootstrap.shouldUseDemoMode;
 
     if (_demoMode) {
       _backend = InMemoryClinicBackend();

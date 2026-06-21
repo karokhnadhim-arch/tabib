@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../core/constants/firestore_limits.dart';
 import '../../models/notification.dart';
 import '../../models/prescription.dart';
 import '../../domain/repositories/repositories.dart';
@@ -16,6 +17,7 @@ class FirestorePrescriptionRepository implements PrescriptionRepository {
         .collection('prescriptions')
         .where('patientId', isEqualTo: patientId)
         .orderBy('createdAt', descending: true)
+        .limit(FirestoreLimits.prescriptionsPageSize)
         .snapshots()
         .map((snap) => snap.docs
             .map((d) => Prescription.fromFirestore(d.id, d.data()))
@@ -28,6 +30,7 @@ class FirestorePrescriptionRepository implements PrescriptionRepository {
         .collection('prescriptions')
         .where('doctorId', isEqualTo: doctorId)
         .orderBy('createdAt', descending: true)
+        .limit(FirestoreLimits.prescriptionsPageSize)
         .snapshots()
         .map((snap) => snap.docs
             .map((d) => Prescription.fromFirestore(d.id, d.data()))

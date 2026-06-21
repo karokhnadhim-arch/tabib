@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../core/constants/firestore_limits.dart';
 import '../../models/chat_message.dart';
 import '../../domain/repositories/repositories.dart';
 
@@ -18,11 +19,16 @@ class FirestoreChatRepository implements ChatRepository {
         .collection('chat_messages')
         .where('clinicId', isEqualTo: clinicId)
         .where('patientId', isEqualTo: patientId)
-        .orderBy('createdAt')
+        .orderBy('createdAt', descending: true)
+        .limit(FirestoreLimits.chatMessagesPageSize)
         .snapshots()
-        .map((snap) => snap.docs
-            .map((d) => _fromDoc(d.id, d.data()))
-            .toList());
+        .map((snap) {
+          final messages = snap.docs
+              .map((d) => _fromDoc(d.id, d.data()))
+              .toList();
+          messages.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+          return messages;
+        });
   }
 
   @override
@@ -56,6 +62,8 @@ class FirestoreChatRepository implements ChatRepository {
         .collection('chat_messages')
         .where('clinicId', isEqualTo: clinicId)
         .where('patientId', isEqualTo: patientId)
+        .where('read', isEqualTo: false)
+        .limit(FirestoreLimits.chatMessagesPageSize)
         .get();
     final batch = _db.batch();
     for (final doc in snap.docs) {

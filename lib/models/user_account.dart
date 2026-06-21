@@ -11,6 +11,7 @@ class UserAccount {
     this.phone,
     this.doctorId,
     this.clinicId,
+    this.linkedDoctorId,
   });
 
   final String id;
@@ -20,6 +21,8 @@ class UserAccount {
   final String? phone;
   final String? doctorId;
   final String? clinicId;
+  /// Required for secretary accounts — the doctor they assist.
+  final String? linkedDoctorId;
 
   Map<String, dynamic> toMap() => {
         'name': name.toMap(),
@@ -28,6 +31,7 @@ class UserAccount {
         'phone': phone,
         'doctorId': doctorId,
         'clinicId': clinicId,
+        'linkedDoctorId': linkedDoctorId,
       };
 
   factory UserAccount.fromFirestore(String id, Map<String, dynamic> data) {
@@ -42,6 +46,7 @@ class UserAccount {
       phone: data['phone'] as String?,
       doctorId: data['doctorId'] as String?,
       clinicId: data['clinicId'] as String?,
+      linkedDoctorId: data['linkedDoctorId'] as String?,
     );
   }
 }

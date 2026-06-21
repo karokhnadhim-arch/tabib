@@ -9,10 +9,13 @@ import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
 class DefaultFirebaseOptions {
-  static bool get isConfigured {
-    return !_isPlaceholder(web.apiKey) &&
-        !_isPlaceholder(web.appId) &&
-        !_isPlaceholder(web.projectId);
+  /// True when the **current platform's** Firebase options are real values.
+  static bool get isConfigured => isConfiguredFor(currentPlatform);
+
+  static bool isConfiguredFor(FirebaseOptions options) {
+    return !_isPlaceholder(options.apiKey) &&
+        !_isPlaceholder(options.appId) &&
+        !_isPlaceholder(options.projectId);
   }
 
   static bool _isPlaceholder(String value) {

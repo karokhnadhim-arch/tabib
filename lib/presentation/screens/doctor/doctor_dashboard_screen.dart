@@ -7,10 +7,13 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/responsive_scaffold.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/appointment.dart';
+import '../../../models/doctor.dart';
 import '../../../services/auth_service.dart';
+import '../../../services/clinic_data_service.dart';
 import '../../../utils/localization_utils.dart';
 import '../../../widgets/language_picker.dart';
 import '../../providers/app_providers.dart';
+import '../../widgets/doctor_avatar.dart';
 import 'patient_records_screen.dart';
 
 class DoctorDashboardScreen extends StatefulWidget {
@@ -39,8 +42,10 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final auth = context.watch<AuthService>();
+    final data = context.watch<ClinicDataService>();
     final appointments = context.watch<AppointmentProvider>();
     final doctorId = auth.currentUser?.doctorId ?? '';
+    final doctor = doctorId.isEmpty ? null : data.doctorById(doctorId);
 
     final pending = appointments.appointments
         .where((a) => a.isPending && a.doctorId == doctorId)
@@ -54,55 +59,146 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
         title: Text(l10n.doctorDashboard),
         backgroundColor: AppTheme.doctorColor,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.edit),
+            tooltip: l10n.editProfile,
+            onPressed: () => context.push('/doctor/profile'),
+          ),
           const LanguagePicker(),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
               await auth.logout();
+              if (!context.mounted) return;
               context.go('/login');
             },
           ),
         ],
       ),
       body: ResponsiveBody(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 28,
-                      backgroundColor: AppTheme.doctorColor.withOpacity(0.1),
-                      child: const Icon(
-                        Icons.medical_services,
-                        color: AppTheme.doctorColor,
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Card(
+              color: AppTheme.doctorColor.withOpacity(0.06),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: BorderSide(color: AppTheme.doctorColor.withOpacity(0.35)),
+              ),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () => context.push('/doctor/profile'),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppTheme.doctorColor.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.manage_accounts_outlined,
+                          color: AppTheme.doctorColor,
+                          size: 28,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            auth.currentUser?.name.localized(context) ?? '',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.manageProfile,
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          Text(l10n.roleDoctor),
-                        ],
+                            const SizedBox(height: 4),
+                            Text(
+                              l10n.manageProfileHint,
+                              style: TextStyle(
+                                color: Colors.grey.shade700,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                      Icon(
+                        Icons.chevron_right,
+                        color: AppTheme.doctorColor.withOpacity(0.8),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 12),
-            SegmentedButton<int>(
+            if (doctor != null)
+              _DoctorProfilePreview(
+                doctor: doctor,
+                onEdit: () => context.push('/doctor/profile'),
+                onViewPublic: () => context.push('/doctors/${doctor.id}'),
+              )
+            else
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 28,
+                            backgroundColor:
+                                AppTheme.doctorColor.withOpacity(0.1),
+                            child: const Icon(
+                              Icons.medical_services,
+                              color: AppTheme.doctorColor,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  auth.currentUser?.name.localized(context) ??
+                                      '',
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(l10n.roleDoctor),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      FilledButton.icon(
+                        onPressed: () => context.push('/doctor/profile'),
+                        icon: const Icon(Icons.edit_outlined),
+                        label: Text(l10n.editProfile),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppTheme.doctorColor,
+                          minimumSize: const Size.fromHeight(44),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            const SizedBox(height: 12),
+            ResponsiveSegmentedButton<int>(
               segments: [
                 ButtonSegment(value: 0, label: Text(l10n.pendingRequests)),
                 ButtonSegment(value: 1, label: Text(l10n.acceptedAppointments)),
@@ -112,7 +208,11 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
               onSelectionChanged: (v) => setState(() => _tab = v.first),
             ),
             const SizedBox(height: 12),
-            Expanded(
+                ],
+              ),
+            ),
+            SliverFillRemaining(
+              hasScrollBody: true,
               child: _tab == 0
                   ? _AppointmentList(
                       appointments: pending,
@@ -130,6 +230,239 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _DoctorProfilePreview extends StatelessWidget {
+  const _DoctorProfilePreview({
+    required this.doctor,
+    required this.onEdit,
+    required this.onViewPublic,
+  });
+
+  final Doctor doctor;
+  final VoidCallback onEdit;
+  final VoidCallback onViewPublic;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final degree = doctor.academicDegree?.localized(context);
+    final hours = doctor.workingHours?.localized(context);
+    final workingDays = doctor.workingDays ?? const <int>[];
+
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppTheme.doctorColor.withOpacity(0.12),
+                  AppTheme.medicalGreen.withOpacity(0.08),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                DoctorAvatar(
+                  photoUrl: doctor.photoUrl,
+                  radius: 36,
+                  backgroundColor: AppTheme.doctorColor.withOpacity(0.15),
+                  fallback: Icon(
+                    Icons.person,
+                    size: 36,
+                    color: AppTheme.doctorColor.withOpacity(0.7),
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        doctor.name.localized(context),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        doctor.specialty.name.localized(context),
+                        style: TextStyle(color: Colors.grey.shade700),
+                      ),
+                      if (degree != null && degree.isNotEmpty) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          degree,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 6,
+                        children: [
+                          Chip(
+                            visualDensity: VisualDensity.compact,
+                            label: Text(
+                              l10n.yearsExperience(doctor.experienceYears),
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            backgroundColor:
+                                AppTheme.doctorColor.withOpacity(0.1),
+                          ),
+                          Chip(
+                            visualDensity: VisualDensity.compact,
+                            avatar: Icon(
+                              Icons.circle,
+                              size: 10,
+                              color: doctor.isAvailableToday
+                                  ? AppTheme.medicalGreen
+                                  : Colors.red.shade400,
+                            ),
+                            label: Text(
+                              doctor.isAvailableToday
+                                  ? l10n.availableToday
+                                  : l10n.unavailable,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            backgroundColor: doctor.isAvailableToday
+                                ? AppTheme.medicalGreen.withOpacity(0.12)
+                                : Colors.red.shade50,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (hours != null && hours.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  _InfoRow(
+                    icon: Icons.access_time,
+                    text: hours,
+                  ),
+                ],
+                if (workingDays.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  _InfoRow(
+                    icon: Icons.calendar_today_outlined,
+                    text: workingDays
+                        .map((d) => _weekdayShort(l10n, d))
+                        .join(' · '),
+                  ),
+                ],
+                if (doctor.effectiveContactPhone.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  _InfoRow(
+                    icon: Icons.phone_outlined,
+                    text: doctor.effectiveContactPhone,
+                  ),
+                ],
+                const SizedBox(height: 14),
+                ResponsiveActionButtons(
+                  spacing: 8,
+                  children: [
+                    FilledButton.icon(
+                      onPressed: onEdit,
+                      icon: const Icon(Icons.edit_outlined, size: 18),
+                      label: Text(l10n.editProfile),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: AppTheme.doctorColor,
+                        minimumSize: const Size.fromHeight(44),
+                      ),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed: onViewPublic,
+                      icon: const Icon(Icons.visibility_outlined, size: 18),
+                      label: Text(
+                        l10n.viewPublicProfile,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppTheme.doctorColor,
+                        side: const BorderSide(color: AppTheme.doctorColor),
+                        minimumSize: const Size.fromHeight(44),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  l10n.viewPublicProfileHint,
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _weekdayShort(AppLocalizations l10n, int weekday) {
+    switch (weekday) {
+      case DateTime.monday:
+        return l10n.dayMonday;
+      case DateTime.tuesday:
+        return l10n.dayTuesday;
+      case DateTime.wednesday:
+        return l10n.dayWednesday;
+      case DateTime.thursday:
+        return l10n.dayThursday;
+      case DateTime.friday:
+        return l10n.dayFriday;
+      case DateTime.saturday:
+        return l10n.daySaturday;
+      case DateTime.sunday:
+        return l10n.daySunday;
+      default:
+        return '';
+    }
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  const _InfoRow({required this.icon, required this.text});
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, size: 18, color: AppTheme.doctorColor),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(color: Colors.grey.shade800, fontSize: 13),
+          ),
+        ),
+      ],
     );
   }
 }

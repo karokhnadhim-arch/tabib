@@ -5,7 +5,9 @@ import '../services/locale_service.dart';
 import '../../l10n/app_localizations.dart';
 
 class LanguagePicker extends StatelessWidget {
-  const LanguagePicker({super.key});
+  const LanguagePicker({super.key, this.iconColor});
+
+  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +15,7 @@ class LanguagePicker extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     return PopupMenuButton<Locale>(
-      icon: const Icon(Icons.language),
+      icon: Icon(Icons.language, color: iconColor),
       tooltip: l10n.language,
       onSelected: localeService.setLocale,
       itemBuilder: (context) => [

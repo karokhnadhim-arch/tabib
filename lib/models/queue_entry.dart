@@ -1,4 +1,12 @@
-enum QueueStatus { waiting, inProgress, completed, cancelled }
+enum QueueStatus {
+  waiting,
+  inProgress,
+  sentForTests,
+  followUp,
+  completed,
+  absent,
+  cancelled,
+}
 
 class QueueEntry {
   QueueEntry({
@@ -24,7 +32,12 @@ class QueueEntry {
   int? estimatedWaitMinutes;
 
   bool get isActive =>
-      status == QueueStatus.waiting || status == QueueStatus.inProgress;
+      status == QueueStatus.waiting ||
+      status == QueueStatus.inProgress ||
+      status == QueueStatus.sentForTests ||
+      status == QueueStatus.followUp;
+
+  bool get isWaitingInLine => status == QueueStatus.waiting;
 
   Map<String, dynamic> toMap() => {
         'patientId': patientId,
@@ -57,3 +70,17 @@ class QueueEntry {
     );
   }
 }
+
+const activeQueueStatuses = [
+  QueueStatus.waiting,
+  QueueStatus.inProgress,
+  QueueStatus.sentForTests,
+  QueueStatus.followUp,
+];
+
+const activeQueueStatusNames = [
+  'waiting',
+  'inProgress',
+  'sentForTests',
+  'followUp',
+];

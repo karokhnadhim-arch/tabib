@@ -41,4 +41,24 @@ class LocationService {
     );
     return launchUrl(uri, mode: LaunchMode.externalApplication);
   }
+
+  Future<bool> openCoordinatesInMaps({
+    required double latitude,
+    required double longitude,
+  }) async {
+    final uri = Uri.parse(
+      'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude',
+    );
+    return launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  Future<bool> openDirectionsToCoordinates({
+    required double latitude,
+    required double longitude,
+  }) async {
+    final uri = Uri.parse(
+      'https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude',
+    );
+    return launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
 }

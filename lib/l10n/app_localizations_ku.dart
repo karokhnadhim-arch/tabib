@@ -391,7 +391,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get noAppointmentsAvailable => 'ئێستا هیچ نۆرەیەک بەردەست نییە';
 
   @override
-  String get appointmentDate => 'بەروار و کات';
+  String get appointmentDate => 'ڕێکەوتی نۆرینگە';
 
   @override
   String get statusAvailable => 'بەردەست';
@@ -569,4 +569,222 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get statusFollowUp => 'موراجەعە';
+
+  @override
+  String get createDoctorAccount => 'دروستکردنی هەژماری دکتۆر';
+
+  @override
+  String get createDoctorAccountHint => 'دکتۆری نوێ بە زانیاری چوونەژوورەوە زیاد بکە';
+
+  @override
+  String get createSecretaryAccount => 'دروستکردنی هەژماری سکرتێر';
+
+  @override
+  String get createSecretaryAccountHint => 'سکرتێرێک بەستراو بە دکتۆر زیاد بکە';
+
+  @override
+  String get linkedDoctor => 'دکتۆری بەستراو';
+
+  @override
+  String get linkedDoctorRequired => 'دکتۆرێک هەڵبژێرە کە ئەم سکرتێرە یارمەتی دەدات';
+
+  @override
+  String get accountCreated => 'هەژمار بە سەرکەوتوویی دروست کرا';
+
+  @override
+  String get editProfile => 'دەستکاری پڕۆفایل';
+
+  @override
+  String get manageProfile => 'بەڕێوەبردنی پڕۆفایل';
+
+  @override
+  String get manageProfileHint => 'وێنە، بایۆ، زانیاری نۆرینگە و خشتەی کار نوێ بکەرەوە';
+
+  @override
+  String get profilePhotoUrl => 'ناونیشانی وێنەی پڕۆفایل';
+
+  @override
+  String get uploadPhoto => 'بارکردنی وێنە';
+
+  @override
+  String get removePhoto => 'لابردنی وێنە';
+
+  @override
+  String get photoUploadHint => 'وێنەیەک لە ئامێرەکەت هەڵبژێرە، یان بەستەر لە خوارەوە بنووسە';
+
+  @override
+  String get orPastePhotoUrl => 'یان بەستەری وێنە بنووسە';
+
+  @override
+  String get photoTooLarge => 'وێنەکە زۆر گەورەیە (زۆرترین 512 KB)';
+
+  @override
+  String get workingHours => 'کاتژمێری کار';
+
+  @override
+  String get workingHoursKu => 'کاتژمێری کار (کوردی)';
+
+  @override
+  String get workingHoursAr => 'کاتژمێری کار (عەرەبی)';
+
+  @override
+  String get workingHoursEn => 'کاتژمێری کار (ئینگلیزی)';
+
+  @override
+  String get contactInfo => 'زانیاری پەیوەندی';
+
+  @override
+  String get useCurrentLocation => 'شوێنی ئێستا بەکاربهێنە';
+
+  @override
+  String get personalInfo => 'زانیاری کەسی';
+
+  @override
+  String get professionalInfo => 'وردەکاری پیشەیی';
+
+  @override
+  String get clinicInfo => 'زانیاری نۆرینگە';
+
+  @override
+  String get scheduleInfo => 'خشتەی کار';
+
+  @override
+  String get aboutDoctor => 'دەربارەی دکتۆر';
+
+  @override
+  String get academicDegree => 'پلەی زانستی';
+
+  @override
+  String get academicDegreeKu => 'پلە (کوردی)';
+
+  @override
+  String get academicDegreeAr => 'پلە (عەرەبی)';
+
+  @override
+  String get academicDegreeEn => 'پلە (ئینگلیزی)';
+
+  @override
+  String get clinicNameKu => 'ناوی نۆرینگە (کوردی)';
+
+  @override
+  String get clinicNameAr => 'ناوی نۆرینگە (عەرەبی)';
+
+  @override
+  String get clinicNameEn => 'ناوی نۆرینگە (ئینگلیزی)';
+
+  @override
+  String get whatsappNumber => 'ژمارەی واتساپ';
+
+  @override
+  String get workingDays => 'ڕۆژەکانی کار';
+
+  @override
+  String get languagesSpoken => 'زمانە قسەکراوەکان';
+
+  @override
+  String get languagesHint => 'وەک: کوردی، عەرەبی، ئینگلیزی';
+
+  @override
+  String get dayMonday => 'دووش';
+
+  @override
+  String get dayTuesday => 'سێش';
+
+  @override
+  String get dayWednesday => 'چوار';
+
+  @override
+  String get dayThursday => 'پێنج';
+
+  @override
+  String get dayFriday => 'هەینی';
+
+  @override
+  String get daySaturday => 'شەم';
+
+  @override
+  String get daySunday => 'یەک';
+
+  @override
+  String get openWhatsApp => 'نامە لە واتساپ';
+
+  @override
+  String get fullName => 'ناوی تەواو';
+
+  @override
+  String get viewPublicProfile => 'بینینی پڕۆفایلی گشتی';
+
+  @override
+  String get viewPublicProfileHint => 'بزانە نەخۆشەکان چۆن پڕۆفایلەکەت دەبینن';
+
+  @override
+  String get availableTodayToggle => 'ئەمڕۆ بەردەستە بۆ نۆرینگە';
+
+  @override
+  String get showToPatients => 'نیشاندان بە نەخۆش';
+
+  @override
+  String get consultationFee => 'تێچووی بینین';
+
+  @override
+  String consultationFeeAmount(String amount) {
+    return '$amount د.ع';
+  }
+
+  @override
+  String get clinicPhotos => 'وێنەکانی نۆرینگە';
+
+  @override
+  String get clinicPhotosHint => 'بەستەری وێنەکان بە فاریزە جیا بکەرەوە';
+
+  @override
+  String get live => 'ڕاستەوخۆ';
+
+  @override
+  String get liveQueueProgress => 'نۆرەکە بە شێوەی ڕاستەوخۆ نوێ دەبێتەوە';
+
+  @override
+  String get patientsBeforeMe => 'نەخۆش پێش من';
+
+  @override
+  String get appointmentStatusLabel => 'دۆخی نۆرینگە';
+
+  @override
+  String get queueStatusWaiting => 'چاوەڕوان';
+
+  @override
+  String get queueStatusInDoctorRoom => 'لە ژووری دکتۆر';
+
+  @override
+  String get queueStatusSentForTests => 'نێردراوە بۆ پشکنین';
+
+  @override
+  String get queueStatusFollowUp => 'سەردانی دووبارە';
+
+  @override
+  String get queueStatusCompleted => 'تەواو';
+
+  @override
+  String get queueStatusAbsent => 'ئامادە نەبوو';
+
+  @override
+  String get queueStatusCancelled => 'هەڵوەشاوە';
+
+  @override
+  String get queueNotifyFourRemaining => 'نزیکە لە نۆرەکەت';
+
+  @override
+  String get queueNotifyFourRemainingBody => 'تەنها ٤ نەخۆش لە پێش تۆ ماوە.';
+
+  @override
+  String get queueNotifyTwoRemaining => 'ئامادە بە';
+
+  @override
+  String get queueNotifyTwoRemainingBody => 'تەنها ٢ نەخۆش لە پێش تۆ ماوە.';
+
+  @override
+  String get queueNotifyYourTurn => 'ئێستا نۆرەکەتە';
+
+  @override
+  String get queueNotifyYourTurnBody => 'تکایە بچۆ ژووری دکتۆر.';
 }

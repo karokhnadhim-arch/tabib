@@ -7,6 +7,9 @@ import '../../models/localized_text.dart';
 import '../../models/queue_entry.dart';
 import '../../models/specialty.dart';
 import '../../models/user_account.dart';
+import '../../core/constants/firestore_limits.dart';
+import '../../models/doctor_page.dart';
+import 'firestore_reference_cache.dart';
 import 'clinic_backend.dart';
 
 class FirestoreClinicBackend implements ClinicBackend {
@@ -18,6 +21,7 @@ class FirestoreClinicBackend implements ClinicBackend {
 
   final FirebaseFirestore _db;
   final FirebaseAuth _auth;
+  final FirestoreReferenceCache _cache = FirestoreReferenceCache();
 
   CollectionReference<Map<String, dynamic>> get _specialties =>
       _db.collection('specialties');
@@ -48,60 +52,127 @@ class FirestoreClinicBackend implements ClinicBackend {
         );
   }
 
+  Future<void> _ensureReferenceCache() async {
+    if (!_cache.hasFreshSpecialties) {
+      final snap = await _specialties.get();
+      _cache.setSpecialties({
+        for (final d in snap.docs)
+          d.id: Specialty.fromFirestore(d.id, d.data()),
+      });
+    }
+    if (!_cache.hasFreshClinics) {
+      final snap = await _clinics.get();
+      _cache.setClinics({
+        for (final d in snap.docs)
+          d.id: Clinic.fromFirestore(d.id, d.data()),
+      });
+    }
+  }
+
+  Doctor _doctorFromDoc(QueryDocumentSnapshot<Map<String, dynamic>> d) {
+    final data = d.data();
+    final specId = data['specialtyId'] as String? ?? '';
+    final clinId = data['clinicId'] as String? ?? '';
+    final specialty = _cache.specialties[specId] ??
+        Specialty(
+          id: specId,
+          name: const LocalizedText(ku: '', ar: '', en: ''),
+          iconName: 'medical',
+        );
+    final clinic = _cache.clinics[clinId] ??
+        Clinic(
+          id: clinId,
+          name: const LocalizedText(ku: '', ar: '', en: ''),
+          address: const LocalizedText(ku: '', ar: '', en: ''),
+          latitude: 0,
+          longitude: 0,
+          phone: '',
+        );
+    return Doctor.fromMap(
+      id: d.id,
+      data: data,
+      specialty: specialty,
+      clinic: clinic,
+    );
+  }
+
+  Query<Map<String, dynamic>> _doctorsQuery({
+    String? specialtyId,
+    String? clinicId,
+  }) {
+    Query<Map<String, dynamic>> query = _doctors.orderBy(FieldPath.documentId);
+    if (specialtyId != null) {
+      query = query.where('specialtyId', isEqualTo: specialtyId);
+    }
+    if (clinicId != null) {
+      query = query.where('clinicId', isEqualTo: clinicId);
+    }
+    return query;
+  }
+
+  @override
+  Future<List<Specialty>> fetchSpecialties() async {
+    if (_cache.hasFreshSpecialties) {
+      return _cache.specialties.values.toList();
+    }
+    final snap = await _specialties.get();
+    final map = {
+      for (final d in snap.docs)
+        d.id: Specialty.fromFirestore(d.id, d.data()),
+    };
+    _cache.setSpecialties(map);
+    return map.values.toList();
+  }
+
+  @override
+  Future<List<Clinic>> fetchClinics() async {
+    if (_cache.hasFreshClinics) {
+      return _cache.clinics.values.toList();
+    }
+    final snap = await _clinics.get();
+    final map = {
+      for (final d in snap.docs) d.id: Clinic.fromFirestore(d.id, d.data()),
+    };
+    _cache.setClinics(map);
+    return map.values.toList();
+  }
+
+  @override
+  Future<DoctorPage> fetchDoctorsPage({
+    String? specialtyId,
+    String? clinicId,
+    int limit = FirestoreLimits.doctorsPageSize,
+    Object? startAfterCursor,
+  }) async {
+    await _ensureReferenceCache();
+    var query = _doctorsQuery(
+      specialtyId: specialtyId,
+      clinicId: clinicId,
+    ).limit(limit + 1);
+    if (startAfterCursor is DocumentSnapshot<Map<String, dynamic>>) {
+      query = query.startAfterDocument(startAfterCursor);
+    }
+    final snap = await query.get();
+    final docs = snap.docs;
+    final hasMore = docs.length > limit;
+    final pageDocs = hasMore ? docs.sublist(0, limit) : docs;
+    return DoctorPage(
+      doctors: pageDocs.map(_doctorFromDoc).toList(),
+      hasMore: hasMore,
+      nextCursor: pageDocs.isEmpty ? null : pageDocs.last,
+    );
+  }
+
   @override
   Stream<List<Doctor>> watchDoctors({String? specialtyId, String? clinicId}) {
-    return _doctors.snapshots().asyncMap((snap) async {
-      final clinics = await _clinics.get();
-      final specialties = await _specialties.get();
-      final clinicMap = {
-        for (final d in clinics.docs)
-          d.id: Clinic.fromFirestore(d.id, d.data()),
-      };
-      final specialtyMap = {
-        for (final d in specialties.docs)
-          d.id: Specialty.fromFirestore(d.id, d.data()),
-      };
-
-      var docs = snap.docs;
-      if (specialtyId != null) {
-        docs = docs.where((d) => d.data()['specialtyId'] == specialtyId).toList();
-      }
-      if (clinicId != null) {
-        docs = docs.where((d) => d.data()['clinicId'] == clinicId).toList();
-      }
-
-      return docs.map((d) {
-        final data = d.data();
-        final specId = data['specialtyId'] as String? ?? '';
-        final clinId = data['clinicId'] as String? ?? '';
-        final specialty = specialtyMap[specId] ??
-            Specialty(
-              id: specId,
-              name: const LocalizedText(ku: '', ar: '', en: ''),
-              iconName: 'medical',
-            );
-        final clinic = clinicMap[clinId] ??
-            Clinic(
-              id: clinId,
-              name: const LocalizedText(ku: '', ar: '', en: ''),
-              address: const LocalizedText(ku: '', ar: '', en: ''),
-              latitude: 0,
-              longitude: 0,
-              phone: '',
-            );
-        return Doctor(
-          id: d.id,
-          name: LocalizedText.fromMap(data['name'] as Map<String, dynamic>?),
-          specialtyId: specId,
-          specialty: specialty,
-          clinicId: clinId,
-          clinic: clinic,
-          rating: (data['rating'] as num?)?.toDouble() ?? 0,
-          experienceYears: (data['experienceYears'] as num?)?.toInt() ?? 0,
-          bio: LocalizedText.fromMap(data['bio'] as Map<String, dynamic>?),
-          isAvailableToday: data['isAvailableToday'] as bool? ?? false,
-        );
-      }).toList();
+    return Stream.fromFuture(_ensureReferenceCache()).asyncExpand((_) {
+      var query = _doctorsQuery(
+        specialtyId: specialtyId,
+        clinicId: clinicId,
+      ).limit(FirestoreLimits.maxDoctorsCatalog);
+      return query.snapshots().map(
+            (snap) => snap.docs.map(_doctorFromDoc).toList(),
+          );
     });
   }
 
@@ -109,8 +180,9 @@ class FirestoreClinicBackend implements ClinicBackend {
   Stream<List<QueueEntry>> watchQueue(String doctorId) {
     return _queues
         .where('doctorId', isEqualTo: doctorId)
-        .where('status', whereIn: ['waiting', 'inProgress'])
+        .where('status', whereIn: activeQueueStatusNames)
         .orderBy('position')
+        .limit(FirestoreLimits.queueActiveMax)
         .snapshots()
         .map(
           (snap) => snap.docs
@@ -123,7 +195,7 @@ class FirestoreClinicBackend implements ClinicBackend {
   Stream<QueueEntry?> watchPatientActiveQueue(String patientId) {
     return _queues
         .where('patientId', isEqualTo: patientId)
-        .where('status', whereIn: ['waiting', 'inProgress'])
+        .where('status', whereIn: activeQueueStatusNames)
         .limit(1)
         .snapshots()
         .map((snap) {
@@ -136,9 +208,32 @@ class FirestoreClinicBackend implements ClinicBackend {
   @override
   Future<Doctor?> getDoctor(String doctorId) async {
     final doc = await _doctors.doc(doctorId).get();
-    if (!doc.exists) return null;
-    final doctors = await watchDoctors().first;
-    return doctors.where((d) => d.id == doctorId).firstOrNull;
+    if (!doc.exists || doc.data() == null) return null;
+    await _ensureReferenceCache();
+    final data = doc.data()!;
+    final specId = data['specialtyId'] as String? ?? '';
+    final clinId = data['clinicId'] as String? ?? '';
+    final specialty = _cache.specialties[specId] ??
+        Specialty(
+          id: specId,
+          name: const LocalizedText(ku: '', ar: '', en: ''),
+          iconName: 'medical',
+        );
+    final clinic = _cache.clinics[clinId] ??
+        Clinic(
+          id: clinId,
+          name: const LocalizedText(ku: '', ar: '', en: ''),
+          address: const LocalizedText(ku: '', ar: '', en: ''),
+          latitude: 0,
+          longitude: 0,
+          phone: '',
+        );
+    return Doctor.fromMap(
+      id: doc.id,
+      data: data,
+      specialty: specialty,
+      clinic: clinic,
+    );
   }
 
   @override
@@ -157,17 +252,21 @@ class FirestoreClinicBackend implements ClinicBackend {
   }) async {
     final existing = await _queues
         .where('patientId', isEqualTo: patientId)
-        .where('status', whereIn: ['waiting', 'inProgress'])
+        .where('status', whereIn: activeQueueStatusNames)
         .limit(1)
         .get();
     if (existing.docs.isNotEmpty) return null;
 
     final active = await _queues
         .where('doctorId', isEqualTo: doctorId)
-        .where('status', whereIn: ['waiting', 'inProgress'])
+        .where('status', whereIn: activeQueueStatusNames)
+        .orderBy('position', descending: true)
+        .limit(1)
         .get();
 
-    final position = active.docs.length + 1;
+    final position = active.docs.isEmpty
+        ? 1
+        : ((active.docs.first.data()['position'] as num?)?.toInt() ?? 0) + 1;
     final ref = _queues.doc();
     final entry = QueueEntry(
       id: ref.id,
@@ -203,7 +302,7 @@ class FirestoreClinicBackend implements ClinicBackend {
   Future<void> _swapEntry(String entryId, String doctorId, int direction) async {
     final snap = await _queues
         .where('doctorId', isEqualTo: doctorId)
-        .where('status', whereIn: ['waiting', 'inProgress'])
+        .where('status', whereIn: activeQueueStatusNames)
         .orderBy('position')
         .get();
     final entries = snap.docs;
@@ -255,10 +354,38 @@ class FirestoreClinicBackend implements ClinicBackend {
     await _reindexDoctorQueue(doctorId);
   }
 
+  @override
+  Future<void> updateEntryStatus(
+    String entryId,
+    String doctorId,
+    QueueStatus status,
+  ) async {
+    await _queues.doc(entryId).update({'status': status.name});
+    if (status == QueueStatus.completed ||
+        status == QueueStatus.absent ||
+        status == QueueStatus.cancelled) {
+      await _reindexDoctorQueue(doctorId);
+    }
+  }
+
+  @override
+  Future<void> enterDoctorRoom(String entryId, String doctorId) async {
+    final inProgress = await _queues
+        .where('doctorId', isEqualTo: doctorId)
+        .where('status', isEqualTo: 'inProgress')
+        .get();
+    final batch = _db.batch();
+    for (final d in inProgress.docs) {
+      batch.update(d.reference, {'status': QueueStatus.completed.name});
+    }
+    batch.update(_queues.doc(entryId), {'status': QueueStatus.inProgress.name});
+    await batch.commit();
+  }
+
   Future<void> _reindexDoctorQueue(String doctorId) async {
     final snap = await _queues
         .where('doctorId', isEqualTo: doctorId)
-        .where('status', whereIn: ['waiting', 'inProgress'])
+        .where('status', whereIn: activeQueueStatusNames)
         .orderBy('position')
         .get();
     final batch = _db.batch();
@@ -274,6 +401,7 @@ class FirestoreClinicBackend implements ClinicBackend {
   @override
   Future<void> upsertSpecialty(Specialty specialty) async {
     await _specialties.doc(specialty.id).set(specialty.toMap(), SetOptions(merge: true));
+    _cache.upsertSpecialty(specialty);
   }
 
   @override
@@ -284,6 +412,7 @@ class FirestoreClinicBackend implements ClinicBackend {
   @override
   Future<void> upsertClinic(Clinic clinic) async {
     await _clinics.doc(clinic.id).set(clinic.toMap(), SetOptions(merge: true));
+    _cache.upsertClinic(clinic);
   }
 
   @override
@@ -319,6 +448,26 @@ class FirestoreClinicBackend implements ClinicBackend {
   @override
   Future<void> deleteStaff(String id) async {
     await _users.doc(id).delete();
+  }
+
+  @override
+  Stream<List<UserAccount>> watchStaff() {
+    return _users
+        .where('role', whereIn: ['doctor', 'secretary', 'admin'])
+        .snapshots()
+        .map(
+          (snap) => snap.docs
+              .map((d) => UserAccount.fromFirestore(d.id, d.data()))
+              .toList(),
+        );
+  }
+
+  @override
+  Future<UserAccount?> lookupStaffCredentials(
+    String email,
+    String password,
+  ) async {
+    return null;
   }
 
   @override
@@ -377,11 +526,36 @@ class FirestoreClinicBackend implements ClinicBackend {
       rating: 4.8,
       experienceYears: 12,
       bio: const LocalizedText(
-        ku: 'پزیشکی گشتی',
-        ar: 'طبيب عام',
-        en: 'General practitioner',
+        ku: 'پزیشکی گشتی بە ئەزموونی ١٢ ساڵ',
+        ar: 'طبيب عام بخبرة 12 سنة',
+        en: 'General practitioner with 12 years of experience',
       ),
       isAvailableToday: true,
+      photoUrl: 'https://i.pravatar.cc/300?u=doc_1',
+      academicDegree: const LocalizedText(
+        ku: 'دکتۆرا لە پزیشکی',
+        ar: 'دكتوراه في الطب',
+        en: 'MD',
+      ),
+      contactPhone: '07501234567',
+      whatsappNumber: '07501234567',
+      contactEmail: 'doctor@tabib.demo',
+      workingDays: const [
+        DateTime.saturday,
+        DateTime.sunday,
+        DateTime.monday,
+        DateTime.tuesday,
+        DateTime.wednesday,
+        DateTime.thursday,
+      ],
+      workingHours: const LocalizedText(
+        ku: '٩:٠٠–١٧:٠٠',
+        ar: '٩:٠٠–١٧:٠٠',
+        en: '9:00 AM–5:00 PM',
+      ),
+      languagesSpoken: const ['Kurdish', 'Arabic', 'English'],
+      latitude: clinic.latitude,
+      longitude: clinic.longitude,
     );
     await upsertDoctor(doctor);
   }

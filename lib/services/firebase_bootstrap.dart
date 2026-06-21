@@ -11,19 +11,18 @@ class FirebaseBootstrap {
 
   /// Initializes Firebase when configured. Returns false for demo/offline mode.
   static Future<bool> initialize() async {
-    if (initialized) return true;
+    final options = DefaultFirebaseOptions.currentPlatform;
 
-    if (!DefaultFirebaseOptions.isConfigured) {
-      initError = 'Firebase options are not configured.';
+    if (!DefaultFirebaseOptions.isConfiguredFor(options)) {
+      initialized = false;
+      initError = 'Firebase options are not configured for this platform.';
       debugPrint('Tabib: demo mode — Firebase not configured.');
       return false;
     }
 
     try {
       if (Firebase.apps.isEmpty) {
-        await Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        );
+        await Firebase.initializeApp(options: options);
       }
       initialized = true;
       initError = null;
@@ -38,6 +37,6 @@ class FirebaseBootstrap {
     }
   }
 
-  /// True when Firebase should not be used (placeholders or init failed).
-  static bool get shouldUseDemoMode => !initialized && !DefaultFirebaseOptions.isConfigured;
+  /// True when the app should use in-memory demo data instead of Firebase.
+  static bool get shouldUseDemoMode => !initialized;
 }

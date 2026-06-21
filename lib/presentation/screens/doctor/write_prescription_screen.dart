@@ -77,7 +77,7 @@ class _WritePrescriptionScreenState extends State<WritePrescriptionScreen> {
         title: Text(l10n.writePrescription),
         backgroundColor: AppTheme.doctorColor,
       ),
-      body: ResponsiveBody(
+      body: ScrollableResponsiveBody(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -106,7 +106,7 @@ class _WritePrescriptionScreenState extends State<WritePrescriptionScreen> {
               decoration: InputDecoration(labelText: l10n.notesOptional),
               maxLines: 2,
             ),
-            const Spacer(),
+            const SizedBox(height: 24),
             FilledButton(
               onPressed: _loading ? null : _submit,
               style: FilledButton.styleFrom(

@@ -842,7 +842,7 @@ abstract class AppLocalizations {
   /// No description provided for @appointmentDate.
   ///
   /// In en, this message translates to:
-  /// **'Date & time'**
+  /// **'Appointment date'**
   String get appointmentDate;
 
   /// No description provided for @statusAvailable.
@@ -1198,6 +1198,438 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Follow-up'**
   String get statusFollowUp;
+
+  /// No description provided for @createDoctorAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create doctor account'**
+  String get createDoctorAccount;
+
+  /// No description provided for @createDoctorAccountHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a new doctor with login credentials'**
+  String get createDoctorAccountHint;
+
+  /// No description provided for @createSecretaryAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create secretary account'**
+  String get createSecretaryAccount;
+
+  /// No description provided for @createSecretaryAccountHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a secretary linked to a doctor'**
+  String get createSecretaryAccountHint;
+
+  /// No description provided for @linkedDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked doctor'**
+  String get linkedDoctor;
+
+  /// No description provided for @linkedDoctorRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the doctor this secretary assists'**
+  String get linkedDoctorRequired;
+
+  /// No description provided for @accountCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Account created successfully'**
+  String get accountCreated;
+
+  /// No description provided for @editProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit profile'**
+  String get editProfile;
+
+  /// No description provided for @manageProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your profile'**
+  String get manageProfile;
+
+  /// No description provided for @manageProfileHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Update photo, bio, clinic details, and schedule'**
+  String get manageProfileHint;
+
+  /// No description provided for @profilePhotoUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile photo URL'**
+  String get profilePhotoUrl;
+
+  /// No description provided for @uploadPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload photo'**
+  String get uploadPhoto;
+
+  /// No description provided for @removePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove photo'**
+  String get removePhoto;
+
+  /// No description provided for @photoUploadHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick an image from your device, or paste a URL below'**
+  String get photoUploadHint;
+
+  /// No description provided for @orPastePhotoUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Or paste image URL'**
+  String get orPastePhotoUrl;
+
+  /// No description provided for @photoTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Image is too large (max 512 KB)'**
+  String get photoTooLarge;
+
+  /// No description provided for @workingHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Working hours'**
+  String get workingHours;
+
+  /// No description provided for @workingHoursKu.
+  ///
+  /// In en, this message translates to:
+  /// **'Working hours (Kurdish)'**
+  String get workingHoursKu;
+
+  /// No description provided for @workingHoursAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Working hours (Arabic)'**
+  String get workingHoursAr;
+
+  /// No description provided for @workingHoursEn.
+  ///
+  /// In en, this message translates to:
+  /// **'Working hours (English)'**
+  String get workingHoursEn;
+
+  /// No description provided for @contactInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact information'**
+  String get contactInfo;
+
+  /// No description provided for @useCurrentLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Use current location'**
+  String get useCurrentLocation;
+
+  /// No description provided for @personalInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal information'**
+  String get personalInfo;
+
+  /// No description provided for @professionalInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Professional details'**
+  String get professionalInfo;
+
+  /// No description provided for @clinicInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic information'**
+  String get clinicInfo;
+
+  /// No description provided for @scheduleInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule'**
+  String get scheduleInfo;
+
+  /// No description provided for @aboutDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'About the doctor'**
+  String get aboutDoctor;
+
+  /// No description provided for @academicDegree.
+  ///
+  /// In en, this message translates to:
+  /// **'Academic degree'**
+  String get academicDegree;
+
+  /// No description provided for @academicDegreeKu.
+  ///
+  /// In en, this message translates to:
+  /// **'Degree (Kurdish)'**
+  String get academicDegreeKu;
+
+  /// No description provided for @academicDegreeAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Degree (Arabic)'**
+  String get academicDegreeAr;
+
+  /// No description provided for @academicDegreeEn.
+  ///
+  /// In en, this message translates to:
+  /// **'Degree (English)'**
+  String get academicDegreeEn;
+
+  /// No description provided for @clinicNameKu.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic name (Kurdish)'**
+  String get clinicNameKu;
+
+  /// No description provided for @clinicNameAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic name (Arabic)'**
+  String get clinicNameAr;
+
+  /// No description provided for @clinicNameEn.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic name (English)'**
+  String get clinicNameEn;
+
+  /// No description provided for @whatsappNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp number'**
+  String get whatsappNumber;
+
+  /// No description provided for @workingDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Working days'**
+  String get workingDays;
+
+  /// No description provided for @languagesSpoken.
+  ///
+  /// In en, this message translates to:
+  /// **'Languages spoken'**
+  String get languagesSpoken;
+
+  /// No description provided for @languagesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Kurdish, Arabic, English'**
+  String get languagesHint;
+
+  /// No description provided for @dayMonday.
+  ///
+  /// In en, this message translates to:
+  /// **'Mon'**
+  String get dayMonday;
+
+  /// No description provided for @dayTuesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Tue'**
+  String get dayTuesday;
+
+  /// No description provided for @dayWednesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Wed'**
+  String get dayWednesday;
+
+  /// No description provided for @dayThursday.
+  ///
+  /// In en, this message translates to:
+  /// **'Thu'**
+  String get dayThursday;
+
+  /// No description provided for @dayFriday.
+  ///
+  /// In en, this message translates to:
+  /// **'Fri'**
+  String get dayFriday;
+
+  /// No description provided for @daySaturday.
+  ///
+  /// In en, this message translates to:
+  /// **'Sat'**
+  String get daySaturday;
+
+  /// No description provided for @daySunday.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun'**
+  String get daySunday;
+
+  /// No description provided for @openWhatsApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Message on WhatsApp'**
+  String get openWhatsApp;
+
+  /// No description provided for @fullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name'**
+  String get fullName;
+
+  /// No description provided for @viewPublicProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'View public profile'**
+  String get viewPublicProfile;
+
+  /// No description provided for @viewPublicProfileHint.
+  ///
+  /// In en, this message translates to:
+  /// **'See how patients view your profile'**
+  String get viewPublicProfileHint;
+
+  /// No description provided for @availableTodayToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Available for appointments today'**
+  String get availableTodayToggle;
+
+  /// No description provided for @showToPatients.
+  ///
+  /// In en, this message translates to:
+  /// **'Show to patients'**
+  String get showToPatients;
+
+  /// No description provided for @consultationFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Consultation fee'**
+  String get consultationFee;
+
+  /// No description provided for @consultationFeeAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} IQD'**
+  String consultationFeeAmount(String amount);
+
+  /// No description provided for @clinicPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic photos'**
+  String get clinicPhotos;
+
+  /// No description provided for @clinicPhotosHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste image URLs separated by commas'**
+  String get clinicPhotosHint;
+
+  /// No description provided for @live.
+  ///
+  /// In en, this message translates to:
+  /// **'LIVE'**
+  String get live;
+
+  /// No description provided for @liveQueueProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Live queue updates automatically'**
+  String get liveQueueProgress;
+
+  /// No description provided for @patientsBeforeMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Patients before me'**
+  String get patientsBeforeMe;
+
+  /// No description provided for @appointmentStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment status'**
+  String get appointmentStatusLabel;
+
+  /// No description provided for @queueStatusWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get queueStatusWaiting;
+
+  /// No description provided for @queueStatusInDoctorRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'In doctor room'**
+  String get queueStatusInDoctorRoom;
+
+  /// No description provided for @queueStatusSentForTests.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent for tests'**
+  String get queueStatusSentForTests;
+
+  /// No description provided for @queueStatusFollowUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow up'**
+  String get queueStatusFollowUp;
+
+  /// No description provided for @queueStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get queueStatusCompleted;
+
+  /// No description provided for @queueStatusAbsent.
+  ///
+  /// In en, this message translates to:
+  /// **'Absent'**
+  String get queueStatusAbsent;
+
+  /// No description provided for @queueStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get queueStatusCancelled;
+
+  /// No description provided for @queueNotifyFourRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost your turn'**
+  String get queueNotifyFourRemaining;
+
+  /// No description provided for @queueNotifyFourRemainingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Only 4 patients remain before you.'**
+  String get queueNotifyFourRemainingBody;
+
+  /// No description provided for @queueNotifyTwoRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Get ready'**
+  String get queueNotifyTwoRemaining;
+
+  /// No description provided for @queueNotifyTwoRemainingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Only 2 patients remain before you.'**
+  String get queueNotifyTwoRemainingBody;
+
+  /// No description provided for @queueNotifyYourTurn.
+  ///
+  /// In en, this message translates to:
+  /// **'Your turn now'**
+  String get queueNotifyYourTurn;
+
+  /// No description provided for @queueNotifyYourTurnBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Please proceed to the doctor room.'**
+  String get queueNotifyYourTurnBody;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

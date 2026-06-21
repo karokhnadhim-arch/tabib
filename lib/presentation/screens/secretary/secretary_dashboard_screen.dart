@@ -5,10 +5,13 @@ import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/medical_ui.dart';
+import '../../../core/widgets/responsive_scaffold.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/appointment.dart';
+import '../../../models/queue_entry.dart';
 import '../../../models/visit_status.dart';
 import '../../../services/auth_service.dart';
+import '../../../services/queue_service.dart';
 import '../../../utils/localization_utils.dart';
 import '../../providers/app_providers.dart';
 import 'daily_schedule_screen.dart';
@@ -31,7 +34,10 @@ class _SecretaryDashboardScreenState extends State<SecretaryDashboardScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final auth = context.read<AuthService>();
       final clinicId = auth.currentUser?.clinicId ?? 'clinic_erbil_1';
-      context.read<AppointmentProvider>().watchClinic(clinicId);
+      context.read<AppointmentProvider>().watchDailySchedule(
+            clinicId,
+            DateTime.now(),
+          );
     });
   }
 
@@ -68,7 +74,7 @@ class _SecretaryDashboardScreenState extends State<SecretaryDashboardScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                SegmentedButton<int>(
+                ResponsiveSegmentedButton<int>(
                   segments: [
                     ButtonSegment(value: 0, label: Text(l10n.manageAppointments)),
                     ButtonSegment(value: 1, label: Text(l10n.registerPatient)),
@@ -136,6 +142,21 @@ class _WorkflowAppointmentsTab extends StatelessWidget {
       case VisitStatus.scheduled:
         return Colors.grey;
     }
+  }
+
+  Future<void> _syncQueueWith(
+    QueueService queue,
+    Appointment appointment,
+    QueueStatus status,
+  ) async {
+    final patientId = appointment.patientId;
+    final doctorId = appointment.doctorId;
+    if (patientId == null || doctorId == null) return;
+    await queue.syncPatientQueueStatus(
+      patientId: patientId,
+      doctorId: doctorId,
+      status: status,
+    );
   }
 
   @override
@@ -212,25 +233,45 @@ class _WorkflowAppointmentsTab extends StatelessWidget {
                       icon: Icons.login,
                       label: l10n.markEntered,
                       color: AppTheme.medicalBlue,
-                      onTap: () => provider.markArrived(a.id),
+                      onTap: () async {
+                        final queue = context.read<QueueService>();
+                        await provider.markArrived(a.id);
+                        if (!context.mounted) return;
+                        await _syncQueueWith(queue, a, QueueStatus.inProgress);
+                      },
                     ),
                     MedicalActionChip(
                       icon: Icons.person_off_outlined,
                       label: l10n.markAbsent,
                       color: Colors.red,
-                      onTap: () => provider.markAbsent(a.id),
+                      onTap: () async {
+                        final queue = context.read<QueueService>();
+                        await provider.markAbsent(a.id);
+                        if (!context.mounted) return;
+                        await _syncQueueWith(queue, a, QueueStatus.absent);
+                      },
                     ),
                     MedicalActionChip(
                       icon: Icons.medical_services_outlined,
                       label: l10n.sendToExamination,
                       color: AppTheme.medicalGreen,
-                      onTap: () => provider.sendToExamination(a.id),
+                      onTap: () async {
+                        final queue = context.read<QueueService>();
+                        await provider.sendToExamination(a.id);
+                        if (!context.mounted) return;
+                        await _syncQueueWith(queue, a, QueueStatus.sentForTests);
+                      },
                     ),
                     MedicalActionChip(
                       icon: Icons.event_repeat,
                       label: l10n.addFollowUp,
                       color: Colors.orange,
-                      onTap: () => provider.addFollowUp(a.id),
+                      onTap: () async {
+                        final queue = context.read<QueueService>();
+                        await provider.addFollowUp(a.id);
+                        if (!context.mounted) return;
+                        await _syncQueueWith(queue, a, QueueStatus.followUp);
+                      },
                     ),
                     MedicalActionChip(
                       icon: Icons.arrow_upward,

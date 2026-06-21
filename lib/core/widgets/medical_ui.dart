@@ -156,7 +156,8 @@ class AnimatedQueueNumber extends StatelessWidget {
       tween: Tween(begin: 0.8, end: 1),
       duration: const Duration(milliseconds: 600),
       curve: Curves.elasticOut,
-      builder: (context, scale, child) => Transform.scale(scale: scale, child: child),
+      builder: (context, scale, child) =>
+          Transform.scale(scale: scale, child: child),
       child: Column(
         children: [
           Text(
@@ -179,7 +180,8 @@ class AnimatedQueueNumber extends StatelessWidget {
 }
 
 class PulseDot extends StatefulWidget {
-  const PulseDot({super.key, this.color = AppTheme.medicalGreen, this.size = 12});
+  const PulseDot(
+      {super.key, this.color = AppTheme.medicalGreen, this.size = 12});
 
   final Color color;
   final double size;
@@ -222,7 +224,8 @@ class _PulseDotState extends State<PulseDot>
           child: Container(
             width: widget.size,
             height: widget.size,
-            decoration: BoxDecoration(color: widget.color, shape: BoxShape.circle),
+            decoration:
+                BoxDecoration(color: widget.color, shape: BoxShape.circle),
           ),
         ),
       ),
@@ -284,7 +287,8 @@ class MedicalActionChip extends StatelessWidget {
             children: [
               Icon(icon, color: color, size: 18),
               const SizedBox(width: 6),
-              Text(label, style: TextStyle(color: color, fontWeight: FontWeight.w600)),
+              Text(label,
+                  style: TextStyle(color: color, fontWeight: FontWeight.w600)),
             ],
           ),
         ),
