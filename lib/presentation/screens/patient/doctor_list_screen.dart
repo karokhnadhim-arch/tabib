@@ -211,7 +211,7 @@ class _TabibDoctorListScreenState extends State<TabibDoctorListScreen> {
                                         Flexible(
                                           child: Text(
                                             l10n.available,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               color: AppTheme.medicalGreen,
                                               fontSize: 12,
                                             ),

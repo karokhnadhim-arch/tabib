@@ -142,8 +142,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         prefixIcon: Icons.lock_outline,
                         obscureText: _obscurePassword,
                         validator: (v) {
-                          if (v == null || v.length < 6)
+                          if (v == null || v.length < 6) {
                             return l10n.weakPassword;
+                          }
                           return null;
                         },
                       ),

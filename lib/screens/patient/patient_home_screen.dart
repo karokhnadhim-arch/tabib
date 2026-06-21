@@ -47,7 +47,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
             icon: const Icon(Icons.logout),
             onPressed: () async {
               await auth.logout();
-              context.go('/');
+              if (context.mounted) context.go('/');
             },
           ),
         ],

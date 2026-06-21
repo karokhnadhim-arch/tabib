@@ -320,8 +320,6 @@ class InMemoryChatRepository implements ChatRepository {
 
   void _notify() => _change.add(null);
 
-  String _key(String clinicId, String patientId) => '$clinicId::$patientId';
-
   @override
   Stream<List<ChatMessage>> watchConversation({
     required String clinicId,

@@ -560,11 +560,3 @@ class FirestoreClinicBackend implements ClinicBackend {
     await upsertDoctor(doctor);
   }
 }
-
-extension _FirstOrNull<T> on Iterable<T> {
-  T? get firstOrNull {
-    final it = iterator;
-    if (it.moveNext()) return it.current;
-    return null;
-  }
-}

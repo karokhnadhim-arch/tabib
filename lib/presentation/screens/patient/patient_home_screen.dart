@@ -16,6 +16,7 @@ import '../../../utils/localization_utils.dart';
 import '../../../widgets/common_widgets.dart';
 import '../../../widgets/language_picker.dart';
 import '../../providers/app_providers.dart';
+import '../../widgets/premium_queue_dashboard.dart';
 import 'doctor_list_screen.dart';
 
 class PatientHomeScreen extends StatefulWidget {
@@ -44,7 +45,6 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final auth = context.watch<AuthService>();
-    final notifications = context.watch<NotificationProvider>();
     final appointments = context.watch<AppointmentProvider>();
     final queue = context.watch<QueueService>();
     final activeQueue = queue.activeEntryForPatient(auth.patientId);
@@ -144,8 +144,10 @@ class _HomeTab extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-              if (activeQueue != null)
-                _ActiveQueueBanner(entry: activeQueue!, onTap: onQueueTap),
+              _HomeQueueDashboard(
+                activeQueue: activeQueue,
+                onTap: onQueueTap,
+              ),
               Row(
                 children: [
                   Expanded(
@@ -202,77 +204,131 @@ class _HomeTab extends StatelessWidget {
   }
 }
 
-class _ActiveQueueBanner extends StatefulWidget {
-  const _ActiveQueueBanner({required this.entry, required this.onTap});
+class _HomeQueueDashboard extends StatefulWidget {
+  const _HomeQueueDashboard({
+    required this.activeQueue,
+    required this.onTap,
+  });
 
-  final QueueEntry entry;
+  final QueueEntry? activeQueue;
   final VoidCallback onTap;
 
   @override
-  State<_ActiveQueueBanner> createState() => _ActiveQueueBannerState();
+  State<_HomeQueueDashboard> createState() => _HomeQueueDashboardState();
 }
 
-class _ActiveQueueBannerState extends State<_ActiveQueueBanner> {
+class _HomeQueueDashboardState extends State<_HomeQueueDashboard>
+    with TickerProviderStateMixin {
+  static const _demoPosition = 25;
+  static const _demoCurrent = 20;
+  static const _demoWaitMinutes = 15;
+  static const _demoPeopleAhead = 5;
+
+  late final AnimationController _pulseController;
+  late final AnimationController _numberController;
+  late final Animation<double> _numberScale;
+  String? _watchedDoctorId;
+
   @override
   void initState() {
     super.initState();
-    if (widget.entry.doctorId.isNotEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.read<QueueService>().watchDoctorQueue(widget.entry.doctorId);
-      });
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1600),
+    )..repeat(reverse: true);
+    _numberController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    _numberScale = CurvedAnimation(
+      parent: _numberController,
+      curve: Curves.elasticOut,
+    );
+    _numberController.forward();
+    _syncDoctorQueueWatch(widget.activeQueue?.doctorId);
+  }
+
+  @override
+  void didUpdateWidget(_HomeQueueDashboard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _syncDoctorQueueWatch(widget.activeQueue?.doctorId);
+  }
+
+  void _syncDoctorQueueWatch(String? doctorId) {
+    if (doctorId == null || doctorId.isEmpty) {
+      if (_watchedDoctorId != null) {
+        context.read<QueueService>().stopWatchingDoctorQueue(_watchedDoctorId);
+        _watchedDoctorId = null;
+      }
+      return;
     }
+    if (_watchedDoctorId == doctorId) return;
+    if (_watchedDoctorId != null) {
+      context.read<QueueService>().stopWatchingDoctorQueue(_watchedDoctorId);
+    }
+    _watchedDoctorId = doctorId;
+    context.read<QueueService>().watchDoctorQueue(doctorId);
   }
 
   @override
   void dispose() {
-    context.read<QueueService>().stopWatchingDoctorQueue(widget.entry.doctorId);
+    if (_watchedDoctorId != null) {
+      context.read<QueueService>().stopWatchingDoctorQueue(_watchedDoctorId);
+    }
+    _pulseController.dispose();
+    _numberController.dispose();
     super.dispose();
   }
 
+  QueueEntry _demoEntry() => QueueEntry(
+        id: 'demo',
+        patientId: '',
+        patientName: '',
+        patientPhone: '',
+        doctorId: '',
+        position: _demoPosition,
+        status: QueueStatus.waiting,
+        bookedAt: DateTime.now(),
+        estimatedWaitMinutes: _demoWaitMinutes,
+      );
+
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
     final queue = context.watch<QueueService>();
-    final current = queue.currentServingNumber(widget.entry.doctorId) ?? 0;
+    final data = context.watch<ClinicDataService>();
+    final entry = widget.activeQueue;
+    final isDemo = entry == null;
+
+    final displayEntry = entry ?? _demoEntry();
+    final doctor =
+        entry != null ? data.doctorById(entry.doctorId) : null;
+
+    final int currentNumber;
+    final int peopleAhead;
+    final int waitMinutes;
+    if (isDemo) {
+      currentNumber = _demoCurrent;
+      peopleAhead = _demoPeopleAhead;
+      waitMinutes = _demoWaitMinutes;
+    } else {
+      currentNumber = queue.currentServingNumber(entry.doctorId) ?? 0;
+      peopleAhead = queue.peopleAhead(entry);
+      waitMinutes = queue.estimatedWaitMinutes(entry);
+    }
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
-      child: Material(
-        elevation: 0,
-        color: AppTheme.medicalGreen.withOpacity(0.08),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: AppTheme.medicalGreen.withOpacity(0.3)),
-        ),
-        child: InkWell(
-          onTap: widget.onTap,
-          borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                const PulseDot(),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.myQueue,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        '${l10n.queueNumber}: ${widget.entry.position} • ${l10n.currentQueueNumber}: $current',
-                        style: TextStyle(
-                            color: Colors.grey.shade700, fontSize: 13),
-                      ),
-                    ],
-                  ),
-                ),
-                const Icon(Icons.chevron_right, color: AppTheme.medicalGreen),
-              ],
-            ),
-          ),
+      child: InkWell(
+        onTap: widget.onTap,
+        borderRadius: BorderRadius.circular(24),
+        child: PremiumQueueDashboard(
+          entry: displayEntry,
+          doctor: doctor,
+          currentNumber: currentNumber,
+          peopleAhead: peopleAhead,
+          waitMinutes: waitMinutes,
+          pulseController: _pulseController,
+          numberScaleAnimation: _numberScale,
         ),
       ),
     );

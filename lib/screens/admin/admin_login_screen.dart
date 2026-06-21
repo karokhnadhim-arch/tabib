@@ -119,7 +119,7 @@ class AdminDashboardScreen extends StatelessWidget {
             icon: const Icon(Icons.logout),
             onPressed: () async {
               await auth.logout();
-              context.go('/');
+              if (context.mounted) context.go('/');
             },
           ),
         ],
