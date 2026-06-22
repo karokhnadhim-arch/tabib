@@ -16,7 +16,7 @@ import '../../../utils/localization_utils.dart';
 import '../../../widgets/common_widgets.dart';
 import '../../../widgets/language_picker.dart';
 import '../../providers/app_providers.dart';
-import '../../widgets/premium_queue_dashboard.dart';
+import '../../widgets/simple_queue_circles.dart';
 import 'doctor_list_screen.dart';
 
 class PatientHomeScreen extends StatefulWidget {
@@ -140,14 +140,16 @@ class _HomeTab extends StatelessWidget {
             ],
           ),
         ),
+        SliverToBoxAdapter(
+          child: _HomeQueueDashboard(
+            activeQueue: activeQueue,
+            onTap: onQueueTap,
+          ),
+        ),
         SliverPadding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-              _HomeQueueDashboard(
-                activeQueue: activeQueue,
-                onTap: onQueueTap,
-              ),
               Row(
                 children: [
                   Expanded(
@@ -221,7 +223,6 @@ class _HomeQueueDashboardState extends State<_HomeQueueDashboard>
     with TickerProviderStateMixin {
   static const _demoPosition = 25;
   static const _demoCurrent = 20;
-  static const _demoWaitMinutes = 15;
   static const _demoPeopleAhead = 5;
 
   late final AnimationController _pulseController;
@@ -252,6 +253,14 @@ class _HomeQueueDashboardState extends State<_HomeQueueDashboard>
   void didUpdateWidget(_HomeQueueDashboard oldWidget) {
     super.didUpdateWidget(oldWidget);
     _syncDoctorQueueWatch(widget.activeQueue?.doctorId);
+
+    final oldNumber = oldWidget.activeQueue?.position ?? _demoPosition;
+    final newNumber = widget.activeQueue?.position ?? _demoPosition;
+    if (oldNumber != newNumber) {
+      _numberController
+        ..reset()
+        ..forward();
+    }
   }
 
   void _syncDoctorQueueWatch(String? doctorId) {
@@ -280,57 +289,32 @@ class _HomeQueueDashboardState extends State<_HomeQueueDashboard>
     super.dispose();
   }
 
-  QueueEntry _demoEntry() => QueueEntry(
-        id: 'demo',
-        patientId: '',
-        patientName: '',
-        patientPhone: '',
-        doctorId: '',
-        position: _demoPosition,
-        status: QueueStatus.waiting,
-        bookedAt: DateTime.now(),
-        estimatedWaitMinutes: _demoWaitMinutes,
-      );
-
   @override
   Widget build(BuildContext context) {
     final queue = context.watch<QueueService>();
-    final data = context.watch<ClinicDataService>();
     final entry = widget.activeQueue;
     final isDemo = entry == null;
 
-    final displayEntry = entry ?? _demoEntry();
-    final doctor =
-        entry != null ? data.doctorById(entry.doctorId) : null;
-
+    final int myNumber;
     final int currentNumber;
     final int peopleAhead;
-    final int waitMinutes;
     if (isDemo) {
+      myNumber = _demoPosition;
       currentNumber = _demoCurrent;
       peopleAhead = _demoPeopleAhead;
-      waitMinutes = _demoWaitMinutes;
     } else {
+      myNumber = entry.position;
       currentNumber = queue.currentServingNumber(entry.doctorId) ?? 0;
       peopleAhead = queue.peopleAhead(entry);
-      waitMinutes = queue.estimatedWaitMinutes(entry);
     }
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: InkWell(
-        onTap: widget.onTap,
-        borderRadius: BorderRadius.circular(24),
-        child: PremiumQueueDashboard(
-          entry: displayEntry,
-          doctor: doctor,
-          currentNumber: currentNumber,
-          peopleAhead: peopleAhead,
-          waitMinutes: waitMinutes,
-          pulseController: _pulseController,
-          numberScaleAnimation: _numberScale,
-        ),
-      ),
+    return SimpleQueueCircles(
+      myNumber: myNumber,
+      currentNumber: currentNumber,
+      peopleAhead: peopleAhead,
+      pulseController: _pulseController,
+      numberScaleAnimation: _numberScale,
+      onTap: widget.onTap,
     );
   }
 }
@@ -366,6 +350,8 @@ class _SpecialtyCard extends StatelessWidget {
               Text(
                 specialty.name.localized(context),
                 textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
             ],

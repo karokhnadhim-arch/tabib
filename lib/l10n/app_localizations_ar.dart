@@ -598,8 +598,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get manageProfile => 'إدارة الملف الشخصي';
 
   @override
-  String get manageProfileHint =>
-      'تحديث الصورة والسيرة ومعلومات العيادة والجدول';
+  String get manageProfileHint => 'تحديث الصورة والسيرة ومعلومات العيادة والجدول';
 
   @override
   String get profilePhotoUrl => 'رابط صورة الملف الشخصي';

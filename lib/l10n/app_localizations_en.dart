@@ -8,8 +8,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'Tabib';
 
   @override
-  String get appSubtitle =>
-      'Find doctors, book appointments, manage your health';
+  String get appSubtitle => 'Find doctors, book appointments, manage your health';
 
   @override
   String get patientApp => 'Patient App';
@@ -262,8 +261,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get firebaseNotConfigured => 'Firebase is not configured';
 
   @override
-  String get firebaseSetupHint =>
-      'Run flutterfire configure and add your google-services files. See README.md.';
+  String get firebaseSetupHint => 'Run flutterfire configure and add your google-services files. See README.md.';
 
   @override
   String get adminDashboard => 'Admin Dashboard';
@@ -576,8 +574,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createDoctorAccount => 'Create doctor account';
 
   @override
-  String get createDoctorAccountHint =>
-      'Add a new doctor with login credentials';
+  String get createDoctorAccountHint => 'Add a new doctor with login credentials';
 
   @override
   String get createSecretaryAccount => 'Create secretary account';
@@ -601,8 +598,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get manageProfile => 'Manage your profile';
 
   @override
-  String get manageProfileHint =>
-      'Update photo, bio, clinic details, and schedule';
+  String get manageProfileHint => 'Update photo, bio, clinic details, and schedule';
 
   @override
   String get profilePhotoUrl => 'Profile photo URL';
@@ -614,8 +610,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get removePhoto => 'Remove photo';
 
   @override
-  String get photoUploadHint =>
-      'Pick an image from your device, or paste a URL below';
+  String get photoUploadHint => 'Pick an image from your device, or paste a URL below';
 
   @override
   String get orPastePhotoUrl => 'Or paste image URL';
@@ -779,15 +774,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get queueNotifyFourRemaining => 'Almost your turn';
 
   @override
-  String get queueNotifyFourRemainingBody =>
-      'Only 4 patients remain before you.';
+  String get queueNotifyFourRemainingBody => 'Only 4 patients remain before you.';
 
   @override
   String get queueNotifyTwoRemaining => 'Get ready';
 
   @override
-  String get queueNotifyTwoRemainingBody =>
-      'Only 2 patients remain before you.';
+  String get queueNotifyTwoRemainingBody => 'Only 2 patients remain before you.';
 
   @override
   String get queueNotifyYourTurn => 'Your turn now';

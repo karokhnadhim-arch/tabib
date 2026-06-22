@@ -13,6 +13,7 @@ import '../../../services/queue_alert_service.dart';
 import '../../../services/queue_service.dart';
 import '../../widgets/premium_queue_dashboard.dart';
 
+
 class QueueTrackingScreen extends StatefulWidget {
   const QueueTrackingScreen({super.key});
 
@@ -133,12 +134,10 @@ class _QueueTrackingScreenState extends State<QueueTrackingScreen>
           title: Text(l10n.queueTracking),
           backgroundColor: AppTheme.patientColor,
         ),
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
@@ -164,7 +163,6 @@ class _QueueTrackingScreenState extends State<QueueTrackingScreen>
               ],
             ),
           ),
-        ),
       );
     }
 
