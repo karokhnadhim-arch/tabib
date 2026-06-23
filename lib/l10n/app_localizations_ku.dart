@@ -2,7 +2,7 @@ import 'app_localizations.dart';
 
 /// The translations for Kurdish (`ku`).
 class AppLocalizationsKu extends AppLocalizations {
-  AppLocalizationsKu([String locale = 'ku']) : super(locale);
+  AppLocalizationsKu([super.locale = 'ku']);
 
   @override
   String get appTitle => 'Tabib';
