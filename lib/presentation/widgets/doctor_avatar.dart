@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_theme.dart';
-import '../../utils/doctor_photo_utils.dart';
+import '../../utils/image_upload_utils.dart';
 
 class DoctorAvatar extends StatelessWidget {
   const DoctorAvatar({
     super.key,
     required this.photoUrl,
+    this.thumbnailUrl,
     this.radius = 40,
     this.backgroundColor,
     this.fallback,
@@ -14,6 +15,7 @@ class DoctorAvatar extends StatelessWidget {
   });
 
   final String? photoUrl;
+  final String? thumbnailUrl;
   final double radius;
   final Color? backgroundColor;
   final Widget? fallback;
@@ -21,22 +23,54 @@ class DoctorAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = doctorPhotoImageProvider(photoUrl);
-    final avatar = CircleAvatar(
-      radius: radius,
-      backgroundColor:
-          backgroundColor ?? AppTheme.medicalBlue.withOpacity(0.12),
-      backgroundImage: provider,
-      onBackgroundImageError: provider != null ? (_, __) {} : null,
-      child: provider == null
-          ? fallback ??
-              Icon(
-                Icons.person,
-                size: radius,
-                color: AppTheme.medicalBlue.withOpacity(0.7),
-              )
-          : null,
+    final pixelRatio = MediaQuery.devicePixelRatioOf(context);
+    final cacheSize = (radius * 2 * pixelRatio).round().clamp(1, 512);
+    final provider = tabibImageProvider(
+      photoUrl,
+      thumbnailUrl: thumbnailUrl,
+      preferThumbnail: true,
     );
+
+    Widget avatar;
+    if (provider == null) {
+      avatar = CircleAvatar(
+        radius: radius,
+        backgroundColor:
+            backgroundColor ?? AppTheme.medicalBlue.withOpacity(0.12),
+        child: fallback ??
+            Icon(
+              Icons.person,
+              size: radius,
+              color: AppTheme.medicalBlue.withOpacity(0.7),
+            ),
+      );
+    } else {
+      avatar = CircleAvatar(
+        radius: radius,
+        backgroundColor:
+            backgroundColor ?? AppTheme.medicalBlue.withOpacity(0.12),
+        child: ClipOval(
+          child: Image(
+            image: ResizeImage(
+              provider,
+              width: cacheSize,
+              height: cacheSize,
+            ),
+            width: radius * 2,
+            height: radius * 2,
+            fit: BoxFit.cover,
+            gaplessPlayback: true,
+            errorBuilder: (_, __, ___) =>
+                fallback ??
+                Icon(
+                  Icons.person,
+                  size: radius,
+                  color: AppTheme.medicalBlue.withOpacity(0.7),
+                ),
+          ),
+        ),
+      );
+    }
 
     if (border == null) return avatar;
     return Container(

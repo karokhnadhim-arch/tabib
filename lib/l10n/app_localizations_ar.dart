@@ -2,7 +2,7 @@ import 'app_localizations.dart';
 
 /// The translations for Arabic (`ar`).
 class AppLocalizationsAr extends AppLocalizations {
-  AppLocalizationsAr([super.locale = 'ar']);
+  AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
   String get appTitle => 'Tabib';
@@ -610,13 +610,46 @@ class AppLocalizationsAr extends AppLocalizations {
   String get removePhoto => 'إزالة الصورة';
 
   @override
-  String get photoUploadHint => 'اختر صورة من جهازك أو الصق رابطاً أدناه';
+  String get photoUploadHint => 'اختر صورة، قصّها داخل دائرة، ثم احفظ. الصور الكبيرة مدعومة. يمكنك أيضاً لصق رابط أدناه';
 
   @override
   String get orPastePhotoUrl => 'أو الصق رابط الصورة';
 
   @override
-  String get photoTooLarge => 'الصورة كبيرة جداً (الحد الأقصى 512 ك.ب)';
+  String get photoTooLarge => 'تعذر ضغط الصورة بشكل كافٍ. جرّب صورة أصغر';
+
+  @override
+  String get photoProcessingFailed => 'تعذر معالجة الصورة المحددة';
+
+  @override
+  String get cropProfilePhoto => 'قص صورة الملف الشخصي';
+
+  @override
+  String get cropProfilePhotoHint => 'قرّب/بعّد بالقرص واسحب لوضع الصورة داخل الدائرة';
+
+  @override
+  String get photoPreview => 'معاينة';
+
+  @override
+  String get photoPreviewHint => 'هكذا سيرى المرضى صورتك الشخصية';
+
+  @override
+  String get usePhoto => 'استخدام الصورة';
+
+  @override
+  String get zoomIn => 'تكبير';
+
+  @override
+  String get zoomOut => 'تصغير';
+
+  @override
+  String get addClinicPhoto => 'رفع صورة العيادة';
+
+  @override
+  String get addClinicPhotoUrl => 'إضافة رابط';
+
+  @override
+  String get clinicPhotoUploadHint => 'يتم تحسين صور العيادة حتى 1920×1080. تُستخدم الصور المصغرة في القوائم لتسريع التحميل.';
 
   @override
   String get workingHours => 'ساعات العمل';
@@ -685,25 +718,25 @@ class AppLocalizationsAr extends AppLocalizations {
   String get languagesHint => 'مثال: كردي، عربي، إنجليزي';
 
   @override
-  String get dayMonday => 'إث';
+  String get dayMonday => 'الإثنين';
 
   @override
-  String get dayTuesday => 'ثل';
+  String get dayTuesday => 'الثلاثاء';
 
   @override
-  String get dayWednesday => 'أر';
+  String get dayWednesday => 'الأربعاء';
 
   @override
-  String get dayThursday => 'خم';
+  String get dayThursday => 'الخميس';
 
   @override
-  String get dayFriday => 'جم';
+  String get dayFriday => 'الجمعة';
 
   @override
-  String get daySaturday => 'سب';
+  String get daySaturday => 'السبت';
 
   @override
-  String get daySunday => 'أح';
+  String get daySunday => 'الأحد';
 
   @override
   String get openWhatsApp => 'مراسلة على واتساب';
@@ -735,7 +768,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get clinicPhotos => 'صور العيادة';
 
   @override
-  String get clinicPhotosHint => 'ألصق روابط الصور مفصولة بفواصل';
+  String get clinicPhotosHint => 'الصق رابط الصورة ثم اضغط إضافة رابط';
 
   @override
   String get live => 'مباشر';
@@ -787,4 +820,49 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get queueNotifyYourTurnBody => 'تفضل إلى غرفة الطبيب.';
+
+  @override
+  String get dayClosed => 'مغلق';
+
+  @override
+  String get markDayOpen => 'مفتوح';
+
+  @override
+  String get markDayClosed => 'مغلق';
+
+  @override
+  String get addTimePeriod => 'إضافة فترة';
+
+  @override
+  String get removeTimePeriod => 'حذف الفترة';
+
+  @override
+  String get openingTime => 'يفتح';
+
+  @override
+  String get closingTime => 'يغلق';
+
+  @override
+  String get schedulePeriodInvalid => 'وقت الإغلاق يجب أن يكون بعد وقت الفتح';
+
+  @override
+  String get schedulePeriodOverlap => 'لا يمكن أن تتداخل الفترات الزمنية';
+
+  @override
+  String get scheduleOpenDayNeedsPeriod => 'أضف فترة واحدة على الأقل لكل يوم مفتوح';
+
+  @override
+  String get appointmentOutsideSchedule => 'الوقت المحدد خارج ساعات العمل';
+
+  @override
+  String get appointmentClosedDay => 'الطبيب غير متاح في هذا اليوم';
+
+  @override
+  String get noScheduleSet => 'لم يتم تحديد جدول العمل';
+
+  @override
+  String get editWorkingSchedule => 'تعديل جدول العمل';
+
+  @override
+  String get viewWorkingSchedule => 'جدول العمل';
 }

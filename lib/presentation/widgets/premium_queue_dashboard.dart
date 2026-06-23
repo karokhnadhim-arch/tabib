@@ -205,6 +205,7 @@ class _DoctorHeader extends StatelessWidget {
           children: [
             DoctorAvatar(
               photoUrl: doctor.photoUrl,
+              thumbnailUrl: doctor.photoThumbnailUrl,
               radius: 28,
               border: Border.all(
                 color: AppTheme.medicalBlue.withOpacity(0.2),

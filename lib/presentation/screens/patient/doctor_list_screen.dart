@@ -163,6 +163,8 @@ class _TabibDoctorListScreenState extends State<TabibDoctorListScreen> {
                               ),
                               leading: DoctorAvatar(
                                 photoUrl: doctor.patientVisiblePhotoUrl,
+                                thumbnailUrl:
+                                    doctor.patientVisiblePhotoThumbnailUrl,
                                 radius: 24,
                                 backgroundColor:
                                     AppTheme.medicalBlue.withOpacity(0.1),

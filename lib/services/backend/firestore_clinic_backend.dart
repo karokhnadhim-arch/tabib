@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../models/clinic.dart';
 import '../../models/doctor.dart';
+import '../../models/doctor_working_schedule.dart';
 import '../../models/localized_text.dart';
 import '../../models/queue_entry.dart';
 import '../../models/specialty.dart';
@@ -543,16 +544,12 @@ class FirestoreClinicBackend implements ClinicBackend {
       workingDays: const [
         DateTime.saturday,
         DateTime.sunday,
-        DateTime.monday,
         DateTime.tuesday,
         DateTime.wednesday,
         DateTime.thursday,
+        DateTime.friday,
       ],
-      workingHours: const LocalizedText(
-        ku: '٩:٠٠–١٧:٠٠',
-        ar: '٩:٠٠–١٧:٠٠',
-        en: '9:00 AM–5:00 PM',
-      ),
+      workingSchedule: DoctorWorkingSchedule.demoSchedule(),
       languagesSpoken: const ['Kurdish', 'Arabic', 'English'],
       latitude: clinic.latitude,
       longitude: clinic.longitude,

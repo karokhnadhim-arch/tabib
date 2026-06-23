@@ -11,9 +11,12 @@ import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../services/queue_service.dart';
 import '../../../utils/localization_utils.dart';
+import '../../../utils/schedule_utils.dart';
 import '../../../widgets/common_widgets.dart';
 import '../../widgets/doctor_avatar.dart';
 import '../../widgets/doctor_location_card.dart';
+import '../../widgets/doctor_schedule_view.dart';
+import '../../widgets/tabib_image.dart';
 
 class TabibDoctorDetailScreen extends StatefulWidget {
   const TabibDoctorDetailScreen({super.key, required this.doctorId});
@@ -53,27 +56,6 @@ class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
   void dispose() {
     context.read<QueueService>().stopWatchingDoctorQueue(widget.doctorId);
     super.dispose();
-  }
-
-  String _weekdayLabel(AppLocalizations l10n, int weekday) {
-    switch (weekday) {
-      case DateTime.monday:
-        return l10n.dayMonday;
-      case DateTime.tuesday:
-        return l10n.dayTuesday;
-      case DateTime.wednesday:
-        return l10n.dayWednesday;
-      case DateTime.thursday:
-        return l10n.dayThursday;
-      case DateTime.friday:
-        return l10n.dayFriday;
-      case DateTime.saturday:
-        return l10n.daySaturday;
-      case DateTime.sunday:
-        return l10n.daySunday;
-      default:
-        return '';
-    }
   }
 
   Future<void> _openWhatsApp(String number) async {
@@ -161,6 +143,8 @@ class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
                                 ),
                                 child: DoctorAvatar(
                                   photoUrl: doctor.patientVisiblePhotoUrl,
+                                  thumbnailUrl:
+                                      doctor.patientVisiblePhotoThumbnailUrl,
                                   radius: 48,
                                   backgroundColor:
                                       Colors.white.withOpacity(0.2),
@@ -362,7 +346,7 @@ class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
                   const SizedBox(height: 16),
                 ],
                 if (doctor.patientShowsSchedule(context)) ...[
-                  SectionHeader(title: l10n.scheduleInfo),
+                  SectionHeader(title: l10n.viewWorkingSchedule),
                   Card(
                     elevation: 0,
                     shape: RoundedRectangleBorder(
@@ -371,60 +355,66 @@ class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (doctor.patientShowsWorkingDays) ...[
-                            Row(
+                      child: doctor.patientShowsStructuredSchedule
+                          ? DoctorScheduleView(
+                              schedule: doctor.effectiveWorkingSchedule,
+                            )
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Icon(
-                                  Icons.calendar_today_outlined,
-                                  size: 20,
-                                  color: AppTheme.medicalGreen,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  l10n.workingDays,
-                                  style: TextStyle(color: Colors.grey.shade600),
-                                ),
+                                if (doctor.patientShowsWorkingDays) ...[
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.calendar_today_outlined,
+                                        size: 20,
+                                        color: AppTheme.medicalGreen,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        l10n.workingDays,
+                                        style:
+                                            TextStyle(color: Colors.grey.shade600),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Wrap(
+                                    spacing: 6,
+                                    runSpacing: 6,
+                                    children: doctor.workingDays!.map((day) {
+                                      return Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                          vertical: 6,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: AppTheme.medicalGreen
+                                              .withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: Text(
+                                          ScheduleUtils.weekdayLabel(l10n, day),
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            color: AppTheme.medicalGreen,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                  const SizedBox(height: 12),
+                                ],
+                                if (doctor.patientShowsWorkingHours(context))
+                                  InfoTile(
+                                    icon: Icons.schedule,
+                                    label: l10n.workingHours,
+                                    value:
+                                        doctor.workingHours!.localized(context),
+                                  ),
                               ],
                             ),
-                            const SizedBox(height: 8),
-                            Wrap(
-                              spacing: 6,
-                              runSpacing: 6,
-                              children: doctor.workingDays!.map((day) {
-                                return Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        AppTheme.medicalGreen.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Text(
-                                    _weekdayLabel(l10n, day),
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: AppTheme.medicalGreen,
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                            const SizedBox(height: 12),
-                          ],
-                          if (doctor.patientShowsWorkingHours(context))
-                            InfoTile(
-                              icon: Icons.schedule,
-                              label: l10n.workingHours,
-                              value: doctor.workingHours!.localized(context),
-                            ),
-                        ],
-                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -456,20 +446,17 @@ class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
                       separatorBuilder: (_, __) => const SizedBox(width: 8),
                       itemBuilder: (context, index) {
                         final url = doctor.clinicPhotos![index];
-                        return ClipRRect(
+                        final thumbs =
+                            doctor.patientVisibleClinicPhotoThumbnails;
+                        final thumb = thumbs != null && index < thumbs.length
+                            ? thumbs[index]
+                            : url;
+                        return TabibImage(
+                          imageUrl: url,
+                          thumbnailUrl: thumb,
+                          width: 160,
+                          height: 120,
                           borderRadius: BorderRadius.circular(12),
-                          child: Image.network(
-                            url,
-                            width: 160,
-                            height: 120,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Container(
-                              width: 160,
-                              height: 120,
-                              color: Colors.grey.shade200,
-                              child: const Icon(Icons.broken_image_outlined),
-                            ),
-                          ),
                         );
                       },
                     ),

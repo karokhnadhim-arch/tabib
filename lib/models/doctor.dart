@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import 'clinic.dart';
 import 'doctor_profile_visibility.dart';
+import 'doctor_working_schedule.dart';
 import 'localized_text.dart';
 import 'specialty.dart';
 
@@ -20,6 +21,7 @@ class Doctor {
     required this.bio,
     required this.isAvailableToday,
     this.photoUrl,
+    this.photoThumbnailUrl,
     this.academicDegree,
     this.clinicName,
     this.clinicAddress,
@@ -30,9 +32,11 @@ class Doctor {
     this.whatsappNumber,
     this.contactEmail,
     this.workingHours,
+    this.workingSchedule,
     this.languagesSpoken,
     this.consultationFee,
     this.clinicPhotos,
+    this.clinicPhotoThumbnails,
     this.profileVisibility = const DoctorProfileVisibility(),
   });
 
@@ -47,6 +51,7 @@ class Doctor {
   final LocalizedText bio;
   final bool isAvailableToday;
   final String? photoUrl;
+  final String? photoThumbnailUrl;
   final LocalizedText? academicDegree;
   final LocalizedText? clinicName;
   final LocalizedText? clinicAddress;
@@ -58,9 +63,11 @@ class Doctor {
   final String? whatsappNumber;
   final String? contactEmail;
   final LocalizedText? workingHours;
+  final List<DoctorDaySchedule>? workingSchedule;
   final List<String>? languagesSpoken;
   final double? consultationFee;
   final List<String>? clinicPhotos;
+  final List<String>? clinicPhotoThumbnails;
   final DoctorProfileVisibility profileVisibility;
 
   LocalizedText get effectiveClinicName => clinicName ?? clinic.name;
@@ -128,14 +135,48 @@ class Doctor {
       clinicPhotos != null &&
       clinicPhotos!.isNotEmpty;
 
+  String? get patientVisiblePhotoThumbnailUrl =>
+      profileVisibility.showProfilePhoto
+          ? (photoThumbnailUrl ?? photoUrl)?.trim().isNotEmpty == true
+              ? (photoThumbnailUrl ?? photoUrl)!.trim()
+              : null
+          : null;
+
+  List<String>? get patientVisibleClinicPhotoThumbnails {
+    if (!patientShowsClinicPhotos) return null;
+    final photos = clinicPhotos!;
+    final thumbs = clinicPhotoThumbnails;
+    if (thumbs == null || thumbs.length != photos.length) {
+      return photos;
+    }
+    return thumbs;
+  }
+
   bool patientShowsWorkingHours(BuildContext context) =>
       workingHours != null && workingHours!.localized(context).trim().isNotEmpty;
 
   bool get patientShowsWorkingDays =>
       workingDays != null && workingDays!.isNotEmpty;
 
+  bool get patientShowsStructuredSchedule =>
+      effectiveWorkingSchedule.hasConfiguredSchedule;
+
   bool patientShowsSchedule(BuildContext context) =>
-      patientShowsWorkingHours(context) || patientShowsWorkingDays;
+      patientShowsStructuredSchedule ||
+      patientShowsWorkingHours(context) ||
+      patientShowsWorkingDays;
+
+  DoctorWorkingSchedule get effectiveWorkingSchedule {
+    if (workingSchedule != null && workingSchedule!.isNotEmpty) {
+      return DoctorWorkingSchedule(days: workingSchedule!);
+    }
+    return DoctorWorkingSchedule.fromLegacy(workingDays: workingDays);
+  }
+
+  bool isOpenOn(DateTime date) => effectiveWorkingSchedule.isOpenOn(date);
+
+  bool isDateTimeWithinSchedule(DateTime dateTime) =>
+      effectiveWorkingSchedule.isDateTimeWithinSchedule(dateTime);
 
   factory Doctor.fromMap({
     required String id,
@@ -157,6 +198,7 @@ class Doctor {
       bio: LocalizedText.fromMap(data['bio'] as Map<String, dynamic>?),
       isAvailableToday: data['isAvailableToday'] as bool? ?? false,
       photoUrl: data['photoUrl'] as String?,
+      photoThumbnailUrl: data['photoThumbnailUrl'] as String?,
       academicDegree: data['academicDegree'] != null
           ? LocalizedText.fromMap(
               data['academicDegree'] as Map<String, dynamic>?,
@@ -181,11 +223,16 @@ class Doctor {
       workingHours: data['workingHours'] != null
           ? LocalizedText.fromMap(data['workingHours'] as Map<String, dynamic>?)
           : null,
+      workingSchedule: _parseWorkingSchedule(data),
       languagesSpoken: (data['languagesSpoken'] as List<dynamic>?)
           ?.map((l) => l as String)
           .toList(),
       consultationFee: (data['consultationFee'] as num?)?.toDouble(),
       clinicPhotos: (data['clinicPhotos'] as List<dynamic>?)
+          ?.map((p) => p as String)
+          .where((p) => p.trim().isNotEmpty)
+          .toList(),
+      clinicPhotoThumbnails: (data['clinicPhotoThumbnails'] as List<dynamic>?)
           ?.map((p) => p as String)
           .where((p) => p.trim().isNotEmpty)
           .toList(),
@@ -204,6 +251,7 @@ class Doctor {
         'bio': bio.toMap(),
         'isAvailableToday': isAvailableToday,
         if (photoUrl != null) 'photoUrl': photoUrl,
+        if (photoThumbnailUrl != null) 'photoThumbnailUrl': photoThumbnailUrl,
         if (academicDegree != null) 'academicDegree': academicDegree!.toMap(),
         if (clinicName != null) 'clinicName': clinicName!.toMap(),
         if (clinicAddress != null) 'clinicAddress': clinicAddress!.toMap(),
@@ -215,11 +263,16 @@ class Doctor {
         if (whatsappNumber != null) 'whatsappNumber': whatsappNumber,
         if (contactEmail != null) 'contactEmail': contactEmail,
         if (workingHours != null) 'workingHours': workingHours!.toMap(),
+        if (workingSchedule != null && workingSchedule!.isNotEmpty)
+          'workingSchedule':
+              DoctorWorkingSchedule(days: workingSchedule!).toMapList(),
         if (languagesSpoken != null && languagesSpoken!.isNotEmpty)
           'languagesSpoken': languagesSpoken,
         if (consultationFee != null) 'consultationFee': consultationFee,
         if (clinicPhotos != null && clinicPhotos!.isNotEmpty)
           'clinicPhotos': clinicPhotos,
+        if (clinicPhotoThumbnails != null && clinicPhotoThumbnails!.isNotEmpty)
+          'clinicPhotoThumbnails': clinicPhotoThumbnails,
         'profileVisibility': profileVisibility.toMap(),
       };
 
@@ -234,6 +287,8 @@ class Doctor {
     LocalizedText? bio,
     bool? isAvailableToday,
     String? photoUrl,
+    String? photoThumbnailUrl,
+    bool clearPhotos = false,
     LocalizedText? academicDegree,
     LocalizedText? clinicName,
     LocalizedText? clinicAddress,
@@ -244,9 +299,11 @@ class Doctor {
     String? whatsappNumber,
     String? contactEmail,
     LocalizedText? workingHours,
+    List<DoctorDaySchedule>? workingSchedule,
     List<String>? languagesSpoken,
     double? consultationFee,
     List<String>? clinicPhotos,
+    List<String>? clinicPhotoThumbnails,
     DoctorProfileVisibility? profileVisibility,
   }) {
     return Doctor(
@@ -260,7 +317,9 @@ class Doctor {
       experienceYears: experienceYears ?? this.experienceYears,
       bio: bio ?? this.bio,
       isAvailableToday: isAvailableToday ?? this.isAvailableToday,
-      photoUrl: photoUrl ?? this.photoUrl,
+      photoUrl: clearPhotos ? null : (photoUrl ?? this.photoUrl),
+      photoThumbnailUrl:
+          clearPhotos ? null : (photoThumbnailUrl ?? this.photoThumbnailUrl),
       academicDegree: academicDegree ?? this.academicDegree,
       clinicName: clinicName ?? this.clinicName,
       clinicAddress: clinicAddress ?? this.clinicAddress,
@@ -271,10 +330,21 @@ class Doctor {
       whatsappNumber: whatsappNumber ?? this.whatsappNumber,
       contactEmail: contactEmail ?? this.contactEmail,
       workingHours: workingHours ?? this.workingHours,
+      workingSchedule: workingSchedule ?? this.workingSchedule,
       languagesSpoken: languagesSpoken ?? this.languagesSpoken,
       consultationFee: consultationFee ?? this.consultationFee,
       clinicPhotos: clinicPhotos ?? this.clinicPhotos,
+      clinicPhotoThumbnails:
+          clinicPhotoThumbnails ?? this.clinicPhotoThumbnails,
       profileVisibility: profileVisibility ?? this.profileVisibility,
     );
+  }
+
+  static List<DoctorDaySchedule>? _parseWorkingSchedule(
+    Map<String, dynamic> data,
+  ) {
+    final raw = data['workingSchedule'] as List<dynamic>?;
+    if (raw == null || raw.isEmpty) return null;
+    return DoctorWorkingSchedule.fromMapList(raw).days;
   }
 }

@@ -11,9 +11,11 @@ import '../../../models/doctor.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../utils/localization_utils.dart';
+import '../../../utils/schedule_utils.dart';
 import '../../../widgets/language_picker.dart';
 import '../../providers/app_providers.dart';
 import '../../widgets/doctor_avatar.dart';
+import '../../widgets/doctor_schedule_view.dart';
 import 'patient_records_screen.dart';
 
 class DoctorDashboardScreen extends StatefulWidget {
@@ -249,8 +251,8 @@ class _DoctorProfilePreview extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final degree = doctor.academicDegree?.localized(context);
-    final hours = doctor.workingHours?.localized(context);
     final workingDays = doctor.workingDays ?? const <int>[];
+    final hasStructuredSchedule = doctor.patientShowsStructuredSchedule;
 
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -275,6 +277,7 @@ class _DoctorProfilePreview extends StatelessWidget {
               children: [
                 DoctorAvatar(
                   photoUrl: doctor.photoUrl,
+                  thumbnailUrl: doctor.photoThumbnailUrl,
                   radius: 36,
                   backgroundColor: AppTheme.doctorColor.withOpacity(0.15),
                   fallback: Icon(
@@ -356,19 +359,18 @@ class _DoctorProfilePreview extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (hours != null && hours.isNotEmpty) ...[
+                if (hasStructuredSchedule) ...[
                   const SizedBox(height: 12),
-                  _InfoRow(
-                    icon: Icons.access_time,
-                    text: hours,
+                  DoctorScheduleView(
+                    schedule: doctor.effectiveWorkingSchedule,
+                    compact: true,
                   ),
-                ],
-                if (workingDays.isNotEmpty) ...[
+                ] else if (workingDays.isNotEmpty) ...[
                   const SizedBox(height: 8),
                   _InfoRow(
                     icon: Icons.calendar_today_outlined,
                     text: workingDays
-                        .map((d) => _weekdayShort(l10n, d))
+                        .map((d) => ScheduleUtils.weekdayLabel(l10n, d))
                         .join(' · '),
                   ),
                 ],
@@ -420,27 +422,6 @@ class _DoctorProfilePreview extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  String _weekdayShort(AppLocalizations l10n, int weekday) {
-    switch (weekday) {
-      case DateTime.monday:
-        return l10n.dayMonday;
-      case DateTime.tuesday:
-        return l10n.dayTuesday;
-      case DateTime.wednesday:
-        return l10n.dayWednesday;
-      case DateTime.thursday:
-        return l10n.dayThursday;
-      case DateTime.friday:
-        return l10n.dayFriday;
-      case DateTime.saturday:
-        return l10n.daySaturday;
-      case DateTime.sunday:
-        return l10n.daySunday;
-      default:
-        return '';
-    }
   }
 }
 

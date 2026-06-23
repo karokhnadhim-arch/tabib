@@ -2,6 +2,7 @@ import 'dart:async';
 
 import '../../models/clinic.dart';
 import '../../models/doctor.dart';
+import '../../models/doctor_working_schedule.dart';
 import '../../models/localized_text.dart';
 import '../../models/queue_entry.dart';
 import '../../models/specialty.dart';
@@ -425,16 +426,12 @@ class InMemoryClinicBackend implements ClinicBackend {
         workingDays: const [
           DateTime.saturday,
           DateTime.sunday,
-          DateTime.monday,
           DateTime.tuesday,
           DateTime.wednesday,
           DateTime.thursday,
+          DateTime.friday,
         ],
-        workingHours: const LocalizedText(
-          ku: '٩:٠٠–١٧:٠٠',
-          ar: '٩:٠٠–١٧:٠٠',
-          en: '9:00 AM–5:00 PM',
-        ),
+        workingSchedule: DoctorWorkingSchedule.demoSchedule(),
         languagesSpoken: const ['Kurdish', 'Arabic', 'English'],
         latitude: clinic.latitude,
         longitude: clinic.longitude,
@@ -536,11 +533,15 @@ class InMemoryClinicBackend implements ClinicBackend {
           DateTime.wednesday,
           DateTime.thursday,
         ],
-        workingHours: const LocalizedText(
-          ku: '١٠:٠٠–١٨:٠٠',
-          ar: '١٠:٠٠–١٨:٠٠',
-          en: '10:00 AM–6:00 PM',
-        ),
+        workingSchedule: DoctorWorkingSchedule.fromLegacy(
+          workingDays: const [
+            DateTime.sunday,
+            DateTime.monday,
+            DateTime.tuesday,
+            DateTime.wednesday,
+            DateTime.thursday,
+          ],
+        ).days,
         languagesSpoken: const ['Kurdish', 'Arabic'],
         latitude: 36.1920,
         longitude: 44.0100,
@@ -594,11 +595,13 @@ class InMemoryClinicBackend implements ClinicBackend {
           DateTime.monday,
           DateTime.wednesday,
         ],
-        workingHours: const LocalizedText(
-          ku: '٨:٣٠–١٤:٣٠',
-          ar: '٨:٣٠–١٤:٣٠',
-          en: '8:30 AM–2:30 PM',
-        ),
+        workingSchedule: DoctorWorkingSchedule.fromLegacy(
+          workingDays: const [
+            DateTime.saturday,
+            DateTime.monday,
+            DateTime.wednesday,
+          ],
+        ).days,
         languagesSpoken: const ['Kurdish', 'Arabic', 'English', 'German'],
         latitude: 36.1905,
         longitude: 44.0085,

@@ -2,7 +2,7 @@ import 'app_localizations.dart';
 
 /// The translations for English (`en`).
 class AppLocalizationsEn extends AppLocalizations {
-  AppLocalizationsEn([super.locale = 'en']);
+  AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
   String get appTitle => 'Tabib';
@@ -610,13 +610,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get removePhoto => 'Remove photo';
 
   @override
-  String get photoUploadHint => 'Pick an image from your device, or paste a URL below';
+  String get photoUploadHint => 'Pick a photo, crop it in a circle, then save. Large images are supported. You can also paste a URL below.';
 
   @override
   String get orPastePhotoUrl => 'Or paste image URL';
 
   @override
-  String get photoTooLarge => 'Image is too large (max 512 KB)';
+  String get photoTooLarge => 'Image could not be compressed enough. Try a smaller photo.';
+
+  @override
+  String get photoProcessingFailed => 'Could not process the selected image';
+
+  @override
+  String get cropProfilePhoto => 'Crop profile photo';
+
+  @override
+  String get cropProfilePhotoHint => 'Pinch to zoom and drag to position your photo inside the circle';
+
+  @override
+  String get photoPreview => 'Preview';
+
+  @override
+  String get photoPreviewHint => 'This is how patients will see your profile photo';
+
+  @override
+  String get usePhoto => 'Use photo';
+
+  @override
+  String get zoomIn => 'Zoom in';
+
+  @override
+  String get zoomOut => 'Zoom out';
+
+  @override
+  String get addClinicPhoto => 'Upload clinic photo';
+
+  @override
+  String get addClinicPhotoUrl => 'Add URL';
+
+  @override
+  String get clinicPhotoUploadHint => 'Clinic photos are optimized up to 1920×1080. Thumbnails are used in lists for faster loading.';
 
   @override
   String get workingHours => 'Working hours';
@@ -685,25 +718,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languagesHint => 'e.g. Kurdish, Arabic, English';
 
   @override
-  String get dayMonday => 'Mon';
+  String get dayMonday => 'Monday';
 
   @override
-  String get dayTuesday => 'Tue';
+  String get dayTuesday => 'Tuesday';
 
   @override
-  String get dayWednesday => 'Wed';
+  String get dayWednesday => 'Wednesday';
 
   @override
-  String get dayThursday => 'Thu';
+  String get dayThursday => 'Thursday';
 
   @override
-  String get dayFriday => 'Fri';
+  String get dayFriday => 'Friday';
 
   @override
-  String get daySaturday => 'Sat';
+  String get daySaturday => 'Saturday';
 
   @override
-  String get daySunday => 'Sun';
+  String get daySunday => 'Sunday';
 
   @override
   String get openWhatsApp => 'Message on WhatsApp';
@@ -735,7 +768,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clinicPhotos => 'Clinic photos';
 
   @override
-  String get clinicPhotosHint => 'Paste image URLs separated by commas';
+  String get clinicPhotosHint => 'Paste an image URL and tap Add URL';
 
   @override
   String get live => 'LIVE';
@@ -787,4 +820,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get queueNotifyYourTurnBody => 'Please proceed to the doctor room.';
+
+  @override
+  String get dayClosed => 'Closed';
+
+  @override
+  String get markDayOpen => 'Open';
+
+  @override
+  String get markDayClosed => 'Closed';
+
+  @override
+  String get addTimePeriod => 'Add time period';
+
+  @override
+  String get removeTimePeriod => 'Remove period';
+
+  @override
+  String get openingTime => 'Opens';
+
+  @override
+  String get closingTime => 'Closes';
+
+  @override
+  String get schedulePeriodInvalid => 'Closing time must be after opening time';
+
+  @override
+  String get schedulePeriodOverlap => 'Time periods cannot overlap';
+
+  @override
+  String get scheduleOpenDayNeedsPeriod => 'Add at least one time period for each open day';
+
+  @override
+  String get appointmentOutsideSchedule => 'Selected time is outside working hours';
+
+  @override
+  String get appointmentClosedDay => 'The doctor is not available on this day';
+
+  @override
+  String get noScheduleSet => 'No working schedule set';
+
+  @override
+  String get editWorkingSchedule => 'Edit working schedule';
+
+  @override
+  String get viewWorkingSchedule => 'Working schedule';
 }

@@ -11,6 +11,7 @@ import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../utils/localization_utils.dart';
 import '../../providers/app_providers.dart';
+import '../../widgets/doctor_schedule_view.dart';
 
 class AppointmentBookingScreen extends StatefulWidget {
   const AppointmentBookingScreen({super.key, required this.doctorId});
@@ -40,8 +41,7 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
     final doctor = data.doctorById(widget.doctorId);
     if (doctor == null || auth.currentUser == null) return;
 
-    setState(() => _loading = true);
-
+    final l10n = AppLocalizations.of(context);
     final dateTime = DateTime(
       _selectedDate.year,
       _selectedDate.month,
@@ -49,6 +49,21 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
       _selectedTime.hour,
       _selectedTime.minute,
     );
+
+    if (!doctor.isOpenOn(_selectedDate)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.appointmentClosedDay)),
+      );
+      return;
+    }
+    if (!doctor.isDateTimeWithinSchedule(dateTime)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.appointmentOutsideSchedule)),
+      );
+      return;
+    }
+
+    setState(() => _loading = true);
 
     final err = await context.read<AppointmentProvider>().book(
       patientId: auth.patientId,
@@ -68,7 +83,6 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
     if (!mounted) return;
     setState(() => _loading = false);
 
-    final l10n = AppLocalizations.of(context);
     if (err == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.bookAppointmentSuccess)),
@@ -110,6 +124,18 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
               subtitle: doctor.specialty.name.localized(context),
             ),
             const SizedBox(height: 20),
+            if (doctor.patientShowsStructuredSchedule) ...[
+              SectionHeader(title: l10n.viewWorkingSchedule),
+              Card(
+                margin: const EdgeInsets.only(bottom: 16),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: DoctorScheduleView(
+                    schedule: doctor.effectiveWorkingSchedule,
+                  ),
+                ),
+              ),
+            ],
             _BookingTile(
               icon: Icons.calendar_today,
               color: AppTheme.medicalBlue,
@@ -121,8 +147,20 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
                   initialDate: _selectedDate,
                   firstDate: DateTime.now(),
                   lastDate: DateTime.now().add(const Duration(days: 90)),
+                  selectableDayPredicate: (date) => doctor.isOpenOn(date),
                 );
-                if (picked != null) setState(() => _selectedDate = picked);
+                if (picked != null) {
+                  setState(() {
+                    _selectedDate = picked;
+                    final firstTime =
+                        doctor.effectiveWorkingSchedule.firstAvailableTimeOn(
+                      picked,
+                    );
+                    if (firstTime != null) {
+                      _selectedTime = firstTime;
+                    }
+                  });
+                }
               },
             ),
             _BookingTile(

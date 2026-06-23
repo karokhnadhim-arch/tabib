@@ -2,7 +2,7 @@ import 'app_localizations.dart';
 
 /// The translations for Kurdish (`ku`).
 class AppLocalizationsKu extends AppLocalizations {
-  AppLocalizationsKu([super.locale = 'ku']);
+  AppLocalizationsKu([String locale = 'ku']) : super(locale);
 
   @override
   String get appTitle => 'Tabib';
@@ -610,13 +610,46 @@ class AppLocalizationsKu extends AppLocalizations {
   String get removePhoto => 'لابردنی وێنە';
 
   @override
-  String get photoUploadHint => 'وێنەیەک لە ئامێرەکەت هەڵبژێرە، یان بەستەر لە خوارەوە بنووسە';
+  String get photoUploadHint => 'وێنەیەک هەڵبژێرە، لە بازنەیەکدا ببڕە، پاشان پاشەکەوت بکە. وێنە گەورەکان پشتگیری دەکرێن. دەتوانیت بەستەر لە خوارەوە بنووسیت.';
 
   @override
   String get orPastePhotoUrl => 'یان بەستەری وێنە بنووسە';
 
   @override
-  String get photoTooLarge => 'وێنەکە زۆر گەورەیە (زۆرترین 512 KB)';
+  String get photoTooLarge => 'نەتوانرا وێنەکە بەشێوەیەکی گونجاو پەست بکرێت. وێنەیەکی بچووکتر هەوڵ بدە';
+
+  @override
+  String get photoProcessingFailed => 'نەتوانرا وێنەی هەڵبژێردراو پرۆسێس بکرێت';
+
+  @override
+  String get cropProfilePhoto => 'بڕینی وێنەی پڕۆفایل';
+
+  @override
+  String get cropProfilePhotoHint => 'بۆ نزیککردنەوە پێچ بکە و بکێشە بۆ دانانی وێنەکەت لە ناو بازنەکە';
+
+  @override
+  String get photoPreview => 'پێشبینین';
+
+  @override
+  String get photoPreviewHint => 'نەخۆشەکان وێنەی پڕۆفایلت بەم شێوەیە دەبینن';
+
+  @override
+  String get usePhoto => 'بەکارهێنانی وێنە';
+
+  @override
+  String get zoomIn => 'نزیککردنەوە';
+
+  @override
+  String get zoomOut => 'دوورخستنەوە';
+
+  @override
+  String get addClinicPhoto => 'بارکردنی وێنەی نۆرینگە';
+
+  @override
+  String get addClinicPhotoUrl => 'زیادکردنی بەستەر';
+
+  @override
+  String get clinicPhotoUploadHint => 'وێنەکانی نۆرینگە تا 1920×1080 باش دەکرێن. وێنۆچکە لە لیستەکاندا بەکاردەهێنرێت بۆ خێرایی.';
 
   @override
   String get workingHours => 'کاتژمێری کار';
@@ -685,25 +718,25 @@ class AppLocalizationsKu extends AppLocalizations {
   String get languagesHint => 'وەک: کوردی، عەرەبی، ئینگلیزی';
 
   @override
-  String get dayMonday => 'دووش';
+  String get dayMonday => 'دووشەممە';
 
   @override
-  String get dayTuesday => 'سێش';
+  String get dayTuesday => 'سێشەممە';
 
   @override
-  String get dayWednesday => 'چوار';
+  String get dayWednesday => 'چوارشەممە';
 
   @override
-  String get dayThursday => 'پێنج';
+  String get dayThursday => 'پێنجشەممە';
 
   @override
   String get dayFriday => 'هەینی';
 
   @override
-  String get daySaturday => 'شەم';
+  String get daySaturday => 'شەممە';
 
   @override
-  String get daySunday => 'یەک';
+  String get daySunday => 'یەکشەممە';
 
   @override
   String get openWhatsApp => 'نامە لە واتساپ';
@@ -735,7 +768,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get clinicPhotos => 'وێنەکانی نۆرینگە';
 
   @override
-  String get clinicPhotosHint => 'بەستەری وێنەکان بە فاریزە جیا بکەرەوە';
+  String get clinicPhotosHint => 'بەستەری وێنە بنووسە و «زیادکردنی بەستەر» بکە';
 
   @override
   String get live => 'ڕاستەوخۆ';
@@ -787,4 +820,49 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get queueNotifyYourTurnBody => 'تکایە بچۆ ژووری دکتۆر.';
+
+  @override
+  String get dayClosed => 'داخراو';
+
+  @override
+  String get markDayOpen => 'کراوە';
+
+  @override
+  String get markDayClosed => 'داخراو';
+
+  @override
+  String get addTimePeriod => 'زیادکردنی کات';
+
+  @override
+  String get removeTimePeriod => 'سڕینەوەی کات';
+
+  @override
+  String get openingTime => 'دەکرێتەوە';
+
+  @override
+  String get closingTime => 'دادەخرێت';
+
+  @override
+  String get schedulePeriodInvalid => 'کاتی داخستن دەبێت دوای کاتی کردنەوە بێت';
+
+  @override
+  String get schedulePeriodOverlap => 'کاتەکان نابێت لەسەر یەک بن';
+
+  @override
+  String get scheduleOpenDayNeedsPeriod => 'لە هەر ڕۆژێکی کراوەدا لانیکەم یەک کات زیاد بکە';
+
+  @override
+  String get appointmentOutsideSchedule => 'کاتی هەڵبژێردراو لە دەرەوەی کاتەکانی کارە';
+
+  @override
+  String get appointmentClosedDay => 'دکتۆر لەم ڕۆژەدا بەردەست نییە';
+
+  @override
+  String get noScheduleSet => 'خشتەی کار دیاری نەکراوە';
+
+  @override
+  String get editWorkingSchedule => 'دەستکاری خشتەی کار';
+
+  @override
+  String get viewWorkingSchedule => 'خشتەی کار';
 }

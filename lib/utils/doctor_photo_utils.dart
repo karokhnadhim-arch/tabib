@@ -1,44 +1,22 @@
-import 'dart:convert';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image/image.dart' as img;
 
-/// Max encoded size for demo-mode base64 photos stored in [Doctor.photoUrl].
-const int kDoctorPhotoMaxBytes = 512 * 1024;
+import '../presentation/widgets/profile_photo_crop_screen.dart';
+import 'image_upload_utils.dart';
+import 'profile_photo_crop.dart';
 
-ImageProvider? doctorPhotoImageProvider(String? photoUrl) {
-  if (photoUrl == null || photoUrl.trim().isEmpty) return null;
-  final url = photoUrl.trim();
-  if (url.startsWith('data:image')) {
-    try {
-      final base64Str = url.contains(',') ? url.split(',').last : url;
-      final bytes = base64Decode(base64Str);
-      return MemoryImage(bytes);
-    } catch (_) {
-      return null;
-    }
-  }
-  return NetworkImage(url);
-}
+export 'image_upload_utils.dart'
+    show
+        ImageUploadLimits,
+        ProcessedImage,
+        tabibHasDisplayableImage,
+        tabibImageProvider;
 
-bool doctorHasDisplayablePhoto(String? photoUrl) =>
-    doctorPhotoImageProvider(photoUrl) != null;
-
-String _mimeFromExtension(String? extension) {
-  switch (extension?.toLowerCase()) {
-    case 'png':
-      return 'image/png';
-    case 'gif':
-      return 'image/gif';
-    case 'webp':
-      return 'image/webp';
-    default:
-      return 'image/jpeg';
-  }
-}
-
-/// Picks an image and returns a `data:image/...;base64,...` URL for web demo mode.
-Future<DoctorPhotoPickResult> pickDoctorPhotoDataUrl() async {
+/// Picks a profile photo, opens the circular crop editor, then saves the crop.
+Future<DoctorPhotoPickResult> pickDoctorPhotoDataUrl(
+  BuildContext context,
+) async {
   final result = await FilePicker.platform.pickFiles(
     type: FileType.image,
     withData: true,
@@ -53,31 +31,108 @@ Future<DoctorPhotoPickResult> pickDoctorPhotoDataUrl() async {
   if (bytes == null || bytes.isEmpty) {
     return const DoctorPhotoPickResult.error('empty');
   }
-  if (bytes.length > kDoctorPhotoMaxBytes) {
-    return const DoctorPhotoPickResult.error('too_large');
+
+  img.Image editorImage;
+  try {
+    editorImage = prepareImageForCropEditor(bytes);
+  } catch (_) {
+    return const DoctorPhotoPickResult.error('processing_failed');
   }
 
-  final mime = _mimeFromExtension(file.extension);
-  final dataUrl = 'data:$mime;base64,${base64Encode(bytes)}';
-  return DoctorPhotoPickResult.success(dataUrl);
+  if (!context.mounted) {
+    return const DoctorPhotoPickResult.cancelled();
+  }
+
+  final cropped = await Navigator.of(context).push<img.Image>(
+    MaterialPageRoute(
+      fullscreenDialog: true,
+      builder: (_) => ProfilePhotoCropScreen(image: editorImage),
+    ),
+  );
+
+  if (cropped == null) {
+    return const DoctorPhotoPickResult.cancelled();
+  }
+
+  try {
+    final processed = processCroppedProfileImage(cropped);
+    return DoctorPhotoPickResult.success(
+      dataUrl: processed.fullDataUrl,
+      thumbnailDataUrl: processed.thumbnailDataUrl,
+    );
+  } on FormatException catch (error) {
+    if (error.message == 'too_large') {
+      return const DoctorPhotoPickResult.error('too_large');
+    }
+    return const DoctorPhotoPickResult.error('processing_failed');
+  } catch (_) {
+    return const DoctorPhotoPickResult.error('processing_failed');
+  }
+}
+
+/// Picks a clinic photo, compresses to 1920x1080 max, and returns full + thumbnail URLs.
+Future<DoctorPhotoPickResult> pickClinicPhotoDataUrl() async {
+  return _pickAndProcessClinic(processClinicImage);
+}
+
+Future<DoctorPhotoPickResult> _pickAndProcessClinic(
+  ProcessedImage Function(List<int> bytes) processor,
+) async {
+  final result = await FilePicker.platform.pickFiles(
+    type: FileType.image,
+    withData: true,
+    allowMultiple: false,
+  );
+  if (result == null || result.files.isEmpty) {
+    return const DoctorPhotoPickResult.cancelled();
+  }
+
+  final file = result.files.first;
+  final bytes = file.bytes;
+  if (bytes == null || bytes.isEmpty) {
+    return const DoctorPhotoPickResult.error('empty');
+  }
+
+  try {
+    final processed = processor(bytes);
+    return DoctorPhotoPickResult.success(
+      dataUrl: processed.fullDataUrl,
+      thumbnailDataUrl: processed.thumbnailDataUrl,
+    );
+  } on FormatException catch (error) {
+    if (error.message == 'too_large') {
+      return const DoctorPhotoPickResult.error('too_large');
+    }
+    return const DoctorPhotoPickResult.error('processing_failed');
+  } catch (_) {
+    return const DoctorPhotoPickResult.error('processing_failed');
+  }
 }
 
 class DoctorPhotoPickResult {
   const DoctorPhotoPickResult._({
     this.dataUrl,
+    this.thumbnailDataUrl,
     this.errorCode,
   });
 
   const DoctorPhotoPickResult.cancelled()
-      : this._(dataUrl: null, errorCode: null);
+      : this._(dataUrl: null, thumbnailDataUrl: null, errorCode: null);
 
-  const DoctorPhotoPickResult.success(String url)
-      : this._(dataUrl: url, errorCode: null);
+  const DoctorPhotoPickResult.success({
+    required String dataUrl,
+    required String thumbnailDataUrl,
+  }) : this._(
+          dataUrl: dataUrl,
+          thumbnailDataUrl: thumbnailDataUrl,
+          errorCode: null,
+        );
 
   const DoctorPhotoPickResult.error(String code)
-      : this._(dataUrl: null, errorCode: code);
+      : this._(dataUrl: null, thumbnailDataUrl: null, errorCode: code);
 
   final String? dataUrl;
+  final String? thumbnailDataUrl;
   final String? errorCode;
 
   bool get isSuccess => dataUrl != null;

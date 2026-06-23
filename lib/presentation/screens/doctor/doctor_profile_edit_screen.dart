@@ -12,6 +12,7 @@ import '../../../l10n/app_localizations.dart';
 
 import '../../../models/doctor.dart';
 import '../../../models/doctor_profile_visibility.dart';
+import '../../../models/doctor_working_schedule.dart';
 
 import '../../../models/localized_text.dart';
 
@@ -26,6 +27,8 @@ import '../../../services/location_service.dart';
 import '../../../utils/localization_utils.dart';
 
 import '../../../presentation/widgets/doctor_avatar.dart';
+import '../../../presentation/widgets/doctor_schedule_editor.dart';
+import '../../../presentation/widgets/tabib_image.dart';
 import '../../../utils/doctor_photo_utils.dart';
 import '../../../widgets/auth/auth_text_field.dart';
 
@@ -109,35 +112,19 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
   final _consultationFeeController = TextEditingController();
   final _clinicPhotosController = TextEditingController();
 
+  String? _photoThumbnailUrl;
+  List<String> _clinicPhotos = [];
+  List<String> _clinicPhotoThumbnails = [];
   String? _specialtyId;
-  final Set<int> _workingDays = {};
+  DoctorWorkingSchedule _schedule = DoctorWorkingSchedule.empty();
   bool _isAvailableToday = true;
   bool _loading = false;
   bool _locating = false;
   bool _pickingPhoto = false;
+  bool _pickingClinicPhoto = false;
   bool _loadFailed = false;
   Doctor? _doctor;
   DoctorProfileVisibility _visibility = const DoctorProfileVisibility();
-
-  static const _weekdays = [
-
-    DateTime.monday,
-
-    DateTime.tuesday,
-
-    DateTime.wednesday,
-
-    DateTime.thursday,
-
-    DateTime.friday,
-
-    DateTime.saturday,
-
-    DateTime.sunday,
-
-  ];
-
-
 
   @override
 
@@ -208,6 +195,7 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
       _nameEnController.text = doctor.name.en;
 
       _photoUrlController.text = doctor.photoUrl ?? '';
+      _photoThumbnailUrl = doctor.photoThumbnailUrl;
 
       _bioKuController.text = doctor.bio.ku;
 
@@ -259,15 +247,14 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
           ? doctor.consultationFee!.toStringAsFixed(0)
           : '';
 
-      _clinicPhotosController.text = doctor.clinicPhotos?.join(', ') ?? '';
+      _clinicPhotos = List<String>.from(doctor.clinicPhotos ?? []);
+      _clinicPhotoThumbnails =
+          List<String>.from(doctor.clinicPhotoThumbnails ?? []);
+      _syncClinicPhotoThumbnails();
 
       _visibility = doctor.profileVisibility;
 
-      _workingDays
-
-        ..clear()
-
-        ..addAll(doctor.workingDays ?? []);
+      _schedule = doctor.effectiveWorkingSchedule;
 
       _isAvailableToday = doctor.isAvailableToday;
 
@@ -341,66 +328,87 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
 
 
 
-  String _weekdayLabel(AppLocalizations l10n, int weekday) {
-
-    switch (weekday) {
-
-      case DateTime.monday:
-
-        return l10n.dayMonday;
-
-      case DateTime.tuesday:
-
-        return l10n.dayTuesday;
-
-      case DateTime.wednesday:
-
-        return l10n.dayWednesday;
-
-      case DateTime.thursday:
-
-        return l10n.dayThursday;
-
-      case DateTime.friday:
-
-        return l10n.dayFriday;
-
-      case DateTime.saturday:
-
-        return l10n.daySaturday;
-
-      case DateTime.sunday:
-
-        return l10n.daySunday;
-
-      default:
-
-        return '';
-
-    }
-
-  }
-
-
-
   Future<void> _pickPhoto() async {
     setState(() => _pickingPhoto = true);
-    final result = await pickDoctorPhotoDataUrl();
+    final result = await pickDoctorPhotoDataUrl(context);
     if (!mounted) return;
     setState(() => _pickingPhoto = false);
     if (result.isSuccess) {
       _photoUrlController.text = result.dataUrl!;
+      _photoThumbnailUrl = result.thumbnailDataUrl;
       setState(() {});
     } else if (result.errorCode == 'too_large') {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppLocalizations.of(context).photoTooLarge)),
+      );
+    } else if (result.errorCode != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context).photoProcessingFailed),
+        ),
       );
     }
   }
 
   void _removePhoto() {
     _photoUrlController.clear();
+    _photoThumbnailUrl = null;
     setState(() {});
+  }
+
+  Future<void> _pickClinicPhoto() async {
+    setState(() => _pickingClinicPhoto = true);
+    final result = await pickClinicPhotoDataUrl();
+    if (!mounted) return;
+    setState(() => _pickingClinicPhoto = false);
+    if (result.isSuccess) {
+      setState(() {
+        _clinicPhotos.add(result.dataUrl!);
+        _clinicPhotoThumbnails.add(result.thumbnailDataUrl!);
+      });
+    } else if (result.errorCode == 'too_large') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context).photoTooLarge)),
+      );
+    } else if (result.errorCode != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context).photoProcessingFailed),
+        ),
+      );
+    }
+  }
+
+  void _removeClinicPhoto(int index) {
+    setState(() {
+      _clinicPhotos.removeAt(index);
+      if (index < _clinicPhotoThumbnails.length) {
+        _clinicPhotoThumbnails.removeAt(index);
+      }
+      _syncClinicPhotoThumbnails();
+    });
+  }
+
+  void _addClinicPhotoUrl() {
+    final url = _clinicPhotosController.text.trim();
+    if (url.isEmpty) return;
+    setState(() {
+      _clinicPhotos.add(url);
+      _clinicPhotoThumbnails.add(url);
+      _clinicPhotosController.clear();
+    });
+  }
+
+  void _syncClinicPhotoThumbnails() {
+    while (_clinicPhotoThumbnails.length < _clinicPhotos.length) {
+      _clinicPhotoThumbnails.add(_clinicPhotos[_clinicPhotoThumbnails.length]);
+    }
+    if (_clinicPhotoThumbnails.length > _clinicPhotos.length) {
+      _clinicPhotoThumbnails.removeRange(
+        _clinicPhotos.length,
+        _clinicPhotoThumbnails.length,
+      );
+    }
   }
 
   Future<void> _useCurrentLocation() async {
@@ -426,14 +434,6 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
 
 
   List<String> _parseLanguages(String raw) {
-    return raw
-        .split(',')
-        .map((s) => s.trim())
-        .where((s) => s.isNotEmpty)
-        .toList();
-  }
-
-  List<String> _parsePhotoUrls(String raw) {
     return raw
         .split(',')
         .map((s) => s.trim())
@@ -486,6 +486,20 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
 
   }
 
+  String _scheduleErrorMessage(BuildContext context, String key) {
+    final l10n = AppLocalizations.of(context);
+    switch (key) {
+      case 'schedulePeriodInvalid':
+        return l10n.schedulePeriodInvalid;
+      case 'schedulePeriodOverlap':
+        return l10n.schedulePeriodOverlap;
+      case 'scheduleOpenDayNeedsPeriod':
+        return l10n.scheduleOpenDayNeedsPeriod;
+      default:
+        return l10n.fieldRequired;
+    }
+  }
+
 
 
   Future<void> _save() async {
@@ -522,10 +536,19 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
 
     final experience = int.tryParse(_experienceController.text.trim());
     final languages = _parseLanguages(_languagesController.text);
-    final clinicPhotos = _parsePhotoUrls(_clinicPhotosController.text);
+    final clinicPhotos = _clinicPhotos;
+    final clinicPhotoThumbnails = _clinicPhotoThumbnails;
     final consultationFee =
         double.tryParse(_consultationFeeController.text.trim());
-    final sortedDays = _workingDays.toList()..sort();
+    final sortedDays = _schedule.openWeekdays;
+    final scheduleErrorKey = _schedule.validationErrorKey();
+    if (scheduleErrorKey != null) {
+      setState(() => _loading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_scheduleErrorMessage(context, scheduleErrorKey))),
+      );
+      return;
+    }
 
     final clinicNameKu = _clinicNameKuController.text.trim();
     final clinicNameAr = _clinicNameArController.text.trim();
@@ -533,19 +556,17 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
     final addrKu = _addrKuController.text.trim();
     final addrAr = _addrArController.text.trim();
     final addrEn = _addrEnController.text.trim();
-    final hoursKu = _hoursKuController.text.trim();
-    final hoursAr = _hoursArController.text.trim();
-    final hoursEn = _hoursEnController.text.trim();
 
     if (!_hasLocalizedText(clinicNameKu, clinicNameAr, clinicNameEn) ||
-        !_hasLocalizedText(addrKu, addrAr, addrEn) ||
-        !_hasLocalizedText(hoursKu, hoursAr, hoursEn)) {
+        !_hasLocalizedText(addrKu, addrAr, addrEn)) {
       setState(() => _loading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppLocalizations.of(context).fieldRequired)),
       );
       return;
     }
+
+    final photo = _photoUrlController.text.trim();
 
     final updated = doctor.copyWith(
 
@@ -563,11 +584,11 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
 
       specialty: specialty,
 
-      photoUrl: _photoUrlController.text.trim().isEmpty
+      photoUrl: photo.isEmpty ? null : photo,
 
-          ? null
+      photoThumbnailUrl: photo.isEmpty ? null : _photoThumbnailUrl,
 
-          : _photoUrlController.text.trim(),
+      clearPhotos: photo.isEmpty,
 
       bio: LocalizedText(
 
@@ -609,11 +630,9 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
 
       workingDays: sortedDays.isEmpty ? null : sortedDays,
 
-      workingHours: LocalizedText(
-        ku: hoursKu,
-        ar: hoursAr,
-        en: hoursEn,
-      ),
+      workingSchedule: _schedule.days,
+
+      workingHours: null,
 
       contactPhone: _phoneController.text.trim().isEmpty
           ? null
@@ -636,6 +655,9 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
       consultationFee: consultationFee,
 
       clinicPhotos: clinicPhotos.isEmpty ? null : clinicPhotos,
+
+      clinicPhotoThumbnails:
+          clinicPhotos.isEmpty ? null : clinicPhotoThumbnails,
 
       profileVisibility: _visibility,
 
@@ -805,6 +827,7 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
                       photoUrl: _photoUrlController.text.isEmpty
                           ? null
                           : _photoUrlController.text,
+                      thumbnailUrl: _photoThumbnailUrl,
                       radius: 52,
                       backgroundColor: AppTheme.doctorColor.withOpacity(0.15),
                       fallback: Icon(
@@ -1305,11 +1328,79 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    onPressed: _pickingClinicPhoto ? null : _pickClinicPhoto,
+                    icon: _pickingClinicPhoto
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.add_photo_alternate_outlined),
+                    label: Text(l10n.addClinicPhoto),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    l10n.clinicPhotoUploadHint,
+                    style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                  ),
+                  if (_clinicPhotos.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      height: 112,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _clinicPhotos.length,
+                        separatorBuilder: (_, __) => const SizedBox(width: 10),
+                        itemBuilder: (context, index) {
+                          final thumb = index < _clinicPhotoThumbnails.length
+                              ? _clinicPhotoThumbnails[index]
+                              : _clinicPhotos[index];
+                          return Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              TabibImage(
+                                imageUrl: _clinicPhotos[index],
+                                thumbnailUrl: thumb,
+                                width: 148,
+                                height: 112,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              PositionedDirectional(
+                                top: -8,
+                                end: -8,
+                                child: IconButton.filledTonal(
+                                  style: IconButton.styleFrom(
+                                    backgroundColor: Colors.red.shade50,
+                                    foregroundColor: Colors.red.shade700,
+                                    minimumSize: const Size(32, 32),
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                  onPressed: () => _removeClinicPhoto(index),
+                                  icon: const Icon(Icons.close, size: 16),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 12),
                   AuthTextField(
                     controller: _clinicPhotosController,
-                    label: l10n.clinicPhotos,
+                    label: l10n.orPastePhotoUrl,
                     hint: l10n.clinicPhotosHint,
-                    prefixIcon: Icons.photo_library_outlined,
+                    prefixIcon: Icons.link,
+                  ),
+                  Align(
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: TextButton.icon(
+                      onPressed: _addClinicPhotoUrl,
+                      icon: const Icon(Icons.add_link),
+                      label: Text(l10n.addClinicPhotoUrl),
+                    ),
                   ),
                   _showToPatientsSwitch(
                     l10n: l10n,
@@ -1328,7 +1419,7 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
 
               _ProfileSectionCard(
 
-                title: l10n.scheduleInfo,
+                title: l10n.editWorkingSchedule,
 
                 icon: Icons.schedule,
 
@@ -1336,92 +1427,19 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
 
                   Text(
 
-                    l10n.workingDays,
+                    l10n.scheduleInfo,
 
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  Wrap(
-
-                    spacing: 8,
-
-                    runSpacing: 4,
-
-                    children: _weekdays.map((day) {
-
-                      final selected = _workingDays.contains(day);
-
-                      return FilterChip(
-
-                        label: Text(_weekdayLabel(l10n, day)),
-
-                        selected: selected,
-
-                        onSelected: (v) {
-
-                          setState(() {
-
-                            if (v) {
-
-                              _workingDays.add(day);
-
-                            } else {
-
-                              _workingDays.remove(day);
-
-                            }
-
-                          });
-
-                        },
-
-                        selectedColor: AppTheme.doctorColor.withOpacity(0.2),
-
-                        checkmarkColor: AppTheme.doctorColor,
-
-                      );
-
-                    }).toList(),
+                    style: TextStyle(color: Colors.grey.shade600),
 
                   ),
 
                   const SizedBox(height: 12),
 
-                  AuthTextField(
-                    controller: _hoursKuController,
-                    label: l10n.workingHoursKu,
-                    prefixIcon: Icons.access_time,
-                    validator: (v) => _localizedFieldValidator(
-                      v ?? '',
-                      _hoursArController.text,
-                      _hoursEnController.text,
-                    ),
-                  ),
+                  DoctorScheduleEditor(
 
-                  const SizedBox(height: 8),
+                    schedule: _schedule,
 
-                  AuthTextField(
-
-                    controller: _hoursArController,
-
-                    label: l10n.workingHoursAr,
-
-                    prefixIcon: Icons.access_time,
-
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  AuthTextField(
-
-                    controller: _hoursEnController,
-
-                    label: l10n.workingHoursEn,
-
-                    prefixIcon: Icons.access_time,
+                    onChanged: (updated) => setState(() => _schedule = updated),
 
                   ),
 

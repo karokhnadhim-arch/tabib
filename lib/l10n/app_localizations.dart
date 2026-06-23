@@ -1280,7 +1280,7 @@ abstract class AppLocalizations {
   /// No description provided for @photoUploadHint.
   ///
   /// In en, this message translates to:
-  /// **'Pick an image from your device, or paste a URL below'**
+  /// **'Pick a photo, crop it in a circle, then save. Large images are supported. You can also paste a URL below.'**
   String get photoUploadHint;
 
   /// No description provided for @orPastePhotoUrl.
@@ -1292,8 +1292,74 @@ abstract class AppLocalizations {
   /// No description provided for @photoTooLarge.
   ///
   /// In en, this message translates to:
-  /// **'Image is too large (max 512 KB)'**
+  /// **'Image could not be compressed enough. Try a smaller photo.'**
   String get photoTooLarge;
+
+  /// No description provided for @photoProcessingFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not process the selected image'**
+  String get photoProcessingFailed;
+
+  /// No description provided for @cropProfilePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop profile photo'**
+  String get cropProfilePhoto;
+
+  /// No description provided for @cropProfilePhotoHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinch to zoom and drag to position your photo inside the circle'**
+  String get cropProfilePhotoHint;
+
+  /// No description provided for @photoPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get photoPreview;
+
+  /// No description provided for @photoPreviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This is how patients will see your profile photo'**
+  String get photoPreviewHint;
+
+  /// No description provided for @usePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Use photo'**
+  String get usePhoto;
+
+  /// No description provided for @zoomIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Zoom in'**
+  String get zoomIn;
+
+  /// No description provided for @zoomOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Zoom out'**
+  String get zoomOut;
+
+  /// No description provided for @addClinicPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload clinic photo'**
+  String get addClinicPhoto;
+
+  /// No description provided for @addClinicPhotoUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Add URL'**
+  String get addClinicPhotoUrl;
+
+  /// No description provided for @clinicPhotoUploadHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic photos are optimized up to 1920×1080. Thumbnails are used in lists for faster loading.'**
+  String get clinicPhotoUploadHint;
 
   /// No description provided for @workingHours.
   ///
@@ -1430,43 +1496,43 @@ abstract class AppLocalizations {
   /// No description provided for @dayMonday.
   ///
   /// In en, this message translates to:
-  /// **'Mon'**
+  /// **'Monday'**
   String get dayMonday;
 
   /// No description provided for @dayTuesday.
   ///
   /// In en, this message translates to:
-  /// **'Tue'**
+  /// **'Tuesday'**
   String get dayTuesday;
 
   /// No description provided for @dayWednesday.
   ///
   /// In en, this message translates to:
-  /// **'Wed'**
+  /// **'Wednesday'**
   String get dayWednesday;
 
   /// No description provided for @dayThursday.
   ///
   /// In en, this message translates to:
-  /// **'Thu'**
+  /// **'Thursday'**
   String get dayThursday;
 
   /// No description provided for @dayFriday.
   ///
   /// In en, this message translates to:
-  /// **'Fri'**
+  /// **'Friday'**
   String get dayFriday;
 
   /// No description provided for @daySaturday.
   ///
   /// In en, this message translates to:
-  /// **'Sat'**
+  /// **'Saturday'**
   String get daySaturday;
 
   /// No description provided for @daySunday.
   ///
   /// In en, this message translates to:
-  /// **'Sun'**
+  /// **'Sunday'**
   String get daySunday;
 
   /// No description provided for @openWhatsApp.
@@ -1526,7 +1592,7 @@ abstract class AppLocalizations {
   /// No description provided for @clinicPhotosHint.
   ///
   /// In en, this message translates to:
-  /// **'Paste image URLs separated by commas'**
+  /// **'Paste an image URL and tap Add URL'**
   String get clinicPhotosHint;
 
   /// No description provided for @live.
@@ -1630,6 +1696,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please proceed to the doctor room.'**
   String get queueNotifyYourTurnBody;
+
+  /// No description provided for @dayClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get dayClosed;
+
+  /// No description provided for @markDayOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get markDayOpen;
+
+  /// No description provided for @markDayClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get markDayClosed;
+
+  /// No description provided for @addTimePeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Add time period'**
+  String get addTimePeriod;
+
+  /// No description provided for @removeTimePeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove period'**
+  String get removeTimePeriod;
+
+  /// No description provided for @openingTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens'**
+  String get openingTime;
+
+  /// No description provided for @closingTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Closes'**
+  String get closingTime;
+
+  /// No description provided for @schedulePeriodInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Closing time must be after opening time'**
+  String get schedulePeriodInvalid;
+
+  /// No description provided for @schedulePeriodOverlap.
+  ///
+  /// In en, this message translates to:
+  /// **'Time periods cannot overlap'**
+  String get schedulePeriodOverlap;
+
+  /// No description provided for @scheduleOpenDayNeedsPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one time period for each open day'**
+  String get scheduleOpenDayNeedsPeriod;
+
+  /// No description provided for @appointmentOutsideSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected time is outside working hours'**
+  String get appointmentOutsideSchedule;
+
+  /// No description provided for @appointmentClosedDay.
+  ///
+  /// In en, this message translates to:
+  /// **'The doctor is not available on this day'**
+  String get appointmentClosedDay;
+
+  /// No description provided for @noScheduleSet.
+  ///
+  /// In en, this message translates to:
+  /// **'No working schedule set'**
+  String get noScheduleSet;
+
+  /// No description provided for @editWorkingSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit working schedule'**
+  String get editWorkingSchedule;
+
+  /// No description provided for @viewWorkingSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Working schedule'**
+  String get viewWorkingSchedule;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
