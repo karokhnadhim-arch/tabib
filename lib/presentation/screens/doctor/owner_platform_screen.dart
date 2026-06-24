@@ -8,28 +8,24 @@ import '../../../services/auth_service.dart';
 import '../../../utils/localization_utils.dart';
 import '../../../widgets/language_picker.dart';
 
-class AdminDashboardScreen extends StatelessWidget {
-  const AdminDashboardScreen({super.key});
+/// Platform management for the hidden system owner only.
+class OwnerPlatformScreen extends StatelessWidget {
+  const OwnerPlatformScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final auth = context.watch<AuthService>();
 
+    if (!auth.isSystemOwner) {
+      return const SizedBox.shrink();
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.adminDashboard),
         backgroundColor: AppTheme.primaryDark,
-        actions: [
-          const LanguagePicker(),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await auth.logout();
-              if (context.mounted) context.go('/login');
-            },
-          ),
-        ],
+        actions: const [LanguagePicker()],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -38,25 +34,37 @@ class AdminDashboardScreen extends StatelessWidget {
             child: ListTile(
               leading: CircleAvatar(
                 backgroundColor: AppTheme.primaryDark.withOpacity(0.1),
-                child: const Icon(Icons.admin_panel_settings,
+                child: const Icon(Icons.medical_services,
                     color: AppTheme.primaryDark),
               ),
-              title: Text(auth.currentUser?.name.localized(context) ?? l10n.roleAdmin),
-              subtitle: Text(l10n.adminAppSubtitle),
+              title: Text(auth.currentUser?.name.localized(context) ?? ''),
+              subtitle: Text(l10n.roleDoctor),
             ),
           ),
           const SizedBox(height: 8),
-          _AdminTile(
+          _PlatformTile(
             title: l10n.createDoctorAccount,
             subtitle: l10n.createDoctorAccountHint,
-            icon: Icons.medical_services_outlined,
-            onTap: () => context.push('/admin/create-doctor'),
+            icon: Icons.person_add_outlined,
+            onTap: () => context.push('/doctor/platform/create-doctor'),
           ),
-          _AdminTile(
+          _PlatformTile(
             title: l10n.createSecretaryAccount,
             subtitle: l10n.createSecretaryAccountHint,
             icon: Icons.support_agent_outlined,
-            onTap: () => context.push('/admin/create-secretary'),
+            onTap: () => context.push('/doctor/platform/create-secretary'),
+          ),
+          _PlatformTile(
+            title: l10n.manageClinics,
+            subtitle: l10n.manageClinics,
+            icon: Icons.local_hospital_outlined,
+            onTap: () => context.push('/doctor/platform/clinics'),
+          ),
+          _PlatformTile(
+            title: l10n.manageStaff,
+            subtitle: l10n.manageStaff,
+            icon: Icons.people_outline,
+            onTap: () => context.push('/doctor/platform/users'),
           ),
         ],
       ),
@@ -64,8 +72,8 @@ class AdminDashboardScreen extends StatelessWidget {
   }
 }
 
-class _AdminTile extends StatelessWidget {
-  const _AdminTile({
+class _PlatformTile extends StatelessWidget {
+  const _PlatformTile({
     required this.title,
     required this.subtitle,
     required this.icon,

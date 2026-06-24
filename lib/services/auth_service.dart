@@ -39,10 +39,17 @@ class AuthService extends ChangeNotifier {
   static const demoSecretaryEmail = 'secretary@tabib.demo';
   static const demoPassword = 'demo123';
   bool get isPatient => _currentUser?.role == UserRole.patient;
-  bool get isDoctor => _currentUser?.role == UserRole.doctor;
   bool get isSecretary => _currentUser?.role == UserRole.secretary;
+  /// System owner — hidden admin with full platform permissions.
+  bool get isSystemOwner =>
+      _currentUser?.isSystemOwner == true ||
+      _currentUser?.role == UserRole.admin;
+  bool get isDoctor =>
+      _currentUser?.role == UserRole.doctor ||
+      (isSystemOwner && (_currentUser?.doctorId?.isNotEmpty ?? false));
   bool get isStaff => isDoctor || isSecretary;
-  bool get isAdmin => _currentUser?.role == UserRole.admin;
+  /// Backend-only admin check — never expose a separate admin login or UI role.
+  bool get isAdmin => isSystemOwner;
 
   /// Demo auth when explicitly in demo mode, Firebase is unavailable, or options
   /// are placeholders (guards against partial Firebase setup).
@@ -281,58 +288,18 @@ class AuthService extends ChangeNotifier {
     }
   }
 
+  /// Backend-only: system owner signs in via the doctor login UI.
   Future<String?> loginAdmin({
     required String email,
     required String password,
   }) async {
-    if (_useDemoAuth) {
-      final err = await _demoStaffLogin(email.trim(), password);
-      if (err != null) return err;
-      if (_currentUser?.role != UserRole.admin) {
-        _currentUser = null;
-        return 'invalid_credentials';
-      }
-      notifyListeners();
-      return null;
-    }
-
-    try {
-      final cred = await _firebaseAuth!.signInWithEmailAndPassword(
-        email: email.trim(),
-        password: password,
-      );
-      final doc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(cred.user!.uid)
-          .get();
-      if (!doc.exists) {
-        await logout();
-        return 'invalid_credentials';
-      }
-      final account = UserAccount.fromFirestore(doc.id, doc.data()!);
-      if (account.role != UserRole.admin) {
-        await logout();
-        return 'invalid_credentials';
-      }
-      _currentUser = account;
-      notifyListeners();
-      return null;
-    } on FirebaseAuthException {
-      if (_isKnownDemoCredential(email.trim(), password) &&
-          email.trim().toLowerCase() == demoAdminEmail) {
-        final err = await _demoStaffLogin(email.trim(), password);
-        if (err != null) return err;
-        if (_currentUser?.role != UserRole.admin) {
-          _currentUser = null;
-          return 'invalid_credentials';
-        }
-        notifyListeners();
-        return null;
-      }
+    final err = await loginStaff(email: email, password: password);
+    if (err != null) return err;
+    if (!isSystemOwner) {
+      await logout();
       return 'invalid_credentials';
-    } on FirebaseException catch (e) {
-      return e.message ?? 'invalid_credentials';
     }
+    return null;
   }
 
   Future<void> logout() async {
@@ -352,7 +319,7 @@ class AuthService extends ChangeNotifier {
     required String clinicId,
     String? phone,
   }) async {
-    if (!isAdmin) return 'unauthorized';
+    if (!isSystemOwner) return 'unauthorized';
     if (password.length < 6) return 'weak_password';
     if (email.trim().isEmpty) return 'invalid_email';
 
@@ -436,7 +403,7 @@ class AuthService extends ChangeNotifier {
     required String linkedDoctorId,
     String? clinicId,
   }) async {
-    if (!isAdmin) return 'unauthorized';
+    if (!isSystemOwner) return 'unauthorized';
     if (password.length < 6) return 'weak_password';
     if (linkedDoctorId.isEmpty) return 'linked_doctor_required';
 
@@ -513,15 +480,18 @@ class AuthService extends ChangeNotifier {
     }
 
     if (normalizedEmail == demoAdminEmail) {
-      _currentUser = UserAccount(
+      _currentUser = const UserAccount(
         id: 'demo_admin',
-        name: const LocalizedText(
-          ku: 'بەڕێوەبەر',
-          ar: 'مدير',
-          en: 'Admin',
+        name: LocalizedText(
+          ku: 'د. بەڕێوەبەر',
+          ar: 'د. المدير',
+          en: 'Dr. Owner',
         ),
-        role: UserRole.admin,
-        email: email,
+        role: UserRole.doctor,
+        email: demoAdminEmail,
+        doctorId: 'doc_1',
+        clinicId: 'clinic_erbil_1',
+        isSystemOwner: true,
       );
       return null;
     }

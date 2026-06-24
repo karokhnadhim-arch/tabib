@@ -107,15 +107,14 @@ class _TabibLoginScreenState extends State<TabibLoginScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
-      if (err != null) err = l10n.invalidCredentials;
-      if (err == null && !auth.isAdmin) {
-        if (_role == _LoginRole.doctor && !auth.isDoctor) {
-          await auth.logout();
-          err = l10n.invalidCredentials;
-        } else if (_role == _LoginRole.secretary && !auth.isSecretary) {
-          await auth.logout();
-          err = l10n.invalidCredentials;
-        }
+      if (err != null) {
+        err = l10n.invalidCredentials;
+      } else if (_role == _LoginRole.doctor && !auth.isDoctor) {
+        await auth.logout();
+        err = l10n.invalidCredentials;
+      } else if (_role == _LoginRole.secretary && !auth.isSecretary) {
+        await auth.logout();
+        err = l10n.invalidCredentials;
       }
     }
 
@@ -123,9 +122,7 @@ class _TabibLoginScreenState extends State<TabibLoginScreen> {
     setState(() => _loading = false);
 
     if (err == null) {
-      if (auth.isAdmin) {
-        context.go('/admin');
-      } else if (auth.isDoctor) {
+      if (auth.isDoctor) {
         context.go('/doctor');
       } else if (auth.isSecretary) {
         context.go('/secretary');
@@ -338,11 +335,6 @@ class _TabibLoginScreenState extends State<TabibLoginScreen> {
                           child: Text(l10n.register),
                         ),
                       ],
-                      const SizedBox(height: 12),
-                      TextButton(
-                        onPressed: () => context.push('/admin/login'),
-                        child: Text(l10n.adminLogin),
-                      ),
                     ],
                   ),
                 ),

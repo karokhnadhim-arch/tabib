@@ -507,12 +507,15 @@ class InMemoryClinicBackend implements ClinicBackend {
       const UserAccount(
         id: 'demo_admin',
         name: LocalizedText(
-          ku: 'بەڕێوەبەر',
-          ar: 'مدير',
-          en: 'Admin',
+          ku: 'د. بەڕێوەبەر',
+          ar: 'د. المدير',
+          en: 'Dr. Owner',
         ),
-        role: UserRole.admin,
+        role: UserRole.doctor,
         email: 'admin@tabib.demo',
+        doctorId: 'doc_1',
+        clinicId: 'clinic_erbil_1',
+        isSystemOwner: true,
       ),
       password: 'demo123',
     );

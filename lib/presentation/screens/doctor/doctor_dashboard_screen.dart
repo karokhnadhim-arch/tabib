@@ -74,6 +74,12 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
         title: Text(l10n.doctorDashboard),
         backgroundColor: AppTheme.doctorColor,
         actions: [
+          if (auth.isSystemOwner)
+            IconButton(
+              icon: const Icon(Icons.settings_outlined),
+              tooltip: l10n.adminDashboard,
+              onPressed: () => context.push('/doctor/platform'),
+            ),
           IconButton(
             icon: const Icon(Icons.edit),
             tooltip: l10n.editProfile,
