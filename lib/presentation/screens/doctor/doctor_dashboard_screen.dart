@@ -10,6 +10,7 @@ import '../../../models/appointment.dart';
 import '../../../models/doctor.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
+import '../../../services/queue_service.dart';
 import '../../../utils/localization_utils.dart';
 import '../../../utils/schedule_utils.dart';
 import '../../../widgets/language_picker.dart';
@@ -17,6 +18,7 @@ import '../../providers/app_providers.dart';
 import '../../widgets/doctor_avatar.dart';
 import '../../widgets/doctor_schedule_view.dart';
 import 'patient_records_screen.dart';
+import 'doctor_queue_tab.dart';
 
 class DoctorDashboardScreen extends StatefulWidget {
   const DoctorDashboardScreen({super.key});
@@ -36,8 +38,19 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
       final doctorId = auth.currentUser?.doctorId ?? '';
       if (doctorId.isNotEmpty) {
         context.read<AppointmentProvider>().watchDoctor(doctorId);
+        context.read<QueueService>().watchDoctorQueue(doctorId);
       }
     });
+  }
+
+  @override
+  void dispose() {
+    final auth = context.read<AuthService>();
+    final doctorId = auth.currentUser?.doctorId;
+    if (doctorId != null && doctorId.isNotEmpty) {
+      context.read<QueueService>().stopWatchingDoctorQueue(doctorId);
+    }
+    super.dispose();
   }
 
   @override
@@ -204,7 +217,8 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
               segments: [
                 ButtonSegment(value: 0, label: Text(l10n.pendingRequests)),
                 ButtonSegment(value: 1, label: Text(l10n.acceptedAppointments)),
-                ButtonSegment(value: 2, label: Text(l10n.patientRecords)),
+                ButtonSegment(value: 2, label: Text(l10n.queueManagement)),
+                ButtonSegment(value: 3, label: Text(l10n.patientRecords)),
               ],
               selected: {_tab},
               onSelectionChanged: (v) => setState(() => _tab = v.first),
@@ -227,7 +241,9 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
                           showActions: false,
                           doctorId: doctorId,
                         )
-                      : const PatientRecordsScreen(),
+                      : _tab == 2
+                          ? DoctorQueueTab(doctorId: doctorId)
+                          : const PatientRecordsScreen(),
             ),
           ],
         ),

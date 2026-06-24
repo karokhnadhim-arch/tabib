@@ -1625,11 +1625,29 @@ abstract class AppLocalizations {
   /// **'Waiting'**
   String get queueStatusWaiting;
 
+  /// No description provided for @queueStatusWithDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'With Doctor'**
+  String get queueStatusWithDoctor;
+
   /// No description provided for @queueStatusInDoctorRoom.
   ///
   /// In en, this message translates to:
   /// **'In doctor room'**
   String get queueStatusInDoctorRoom;
+
+  /// No description provided for @queueStatusExamination.
+  ///
+  /// In en, this message translates to:
+  /// **'Examination'**
+  String get queueStatusExamination;
+
+  /// No description provided for @queueStatusReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get queueStatusReview;
 
   /// No description provided for @queueStatusSentForTests.
   ///
@@ -1660,6 +1678,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancelled'**
   String get queueStatusCancelled;
+
+  /// No description provided for @returnToReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Return to review'**
+  String get returnToReview;
+
+  /// No description provided for @appointmentTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment time'**
+  String get appointmentTime;
+
+  /// No description provided for @noAssignedDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'No doctor assigned to this secretary account'**
+  String get noAssignedDoctor;
+
+  /// No description provided for @queueNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue #'**
+  String get queueNumberLabel;
 
   /// No description provided for @queueNotifyFourRemaining.
   ///

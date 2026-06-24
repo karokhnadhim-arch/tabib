@@ -10,10 +10,15 @@ class QueueService extends ChangeNotifier {
   final ClinicBackend _backend;
   final SubscriptionManager _subscriptions = SubscriptionManager();
   final Map<String, List<QueueEntry>> _queuesByDoctor = {};
+  final Map<String, List<QueueEntry>> _secretaryQueuesByDoctor = {};
   QueueEntry? _patientQueue;
 
   List<QueueEntry> queueForDoctor(String doctorId) {
     return List.unmodifiable(_queuesByDoctor[doctorId] ?? []);
+  }
+
+  List<QueueEntry> secretaryQueueForDoctor(String doctorId) {
+    return List.unmodifiable(_secretaryQueuesByDoctor[doctorId] ?? []);
   }
 
   QueueEntry? activeEntryForPatient(String patientId) => _patientQueue;
@@ -24,6 +29,17 @@ class QueueService extends ChangeNotifier {
       _backend.watchQueue(doctorId),
       (entries) {
         _queuesByDoctor[doctorId] = entries;
+        notifyListeners();
+      },
+    );
+  }
+
+  void watchSecretaryQueue(String doctorId) {
+    _subscriptions.replace(
+      'secretaryQueue:$doctorId',
+      _backend.watchSecretaryQueue(doctorId),
+      (entries) {
+        _secretaryQueuesByDoctor[doctorId] = entries;
         notifyListeners();
       },
     );
@@ -43,10 +59,13 @@ class QueueService extends ChangeNotifier {
   void stopWatchingDoctorQueue([String? doctorId]) {
     if (doctorId != null) {
       _subscriptions.cancel('doctorQueue:$doctorId');
+      _subscriptions.cancel('secretaryQueue:$doctorId');
       _queuesByDoctor.remove(doctorId);
+      _secretaryQueuesByDoctor.remove(doctorId);
     } else {
       _subscriptions.cancelAll();
       _queuesByDoctor.clear();
+      _secretaryQueuesByDoctor.clear();
     }
     notifyListeners();
   }
@@ -59,11 +78,11 @@ class QueueService extends ChangeNotifier {
 
   int peopleAhead(QueueEntry entry) {
     if (!entry.isWaitingInLine) return 0;
-    final waiting = queueForDoctor(entry.doctorId)
-        .where((e) => e.status == QueueStatus.waiting)
+    final inLine = queueForDoctor(entry.doctorId)
+        .where((e) => e.isWaitingInLine)
         .toList()
       ..sort((a, b) => a.position.compareTo(b.position));
-    final index = waiting.indexWhere((e) => e.id == entry.id);
+    final index = inLine.indexWhere((e) => e.id == entry.id);
     if (index <= 0) return 0;
     return index;
   }
@@ -88,8 +107,11 @@ class QueueService extends ChangeNotifier {
   }
 
   QueueEntry? entryForPatient(String patientId, String doctorId) {
+    for (final e in secretaryQueueForDoctor(doctorId)) {
+      if (e.patientId == patientId) return e;
+    }
     for (final e in queueForDoctor(doctorId)) {
-      if (e.patientId == patientId && e.isActive) return e;
+      if (e.patientId == patientId) return e;
     }
     return _patientQueue?.patientId == patientId ? _patientQueue : null;
   }
@@ -132,6 +154,12 @@ class QueueService extends ChangeNotifier {
   Future<void> enterDoctorRoom(String entryId, String doctorId) =>
       _backend.enterDoctorRoom(entryId, doctorId);
 
+  Future<void> sendToExamination(String entryId, String doctorId) =>
+      _backend.sendToExamination(entryId, doctorId);
+
+  Future<void> returnToReview(String entryId, String doctorId) =>
+      _backend.returnToReview(entryId, doctorId);
+
   Future<void> syncPatientQueueStatus({
     required String patientId,
     required String doctorId,
@@ -141,6 +169,14 @@ class QueueService extends ChangeNotifier {
     if (entry == null) return;
     if (status == QueueStatus.inProgress) {
       await enterDoctorRoom(entry.id, doctorId);
+      return;
+    }
+    if (status == QueueStatus.examination) {
+      await sendToExamination(entry.id, doctorId);
+      return;
+    }
+    if (status == QueueStatus.review) {
+      await returnToReview(entry.id, doctorId);
       return;
     }
     await updateEntryStatus(entry.id, doctorId, status);

@@ -21,6 +21,7 @@ abstract class ClinicBackend {
     Object? startAfterCursor,
   });
   Stream<List<QueueEntry>> watchQueue(String doctorId);
+  Stream<List<QueueEntry>> watchSecretaryQueue(String doctorId);
   Stream<QueueEntry?> watchPatientActiveQueue(String patientId);
 
   Future<Doctor?> getDoctor(String doctorId);
@@ -44,6 +45,8 @@ abstract class ClinicBackend {
     QueueStatus status,
   );
   Future<void> enterDoctorRoom(String entryId, String doctorId);
+  Future<void> sendToExamination(String entryId, String doctorId);
+  Future<void> returnToReview(String entryId, String doctorId);
 
   Future<void> upsertSpecialty(Specialty specialty);
   Future<void> deleteSpecialty(String id);

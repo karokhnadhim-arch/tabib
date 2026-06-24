@@ -786,7 +786,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get queueStatusWaiting => 'انتظار';
 
   @override
+  String get queueStatusWithDoctor => 'مع الطبيب';
+
+  @override
   String get queueStatusInDoctorRoom => 'في غرفة الطبيب';
+
+  @override
+  String get queueStatusExamination => 'فحص';
+
+  @override
+  String get queueStatusReview => 'مراجعة';
 
   @override
   String get queueStatusSentForTests => 'أُرسل للفحوصات';
@@ -802,6 +811,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get queueStatusCancelled => 'ملغى';
+
+  @override
+  String get returnToReview => 'إرجاع للمراجعة';
+
+  @override
+  String get appointmentTime => 'وقت الموعد';
+
+  @override
+  String get noAssignedDoctor => 'لا يوجد طبيب مرتبط بهذا الحساب';
+
+  @override
+  String get queueNumberLabel => 'رقم الدور';
 
   @override
   String get queueNotifyFourRemaining => 'اقترب دورك';

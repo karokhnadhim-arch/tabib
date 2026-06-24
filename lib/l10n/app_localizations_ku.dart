@@ -786,7 +786,16 @@ class AppLocalizationsKu extends AppLocalizations {
   String get queueStatusWaiting => 'چاوەڕوان';
 
   @override
+  String get queueStatusWithDoctor => 'لەگەڵ دکتۆر';
+
+  @override
   String get queueStatusInDoctorRoom => 'لە ژووری دکتۆر';
+
+  @override
+  String get queueStatusExamination => 'پشکنین';
+
+  @override
+  String get queueStatusReview => 'پێداچوونەوە';
 
   @override
   String get queueStatusSentForTests => 'نێردراوە بۆ پشکنین';
@@ -802,6 +811,18 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get queueStatusCancelled => 'هەڵوەشاوە';
+
+  @override
+  String get returnToReview => 'گەڕاندنەوە بۆ پێداچوونەوە';
+
+  @override
+  String get appointmentTime => 'کاتی چاوپێکەوتن';
+
+  @override
+  String get noAssignedDoctor => 'هیچ دکتۆرێک بەم هەژمارە نەبەستراوە';
+
+  @override
+  String get queueNumberLabel => 'ژمارەی دور';
 
   @override
   String get queueNotifyFourRemaining => 'نزیکە لە نۆرەکەت';

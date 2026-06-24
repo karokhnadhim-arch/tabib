@@ -9,9 +9,14 @@ import '../../../widgets/common_widgets.dart';
 import '../../providers/app_providers.dart';
 
 class DailyScheduleScreen extends StatefulWidget {
-  const DailyScheduleScreen({super.key, required this.clinicId});
+  const DailyScheduleScreen({
+    super.key,
+    required this.clinicId,
+    this.doctorId,
+  });
 
   final String clinicId;
+  final String? doctorId;
 
   @override
   State<DailyScheduleScreen> createState() => _DailyScheduleScreenState();
@@ -44,9 +49,11 @@ class _DailyScheduleScreenState extends State<DailyScheduleScreen> {
     final l10n = AppLocalizations.of(context);
     final appointments = context.watch<AppointmentProvider>().appointments
         .where((a) =>
-            a.status == AppointmentStatus.accepted ||
-            a.status == AppointmentStatus.pending)
-        .toList();
+            (a.status == AppointmentStatus.accepted ||
+                a.status == AppointmentStatus.pending) &&
+            (widget.doctorId == null || a.doctorId == widget.doctorId))
+        .toList()
+      ..sort((a, b) => a.dateTime.compareTo(b.dateTime));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

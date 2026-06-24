@@ -91,20 +91,48 @@ class InMemoryClinicBackend implements ClinicBackend {
 
   @override
   Stream<List<QueueEntry>> watchQueue(String doctorId) async* {
-    yield _queues.where((q) => q.doctorId == doctorId).toList();
+    yield _activeQueue(doctorId);
     await for (final _ in _change.stream) {
-      yield _queues.where((q) => q.doctorId == doctorId).toList();
+      yield _activeQueue(doctorId);
     }
+  }
+
+  @override
+  Stream<List<QueueEntry>> watchSecretaryQueue(String doctorId) async* {
+    yield _secretaryQueue(doctorId);
+    await for (final _ in _change.stream) {
+      yield _secretaryQueue(doctorId);
+    }
+  }
+
+  List<QueueEntry> _secretaryQueue(String doctorId) {
+    final entries = _queues
+        .where((q) =>
+            q.doctorId == doctorId &&
+            (activeQueueStatuses.contains(q.status) ||
+                q.isInExamination))
+        .toList()
+      ..sort((a, b) {
+        final aExam = a.isInExamination;
+        final bExam = b.isInExamination;
+        if (aExam != bExam) return aExam ? 1 : -1;
+        return a.position.compareTo(b.position);
+      });
+    return entries;
   }
 
   @override
   Stream<QueueEntry?> watchPatientActiveQueue(String patientId) async* {
     yield _queues
-        .where((q) => q.patientId == patientId && q.isActive)
+        .where((q) =>
+            q.patientId == patientId &&
+            (q.isActive || q.isInExamination))
         .firstOrNull;
     await for (final _ in _change.stream) {
       yield _queues
-          .where((q) => q.patientId == patientId && q.isActive)
+          .where((q) =>
+              q.patientId == patientId &&
+              (q.isActive || q.isInExamination))
           .firstOrNull;
     }
   }
@@ -233,7 +261,9 @@ class InMemoryClinicBackend implements ClinicBackend {
     entry.status = status;
     if (status == QueueStatus.completed ||
         status == QueueStatus.absent ||
-        status == QueueStatus.cancelled) {
+        status == QueueStatus.cancelled ||
+        status == QueueStatus.examination ||
+        status == QueueStatus.sentForTests) {
       _reindexDoctorQueue(doctorId);
     }
     _notify();
@@ -249,6 +279,41 @@ class InMemoryClinicBackend implements ClinicBackend {
     final entry = _queues.where((q) => q.id == entryId).firstOrNull;
     if (entry == null || entry.doctorId != doctorId) return;
     entry.status = QueueStatus.inProgress;
+    _notify();
+  }
+
+  @override
+  Future<void> sendToExamination(String entryId, String doctorId) async {
+    final entry = _queues.where((q) => q.id == entryId).firstOrNull;
+    if (entry == null || entry.doctorId != doctorId) return;
+    entry.status = QueueStatus.examination;
+    _reindexDoctorQueue(doctorId);
+    _notify();
+  }
+
+  @override
+  Future<void> returnToReview(String entryId, String doctorId) async {
+    final entry = _queues.where((q) => q.id == entryId).firstOrNull;
+    if (entry == null || entry.doctorId != doctorId || !entry.isInExamination) {
+      return;
+    }
+
+    final active = _activeQueue(doctorId);
+    final inProgress =
+        active.where((e) => e.status == QueueStatus.inProgress).toList();
+    final waiting = active
+        .where((e) =>
+            e.status == QueueStatus.waiting ||
+            e.status == QueueStatus.review)
+        .toList()
+      ..sort((a, b) => a.position.compareTo(b.position));
+
+    entry.status = QueueStatus.review;
+    final ordered = <QueueEntry>[...inProgress, entry, ...waiting];
+    for (var i = 0; i < ordered.length; i++) {
+      ordered[i].position = i + 1;
+      ordered[i].estimatedWaitMinutes = i * 15;
+    }
     _notify();
   }
 

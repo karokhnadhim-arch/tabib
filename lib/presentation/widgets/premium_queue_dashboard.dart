@@ -34,6 +34,7 @@ class PremiumQueueDashboard extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final statusColor = entry.status.color();
     final isYourTurn = entry.status == QueueStatus.inProgress;
+    final showQueueNumber = entry.isActive && !entry.isInExamination;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -78,7 +79,11 @@ class PremiumQueueDashboard extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                isYourTurn ? l10n.yourTurn : l10n.queueNumber,
+                isYourTurn
+                    ? l10n.yourTurn
+                    : entry.isInExamination
+                        ? entry.status.label(l10n)
+                        : l10n.queueNumber,
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.grey.shade600,
@@ -88,7 +93,7 @@ class PremiumQueueDashboard extends StatelessWidget {
               ScaleTransition(
                 scale: numberScaleAnimation,
                 child: Text(
-                  '${entry.position}',
+                  showQueueNumber ? '${entry.position}' : '—',
                   style: TextStyle(
                     fontSize: 80,
                     fontWeight: FontWeight.bold,

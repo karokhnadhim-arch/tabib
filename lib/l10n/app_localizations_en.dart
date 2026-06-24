@@ -786,7 +786,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get queueStatusWaiting => 'Waiting';
 
   @override
+  String get queueStatusWithDoctor => 'With Doctor';
+
+  @override
   String get queueStatusInDoctorRoom => 'In doctor room';
+
+  @override
+  String get queueStatusExamination => 'Examination';
+
+  @override
+  String get queueStatusReview => 'Review';
 
   @override
   String get queueStatusSentForTests => 'Sent for tests';
@@ -802,6 +811,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get queueStatusCancelled => 'Cancelled';
+
+  @override
+  String get returnToReview => 'Return to review';
+
+  @override
+  String get appointmentTime => 'Appointment time';
+
+  @override
+  String get noAssignedDoctor => 'No doctor assigned to this secretary account';
+
+  @override
+  String get queueNumberLabel => 'Queue #';
 
   @override
   String get queueNotifyFourRemaining => 'Almost your turn';

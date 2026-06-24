@@ -193,10 +193,32 @@ class FirestoreClinicBackend implements ClinicBackend {
   }
 
   @override
+  Stream<List<QueueEntry>> watchSecretaryQueue(String doctorId) {
+    return _queues
+        .where('doctorId', isEqualTo: doctorId)
+        .where('status', whereIn: secretaryQueueStatusNames)
+        .orderBy('position')
+        .limit(FirestoreLimits.queueActiveMax)
+        .snapshots()
+        .map((snap) {
+      final entries = snap.docs
+          .map((d) => QueueEntry.fromFirestore(d.id, d.data()))
+          .toList();
+      entries.sort((a, b) {
+        final aExam = a.isInExamination;
+        final bExam = b.isInExamination;
+        if (aExam != bExam) return aExam ? 1 : -1;
+        return a.position.compareTo(b.position);
+      });
+      return entries;
+    });
+  }
+
+  @override
   Stream<QueueEntry?> watchPatientActiveQueue(String patientId) {
     return _queues
         .where('patientId', isEqualTo: patientId)
-        .where('status', whereIn: activeQueueStatusNames)
+        .where('status', whereIn: patientVisibleQueueStatusNames)
         .limit(1)
         .snapshots()
         .map((snap) {
@@ -361,11 +383,26 @@ class FirestoreClinicBackend implements ClinicBackend {
     String doctorId,
     QueueStatus status,
   ) async {
-    await _queues.doc(entryId).update({'status': status.name});
+    await _queues.doc(entryId).update({'status': _persistStatus(status)});
     if (status == QueueStatus.completed ||
         status == QueueStatus.absent ||
-        status == QueueStatus.cancelled) {
+        status == QueueStatus.cancelled ||
+        status == QueueStatus.examination ||
+        status == QueueStatus.sentForTests) {
       await _reindexDoctorQueue(doctorId);
+    }
+  }
+
+  String _persistStatus(QueueStatus status) {
+    switch (status) {
+      case QueueStatus.examination:
+      case QueueStatus.sentForTests:
+        return 'examination';
+      case QueueStatus.review:
+      case QueueStatus.followUp:
+        return 'review';
+      default:
+        return status.name;
     }
   }
 
@@ -380,6 +417,49 @@ class FirestoreClinicBackend implements ClinicBackend {
       batch.update(d.reference, {'status': QueueStatus.completed.name});
     }
     batch.update(_queues.doc(entryId), {'status': QueueStatus.inProgress.name});
+    await batch.commit();
+  }
+
+  @override
+  Future<void> sendToExamination(String entryId, String doctorId) async {
+    await _queues.doc(entryId).update({'status': 'examination'});
+    await _reindexDoctorQueue(doctorId);
+  }
+
+  @override
+  Future<void> returnToReview(String entryId, String doctorId) async {
+    final entryDoc = await _queues.doc(entryId).get();
+    if (!entryDoc.exists) return;
+    final entry = QueueEntry.fromFirestore(entryDoc.id, entryDoc.data()!);
+    if (!entry.isInExamination) return;
+
+    final snap = await _queues
+        .where('doctorId', isEqualTo: doctorId)
+        .where('status', whereIn: activeQueueStatusNames)
+        .orderBy('position')
+        .get();
+
+    final active = snap.docs
+        .map((d) => QueueEntry.fromFirestore(d.id, d.data()))
+        .toList();
+    final inProgress =
+        active.where((e) => e.status == QueueStatus.inProgress).toList();
+    final waiting = active
+        .where((e) =>
+            e.status == QueueStatus.waiting ||
+            e.status == QueueStatus.review)
+        .toList()
+      ..sort((a, b) => a.position.compareTo(b.position));
+
+    final ordered = <QueueEntry>[...inProgress, entry, ...waiting];
+    final batch = _db.batch();
+    for (var i = 0; i < ordered.length; i++) {
+      batch.update(_queues.doc(ordered[i].id), {
+        'status': ordered[i].id == entryId ? 'review' : ordered[i].status.name,
+        'position': i + 1,
+        'estimatedWaitMinutes': i * 15,
+      });
+    }
     await batch.commit();
   }
 
