@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../services/auth_service.dart';
+import '../auth/admin_routes.dart';
 import '../../presentation/screens/admin/create_doctor_screen.dart';
 import '../../presentation/screens/admin/create_secretary_screen.dart';
 import '../../presentation/screens/auth/register_screen.dart';
@@ -187,7 +188,7 @@ class AppRouter {
       return '/home';
     }
 
-    if (loggedIn && path.startsWith('/doctor/platform') && !_auth.isSystemOwner) {
+    if (loggedIn && AdminRoutes.isAdminRoute(path) && !_auth.isSystemOwner) {
       return '/doctor';
     }
 
@@ -197,7 +198,7 @@ class AppRouter {
     if (loggedIn && _auth.isPatient && path.startsWith('/secretary')) {
       return '/home';
     }
-    if (loggedIn && _auth.isPatient && path.startsWith('/doctor/platform')) {
+    if (loggedIn && _auth.isPatient && AdminRoutes.isAdminRoute(path)) {
       return '/home';
     }
 

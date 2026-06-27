@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/auth/admin_permissions.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../presentation/widgets/admin_guard.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../utils/localization_utils.dart';
@@ -84,13 +86,18 @@ class _CreateDoctorScreenState extends State<CreateDoctorScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final auth = context.watch<AuthService>();
+    if (!AdminPermissions.canCreateDoctors(auth)) {
+      return const SizedBox.shrink();
+    }
     final data = context.watch<ClinicDataService>();
 
     _specialtyId ??=
         data.specialties.isNotEmpty ? data.specialties.first.id : null;
     _clinicId ??= data.clinics.isNotEmpty ? data.clinics.first.id : null;
 
-    return Scaffold(
+    return AdminGuard(
+      child: Scaffold(
       appBar: AppBar(
         title: Text(l10n.createDoctorAccount),
         backgroundColor: AppTheme.primaryDark,
@@ -200,6 +207,7 @@ class _CreateDoctorScreenState extends State<CreateDoctorScreen> {
             ],
           ),
         ),
+      ),
       ),
     );
   }

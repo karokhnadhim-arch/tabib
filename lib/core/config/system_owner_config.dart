@@ -2,11 +2,14 @@
 ///
 /// Add your email here to receive automatic admin privileges on staff login.
 /// These accounts are never shown as a separate "Admin" role in the UI.
+///
+/// Owner detection also checks Firebase Auth email and Firestore `isSystemOwner`.
 class SystemOwnerConfig {
   SystemOwnerConfig._();
 
   static const ownerEmails = <String>{
     'admin@tabib.demo',
+    'admin@clinic.app',
   };
 
   static bool isOwnerEmail(String? email) {

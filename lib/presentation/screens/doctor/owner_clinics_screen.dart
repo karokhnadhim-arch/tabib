@@ -100,7 +100,13 @@ class _OwnerClinicsScreenState extends State<OwnerClinicsScreen> {
       longitude: double.tryParse(lng.text) ?? 0,
       phone: phone.text,
     );
-    await context.read<ClinicDataService>().backend.upsertClinic(clinic);
+    final auth = context.read<AuthService>();
+    final err = await auth.saveClinic(clinic);
+    if (err != null && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.errorGeneric)),
+      );
+    }
   }
 
   @override

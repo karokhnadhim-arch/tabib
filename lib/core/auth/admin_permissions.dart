@@ -12,6 +12,8 @@ class AdminPermissions {
 
   static bool canManageClinics(AuthService auth) => auth.isSystemOwner;
 
+  static bool canCreateClinics(AuthService auth) => auth.isSystemOwner;
+
   static bool canViewAllStaff(AuthService auth) => auth.isSystemOwner;
 
   static bool canActivateAccounts(AuthService auth) => auth.isSystemOwner;

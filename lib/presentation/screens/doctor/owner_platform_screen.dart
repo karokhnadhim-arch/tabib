@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/auth/admin_permissions.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../presentation/widgets/admin_guard.dart';
@@ -18,10 +17,6 @@ class OwnerPlatformScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final auth = context.watch<AuthService>();
-
-    if (!AdminPermissions.canAccessAdminPanel(auth)) {
-      return const SizedBox.shrink();
-    }
 
     return AdminGuard(
       child: Scaffold(

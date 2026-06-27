@@ -101,7 +101,10 @@ class AuthService extends ChangeNotifier {
           await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
       if (doc.exists) {
         _currentUser = UserAccount.fromFirestore(doc.id, doc.data()!);
-        await _applySystemOwnerPrivileges(persist: true);
+        await _applySystemOwnerPrivileges(
+          persist: true,
+          authEmail: user.email,
+        );
       } else if (user.isAnonymous) {
         _currentUser = UserAccount(
           id: user.uid,
@@ -115,20 +118,30 @@ class AuthService extends ChangeNotifier {
     }
   }
 
-  Future<void> _applySystemOwnerPrivileges({bool persist = false}) async {
+  Future<void> _applySystemOwnerPrivileges({
+    bool persist = false,
+    String? authEmail,
+  }) async {
     final user = _currentUser;
     if (user == null) return;
 
     final shouldOwn = user.isSystemOwner ||
-        SystemOwnerConfig.isOwnerEmail(user.email);
+        SystemOwnerConfig.isOwnerEmail(user.email) ||
+        SystemOwnerConfig.isOwnerEmail(authEmail);
     if (!shouldOwn) return;
 
-    if (!user.isSystemOwner) {
-      _currentUser = user.copyWith(isSystemOwner: true);
-      if (persist && !_demoMode) {
-        await _backend.upsertStaff(_currentUser!);
-      }
+    final needsUpdate = !user.isSystemOwner ||
+        (user.email == null && authEmail != null && authEmail.isNotEmpty);
+    if (!needsUpdate) return;
+
+    _currentUser = user.copyWith(
+      isSystemOwner: true,
+      email: user.email ?? authEmail,
+    );
+    if (persist && !_demoMode) {
+      await _backend.upsertStaff(_currentUser!);
     }
+    notifyListeners();
   }
 
   Future<String?> _rejectInactiveStaff() async {
@@ -252,7 +265,10 @@ class AuthService extends ChangeNotifier {
         await _loadUserFromFirebase(fbUser);
       }
       if (_currentUser == null) return 'invalid_credentials';
-      await _applySystemOwnerPrivileges(persist: true);
+      await _applySystemOwnerPrivileges(
+        persist: true,
+        authEmail: fbUser?.email ?? email.trim(),
+      );
       return await _rejectInactiveStaff();
     } on FirebaseAuthException {
       if (_isKnownDemoCredential(email.trim(), password)) {
@@ -410,11 +426,32 @@ class AuthService extends ChangeNotifier {
     }
 
     try {
-      final cred = await _firebaseAuth!.createUserWithEmailAndPassword(
+      final clinics = await _backend.fetchClinics();
+      final specialties = await _backend.fetchSpecialties();
+      final clinic = clinics.where((c) => c.id == clinicId).firstOrNull;
+      final specialty =
+          specialties.where((s) => s.id == specialtyId).firstOrNull;
+      if (clinic == null || specialty == null) return 'error';
+
+      final cred = await _firebaseAuth!.createStaffUserWithoutSessionSwitch(
         email: email.trim(),
         password: password,
       );
       final uid = cred.user!.uid;
+      await _backend.upsertDoctor(
+        Doctor(
+          id: doctorId,
+          name: nameText,
+          specialtyId: specialtyId,
+          specialty: specialty,
+          clinicId: clinicId,
+          clinic: clinic,
+          rating: 0,
+          experienceYears: 0,
+          bio: const LocalizedText(ku: '', ar: '', en: ''),
+          isAvailableToday: true,
+        ),
+      );
       await _backend.upsertStaff(
         UserAccount(
           id: uid,
@@ -473,7 +510,7 @@ class AuthService extends ChangeNotifier {
     }
 
     try {
-      final cred = await _firebaseAuth!.createUserWithEmailAndPassword(
+      final cred = await _firebaseAuth!.createStaffUserWithoutSessionSwitch(
         email: email.trim(),
         password: password,
       );
@@ -573,6 +610,13 @@ class AuthService extends ChangeNotifier {
   }
 
   Future<void> seedDemoData() => _backend.seedDemoData();
+
+  /// Admin-only: create or update a clinic.
+  Future<String?> saveClinic(Clinic clinic) async {
+    if (!isSystemOwner) return 'unauthorized';
+    await _backend.upsertClinic(clinic);
+    return null;
+  }
 
   /// Admin-only: activate or deactivate a staff account.
   Future<String?> setStaffActive(String staffId, bool active) async {

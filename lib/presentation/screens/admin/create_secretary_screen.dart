@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/auth/admin_permissions.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../presentation/widgets/admin_guard.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../utils/localization_utils.dart';
@@ -89,11 +91,16 @@ class _CreateSecretaryScreenState extends State<CreateSecretaryScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final auth = context.watch<AuthService>();
+    if (!AdminPermissions.canCreateSecretaries(auth)) {
+      return const SizedBox.shrink();
+    }
     final data = context.watch<ClinicDataService>();
 
     _linkedDoctorId ??= data.doctors.isNotEmpty ? data.doctors.first.id : null;
 
-    return Scaffold(
+    return AdminGuard(
+      child: Scaffold(
       appBar: AppBar(
         title: Text(l10n.createSecretaryAccount),
         backgroundColor: AppTheme.primaryDark,
@@ -181,6 +188,7 @@ class _CreateSecretaryScreenState extends State<CreateSecretaryScreen> {
             ],
           ),
         ),
+      ),
       ),
     );
   }
