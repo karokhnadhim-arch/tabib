@@ -556,6 +556,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get chatWithSecretary => 'محادثة مع السكرتير';
 
   @override
+  String get chatWithClinic => 'التواصل مع العيادة';
+
+  @override
+  String get chatWithPatient => 'محادثة مع المريض';
+
+  @override
   String get typeMessage => 'اكتب رسالة...';
 
   @override

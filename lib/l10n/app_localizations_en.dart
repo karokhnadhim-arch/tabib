@@ -556,6 +556,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatWithSecretary => 'Chat with secretary';
 
   @override
+  String get chatWithClinic => 'Contact clinic';
+
+  @override
+  String get chatWithPatient => 'Chat with patient';
+
+  @override
   String get typeMessage => 'Type a message...';
 
   @override

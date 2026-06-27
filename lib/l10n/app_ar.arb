@@ -179,6 +179,8 @@
   "queueTracking": "تتبع السرعة",
   "currentQueueNumber": "رقم السرعة الحالي",
   "chatWithSecretary": "محادثة مع السكرتير",
+  "chatWithClinic": "التواصل مع العيادة",
+  "chatWithPatient": "محادثة مع المريض",
   "typeMessage": "اكتب رسالة...",
   "markEntered": "وصل",
   "markAbsent": "غائب",

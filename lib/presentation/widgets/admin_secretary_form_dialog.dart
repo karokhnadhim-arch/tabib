@@ -6,6 +6,8 @@ import '../../core/utils/staff_auth_identifiers.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/user_account.dart';
 import '../../services/auth_service.dart';
+import '../../services/clinic_data_service.dart';
+import '../../utils/localization_utils.dart';
 import '../../widgets/auth/auth_text_field.dart';
 import 'staff_account_login_fields.dart';
 
@@ -136,6 +138,8 @@ class _AdminSecretaryFormDialogState extends State<AdminSecretaryFormDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final doctor = context.watch<ClinicDataService>().doctorById(widget.doctorId);
+    final doctorLabel = doctor?.name.localized(context) ?? l10n.notAvailable;
 
     return AlertDialog(
       title: Text(
@@ -156,6 +160,15 @@ class _AdminSecretaryFormDialogState extends State<AdminSecretaryFormDialog> {
                   prefixIcon: Icons.person_outline,
                   validator: (v) =>
                       v == null || v.trim().length < 2 ? l10n.invalidName : null,
+                ),
+                const SizedBox(height: 12),
+                InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: l10n.linkedDoctor,
+                    prefixIcon: const Icon(Icons.link),
+                    border: const OutlineInputBorder(),
+                  ),
+                  child: Text(doctorLabel),
                 ),
                 const SizedBox(height: 12),
                 if (widget.isEdit) ...[

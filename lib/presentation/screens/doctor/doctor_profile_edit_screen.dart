@@ -29,6 +29,7 @@ import '../../../utils/localization_utils.dart';
 import '../../../presentation/widgets/doctor_avatar.dart';
 import '../../../presentation/widgets/doctor_schedule_editor.dart';
 import '../../../presentation/widgets/tabib_image.dart';
+import '../../../services/image_storage_service.dart';
 import '../../../utils/doctor_photo_utils.dart';
 import '../../../widgets/auth/auth_text_field.dart';
 
@@ -330,7 +331,13 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
 
   Future<void> _pickPhoto() async {
     setState(() => _pickingPhoto = true);
-    final result = await pickDoctorPhotoDataUrl(context);
+    final imageStorage = context.read<ImageStorageService>();
+    final doctorId = _doctor?.id ?? context.read<AuthService>().currentUser?.doctorId;
+    final result = await pickDoctorPhotoDataUrl(
+      context,
+      imageStorage: imageStorage,
+      doctorId: doctorId,
+    );
     if (!mounted) return;
     setState(() => _pickingPhoto = false);
     if (result.isSuccess) {
@@ -358,7 +365,12 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
 
   Future<void> _pickClinicPhoto() async {
     setState(() => _pickingClinicPhoto = true);
-    final result = await pickClinicPhotoDataUrl();
+    final imageStorage = context.read<ImageStorageService>();
+    final clinicId = _doctor?.clinicId;
+    final result = await pickClinicPhotoDataUrl(
+      imageStorage: imageStorage,
+      clinicId: clinicId,
+    );
     if (!mounted) return;
     setState(() => _pickingClinicPhoto = false);
     if (result.isSuccess) {

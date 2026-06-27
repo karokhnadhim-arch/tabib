@@ -144,24 +144,42 @@ class _SecretaryDashboardScreenState extends State<SecretaryDashboardScreen> {
                     ),
                   ),
                 Card(
-                  elevation: 2,
+                  elevation: 1,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor:
-                          AppTheme.secretaryColor.withOpacity(0.15),
-                      child: const Icon(
-                        Icons.support_agent,
-                        color: AppTheme.secretaryColor,
-                      ),
-                    ),
-                    title: Text(auth.currentUser?.name.localized(context) ?? ''),
-                    subtitle: Text(
-                      doctor != null
-                          ? '${l10n.roleSecretary} · ${doctor.name.localized(context)}'
-                          : l10n.roleSecretary,
+                  child: Padding(
+                    padding: const EdgeInsets.all(14),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.link,
+                          color: AppTheme.primaryDark.withOpacity(0.7),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                l10n.linkedDoctor,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                              Text(
+                                doctor != null
+                                    ? doctor.name.localized(context)
+                                    : l10n.noAssignedDoctor,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

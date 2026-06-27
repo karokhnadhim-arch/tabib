@@ -58,13 +58,17 @@ class _ChatScreenState extends State<ChatScreen> {
 
     final auth = context.read<AuthService>();
     final user = auth.currentUser!;
+    final l10n = AppLocalizations.of(context);
     final role = auth.isPatient ? 'patient' : 'secretary';
+    final senderName = auth.isPatient
+        ? user.name.localized(context)
+        : l10n.chatWithClinic;
 
     await context.read<ChatProvider>().send(
       clinicId: widget.clinicId,
       patientId: _patientId,
       senderId: user.id,
-      senderName: user.name.localized(context),
+      senderName: senderName,
       senderRole: role,
       text: text,
     );
@@ -83,7 +87,8 @@ class _ChatScreenState extends State<ChatScreen> {
     final l10n = AppLocalizations.of(context);
     final auth = context.watch<AuthService>();
     final chat = context.watch<ChatProvider>();
-    final title = widget.patientName ?? l10n.chatWithSecretary;
+    final title = widget.patientName ??
+        (auth.isPatient ? l10n.chatWithClinic : l10n.chatWithSecretary);
 
     return Scaffold(
       backgroundColor: AppTheme.medicalWhite,

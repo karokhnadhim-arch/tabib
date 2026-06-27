@@ -165,9 +165,9 @@ class _HomeTab extends StatelessWidget {
                   Expanded(
                     child: MedicalStatCard(
                       icon: Icons.chat_bubble_outline,
-                      label: l10n.chatWithSecretary,
+                      label: l10n.chatWithClinic,
                       value: '💬',
-                      color: AppTheme.secretaryColor,
+                      color: AppTheme.medicalBlue,
                       onTap: () => context.push(
                         '/chat?clinicId=clinic_erbil_1',
                       ),

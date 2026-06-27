@@ -1169,6 +1169,18 @@ abstract class AppLocalizations {
   /// **'Chat with secretary'**
   String get chatWithSecretary;
 
+  /// No description provided for @chatWithClinic.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact clinic'**
+  String get chatWithClinic;
+
+  /// No description provided for @chatWithPatient.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat with patient'**
+  String get chatWithPatient;
+
   /// No description provided for @typeMessage.
   ///
   /// In en, this message translates to:

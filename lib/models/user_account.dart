@@ -23,7 +23,9 @@ class UserAccount {
   final String? phone;
   final String? doctorId;
   final String? clinicId;
-  /// Required for secretary accounts — the doctor they assist.
+  /// Secretary accounts are minimal internal staff records:
+  /// name, phone or email, password (auth), linked doctor, and active status.
+  /// They do not have public profiles — only doctors have patient-visible profiles.
   final String? linkedDoctorId;
   /// Hidden platform owner — full admin permissions, logs in via doctor UI.
   final bool isSystemOwner;

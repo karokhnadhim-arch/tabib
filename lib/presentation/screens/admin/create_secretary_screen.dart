@@ -125,7 +125,7 @@ class _CreateSecretaryScreenState extends State<CreateSecretaryScreen> {
               children: [
                 AuthTextField(
                   controller: _nameController,
-                  label: l10n.patientName,
+                  label: l10n.fullName,
                   prefixIcon: Icons.person_outline,
                   validator: (v) => v == null || v.trim().length < 2
                       ? l10n.invalidName

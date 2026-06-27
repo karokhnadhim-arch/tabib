@@ -9,7 +9,7 @@ import '../../services/auth_service.dart';
 import '../../utils/localization_utils.dart';
 import 'admin_secretary_form_dialog.dart';
 
-/// Secretaries assigned to one doctor — add, edit, delete, activate/deactivate.
+/// Secretaries assigned to one doctor — minimal internal staff records only.
 class AdminDoctorSecretariesSection extends StatelessWidget {
   const AdminDoctorSecretariesSection({
     super.key,
@@ -165,30 +165,6 @@ class AdminDoctorSecretariesSection extends StatelessWidget {
   }
 }
 
-class _SecretaryAvatar extends StatelessWidget {
-  const _SecretaryAvatar({required this.name, required this.isActive});
-
-  final String name;
-  final bool isActive;
-
-  @override
-  Widget build(BuildContext context) {
-    final initial = name.trim().isNotEmpty ? name.trim()[0].toUpperCase() : '?';
-    return CircleAvatar(
-      backgroundColor: isActive
-          ? AppTheme.secretaryColor.withOpacity(0.15)
-          : Colors.grey.withOpacity(0.15),
-      child: Text(
-        initial,
-        style: TextStyle(
-          color: isActive ? AppTheme.secretaryColor : Colors.grey,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-}
-
 class _StatusChip extends StatelessWidget {
   const _StatusChip({required this.isActive});
 
@@ -242,8 +218,6 @@ class _SecretaryCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                _SecretaryAvatar(name: name, isActive: secretary.isActive),
-                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,10 +226,16 @@ class _SecretaryCard extends StatelessWidget {
                         name,
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      if (secretary.phone != null)
-                        Text(secretary.phone!, style: const TextStyle(fontSize: 13)),
-                      if (secretary.email != null)
-                        Text(secretary.email!, style: const TextStyle(fontSize: 13)),
+                      if (secretary.phone != null && secretary.phone!.isNotEmpty)
+                        Text(
+                          secretary.phone!,
+                          style: const TextStyle(fontSize: 13),
+                        ),
+                      if (secretary.email != null && secretary.email!.isNotEmpty)
+                        Text(
+                          secretary.email!,
+                          style: const TextStyle(fontSize: 13),
+                        ),
                     ],
                   ),
                 ),
@@ -273,7 +253,11 @@ class _SecretaryCard extends StatelessWidget {
                 ),
                 TextButton.icon(
                   onPressed: onDelete,
-                  icon: Icon(Icons.delete_outline, size: 18, color: Colors.red.shade700),
+                  icon: Icon(
+                    Icons.delete_outline,
+                    size: 18,
+                    color: Colors.red.shade700,
+                  ),
                   label: Text(
                     l10n.delete,
                     style: TextStyle(color: Colors.red.shade700),
@@ -317,7 +301,6 @@ class _SecretaryTable extends StatelessWidget {
           AppTheme.primaryDark.withOpacity(0.04),
         ),
         columns: [
-          const DataColumn(label: SizedBox.shrink()),
           DataColumn(label: Text(l10n.fullName)),
           DataColumn(label: Text(l10n.phoneNumber)),
           DataColumn(label: Text(l10n.email)),
@@ -328,7 +311,6 @@ class _SecretaryTable extends StatelessWidget {
           final name = s.name.localized(context);
           return DataRow(
             cells: [
-              DataCell(_SecretaryAvatar(name: name, isActive: s.isActive)),
               DataCell(Text(name)),
               DataCell(Text(s.phone ?? l10n.notAvailable)),
               DataCell(Text(s.email ?? l10n.notAvailable)),
@@ -344,7 +326,10 @@ class _SecretaryTable extends StatelessWidget {
                     ),
                     IconButton(
                       tooltip: l10n.delete,
-                      icon: Icon(Icons.delete_outline, color: Colors.red.shade700),
+                      icon: Icon(
+                        Icons.delete_outline,
+                        color: Colors.red.shade700,
+                      ),
                       onPressed: () => onDelete(s),
                     ),
                     Switch(

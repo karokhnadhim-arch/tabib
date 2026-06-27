@@ -396,7 +396,7 @@ class _RowActions extends StatelessWidget {
         ],
         MedicalActionChip(
           icon: Icons.chat_bubble_outline,
-          label: l10n.chatWithSecretary,
+          label: l10n.chatWithPatient,
           color: AppTheme.medicalBlueDark,
           onTap: () {
             context.push(

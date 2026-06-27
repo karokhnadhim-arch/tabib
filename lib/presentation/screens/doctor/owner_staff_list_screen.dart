@@ -80,19 +80,14 @@ class OwnerStaffListScreen extends StatelessWidget {
                   final user = staff[i];
                   return Card(
                     child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: user.isActive
-                            ? AppTheme.primaryDark.withOpacity(0.1)
-                            : Colors.grey.withOpacity(0.15),
-                        child: Icon(
-                          user.role == UserRole.secretary
-                              ? Icons.support_agent_outlined
-                              : Icons.medical_services_outlined,
-                          color: user.isActive
-                              ? AppTheme.primaryDark
-                              : Colors.grey,
-                        ),
-                      ),
+                    leading: Icon(
+                      user.role == UserRole.secretary
+                          ? Icons.badge_outlined
+                          : Icons.medical_services_outlined,
+                      color: user.isActive
+                          ? AppTheme.primaryDark
+                          : Colors.grey,
+                    ),
                       title: Text(user.name.localized(context)),
                       subtitle: Text(
                         [

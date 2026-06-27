@@ -206,7 +206,7 @@ class _QueueTrackingScreenState extends State<QueueTrackingScreen>
                         '/chat?clinicId=${doctor?.clinicId ?? 'clinic_erbil_1'}',
                       ),
                       icon: const Icon(Icons.chat_bubble_outline),
-                      label: Text(l10n.chatWithSecretary),
+                      label: Text(l10n.chatWithClinic),
                     ),
                     FilledButton.icon(
                       onPressed: () async {

@@ -556,6 +556,12 @@ class AppLocalizationsKu extends AppLocalizations {
   String get chatWithSecretary => 'چات لەگەڵ سکرتێر';
 
   @override
+  String get chatWithClinic => 'پەیوەندی بە نۆرینگە';
+
+  @override
+  String get chatWithPatient => 'چات لەگەڵ نەخۆش';
+
+  @override
   String get typeMessage => 'پەیام بنووسە...';
 
   @override

@@ -214,6 +214,8 @@
   "queueTracking": "Queue tracking",
   "currentQueueNumber": "Current queue number",
   "chatWithSecretary": "Chat with secretary",
+  "chatWithClinic": "Contact clinic",
+  "chatWithPatient": "Chat with patient",
   "typeMessage": "Type a message...",
   "markEntered": "Mark entered",
   "markAbsent": "Mark absent",

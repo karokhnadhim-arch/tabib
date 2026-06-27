@@ -60,7 +60,7 @@ img.Image extractProfilePhotoCrop({
   required double baseScale,
   required double userScale,
   required Offset offset,
-  int outputSize = ImageUploadLimits.profileMaxSize,
+  int outputSize = ImageUploadLimits.profileMaxDimension,
 }) {
   final totalScale = baseScale * userScale;
   final displayW = source.width * totalScale;
@@ -91,31 +91,6 @@ img.Image extractProfilePhotoCrop({
     width: outputSize,
     height: outputSize,
     interpolation: img.Interpolation.linear,
-  );
-}
-
-ProcessedImage processCroppedProfileImage(img.Image croppedSquare) {
-  final full = croppedSquare.width == ImageUploadLimits.profileMaxSize &&
-          croppedSquare.height == ImageUploadLimits.profileMaxSize
-      ? croppedSquare
-      : img.copyResize(
-          croppedSquare,
-          width: ImageUploadLimits.profileMaxSize,
-          height: ImageUploadLimits.profileMaxSize,
-          interpolation: img.Interpolation.linear,
-        );
-  final thumb = squareThumbnail(full, ImageUploadLimits.profileThumbSize);
-
-  return ProcessedImage(
-    fullDataUrl: encodeJpegDataUrl(
-      full,
-      maxBytes: ImageUploadLimits.profileMaxBytes,
-    ),
-    thumbnailDataUrl: encodeJpegDataUrl(
-      thumb,
-      quality: 80,
-      maxBytes: ImageUploadLimits.profileThumbMaxBytes,
-    ),
   );
 }
 

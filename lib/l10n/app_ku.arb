@@ -179,6 +179,8 @@
   "queueTracking": "شوێنکەوتنی سەرە",
   "currentQueueNumber": "ژمارەی سەرەی ئێستا",
   "chatWithSecretary": "چات لەگەڵ سکرتێر",
+  "chatWithClinic": "پەیوەندی بە نۆرینگە",
+  "chatWithPatient": "چات لەگەڵ نەخۆش",
   "typeMessage": "پەیام بنووسە...",
   "markEntered": "هاتووە",
   "markAbsent": "نەهاتووە",
