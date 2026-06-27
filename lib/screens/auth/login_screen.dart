@@ -53,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (_mode == _LoginMode.staff) {
       err = await auth.loginStaff(
-        email: _emailController.text.trim(),
+        identifier: _emailController.text.trim(),
         password: _passwordController.text,
       );
       if (err != null) err = l10n.invalidCredentials;

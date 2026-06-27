@@ -35,7 +35,7 @@ class _StaffLoginScreenState extends State<StaffLoginScreen> {
 
     final auth = context.read<AuthService>();
     final err = await auth.loginStaff(
-      email: _emailController.text.trim(),
+      identifier: _emailController.text.trim(),
       password: _passwordController.text,
     );
 
