@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
@@ -331,19 +333,18 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
 
   Future<void> _pickPhoto() async {
     setState(() => _pickingPhoto = true);
-    final imageStorage = context.read<ImageStorageService>();
-    final doctorId = _doctor?.id ?? context.read<AuthService>().currentUser?.doctorId;
-    final result = await pickDoctorPhotoDataUrl(
-      context,
-      imageStorage: imageStorage,
-      doctorId: doctorId,
-    );
+    final result = await pickDoctorPhotoDataUrl(context);
     if (!mounted) return;
     setState(() => _pickingPhoto = false);
     if (result.isSuccess) {
       _photoUrlController.text = result.dataUrl!;
       _photoThumbnailUrl = result.thumbnailDataUrl;
       setState(() {});
+      final optimized = result.optimized;
+      final doctorId = _doctor?.id ?? context.read<AuthService>().currentUser?.doctorId;
+      if (optimized != null && doctorId != null) {
+        unawaited(_uploadProfilePhotoInBackground(optimized, doctorId));
+      }
     } else if (result.errorCode == 'too_large') {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppLocalizations.of(context).photoTooLarge)),
@@ -363,21 +364,42 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
     setState(() {});
   }
 
+  Future<void> _uploadProfilePhotoInBackground(
+    OptimizedImage optimized,
+    String doctorId,
+  ) async {
+    try {
+      final urls = await ImageStorageService.instance.uploadOptimized(
+        image: optimized,
+        category: ImageStorageCategory.doctorProfile,
+        ownerId: doctorId,
+      );
+      if (!mounted) return;
+      setState(() {
+        _photoUrlController.text = urls.fullUrl;
+        _photoThumbnailUrl = urls.thumbnailUrl;
+      });
+    } catch (_) {
+      // Keep local data-URL preview; Firestore save still works in demo mode.
+    }
+  }
+
   Future<void> _pickClinicPhoto() async {
     setState(() => _pickingClinicPhoto = true);
-    final imageStorage = context.read<ImageStorageService>();
-    final clinicId = _doctor?.clinicId;
-    final result = await pickClinicPhotoDataUrl(
-      imageStorage: imageStorage,
-      clinicId: clinicId,
-    );
+    final result = await pickClinicPhotoDataUrl();
     if (!mounted) return;
     setState(() => _pickingClinicPhoto = false);
     if (result.isSuccess) {
+      final optimized = result.optimized;
+      final doctorId = _doctor?.id ?? context.read<AuthService>().currentUser?.doctorId;
+      final index = _clinicPhotos.length;
       setState(() {
         _clinicPhotos.add(result.dataUrl!);
         _clinicPhotoThumbnails.add(result.thumbnailDataUrl!);
       });
+      if (optimized != null && doctorId != null) {
+        unawaited(_uploadClinicPhotoInBackground(optimized, doctorId, index));
+      }
     } else if (result.errorCode == 'too_large') {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppLocalizations.of(context).photoTooLarge)),
@@ -388,6 +410,30 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
           content: Text(AppLocalizations.of(context).photoProcessingFailed),
         ),
       );
+    }
+  }
+
+  Future<void> _uploadClinicPhotoInBackground(
+    OptimizedImage optimized,
+    String doctorId,
+    int index,
+  ) async {
+    try {
+      final urls = await ImageStorageService.instance.uploadOptimized(
+        image: optimized,
+        category: ImageStorageCategory.clinicPhoto,
+        ownerId: doctorId,
+      );
+      if (!mounted) return;
+      if (index < 0 || index >= _clinicPhotos.length) return;
+      setState(() {
+        _clinicPhotos[index] = urls.fullUrl;
+        if (index < _clinicPhotoThumbnails.length) {
+          _clinicPhotoThumbnails[index] = urls.thumbnailUrl;
+        }
+      });
+    } catch (_) {
+      // Local preview remains valid.
     }
   }
 
@@ -579,6 +625,34 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
     }
 
     final photo = _photoUrlController.text.trim();
+    var photoUrl = photo.isEmpty ? null : photo;
+    var photoThumb = photo.isEmpty ? null : _photoThumbnailUrl;
+
+    if (photoUrl != null) {
+      final uploaded = await ImageStorageService.instance.ensureStorageUrls(
+        fullUrl: photoUrl,
+        thumbnailUrl: photoThumb,
+        category: ImageStorageCategory.doctorProfile,
+        ownerId: doctor.id,
+      );
+      photoUrl = uploaded.fullUrl;
+      photoThumb = uploaded.thumbnailUrl;
+    }
+
+    final resolvedClinicPhotos = <String>[];
+    final resolvedClinicThumbs = <String>[];
+    for (var i = 0; i < clinicPhotos.length; i++) {
+      final uploaded = await ImageStorageService.instance.ensureStorageUrls(
+        fullUrl: clinicPhotos[i],
+        thumbnailUrl: i < clinicPhotoThumbnails.length
+            ? clinicPhotoThumbnails[i]
+            : null,
+        category: ImageStorageCategory.clinicPhoto,
+        ownerId: doctor.id,
+      );
+      resolvedClinicPhotos.add(uploaded.fullUrl);
+      resolvedClinicThumbs.add(uploaded.thumbnailUrl);
+    }
 
     final updated = doctor.copyWith(
 
@@ -596,11 +670,11 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
 
       specialty: specialty,
 
-      photoUrl: photo.isEmpty ? null : photo,
+      photoUrl: photoUrl,
 
-      photoThumbnailUrl: photo.isEmpty ? null : _photoThumbnailUrl,
+      photoThumbnailUrl: photoThumb,
 
-      clearPhotos: photo.isEmpty,
+      clearPhotos: photoUrl == null || photoUrl.isEmpty,
 
       bio: LocalizedText(
 
@@ -666,10 +740,12 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
 
       consultationFee: consultationFee,
 
-      clinicPhotos: clinicPhotos.isEmpty ? null : clinicPhotos,
+      clinicPhotos:
+          resolvedClinicPhotos.isEmpty ? null : resolvedClinicPhotos,
 
-      clinicPhotoThumbnails:
-          clinicPhotos.isEmpty ? null : clinicPhotoThumbnails,
+      clinicPhotoThumbnails: resolvedClinicPhotos.isEmpty
+          ? null
+          : resolvedClinicThumbs,
 
       profileVisibility: _visibility,
 

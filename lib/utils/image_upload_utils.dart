@@ -1,59 +1,69 @@
 import 'dart:convert';
 import 'dart:math' as math;
+import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
 
-/// Adaptive image limits — WhatsApp/Facebook-style compression targets.
+/// Adaptive image limits — targets WhatsApp/Facebook-style uploads.
 abstract final class ImageUploadLimits {
-  static const int profileMaxDimension = 1024;
-  static const int profileThumbDimension = 256;
+  /// Full image target band (only compress below min when already huge).
+  static const int targetMinBytes = 300 * 1024;
+  static const int targetMaxBytes = 800 * 1024;
+
+  static const int profileMaxDimension = 1200;
+  static const int profileThumbDimension = 320;
 
   static const int clinicMaxWidth = 1920;
   static const int clinicMaxHeight = 1080;
-  static const int clinicThumbWidth = 320;
-  static const int clinicThumbHeight = 180;
+  static const int clinicThumbWidth = 480;
+  static const int clinicThumbHeight = 270;
 
-  /// Preferred full-image upload range (bytes).
-  static const int targetMinBytes = 300 * 1024;
-  static const int targetMaxBytes = 800 * 1024;
-  static const int hardMaxBytes = 1024 * 1024;
-
-  static const int thumbTargetMinBytes = 40 * 1024;
-  static const int thumbTargetMaxBytes = 120 * 1024;
+  static const int thumbnailMaxBytes = 120 * 1024;
 
   static const int maxJpegQuality = 92;
   static const int minJpegQuality = 58;
-  static const int thumbMaxJpegQuality = 85;
-  static const int thumbMinJpegQuality = 55;
+
+  /// Legacy aliases used elsewhere.
+  static const int profileMaxSize = profileMaxDimension;
+  static const int profileThumbSize = profileThumbDimension;
 }
 
-/// Optimized image bytes ready for Firebase Storage upload.
-class ProcessedImage {
-  const ProcessedImage({
+/// Optimized image bytes ready for upload or demo-mode data URLs.
+class OptimizedImage {
+  const OptimizedImage({
     required this.fullBytes,
     required this.thumbnailBytes,
-    this.fullUrl,
-    this.thumbnailUrl,
   });
 
   final Uint8List fullBytes;
   final Uint8List thumbnailBytes;
-  final String? fullUrl;
-  final String? thumbnailUrl;
 
-  String get fullDisplayUrl =>
-      fullUrl ?? 'data:image/jpeg;base64,${base64Encode(fullBytes)}';
+  int get fullSize => fullBytes.length;
+  int get thumbnailSize => thumbnailBytes.length;
 
-  String get thumbnailDisplayUrl =>
-      thumbnailUrl ?? 'data:image/jpeg;base64,${base64Encode(thumbnailBytes)}';
+  String get fullDataUrl => bytesToDataUrl(fullBytes);
+  String get thumbnailDataUrl => bytesToDataUrl(thumbnailBytes);
+}
 
-  @Deprecated('Use fullDisplayUrl')
-  String get fullDataUrl => fullDisplayUrl;
+/// Legacy wrapper — URLs are data URLs until Firebase Storage upload completes.
+class ProcessedImage {
+  const ProcessedImage({
+    required this.fullDataUrl,
+    required this.thumbnailDataUrl,
+    this.optimized,
+  });
 
-  @Deprecated('Use thumbnailDisplayUrl')
-  String get thumbnailDataUrl => thumbnailDisplayUrl;
+  final String fullDataUrl;
+  final String thumbnailDataUrl;
+  final OptimizedImage? optimized;
+
+  factory ProcessedImage.fromOptimized(OptimizedImage image) =>
+      ProcessedImage(
+        fullDataUrl: image.fullDataUrl,
+        thumbnailDataUrl: image.thumbnailDataUrl,
+        optimized: image,
+      );
 }
 
 img.Image? decodeImageBytes(Uint8List bytes) => img.decodeImage(bytes);
@@ -112,78 +122,116 @@ img.Image clinicThumbnail(img.Image source) {
 Uint8List encodeAdaptiveJpeg(
   img.Image image, {
   int targetMaxBytes = ImageUploadLimits.targetMaxBytes,
-  int hardMaxBytes = ImageUploadLimits.hardMaxBytes,
   int maxQuality = ImageUploadLimits.maxJpegQuality,
   int minQuality = ImageUploadLimits.minJpegQuality,
 }) {
-  var working = image;
+  var best = Uint8List.fromList(img.encodeJpg(image, quality: maxQuality));
 
-  for (var scalePass = 0; scalePass < 6; scalePass++) {
-    var low = minQuality;
-    var high = maxQuality;
-    Uint8List? best;
+  if (best.length <= targetMaxBytes) {
+    return best;
+  }
 
-    while (low <= high) {
-      final quality = (low + high) ~/ 2;
-      final bytes = Uint8List.fromList(img.encodeJpg(working, quality: quality));
+  var lo = minQuality;
+  var hi = maxQuality;
 
-      if (bytes.length <= targetMaxBytes) {
-        best = bytes;
-        low = quality + 1;
-      } else {
-        high = quality - 1;
-      }
+  while (lo <= hi) {
+    final mid = (lo + hi) ~/ 2;
+    final bytes = Uint8List.fromList(img.encodeJpg(image, quality: mid));
+    if (bytes.length <= targetMaxBytes) {
+      best = bytes;
+      lo = mid + 1;
+    } else {
+      hi = mid - 1;
     }
+  }
 
-    if (best != null) {
-      return best;
-    }
+  if (best.length <= targetMaxBytes) {
+    return best;
+  }
 
-    final fallback = Uint8List.fromList(
-      img.encodeJpg(working, quality: minQuality),
-    );
-    if (fallback.length <= hardMaxBytes) {
-      return fallback;
-    }
+  return _encodeWithProgressiveResize(
+    image,
+    targetMaxBytes: targetMaxBytes,
+    maxQuality: maxQuality,
+    minQuality: minQuality,
+  );
+}
 
-    if (scalePass == 5) {
-      throw const FormatException('too_large');
-    }
+Uint8List _encodeWithProgressiveResize(
+  img.Image image, {
+  required int targetMaxBytes,
+  required int maxQuality,
+  required int minQuality,
+}) {
+  var scaled = image;
+  var best = Uint8List.fromList(img.encodeJpg(scaled, quality: minQuality));
 
-    working = img.copyResize(
-      working,
-      width: math.max(1, (working.width * 0.85).round()),
-      height: math.max(1, (working.height * 0.85).round()),
+  for (var pass = 0; pass < 8 && best.length > targetMaxBytes; pass++) {
+    final nextW = math.max(320, (scaled.width * 0.88).round());
+    final nextH = math.max(320, (scaled.height * 0.88).round());
+    if (nextW == scaled.width && nextH == scaled.height) break;
+
+    scaled = img.copyResize(
+      scaled,
+      width: nextW,
+      height: nextH,
       interpolation: img.Interpolation.linear,
+    );
+    best = encodeAdaptiveJpeg(
+      scaled,
+      targetMaxBytes: targetMaxBytes,
+      maxQuality: maxQuality,
+      minQuality: minQuality,
     );
   }
 
-  throw const FormatException('too_large');
+  return best;
 }
 
-Uint8List encodeThumbnailJpeg(img.Image image) => encodeAdaptiveJpeg(
-      image,
-      targetMaxBytes: ImageUploadLimits.thumbTargetMaxBytes,
-      hardMaxBytes: ImageUploadLimits.thumbTargetMaxBytes * 2,
-      maxQuality: ImageUploadLimits.thumbMaxJpegQuality,
-      minQuality: ImageUploadLimits.thumbMinJpegQuality,
+String bytesToDataUrl(Uint8List bytes) =>
+    'data:image/jpeg;base64,${base64Encode(bytes)}';
+
+@Deprecated('Use encodeAdaptiveJpeg')
+String encodeJpegDataUrl(
+  img.Image image, {
+  int quality = ImageUploadLimits.maxJpegQuality,
+  required int maxBytes,
+}) => bytesToDataUrl(
+      encodeAdaptiveJpeg(image, targetMaxBytes: maxBytes, maxQuality: quality),
     );
 
-ProcessedImage _buildProfileProcessed(img.Image decoded) {
+OptimizedImage optimizeProfileImage(List<int> bytes) {
+  final decoded = decodeImageBytes(Uint8List.fromList(bytes));
+  if (decoded == null) {
+    throw const FormatException('decode_failed');
+  }
+
   final full = resizeToFit(
     decoded,
     maxWidth: ImageUploadLimits.profileMaxDimension,
     maxHeight: ImageUploadLimits.profileMaxDimension,
   );
-  final thumb = squareThumbnail(full, ImageUploadLimits.profileThumbDimension);
+  final thumb = squareThumbnail(
+    full,
+    ImageUploadLimits.profileThumbDimension,
+  );
 
-  return ProcessedImage(
+  return OptimizedImage(
     fullBytes: encodeAdaptiveJpeg(full),
-    thumbnailBytes: encodeThumbnailJpeg(thumb),
+    thumbnailBytes: encodeAdaptiveJpeg(
+      thumb,
+      targetMaxBytes: ImageUploadLimits.thumbnailMaxBytes,
+      maxQuality: 85,
+    ),
   );
 }
 
-ProcessedImage _buildClinicProcessed(img.Image decoded) {
+OptimizedImage optimizeClinicImage(List<int> bytes) {
+  final decoded = decodeImageBytes(Uint8List.fromList(bytes));
+  if (decoded == null) {
+    throw const FormatException('decode_failed');
+  }
+
   final full = resizeToFit(
     decoded,
     maxWidth: ImageUploadLimits.clinicMaxWidth,
@@ -191,29 +239,17 @@ ProcessedImage _buildClinicProcessed(img.Image decoded) {
   );
   final thumb = clinicThumbnail(full);
 
-  return ProcessedImage(
+  return OptimizedImage(
     fullBytes: encodeAdaptiveJpeg(full),
-    thumbnailBytes: encodeThumbnailJpeg(thumb),
+    thumbnailBytes: encodeAdaptiveJpeg(
+      thumb,
+      targetMaxBytes: ImageUploadLimits.thumbnailMaxBytes,
+      maxQuality: 85,
+    ),
   );
 }
 
-ProcessedImage processProfileImage(List<int> bytes) {
-  final decoded = decodeImageBytes(Uint8List.fromList(bytes));
-  if (decoded == null) {
-    throw const FormatException('decode_failed');
-  }
-  return _buildProfileProcessed(decoded);
-}
-
-ProcessedImage processClinicImage(List<int> bytes) {
-  final decoded = decodeImageBytes(Uint8List.fromList(bytes));
-  if (decoded == null) {
-    throw const FormatException('decode_failed');
-  }
-  return _buildClinicProcessed(decoded);
-}
-
-ProcessedImage processCroppedProfileImage(img.Image croppedSquare) {
+OptimizedImage optimizeCroppedProfileImage(img.Image croppedSquare) {
   final full = croppedSquare.width == ImageUploadLimits.profileMaxDimension &&
           croppedSquare.height == ImageUploadLimits.profileMaxDimension
       ? croppedSquare
@@ -223,41 +259,28 @@ ProcessedImage processCroppedProfileImage(img.Image croppedSquare) {
           height: ImageUploadLimits.profileMaxDimension,
           interpolation: img.Interpolation.linear,
         );
-  final thumb = squareThumbnail(full, ImageUploadLimits.profileThumbDimension);
+  final thumb = squareThumbnail(
+    full,
+    ImageUploadLimits.profileThumbDimension,
+  );
 
-  return ProcessedImage(
+  return OptimizedImage(
     fullBytes: encodeAdaptiveJpeg(full),
-    thumbnailBytes: encodeThumbnailJpeg(thumb),
+    thumbnailBytes: encodeAdaptiveJpeg(
+      thumb,
+      targetMaxBytes: ImageUploadLimits.thumbnailMaxBytes,
+      maxQuality: 85,
+    ),
   );
 }
 
-@pragma('vm:entry-point')
-ProcessedImage _processProfileBytesIsolate(List<int> bytes) =>
-    processProfileImage(bytes);
+@Deprecated('Use optimizeProfileImage')
+ProcessedImage processProfileImage(List<int> bytes) =>
+    ProcessedImage.fromOptimized(optimizeProfileImage(bytes));
 
-@pragma('vm:entry-point')
-ProcessedImage _processClinicBytesIsolate(List<int> bytes) =>
-    processClinicImage(bytes);
-
-@pragma('vm:entry-point')
-ProcessedImage _processCroppedJpegBytesIsolate(List<int> bytes) {
-  final decoded = decodeImageBytes(Uint8List.fromList(bytes));
-  if (decoded == null) {
-    throw const FormatException('decode_failed');
-  }
-  return processCroppedProfileImage(decoded);
-}
-
-Future<ProcessedImage> processProfileImageAsync(List<int> bytes) =>
-    compute(_processProfileBytesIsolate, bytes);
-
-Future<ProcessedImage> processClinicImageAsync(List<int> bytes) =>
-    compute(_processClinicBytesIsolate, bytes);
-
-Future<ProcessedImage> processCroppedProfileImageAsync(img.Image cropped) {
-  final seed = Uint8List.fromList(img.encodeJpg(cropped, quality: 95));
-  return compute(_processCroppedJpegBytesIsolate, seed);
-}
+@Deprecated('Use optimizeClinicImage')
+ProcessedImage processClinicImage(List<int> bytes) =>
+    ProcessedImage.fromOptimized(optimizeClinicImage(bytes));
 
 Uint8List? decodeDataUrlBytes(String dataUrl) {
   final trimmed = dataUrl.trim();
@@ -275,7 +298,8 @@ ImageProvider? tabibImageProvider(
   String? thumbnailUrl,
   bool preferThumbnail = true,
 }) {
-  final primary = preferThumbnail ? (thumbnailUrl ?? imageUrl) : (imageUrl ?? thumbnailUrl);
+  final primary =
+      preferThumbnail ? (thumbnailUrl ?? imageUrl) : (imageUrl ?? thumbnailUrl);
   if (primary == null || primary.trim().isEmpty) return null;
 
   final url = primary.trim();

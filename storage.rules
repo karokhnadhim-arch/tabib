@@ -2,8 +2,33 @@ rules_version = '2';
 
 service firebase.storage {
   match /b/{bucket}/o {
+
     function signedIn() {
       return request.auth != null;
+    }
+
+    function userDoc() {
+      return firestore.get(/databases/(default)/documents/users/$(request.auth.uid));
+    }
+
+    function userData() {
+      return userDoc().data;
+    }
+
+    function isSystemOwner() {
+      return signedIn() && userData().isSystemOwner == true;
+    }
+
+    function isDoctor() {
+      return signedIn() && userData().role == 'doctor';
+    }
+
+    function accountActive() {
+      return userData().isActive != false;
+    }
+
+    function staffDoctorId() {
+      return userData().doctorId;
     }
 
     function isImageUpload() {
@@ -12,27 +37,25 @@ service firebase.storage {
         && request.resource.size < 2 * 1024 * 1024;
     }
 
-    // Doctor profile photos — doctors upload to their own folder.
-    match /images/doctors/{doctorId}/{fileName} {
+    match /tabib/images/doctors/profile/{doctorId}/{fileName} {
       allow read: if true;
-      allow write: if signedIn() && isImageUpload();
+      allow write: if isImageUpload() && (
+        isSystemOwner()
+        || (isDoctor() && accountActive() && staffDoctorId() == doctorId)
+      );
     }
 
-    // Clinic gallery — authenticated staff can upload optimized JPEGs.
-    match /images/clinics/{clinicId}/gallery/{fileName} {
+    match /tabib/images/clinics/photos/{doctorId}/{fileName} {
       allow read: if true;
-      allow write: if signedIn() && isImageUpload();
+      allow write: if isImageUpload() && (
+        isSystemOwner()
+        || (isDoctor() && accountActive() && staffDoctorId() == doctorId)
+      );
     }
 
-    // Reserved for future staff profile uploads.
-    match /images/staff/{staffId}/{fileName} {
+    match /tabib/images/general/{ownerId}/{fileName} {
       allow read: if true;
-      allow write: if signedIn() && isImageUpload();
-    }
-
-    match /images/{allPaths=**} {
-      allow read: if true;
-      allow write: if false;
+      allow write: if isImageUpload() && signedIn();
     }
   }
 }

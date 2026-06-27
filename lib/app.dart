@@ -22,7 +22,6 @@ import 'services/backend/firestore_clinic_backend.dart';
 import 'services/backend/in_memory_clinic_backend.dart';
 import 'services/clinic_data_service.dart';
 import 'services/firebase_bootstrap.dart';
-import 'services/image_storage_service.dart';
 import 'services/locale_service.dart';
 import 'services/queue_service.dart';
 import 'services/staff_data_service.dart';
@@ -66,7 +65,6 @@ class _TabibAppState extends State<TabibApp> {
   late final NotificationProvider _notificationProvider;
   late final ChatProvider _chatProvider;
   late final SubscriptionMonitorService _subscriptionMonitor;
-  late final ImageStorageService _imageStorage;
   late final GoRouter _router;
 
   @override
@@ -101,7 +99,6 @@ class _TabibAppState extends State<TabibApp> {
     _staffDataService = StaffDataService(backend: _backend);
     _queueService = QueueService(backend: _backend);
     _localeService = LocaleService();
-    _imageStorage = ImageStorageService(demoMode: _demoMode);
     _appointmentProvider = AppointmentProvider(repository: _appointmentRepository);
     _prescriptionProvider = PrescriptionProvider(repository: _prescriptionRepository);
     _notificationProvider = NotificationProvider(repository: _notificationRepository);
@@ -125,7 +122,6 @@ class _TabibAppState extends State<TabibApp> {
     return MultiProvider(
       providers: [
         Provider<ClinicBackend>.value(value: _backend),
-        Provider<ImageStorageService>.value(value: _imageStorage),
         ChangeNotifierProvider.value(value: _authService),
         ChangeNotifierProvider.value(value: _dataService),
         ChangeNotifierProvider.value(value: _staffDataService),

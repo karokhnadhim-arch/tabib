@@ -5,12 +5,16 @@ import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
 import '../utils/image_upload_utils.dart';
+import 'firebase_bootstrap.dart';
 
-/// Categories for Firebase Storage paths — extensible for future uploads.
-enum ImageUploadCategory {
-  doctorProfile,
-  clinicGallery,
-  staffProfile,
+/// Where optimized images are stored in Firebase Storage.
+enum ImageStorageCategory {
+  doctorProfile('doctors/profile'),
+  clinicPhoto('clinics/photos'),
+  general('general');
+
+  const ImageStorageCategory(this.pathSegment);
+  final String pathSegment;
 }
 
 class UploadedImageUrls {
@@ -23,111 +27,117 @@ class UploadedImageUrls {
   final String thumbnailUrl;
 }
 
-/// Uploads optimized JPEG bytes to Firebase Storage (demo mode uses data URLs).
+/// Uploads adaptive-compressed images to Firebase Storage (or data URLs in demo).
 class ImageStorageService {
-  ImageStorageService({
-    required bool demoMode,
-    FirebaseStorage? storage,
-  })  : _demoMode = demoMode,
-        _storage = storage ?? FirebaseStorage.instance;
+  ImageStorageService({FirebaseStorage? storage}) : _storage = storage;
 
-  final bool _demoMode;
-  final FirebaseStorage _storage;
-  final _uuid = const Uuid();
+  final FirebaseStorage? _storage;
+  static const _uuid = Uuid();
 
-  bool get isDemoMode => _demoMode;
+  static ImageStorageService? _instance;
+  static ImageStorageService get instance =>
+      _instance ??= ImageStorageService();
 
-  Future<UploadedImageUrls> uploadDoctorProfile({
-    required String doctorId,
-    required ProcessedImage image,
+  bool get _useStorage =>
+      FirebaseBootstrap.initialized && !FirebaseBootstrap.shouldUseDemoMode;
+
+  FirebaseStorage get _firebaseStorage =>
+      _storage ?? FirebaseStorage.instance;
+
+  /// Compresses (if needed) and uploads full + thumbnail images.
+  Future<UploadedImageUrls> uploadOptimized({
+    required OptimizedImage image,
+    required ImageStorageCategory category,
+    String? ownerId,
   }) async {
-    if (image.fullUrl != null && image.thumbnailUrl != null) {
+    if (!_useStorage) {
       return UploadedImageUrls(
-        fullUrl: image.fullUrl!,
-        thumbnailUrl: image.thumbnailUrl!,
-      );
-    }
-    if (_demoMode) {
-      return UploadedImageUrls(
-        fullUrl: image.fullDisplayUrl,
-        thumbnailUrl: image.thumbnailDisplayUrl,
-      );
-    }
-
-    final stamp = DateTime.now().millisecondsSinceEpoch;
-    final fullPath = 'images/doctors/$doctorId/profile_$stamp.jpg';
-    final thumbPath = 'images/doctors/$doctorId/profile_${stamp}_thumb.jpg';
-
-    final fullUrl = await _uploadBytes(fullPath, image.fullBytes);
-    final thumbUrl = await _uploadBytes(thumbPath, image.thumbnailBytes);
-
-    return UploadedImageUrls(fullUrl: fullUrl, thumbnailUrl: thumbUrl);
-  }
-
-  Future<UploadedImageUrls> uploadClinicGalleryPhoto({
-    required String clinicId,
-    required ProcessedImage image,
-  }) async {
-    if (image.fullUrl != null && image.thumbnailUrl != null) {
-      return UploadedImageUrls(
-        fullUrl: image.fullUrl!,
-        thumbnailUrl: image.thumbnailUrl!,
-      );
-    }
-    if (_demoMode) {
-      return UploadedImageUrls(
-        fullUrl: image.fullDisplayUrl,
-        thumbnailUrl: image.thumbnailDisplayUrl,
+        fullUrl: image.fullDataUrl,
+        thumbnailUrl: image.thumbnailDataUrl,
       );
     }
 
     final id = _uuid.v4();
-    final fullPath = 'images/clinics/$clinicId/gallery/$id.jpg';
-    final thumbPath = 'images/clinics/$clinicId/gallery/${id}_thumb.jpg';
+    final owner = ownerId ?? 'shared';
+    final basePath = 'tabib/images/${category.pathSegment}/$owner';
 
-    final fullUrl = await _uploadBytes(fullPath, image.fullBytes);
-    final thumbUrl = await _uploadBytes(thumbPath, image.thumbnailBytes);
+    final fullRef = _firebaseStorage.ref('$basePath/${id}_full.jpg');
+    final thumbRef = _firebaseStorage.ref('$basePath/${id}_thumb.jpg');
 
-    return UploadedImageUrls(fullUrl: fullUrl, thumbnailUrl: thumbUrl);
+    await Future.wait([
+      _putBytes(fullRef, image.fullBytes),
+      _putBytes(thumbRef, image.thumbnailBytes),
+    ]);
+
+    final urls = await Future.wait([
+      fullRef.getDownloadURL(),
+      thumbRef.getDownloadURL(),
+    ]);
+
+    return UploadedImageUrls(
+      fullUrl: urls[0],
+      thumbnailUrl: urls[1],
+    );
   }
 
-  /// Reserved for future staff profile uploads (secretaries use minimal accounts).
-  Future<UploadedImageUrls> uploadStaffProfile({
-    required String staffId,
-    required ImageUploadCategory category,
-    required ProcessedImage image,
+  /// Pick bytes → optimize → upload in one call (runs optimization first).
+  Future<UploadedImageUrls> optimizeAndUpload({
+    required List<int> rawBytes,
+    required ImageStorageCategory category,
+    String? ownerId,
+    required OptimizedImage Function(List<int> bytes) optimizer,
   }) async {
-    if (_demoMode) {
-      return UploadedImageUrls(
-        fullUrl: image.fullDisplayUrl,
-        thumbnailUrl: image.thumbnailDisplayUrl,
-      );
-    }
-
-    final folder = switch (category) {
-      ImageUploadCategory.doctorProfile => 'doctors',
-      ImageUploadCategory.clinicGallery => 'clinics',
-      ImageUploadCategory.staffProfile => 'staff',
-    };
-    final id = _uuid.v4();
-    final fullPath = 'images/$folder/$staffId/$id.jpg';
-    final thumbPath = 'images/$folder/$staffId/${id}_thumb.jpg';
-
-    final fullUrl = await _uploadBytes(fullPath, image.fullBytes);
-    final thumbUrl = await _uploadBytes(thumbPath, image.thumbnailBytes);
-
-    return UploadedImageUrls(fullUrl: fullUrl, thumbnailUrl: thumbUrl);
+    final optimized = optimizer(rawBytes);
+    return uploadOptimized(
+      image: optimized,
+      category: category,
+      ownerId: ownerId,
+    );
   }
 
-  Future<String> _uploadBytes(String path, Uint8List bytes) async {
-    final ref = _storage.ref(path);
-    await ref.putData(
+  Future<void> _putBytes(Reference ref, Uint8List bytes) {
+    return ref.putData(
       bytes,
       SettableMetadata(
         contentType: 'image/jpeg',
         cacheControl: 'public,max-age=31536000',
       ),
     );
-    return ref.getDownloadURL();
+  }
+
+  /// Re-uploads a data-URL image if Firebase Storage is active; otherwise passthrough.
+  Future<UploadedImageUrls> ensureStorageUrls({
+    required String fullUrl,
+    String? thumbnailUrl,
+    required ImageStorageCategory category,
+    required String ownerId,
+  }) async {
+    if (!_useStorage || !fullUrl.trim().startsWith('data:image')) {
+      return UploadedImageUrls(
+        fullUrl: fullUrl,
+        thumbnailUrl: thumbnailUrl ?? fullUrl,
+      );
+    }
+
+    final fullBytes = decodeDataUrlBytes(fullUrl);
+    if (fullBytes == null || fullBytes.isEmpty) {
+      return UploadedImageUrls(
+        fullUrl: fullUrl,
+        thumbnailUrl: thumbnailUrl ?? fullUrl,
+      );
+    }
+
+    final thumbBytes = thumbnailUrl != null
+        ? decodeDataUrlBytes(thumbnailUrl)
+        : null;
+
+    return uploadOptimized(
+      image: OptimizedImage(
+        fullBytes: fullBytes,
+        thumbnailBytes: thumbBytes ?? fullBytes,
+      ),
+      category: category,
+      ownerId: ownerId,
+    );
   }
 }

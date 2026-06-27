@@ -60,7 +60,7 @@ img.Image extractProfilePhotoCrop({
   required double baseScale,
   required double userScale,
   required Offset offset,
-  int outputSize = ImageUploadLimits.profileMaxDimension,
+  int outputSize = ImageUploadLimits.profileMaxSize,
 }) {
   final totalScale = baseScale * userScale;
   final displayW = source.width * totalScale;
@@ -93,6 +93,9 @@ img.Image extractProfilePhotoCrop({
     interpolation: img.Interpolation.linear,
   );
 }
+
+ProcessedImage processCroppedProfileImage(img.Image croppedSquare) =>
+    ProcessedImage.fromOptimized(optimizeCroppedProfileImage(croppedSquare));
 
 Uint8List encodeImageForPreview(img.Image image) {
   return Uint8List.fromList(img.encodeJpg(image, quality: 92));

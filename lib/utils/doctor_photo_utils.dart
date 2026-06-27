@@ -3,23 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
 
 import '../presentation/widgets/profile_photo_crop_screen.dart';
-import '../services/image_storage_service.dart';
 import 'image_upload_utils.dart';
 import 'profile_photo_crop.dart';
 
 export 'image_upload_utils.dart'
     show
         ImageUploadLimits,
+        OptimizedImage,
         ProcessedImage,
         tabibHasDisplayableImage,
         tabibImageProvider;
 
-/// Picks a profile photo, crops, compresses in the background, and uploads.
+/// Picks a profile photo, crops, and adaptively compresses (local only).
 Future<DoctorPhotoPickResult> pickDoctorPhotoDataUrl(
-  BuildContext context, {
-  ImageStorageService? imageStorage,
-  String? doctorId,
-}) async {
+  BuildContext context,
+) async {
   final result = await FilePicker.platform.pickFiles(
     type: FileType.image,
     withData: true,
@@ -58,15 +56,11 @@ Future<DoctorPhotoPickResult> pickDoctorPhotoDataUrl(
   }
 
   try {
-    final processed = await processCroppedProfileImageAsync(cropped);
-    return _finalizeUpload(
-      processed: processed,
-      imageStorage: imageStorage,
-      upload: (img) => imageStorage!.uploadDoctorProfile(
-        doctorId: doctorId!,
-        image: img,
-      ),
-      canUpload: imageStorage != null && doctorId != null && doctorId.isNotEmpty,
+    final optimized = optimizeCroppedProfileImage(cropped);
+    return DoctorPhotoPickResult.success(
+      dataUrl: optimized.fullDataUrl,
+      thumbnailDataUrl: optimized.thumbnailDataUrl,
+      optimized: optimized,
     );
   } on FormatException catch (error) {
     if (error.message == 'too_large') {
@@ -78,11 +72,14 @@ Future<DoctorPhotoPickResult> pickDoctorPhotoDataUrl(
   }
 }
 
-/// Picks a clinic photo, compresses in the background, and uploads.
-Future<DoctorPhotoPickResult> pickClinicPhotoDataUrl({
-  ImageStorageService? imageStorage,
-  String? clinicId,
-}) async {
+/// Picks a clinic photo and adaptively compresses (local only).
+Future<DoctorPhotoPickResult> pickClinicPhotoDataUrl() async {
+  return _pickAndProcessClinic(optimizeClinicImage);
+}
+
+Future<DoctorPhotoPickResult> _pickAndProcessClinic(
+  OptimizedImage Function(List<int> bytes) optimizer,
+) async {
   final result = await FilePicker.platform.pickFiles(
     type: FileType.image,
     withData: true,
@@ -99,15 +96,11 @@ Future<DoctorPhotoPickResult> pickClinicPhotoDataUrl({
   }
 
   try {
-    final processed = await processClinicImageAsync(bytes);
-    return _finalizeUpload(
-      processed: processed,
-      imageStorage: imageStorage,
-      upload: (img) => imageStorage!.uploadClinicGalleryPhoto(
-        clinicId: clinicId!,
-        image: img,
-      ),
-      canUpload: imageStorage != null && clinicId != null && clinicId.isNotEmpty,
+    final optimized = optimizer(bytes);
+    return DoctorPhotoPickResult.success(
+      dataUrl: optimized.fullDataUrl,
+      thumbnailDataUrl: optimized.thumbnailDataUrl,
+      optimized: optimized,
     );
   } on FormatException catch (error) {
     if (error.message == 'too_large') {
@@ -119,50 +112,44 @@ Future<DoctorPhotoPickResult> pickClinicPhotoDataUrl({
   }
 }
 
-Future<DoctorPhotoPickResult> _finalizeUpload({
-  required ProcessedImage processed,
-  required ImageStorageService? imageStorage,
-  required Future<UploadedImageUrls> Function(ProcessedImage) upload,
-  required bool canUpload,
-}) async {
-  if (canUpload) {
-    final urls = await upload(processed);
-    return DoctorPhotoPickResult.success(
-      dataUrl: urls.fullUrl,
-      thumbnailDataUrl: urls.thumbnailUrl,
-    );
-  }
-
-  return DoctorPhotoPickResult.success(
-    dataUrl: processed.fullDisplayUrl,
-    thumbnailDataUrl: processed.thumbnailDisplayUrl,
-  );
-}
-
 class DoctorPhotoPickResult {
   const DoctorPhotoPickResult._({
     this.dataUrl,
     this.thumbnailDataUrl,
+    this.optimized,
     this.errorCode,
   });
 
   const DoctorPhotoPickResult.cancelled()
-      : this._(dataUrl: null, thumbnailDataUrl: null, errorCode: null);
+      : this._(
+          dataUrl: null,
+          thumbnailDataUrl: null,
+          optimized: null,
+          errorCode: null,
+        );
 
   const DoctorPhotoPickResult.success({
     required String dataUrl,
     required String thumbnailDataUrl,
+    OptimizedImage? optimized,
   }) : this._(
           dataUrl: dataUrl,
           thumbnailDataUrl: thumbnailDataUrl,
+          optimized: optimized,
           errorCode: null,
         );
 
   const DoctorPhotoPickResult.error(String code)
-      : this._(dataUrl: null, thumbnailDataUrl: null, errorCode: code);
+      : this._(
+          dataUrl: null,
+          thumbnailDataUrl: null,
+          optimized: null,
+          errorCode: code,
+        );
 
   final String? dataUrl;
   final String? thumbnailDataUrl;
+  final OptimizedImage? optimized;
   final String? errorCode;
 
   bool get isSuccess => dataUrl != null;
