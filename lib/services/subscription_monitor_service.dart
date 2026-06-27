@@ -3,48 +3,54 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 import '../core/utils/clinic_subscription.dart';
-import '../core/utils/subscription_manager.dart';
 import '../domain/repositories/repositories.dart';
 import '../models/clinic.dart';
 import '../models/notification.dart';
 import '../models/user_account.dart';
 import 'backend/clinic_backend.dart';
+import 'clinic_data_service.dart';
+import 'staff_data_service.dart';
 
 /// Watches clinic subscriptions in real time, sends alerts, and auto-deactivates.
+///
+/// Uses [ClinicDataService] and [StaffDataService] instead of duplicate
+/// Firestore listeners.
 class SubscriptionMonitorService extends ChangeNotifier {
   SubscriptionMonitorService({
     required ClinicBackend backend,
+    required ClinicDataService catalog,
+    required StaffDataService staffData,
     required NotificationRepository notifications,
   })  : _backend = backend,
+        _catalog = catalog,
+        _staffData = staffData,
         _notifications = notifications;
 
   final ClinicBackend _backend;
+  final ClinicDataService _catalog;
+  final StaffDataService _staffData;
   final NotificationRepository _notifications;
-  final SubscriptionManager _subscriptions = SubscriptionManager();
 
-  List<Clinic> _clinics = const [];
-  List<UserAccount> _staff = const [];
+  VoidCallback? _catalogListener;
+  VoidCallback? _staffListener;
 
-  List<Clinic> get clinics => List.unmodifiable(_clinics);
+  List<Clinic> get clinics => _catalog.clinics;
 
   void start() {
-    _subscriptions.replace(
-      'clinics',
-      _backend.watchClinics(),
-      (clinics) {
-        _clinics = clinics;
-        notifyListeners();
-        unawaited(_evaluateAll(clinics));
-      },
-    );
-    _subscriptions.replace(
-      'staff',
-      _backend.watchStaff(),
-      (staff) {
-        _staff = staff;
-        unawaited(_evaluateAll(_clinics));
-      },
-    );
+    _catalogListener ??= () {
+      notifyListeners();
+      unawaited(_evaluateAll(_catalog.clinics));
+    };
+    _staffListener ??= () {
+      unawaited(_evaluateAll(_catalog.clinics));
+    };
+
+    _catalog.addListener(_catalogListener!);
+    _staffData.addListener(_staffListener!);
+
+    if (_catalog.isCatalogLoaded) {
+      unawaited(_evaluateAll(_catalog.clinics));
+    }
   }
 
   Future<void> _evaluateAll(List<Clinic> clinics) async {
@@ -110,8 +116,9 @@ class SubscriptionMonitorService extends ChangeNotifier {
   }
 
   Set<String> _recipientsForClinic(Clinic clinic) {
+    final staff = _staffData.staff;
     final ids = <String>{};
-    for (final account in _staff) {
+    for (final account in staff) {
       if (account.isSystemOwner) {
         ids.add(account.id);
         continue;
@@ -126,7 +133,7 @@ class SubscriptionMonitorService extends ChangeNotifier {
           ids.add(account.id);
           continue;
         }
-        final linkedDoctor = _staff
+        final linkedDoctor = staff
             .where((s) => s.doctorId == account.linkedDoctorId)
             .firstOrNull;
         if (linkedDoctor?.clinicId == clinic.id) {
@@ -139,7 +146,12 @@ class SubscriptionMonitorService extends ChangeNotifier {
 
   @override
   void dispose() {
-    _subscriptions.cancelAll();
+    if (_catalogListener != null) {
+      _catalog.removeListener(_catalogListener!);
+    }
+    if (_staffListener != null) {
+      _staffData.removeListener(_staffListener!);
+    }
     super.dispose();
   }
 }

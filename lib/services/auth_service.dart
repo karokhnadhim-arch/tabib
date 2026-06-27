@@ -406,7 +406,7 @@ class AuthService extends ChangeNotifier {
     final contactPhone = trimmedPhone;
 
     if (_demoMode) {
-      final staff = await _backend.watchStaff().first;
+      final staff = await _backend.fetchStaff();
       if (staff.any((s) =>
           s.email != null &&
           trimmedEmail != null &&
@@ -462,7 +462,7 @@ class AuthService extends ChangeNotifier {
     }
 
     try {
-      final staff = await _backend.watchStaff().first;
+      final staff = await _backend.fetchStaff();
       if (staff.any((s) =>
           s.email != null &&
           trimmedEmail != null &&
@@ -560,7 +560,7 @@ class AuthService extends ChangeNotifier {
     final contactPhone = trimmedPhone;
 
     if (_demoMode) {
-      final staff = await _backend.watchStaff().first;
+      final staff = await _backend.fetchStaff();
       if (staff.any((s) =>
           s.email != null &&
           trimmedEmail != null &&
@@ -594,7 +594,7 @@ class AuthService extends ChangeNotifier {
     }
 
     try {
-      final staff = await _backend.watchStaff().first;
+      final staff = await _backend.fetchStaff();
       if (staff.any((s) =>
           s.email != null &&
           trimmedEmail != null &&
@@ -666,9 +666,9 @@ class AuthService extends ChangeNotifier {
       }
 
       if (normalizedEmail == demoDoctorEmail) {
-        _currentUser = UserAccount(
+        _currentUser = const UserAccount(
           id: 'demo_doctor',
-          name: const LocalizedText(
+          name: LocalizedText(
             ku: 'د. ئاراس محەمەد',
             ar: 'د. أراس محمد',
             en: 'Dr. Aras Mohammed',
@@ -683,9 +683,9 @@ class AuthService extends ChangeNotifier {
       }
 
       if (normalizedEmail == demoSecretaryEmail) {
-        _currentUser = UserAccount(
+        _currentUser = const UserAccount(
           id: 'demo_secretary',
-          name: const LocalizedText(
+          name: LocalizedText(
             ku: 'سکرتێر',
             ar: 'سكرتير',
             en: 'Secretary',
@@ -721,7 +721,7 @@ class AuthService extends ChangeNotifier {
   Future<String?> setStaffActive(String staffId, bool active) async {
     if (!isSystemOwner) return 'unauthorized';
 
-    final staff = await _backend.watchStaff().first;
+    final staff = await _backend.fetchStaff();
     final account = staff.where((s) => s.id == staffId).firstOrNull;
     if (account == null) return 'error';
     if (account.isSystemOwner) return 'unauthorized';
@@ -787,7 +787,7 @@ class AuthService extends ChangeNotifier {
   }) async {
     if (!isSystemOwner) return 'unauthorized';
 
-    final staff = await _backend.watchStaff().first;
+    final staff = await _backend.fetchStaff();
     final account = staff.where((s) => s.id == secretaryId).firstOrNull;
     if (account == null || account.role != UserRole.secretary) return 'error';
     if (account.isSystemOwner) return 'unauthorized';
@@ -829,7 +829,7 @@ class AuthService extends ChangeNotifier {
   Future<String?> deleteSecretaryAccount(String secretaryId) async {
     if (!isSystemOwner) return 'unauthorized';
 
-    final staff = await _backend.watchStaff().first;
+    final staff = await _backend.fetchStaff();
     final account = staff.where((s) => s.id == secretaryId).firstOrNull;
     if (account == null || account.role != UserRole.secretary) return 'error';
     if (account.isSystemOwner) return 'unauthorized';

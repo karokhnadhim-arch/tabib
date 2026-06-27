@@ -6,13 +6,13 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/admin_doctor_staff_resolver.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/doctor.dart';
-import '../../../models/user_account.dart';
 import '../../../presentation/widgets/admin_doctor_secretaries_section.dart';
 import '../../../presentation/widgets/admin_doctor_subscription_card.dart';
 import '../../../presentation/widgets/admin_guard.dart';
 import '../../../presentation/widgets/doctor_avatar.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
+import '../../../services/staff_data_service.dart';
 import '../../../utils/localization_utils.dart';
 
 class OwnerDoctorDetailScreen extends StatefulWidget {
@@ -31,8 +31,10 @@ class _OwnerDoctorDetailScreenState extends State<OwnerDoctorDetailScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final data = context.read<ClinicDataService>();
+      final staffData = context.read<StaffDataService>();
       await data.ensureCatalogLoaded();
       data.startRealtimeCatalog();
+      staffData.startRealtime();
       await data.fetchDoctorById(widget.doctorId);
     });
   }
@@ -47,7 +49,7 @@ class _OwnerDoctorDetailScreenState extends State<OwnerDoctorDetailScreen> {
 
     final data = context.watch<ClinicDataService>();
     final doctor = data.doctorById(widget.doctorId);
-    final backend = data.backend;
+    final staff = context.watch<StaffDataService>().staff;
     final width = MediaQuery.sizeOf(context).width;
     final isWide = width >= 900;
 
@@ -59,28 +61,12 @@ class _OwnerDoctorDetailScreenState extends State<OwnerDoctorDetailScreen> {
         ),
         body: doctor == null
             ? const Center(child: CircularProgressIndicator())
-            : StreamBuilder<List<UserAccount>>(
-                stream: backend.watchStaff(),
-                builder: (context, staffSnap) {
-                  final staff = staffSnap.data ?? const <UserAccount>[];
+            : Builder(
+                builder: (context) {
                   final email =
                       AdminDoctorStaffResolver.emailFor(doctor, staff);
                   final phone =
                       AdminDoctorStaffResolver.phoneFor(doctor, staff);
-
-                  final infoCard = _DoctorInfoCard(
-                    doctor: doctor,
-                    email: email,
-                    phone: phone,
-                  );
-                  final subscriptionCard = AdminDoctorSubscriptionCard(
-                    doctor: doctor,
-                    onRenewed: () => setState(() {}),
-                  );
-                  final secretariesSection = AdminDoctorSecretariesSection(
-                    doctorId: doctor.id,
-                    staff: staff,
-                  );
 
                   return ListView(
                     padding: const EdgeInsets.all(16),
@@ -89,18 +75,39 @@ class _OwnerDoctorDetailScreenState extends State<OwnerDoctorDetailScreen> {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(child: infoCard),
+                            Expanded(
+                              child: _DoctorInfoCard(
+                                doctor: doctor,
+                                email: email,
+                                phone: phone,
+                              ),
+                            ),
                             const SizedBox(width: 16),
-                            Expanded(child: subscriptionCard),
+                            Expanded(
+                              child: AdminDoctorSubscriptionCard(
+                                doctor: doctor,
+                                onRenewed: () => setState(() {}),
+                              ),
+                            ),
                           ],
                         )
                       else ...[
-                        infoCard,
+                        _DoctorInfoCard(
+                          doctor: doctor,
+                          email: email,
+                          phone: phone,
+                        ),
                         const SizedBox(height: 16),
-                        subscriptionCard,
+                        AdminDoctorSubscriptionCard(
+                          doctor: doctor,
+                          onRenewed: () => setState(() {}),
+                        ),
                       ],
                       const SizedBox(height: 16),
-                      secretariesSection,
+                      AdminDoctorSecretariesSection(
+                        doctorId: doctor.id,
+                        staff: staff,
+                      ),
                     ],
                   );
                 },

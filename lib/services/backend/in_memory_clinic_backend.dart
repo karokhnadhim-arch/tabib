@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import '../../core/utils/clinic_subscription.dart';
 import '../../models/clinic.dart';
 import '../../models/doctor.dart';
 import '../../models/doctor_working_schedule.dart';
@@ -146,6 +145,30 @@ class InMemoryClinicBackend implements ClinicBackend {
   @override
   Future<Clinic?> getClinic(String clinicId) async =>
       _clinics.where((c) => c.id == clinicId).firstOrNull;
+
+  @override
+  Stream<Doctor?> watchDoctor(String doctorId) async* {
+    Doctor? current = _doctors.where((d) => d.id == doctorId).firstOrNull;
+    yield current;
+    await for (final _ in _change.stream) {
+      current = _doctors.where((d) => d.id == doctorId).firstOrNull;
+      yield current;
+    }
+  }
+
+  @override
+  Future<List<UserAccount>> fetchStaff() async =>
+      List.unmodifiable(_staff);
+
+  @override
+  Future<List<UserAccount>> fetchSecretariesForDoctor(String doctorId) async {
+    return _staff
+        .where(
+          (s) =>
+              s.role == UserRole.secretary && s.linkedDoctorId == doctorId,
+        )
+        .toList();
+  }
 
   @override
   Future<QueueEntry?> bookQueue({

@@ -27,6 +27,15 @@ abstract class ClinicBackend {
   Future<Doctor?> getDoctor(String doctorId);
   Future<Clinic?> getClinic(String clinicId);
 
+  /// One-shot staff fetch — prefer over [watchStaff].first for uniqueness checks.
+  Future<List<UserAccount>> fetchStaff();
+
+  /// Secretaries assigned to exactly one doctor (scoped query).
+  Future<List<UserAccount>> fetchSecretariesForDoctor(String doctorId);
+
+  /// Real-time updates for a single doctor document (1 read stream).
+  Stream<Doctor?> watchDoctor(String doctorId);
+
   Future<QueueEntry?> bookQueue({
     required String doctorId,
     required String patientId,

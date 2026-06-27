@@ -1,3 +1,4 @@
+import '../../core/constants/firestore_limits.dart';
 import '../../models/clinic.dart';
 import '../../models/specialty.dart';
 
@@ -9,7 +10,7 @@ class FirestoreReferenceCache {
   DateTime? _clinicsLoadedAt;
   DateTime? _specialtiesLoadedAt;
 
-  static const _ttl = Duration(minutes: 10);
+  static const _ttl = FirestoreLimits.referenceCacheTtl;
 
   Map<String, Clinic> get clinics => _clinics;
   Map<String, Specialty> get specialties => _specialties;

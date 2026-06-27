@@ -9,6 +9,7 @@ import '../../../models/user_account.dart';
 import '../../../presentation/widgets/admin_guard.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
+import '../../../services/staff_data_service.dart';
 
 class OwnerStatsScreen extends StatelessWidget {
   const OwnerStatsScreen({super.key});
@@ -22,7 +23,21 @@ class OwnerStatsScreen extends StatelessWidget {
     }
 
     final data = context.watch<ClinicDataService>();
-    final backend = data.backend;
+    final staff = context.watch<StaffDataService>().staff;
+    final doctors = staff
+        .where((s) => s.role == UserRole.doctor || s.role == UserRole.admin)
+        .length;
+    final secretaries =
+        staff.where((s) => s.role == UserRole.secretary).length;
+    final activeStaff = staff.where((s) => s.isActive).length;
+    final clinics = data.clinics;
+    final activeSubscriptions = clinics
+        .where(
+          (c) =>
+              ClinicSubscriptionHelper.statusFor(c) ==
+              ClinicSubscriptionStatus.active,
+        )
+        .length;
 
     return AdminGuard(
       child: Scaffold(
@@ -30,68 +45,46 @@ class OwnerStatsScreen extends StatelessWidget {
           title: Text(l10n.systemStatistics),
           backgroundColor: AppTheme.primaryDark,
         ),
-        body: StreamBuilder<List<UserAccount>>(
-          stream: backend.watchStaff(),
-          builder: (context, snapshot) {
-            final staff = snapshot.data ?? const [];
-            final doctors = staff
-                .where((s) =>
-                    s.role == UserRole.doctor || s.role == UserRole.admin)
-                .length;
-            final secretaries =
-                staff.where((s) => s.role == UserRole.secretary).length;
-            final activeStaff = staff.where((s) => s.isActive).length;
-            final clinics = data.clinics;
-            final activeSubscriptions = clinics
-                .where(
-                  (c) =>
-                      ClinicSubscriptionHelper.statusFor(c) ==
-                      ClinicSubscriptionStatus.active,
-                )
-                .length;
-
-            return ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                _StatCard(
-                  icon: Icons.medical_services_outlined,
-                  label: l10n.totalDoctors,
-                  value: '$doctors',
-                  color: AppTheme.doctorColor,
-                ),
-                _StatCard(
-                  icon: Icons.support_agent_outlined,
-                  label: l10n.totalSecretaries,
-                  value: '$secretaries',
-                  color: AppTheme.secretaryColor,
-                ),
-                _StatCard(
-                  icon: Icons.local_hospital_outlined,
-                  label: l10n.totalClinics,
-                  value: '${clinics.length}',
-                  color: AppTheme.primaryDark,
-                ),
-                _StatCard(
-                  icon: Icons.verified_outlined,
-                  label: l10n.activeSubscriptions,
-                  value: '$activeSubscriptions / ${clinics.length}',
-                  color: AppTheme.medicalGreen,
-                ),
-                _StatCard(
-                  icon: Icons.people_outline,
-                  label: l10n.activeStaffAccounts,
-                  value: '$activeStaff / ${staff.length}',
-                  color: AppTheme.medicalBlue,
-                ),
-                _StatCard(
-                  icon: Icons.person_outline,
-                  label: l10n.totalDoctorsListed,
-                  value: '${data.doctors.length}',
-                  color: AppTheme.doctorColor,
-                ),
-              ],
-            );
-          },
+        body: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            _StatCard(
+              icon: Icons.medical_services_outlined,
+              label: l10n.totalDoctors,
+              value: '$doctors',
+              color: AppTheme.doctorColor,
+            ),
+            _StatCard(
+              icon: Icons.support_agent_outlined,
+              label: l10n.totalSecretaries,
+              value: '$secretaries',
+              color: AppTheme.secretaryColor,
+            ),
+            _StatCard(
+              icon: Icons.local_hospital_outlined,
+              label: l10n.totalClinics,
+              value: '${clinics.length}',
+              color: AppTheme.primaryDark,
+            ),
+            _StatCard(
+              icon: Icons.verified_outlined,
+              label: l10n.activeSubscriptions,
+              value: '$activeSubscriptions / ${clinics.length}',
+              color: AppTheme.medicalGreen,
+            ),
+            _StatCard(
+              icon: Icons.people_outline,
+              label: l10n.activeStaffAccounts,
+              value: '$activeStaff / ${staff.length}',
+              color: AppTheme.medicalBlue,
+            ),
+            _StatCard(
+              icon: Icons.person_outline,
+              label: l10n.totalDoctorsListed,
+              value: '${data.doctors.length}',
+              color: AppTheme.doctorColor,
+            ),
+          ],
         ),
       ),
     );

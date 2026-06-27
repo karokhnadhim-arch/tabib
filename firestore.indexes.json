@@ -107,6 +107,14 @@
         { "fieldPath": "doctorId", "order": "ASCENDING" },
         { "fieldPath": "createdAt", "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "users",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "role", "order": "ASCENDING" },
+        { "fieldPath": "linkedDoctorId", "order": "ASCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

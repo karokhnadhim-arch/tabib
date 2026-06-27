@@ -24,6 +24,7 @@ import 'services/clinic_data_service.dart';
 import 'services/firebase_bootstrap.dart';
 import 'services/locale_service.dart';
 import 'services/queue_service.dart';
+import 'services/staff_data_service.dart';
 import 'services/subscription_monitor_service.dart';
 
 /// Root widget for Tabib — medical appointment platform.
@@ -51,6 +52,7 @@ class _TabibAppState extends State<TabibApp> {
   late final ClinicBackend _backend;
   late final AuthService _authService;
   late final ClinicDataService _dataService;
+  late final StaffDataService _staffDataService;
   late final QueueService _queueService;
   late final AppointmentService _appointmentService;
   late final LocaleService _localeService;
@@ -94,6 +96,7 @@ class _TabibAppState extends State<TabibApp> {
     }
 
     _dataService = ClinicDataService(backend: _backend);
+    _staffDataService = StaffDataService(backend: _backend);
     _queueService = QueueService(backend: _backend);
     _localeService = LocaleService();
     _appointmentProvider = AppointmentProvider(repository: _appointmentRepository);
@@ -102,9 +105,12 @@ class _TabibAppState extends State<TabibApp> {
     _chatProvider = ChatProvider(repository: _chatRepository);
     _subscriptionMonitor = SubscriptionMonitorService(
       backend: _backend,
+      catalog: _dataService,
+      staffData: _staffDataService,
       notifications: _notificationRepository,
     )..start();
     _dataService.startRealtimeCatalog();
+    _staffDataService.startRealtime();
     _router = AppRouter(
       authService: _authService,
       appReady: true,
@@ -118,6 +124,7 @@ class _TabibAppState extends State<TabibApp> {
         Provider<ClinicBackend>.value(value: _backend),
         ChangeNotifierProvider.value(value: _authService),
         ChangeNotifierProvider.value(value: _dataService),
+        ChangeNotifierProvider.value(value: _staffDataService),
         ChangeNotifierProvider.value(value: _queueService),
         ChangeNotifierProvider.value(value: _appointmentService),
         ChangeNotifierProvider.value(value: _localeService),

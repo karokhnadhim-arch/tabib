@@ -1,10 +1,12 @@
 import '../../services/auth_service.dart';
+import 'data_access_policy.dart';
 
 /// Role-based permissions for the hidden system owner admin panel.
 class AdminPermissions {
   AdminPermissions._();
 
-  static bool canAccessAdminPanel(AuthService auth) => auth.isSystemOwner;
+  static bool canAccessAdminPanel(AuthService auth) =>
+      DataAccessPolicy.canAccessAdminPanel(auth.currentUser);
 
   static bool canCreateDoctors(AuthService auth) => auth.isSystemOwner;
 

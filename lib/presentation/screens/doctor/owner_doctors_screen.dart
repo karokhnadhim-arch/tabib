@@ -15,6 +15,7 @@ import '../../../presentation/widgets/doctor_avatar.dart';
 import '../../../presentation/widgets/subscription_status_badge.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
+import '../../../services/staff_data_service.dart';
 import '../../../utils/localization_utils.dart';
 
 class OwnerDoctorsScreen extends StatefulWidget {
@@ -31,7 +32,6 @@ class _OwnerDoctorsScreenState extends State<OwnerDoctorsScreen> {
   final _searchController = TextEditingController();
   int _page = 0;
   int _pageSize = 20;
-  bool _loadingAll = false;
 
   @override
   void initState() {
@@ -41,14 +41,17 @@ class _OwnerDoctorsScreenState extends State<OwnerDoctorsScreen> {
 
   Future<void> _bootstrap() async {
     final data = context.read<ClinicDataService>();
+    final staffData = context.read<StaffDataService>();
     await data.ensureCatalogLoaded();
     data.startRealtimeCatalog();
-    setState(() => _loadingAll = true);
+    staffData.startRealtime();
     await data.loadDoctors(refresh: true);
-    while (data.hasMoreDoctors) {
-      await data.loadDoctors();
-    }
-    if (mounted) setState(() => _loadingAll = false);
+  }
+
+  Future<void> _loadMoreDoctors() async {
+    final data = context.read<ClinicDataService>();
+    if (!data.hasMoreDoctors || data.isDoctorsLoading) return;
+    await data.loadDoctors();
   }
 
   @override
@@ -88,9 +91,19 @@ class _OwnerDoctorsScreenState extends State<OwnerDoctorsScreen> {
     }
 
     final data = context.watch<ClinicDataService>();
-    final backend = data.backend;
+    final staffData = context.watch<StaffDataService>();
+    final staff = staffData.staff;
     final width = MediaQuery.sizeOf(context).width;
     final isWide = width >= 960;
+    final filtered = _filteredDoctors(data, staff);
+    final pages = pageCountFor(filtered.length, _pageSize);
+    final safePage = _page.clamp(0, pages - 1);
+    if (safePage != _page) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) setState(() => _page = safePage);
+      });
+    }
+    final pageItems = paginateSlice(filtered, safePage, _pageSize);
 
     return AdminGuard(
       child: Scaffold(
@@ -98,137 +111,118 @@ class _OwnerDoctorsScreenState extends State<OwnerDoctorsScreen> {
           title: Text(l10n.doctorManagement),
           backgroundColor: AppTheme.primaryDark,
         ),
-        body: StreamBuilder<List<UserAccount>>(
-          stream: backend.watchStaff(),
-          builder: (context, staffSnap) {
-            final staff = staffSnap.data ?? const <UserAccount>[];
-            final filtered = _filteredDoctors(data, staff);
-            final pages = pageCountFor(filtered.length, _pageSize);
-            final safePage = _page.clamp(0, pages - 1);
-            if (safePage != _page) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (mounted) setState(() => _page = safePage);
-              });
-            }
-            final pageItems = paginateSlice(filtered, safePage, _pageSize);
-
-            return Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                  child: TextField(
-                    controller: _searchController,
-                    onChanged: (_) => _onSearchChanged(),
-                    decoration: InputDecoration(
-                      hintText: l10n.adminDoctorSearchHint,
-                      prefixIcon: const Icon(Icons.search),
-                    ),
-                  ),
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: TextField(
+                controller: _searchController,
+                onChanged: (_) => _onSearchChanged(),
+                decoration: InputDecoration(
+                  hintText: l10n.adminDoctorSearchHint,
+                  prefixIcon: const Icon(Icons.search),
                 ),
-                SizedBox(
-                  height: 44,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    children: [
-                      _FilterChip(
-                        label: l10n.filterAll,
-                        selected: _filter == DoctorSubscriptionFilter.all,
-                        onTap: () => setState(() {
-                          _filter = DoctorSubscriptionFilter.all;
-                          _page = 0;
-                        }),
-                      ),
-                      _FilterChip(
-                        label: l10n.subscriptionStatusActive,
-                        selected: _filter == DoctorSubscriptionFilter.active,
-                        color: AppTheme.medicalGreen,
-                        onTap: () => setState(() {
-                          _filter = DoctorSubscriptionFilter.active;
-                          _page = 0;
-                        }),
-                      ),
-                      _FilterChip(
-                        label: l10n.subscriptionStatusExpiringSoon,
-                        selected:
-                            _filter == DoctorSubscriptionFilter.expiringSoon,
-                        color: const Color(0xFFF9A825),
-                        onTap: () => setState(() {
-                          _filter = DoctorSubscriptionFilter.expiringSoon;
-                          _page = 0;
-                        }),
-                      ),
-                      _FilterChip(
-                        label: l10n.subscriptionStatusExpired,
-                        selected: _filter == DoctorSubscriptionFilter.expired,
-                        color: Colors.red.shade700,
-                        onTap: () => setState(() {
-                          _filter = DoctorSubscriptionFilter.expired;
-                          _page = 0;
-                        }),
-                      ),
-                    ],
+              ),
+            ),
+            SizedBox(
+              height: 44,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                children: [
+                  _FilterChip(
+                    label: l10n.filterAll,
+                    selected: _filter == DoctorSubscriptionFilter.all,
+                    onTap: () => setState(() {
+                      _filter = DoctorSubscriptionFilter.all;
+                      _page = 0;
+                    }),
                   ),
-                ),
-                if (_loadingAll || (data.isDoctorsLoading && data.doctors.isEmpty))
-                  const Expanded(
-                    child: Center(child: CircularProgressIndicator()),
-                  )
-                else if (filtered.isEmpty)
-                  Expanded(child: Center(child: Text(l10n.noDoctorsFound)))
-                else
-                  Expanded(
-                    child: isWide
-                        ? _DoctorDataTable(
-                            doctors: pageItems,
+                  _FilterChip(
+                    label: l10n.subscriptionStatusActive,
+                    selected: _filter == DoctorSubscriptionFilter.active,
+                    color: AppTheme.medicalGreen,
+                    onTap: () => setState(() {
+                      _filter = DoctorSubscriptionFilter.active;
+                      _page = 0;
+                    }),
+                  ),
+                  _FilterChip(
+                    label: l10n.subscriptionStatusExpiringSoon,
+                    selected: _filter == DoctorSubscriptionFilter.expiringSoon,
+                    color: const Color(0xFFF9A825),
+                    onTap: () => setState(() {
+                      _filter = DoctorSubscriptionFilter.expiringSoon;
+                      _page = 0;
+                    }),
+                  ),
+                  _FilterChip(
+                    label: l10n.subscriptionStatusExpired,
+                    selected: _filter == DoctorSubscriptionFilter.expired,
+                    color: Colors.red.shade700,
+                    onTap: () => setState(() {
+                      _filter = DoctorSubscriptionFilter.expired;
+                      _page = 0;
+                    }),
+                  ),
+                ],
+              ),
+            ),
+            if (data.isDoctorsLoading && data.doctors.isEmpty)
+              const Expanded(
+                child: Center(child: CircularProgressIndicator()),
+              )
+            else if (filtered.isEmpty)
+              Expanded(child: Center(child: Text(l10n.noDoctorsFound)))
+            else
+              Expanded(
+                child: isWide
+                    ? _DoctorDataTable(
+                        doctors: pageItems,
+                        staff: staff,
+                        data: data,
+                        onTap: (id) =>
+                            context.push('/doctor/platform/doctors/$id'),
+                      )
+                    : ListView.separated(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: pageItems.length,
+                        separatorBuilder: (_, __) =>
+                            const SizedBox(height: 8),
+                        itemBuilder: (context, index) {
+                          final doctor = pageItems[index];
+                          return _DoctorListCard(
+                            doctor: doctor,
                             staff: staff,
                             data: data,
-                            onTap: (id) =>
-                                context.push('/doctor/platform/doctors/$id'),
-                          )
-                        : ListView.separated(
-                            padding: const EdgeInsets.all(16),
-                            itemCount: pageItems.length,
-                            separatorBuilder: (_, __) =>
-                                const SizedBox(height: 8),
-                            itemBuilder: (context, index) {
-                              final doctor = pageItems[index];
-                              return _DoctorListCard(
-                                doctor: doctor,
-                                staff: staff,
-                                data: data,
-                                onTap: () => context.push(
-                                  '/doctor/platform/doctors/${doctor.id}',
-                                ),
-                              );
-                            },
-                          ),
-                  ),
-                if (data.hasMoreDoctors)
-                  Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: OutlinedButton.icon(
-                      onPressed: data.isDoctorsLoading
-                          ? null
-                          : () => data.loadDoctors(),
-                      icon: const Icon(Icons.download_outlined),
-                      label: Text(l10n.loadMore),
-                    ),
-                  ),
-                AdminPaginationBar(
-                  page: safePage,
-                  pageCount: pages,
-                  pageSize: _pageSize,
-                  pageSizes: _pageSizes,
-                  onPageChanged: (p) => setState(() => _page = p),
-                  onPageSizeChanged: (s) => setState(() {
-                    _pageSize = s;
-                    _page = 0;
-                  }),
+                            onTap: () => context.push(
+                              '/doctor/platform/doctors/${doctor.id}',
+                            ),
+                          );
+                        },
+                      ),
+              ),
+            if (data.hasMoreDoctors)
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: OutlinedButton.icon(
+                  onPressed: data.isDoctorsLoading ? null : _loadMoreDoctors,
+                  icon: const Icon(Icons.download_outlined),
+                  label: Text(l10n.loadMore),
                 ),
-              ],
-            );
-          },
+              ),
+            AdminPaginationBar(
+              page: safePage,
+              pageCount: pages,
+              pageSize: _pageSize,
+              pageSizes: _pageSizes,
+              onPageChanged: (p) => setState(() => _page = p),
+              onPageSizeChanged: (s) => setState(() {
+                _pageSize = s;
+                _page = 0;
+              }),
+            ),
+          ],
         ),
       ),
     );

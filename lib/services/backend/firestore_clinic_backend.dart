@@ -23,6 +23,8 @@ class FirestoreClinicBackend implements ClinicBackend {
   final FirebaseFirestore _db;
   final FirebaseAuth _auth;
   final FirestoreReferenceCache _cache = FirestoreReferenceCache();
+  List<UserAccount>? _staffSnapshot;
+  DateTime? _staffFetchedAt;
 
   CollectionReference<Map<String, dynamic>> get _specialties =>
       _db.collection('specialties');
@@ -264,6 +266,49 @@ class FirestoreClinicBackend implements ClinicBackend {
     final doc = await _clinics.doc(clinicId).get();
     if (!doc.exists) return null;
     return Clinic.fromFirestore(doc.id, doc.data()!);
+  }
+
+  Doctor? _doctorFromSnapshot(DocumentSnapshot<Map<String, dynamic>> doc) {
+    if (!doc.exists || doc.data() == null) return null;
+    return _doctorFromDoc(doc as QueryDocumentSnapshot<Map<String, dynamic>>);
+  }
+
+  @override
+  Stream<Doctor?> watchDoctor(String doctorId) {
+    return Stream.fromFuture(_ensureReferenceCache()).asyncExpand((_) {
+      return _doctors.doc(doctorId).snapshots().map(_doctorFromSnapshot);
+    });
+  }
+
+  @override
+  Future<List<UserAccount>> fetchStaff() async {
+    if (_staffSnapshot != null &&
+        _staffFetchedAt != null &&
+        DateTime.now().difference(_staffFetchedAt!) <
+            FirestoreLimits.referenceCacheTtl) {
+      return List.unmodifiable(_staffSnapshot!);
+    }
+    final snap = await _users
+        .where('role', whereIn: ['doctor', 'secretary', 'admin'])
+        .limit(FirestoreLimits.staffFetchMax)
+        .get();
+    _staffSnapshot = snap.docs
+        .map((d) => UserAccount.fromFirestore(d.id, d.data()))
+        .toList();
+    _staffFetchedAt = DateTime.now();
+    return List.unmodifiable(_staffSnapshot!);
+  }
+
+  @override
+  Future<List<UserAccount>> fetchSecretariesForDoctor(String doctorId) async {
+    final snap = await _users
+        .where('role', isEqualTo: 'secretary')
+        .where('linkedDoctorId', isEqualTo: doctorId)
+        .limit(FirestoreLimits.secretariesPerDoctorMax)
+        .get();
+    return snap.docs
+        .map((d) => UserAccount.fromFirestore(d.id, d.data()))
+        .toList();
   }
 
   @override
@@ -518,6 +563,7 @@ class FirestoreClinicBackend implements ClinicBackend {
     String? authEmail,
   }) async {
     await _users.doc(account.id).set(account.toMap(), SetOptions(merge: true));
+    _staffSnapshot = null;
     final loginEmail = authEmail ?? account.email;
     if (password != null && loginEmail != null) {
       try {
@@ -534,17 +580,24 @@ class FirestoreClinicBackend implements ClinicBackend {
   @override
   Future<void> deleteStaff(String id) async {
     await _users.doc(id).delete();
+    _staffSnapshot = null;
   }
 
   @override
   Stream<List<UserAccount>> watchStaff() {
     return _users
         .where('role', whereIn: ['doctor', 'secretary', 'admin'])
+        .limit(FirestoreLimits.staffFetchMax)
         .snapshots()
         .map(
-          (snap) => snap.docs
-              .map((d) => UserAccount.fromFirestore(d.id, d.data()))
-              .toList(),
+          (snap) {
+            final list = snap.docs
+                .map((d) => UserAccount.fromFirestore(d.id, d.data()))
+                .toList();
+            _staffSnapshot = list;
+            _staffFetchedAt = DateTime.now();
+            return list;
+          },
         );
   }
 

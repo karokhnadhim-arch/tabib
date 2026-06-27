@@ -7,7 +7,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../models/user_account.dart';
 import '../../../presentation/widgets/admin_guard.dart';
 import '../../../services/auth_service.dart';
-import '../../../services/clinic_data_service.dart';
+import '../../../services/staff_data_service.dart';
 import '../../../utils/localization_utils.dart';
 
 enum OwnerStaffFilter { doctors, secretaries, all }
@@ -62,7 +62,8 @@ class OwnerStaffListScreen extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    final backend = context.read<ClinicDataService>().backend;
+    final staffData = context.watch<StaffDataService>();
+    final staff = _filterStaff(staffData.staff);
 
     return AdminGuard(
       child: Scaffold(
@@ -70,68 +71,65 @@ class OwnerStaffListScreen extends StatelessWidget {
           title: Text(_title(l10n)),
           backgroundColor: AppTheme.primaryDark,
         ),
-        body: StreamBuilder<List<UserAccount>>(
-          stream: backend.watchStaff(),
-          builder: (context, snapshot) {
-            final staff = _filterStaff(snapshot.data ?? const []);
-            if (staff.isEmpty) {
-              return Center(child: Text(l10n.noStaffAccounts));
-            }
-            return ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: staff.length,
-              itemBuilder: (context, i) {
-                final user = staff[i];
-                return Card(
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: user.isActive
-                          ? AppTheme.primaryDark.withOpacity(0.1)
-                          : Colors.grey.withOpacity(0.15),
-                      child: Icon(
-                        user.role == UserRole.secretary
-                            ? Icons.support_agent_outlined
-                            : Icons.medical_services_outlined,
-                        color: user.isActive
-                            ? AppTheme.primaryDark
-                            : Colors.grey,
+        body: staff.isEmpty
+            ? Center(child: Text(l10n.noStaffAccounts))
+            : ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: staff.length,
+                itemBuilder: (context, i) {
+                  final user = staff[i];
+                  return Card(
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: user.isActive
+                            ? AppTheme.primaryDark.withOpacity(0.1)
+                            : Colors.grey.withOpacity(0.15),
+                        child: Icon(
+                          user.role == UserRole.secretary
+                              ? Icons.support_agent_outlined
+                              : Icons.medical_services_outlined,
+                          color: user.isActive
+                              ? AppTheme.primaryDark
+                              : Colors.grey,
+                        ),
                       ),
-                    ),
-                    title: Text(user.name.localized(context)),
-                    subtitle: Text(
-                      [
-                        _roleLabel(l10n, user.role),
-                        if (user.email != null) user.email!,
-                        user.isActive ? l10n.accountActive : l10n.accountInactive,
-                      ].join(' · '),
-                    ),
-                    isThreeLine: true,
-                    trailing: user.isSystemOwner
-                        ? Chip(
-                            label: Text(l10n.systemOwner),
-                            backgroundColor:
-                                AppTheme.medicalGreen.withOpacity(0.15),
-                          )
-                        : Switch(
-                            value: user.isActive,
-                            onChanged: (active) async {
-                              final err = await auth.setStaffActive(
-                                user.id,
-                                active,
-                              );
-                              if (err != null && context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(l10n.errorGeneric)),
+                      title: Text(user.name.localized(context)),
+                      subtitle: Text(
+                        [
+                          _roleLabel(l10n, user.role),
+                          if (user.email != null) user.email!,
+                          user.isActive
+                              ? l10n.accountActive
+                              : l10n.accountInactive,
+                        ].join(' · '),
+                      ),
+                      isThreeLine: true,
+                      trailing: user.isSystemOwner
+                          ? Chip(
+                              label: Text(l10n.systemOwner),
+                              backgroundColor:
+                                  AppTheme.medicalGreen.withOpacity(0.15),
+                            )
+                          : Switch(
+                              value: user.isActive,
+                              onChanged: (active) async {
+                                final err = await auth.setStaffActive(
+                                  user.id,
+                                  active,
                                 );
-                              }
-                            },
-                          ),
-                  ),
-                );
-              },
-            );
-          },
-        ),
+                                if (err != null && context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(l10n.errorGeneric),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                    ),
+                  );
+                },
+              ),
       ),
     );
   }

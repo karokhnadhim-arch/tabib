@@ -9,4 +9,8 @@ abstract final class FirestoreLimits {
   static const int prescriptionsPageSize = 30;
   static const int dailyScheduleMax = 200;
   static const int queueActiveMax = 500;
+  static const int staffFetchMax = 5000;
+  static const int secretariesPerDoctorMax = 50;
+  static const Duration referenceCacheTtl = Duration(minutes: 10);
+  static const Duration doctorCacheTtl = Duration(minutes: 5);
 }

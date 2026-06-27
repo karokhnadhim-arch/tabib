@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 
@@ -24,6 +25,7 @@ class FirebaseBootstrap {
       if (Firebase.apps.isEmpty) {
         await Firebase.initializeApp(options: options);
       }
+      await _configureFirestore();
       initialized = true;
       initError = null;
       return true;
@@ -39,4 +41,12 @@ class FirebaseBootstrap {
 
   /// True when the app should use in-memory demo data instead of Firebase.
   static bool get shouldUseDemoMode => !initialized;
+
+  static Future<void> _configureFirestore() async {
+    final firestore = FirebaseFirestore.instance;
+    firestore.settings = const Settings(
+      persistenceEnabled: true,
+      cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+    );
+  }
 }

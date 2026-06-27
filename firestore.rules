@@ -1,0 +1,147 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userPath() {
+      return /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+
+    function userData() {
+      return signedIn() && exists(userPath()) ? get(userPath()).data : {};
+    }
+
+    function isSystemOwner() {
+      return signedIn() && userData().isSystemOwner == true;
+    }
+
+    function userRole() {
+      return userData().role;
+    }
+
+    function isDoctor() {
+      return signedIn() && userRole() == 'doctor';
+    }
+
+    function isSecretary() {
+      return signedIn() && userRole() == 'secretary';
+    }
+
+    function isPatient() {
+      return signedIn() && userRole() == 'patient';
+    }
+
+    function staffDoctorId() {
+      return userData().doctorId;
+    }
+
+    function linkedDoctorId() {
+      return userData().linkedDoctorId;
+    }
+
+    function clinicId() {
+      return userData().clinicId;
+    }
+
+    function accountActive() {
+      return userData().isActive != false;
+    }
+
+    // Public reference data (catalog).
+    match /specialties/{id} {
+      allow read: if true;
+      allow write: if isSystemOwner();
+    }
+
+    match /clinics/{clinicId} {
+      allow read: if true;
+      allow write: if isSystemOwner();
+    }
+
+    match /doctors/{doctorId} {
+      allow read: if true;
+      allow write: if isSystemOwner()
+        || (isDoctor() && accountActive() && doctorId() == staffDoctorId());
+    }
+
+    match /users/{userId} {
+      allow read: if signedIn() && (request.auth.uid == userId || isSystemOwner());
+      allow create, update: if isSystemOwner()
+        || (signedIn() && request.auth.uid == userId);
+      allow delete: if isSystemOwner();
+    }
+
+    match /queue_entries/{entryId} {
+      allow read: if isSystemOwner()
+        || (isPatient() && resource.data.patientId == request.auth.uid)
+        || (isDoctor() && accountActive() && resource.data.doctorId == staffDoctorId())
+        || (isSecretary() && accountActive() && resource.data.doctorId == linkedDoctorId());
+
+      allow create: if isSystemOwner()
+        || (isPatient() && accountActive()
+            && request.resource.data.patientId == request.auth.uid)
+        || (isSecretary() && accountActive()
+            && request.resource.data.doctorId == linkedDoctorId());
+
+      allow update, delete: if isSystemOwner()
+        || (isDoctor() && accountActive() && resource.data.doctorId == staffDoctorId())
+        || (isSecretary() && accountActive() && resource.data.doctorId == linkedDoctorId());
+    }
+
+    match /appointments/{appointmentId} {
+      allow read: if isSystemOwner()
+        || (isPatient() && resource.data.patientId == request.auth.uid)
+        || (isDoctor() && accountActive() && resource.data.doctorId == staffDoctorId())
+        || (isSecretary() && accountActive() && resource.data.clinicId == clinicId());
+
+      allow create: if isSystemOwner()
+        || (isPatient() && accountActive()
+            && request.resource.data.patientId == request.auth.uid)
+        || (isSecretary() && accountActive()
+            && request.resource.data.clinicId == clinicId());
+
+      allow update, delete: if isSystemOwner()
+        || (isDoctor() && accountActive() && resource.data.doctorId == staffDoctorId())
+        || (isSecretary() && accountActive() && resource.data.clinicId == clinicId());
+    }
+
+    match /notifications/{notificationId} {
+      allow read: if isSystemOwner()
+        || (signedIn() && resource.data.userId == request.auth.uid);
+      allow create: if isSystemOwner();
+      allow update: if isSystemOwner()
+        || (signedIn() && resource.data.userId == request.auth.uid);
+      allow delete: if isSystemOwner();
+    }
+
+    match /prescriptions/{prescriptionId} {
+      allow read: if isSystemOwner()
+        || (isPatient() && resource.data.patientId == request.auth.uid)
+        || (isDoctor() && accountActive() && resource.data.doctorId == staffDoctorId())
+        || (isSecretary() && accountActive() && resource.data.clinicId == clinicId());
+
+      allow create, update: if isSystemOwner()
+        || (isDoctor() && accountActive() && request.resource.data.doctorId == staffDoctorId());
+
+      allow delete: if isSystemOwner();
+    }
+
+    match /chat_messages/{messageId} {
+      allow read: if isSystemOwner()
+        || (isPatient() && resource.data.patientId == request.auth.uid)
+        || (isDoctor() && accountActive() && resource.data.clinicId == clinicId())
+        || (isSecretary() && accountActive() && resource.data.clinicId == clinicId());
+
+      allow create: if isSystemOwner()
+        || (isPatient() && resource.data.patientId == request.auth.uid)
+        || (isDoctor() && accountActive())
+        || (isSecretary() && accountActive());
+
+      allow update, delete: if isSystemOwner();
+    }
+  }
+}
