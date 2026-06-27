@@ -9,6 +9,8 @@ import '../../presentation/screens/auth/register_screen.dart';
 import '../../presentation/screens/auth/tabib_login_screen.dart';
 import '../../presentation/screens/doctor/doctor_dashboard_screen.dart';
 import '../../presentation/screens/doctor/doctor_profile_edit_screen.dart';
+import '../../presentation/screens/doctor/owner_doctors_screen.dart';
+import '../../presentation/screens/doctor/owner_doctor_detail_screen.dart';
 import '../../presentation/screens/doctor/owner_clinics_screen.dart';
 import '../../presentation/screens/doctor/owner_platform_screen.dart';
 import '../../presentation/screens/doctor/owner_staff_list_screen.dart';
@@ -130,9 +132,15 @@ class AppRouter {
                   ),
                   GoRoute(
                     path: 'doctors',
-                    builder: (_, __) => const OwnerStaffListScreen(
-                      filter: OwnerStaffFilter.doctors,
-                    ),
+                    builder: (_, __) => const OwnerDoctorsScreen(),
+                    routes: [
+                      GoRoute(
+                        path: ':doctorId',
+                        builder: (_, state) => OwnerDoctorDetailScreen(
+                          doctorId: state.pathParameters['doctorId']!,
+                        ),
+                      ),
+                    ],
                   ),
                   GoRoute(
                     path: 'secretaries',

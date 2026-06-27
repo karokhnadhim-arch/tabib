@@ -282,7 +282,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get firebaseSetupHint => 'flutterfire configure جێبەجێ بکە. README بخوێنەوە.';
 
   @override
-  String get adminDashboard => 'داشبۆردی بەڕێوەبەر';
+  String get adminDashboard => 'داشبۆردی بەڕێوەبەرایەتی';
 
   @override
   String get manageClinics => 'بەڕێوەبردنی نۆرینگەکان';
@@ -906,7 +906,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get viewWorkingSchedule => 'خشتەی کار';
 
   @override
-  String get adminControlPanel => 'پانێڵی کۆntrۆڵی بەڕێوەبەر';
+  String get adminControlPanel => 'پانێڵی کۆنترۆڵی بەڕێوەبەر';
 
   @override
   String get adminControlPanelHint => 'بەڕێوەبردنی دکتۆر، سکرتێر، نۆرینگە و بەشداریکردن';
@@ -919,6 +919,9 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get viewAllDoctorsHint => 'گەڕان و بەڕێوەبردنی هەژمارەکانی دکتۆر';
+
+  @override
+  String get viewAllDoctorsSubscriptionHint => 'پلان، دۆخ و نوێکردنەوەی بەشداریکردن';
 
   @override
   String get viewAllSecretaries => 'هەموو سکرتێرەکان';
@@ -1068,5 +1071,69 @@ class AppLocalizationsKu extends AppLocalizations {
   String get assignedDoctors => 'دکتۆرەکان';
 
   @override
+  String get filterAll => 'هەموو';
+
+  @override
+  String get activateSubscription => 'چالاککردنی بەشداریکردن';
+
+  @override
+  String get doctorProfile => 'پڕۆفایلی دکتۆر';
+
+  @override
   String get noExpiry => 'بەبێ بەرواری بەسەرچوون';
+
+  @override
+  String get doctorManagement => 'بەڕێوەبردنی دکتۆرەکان';
+
+  @override
+  String get doctorManagementHint => 'گەڕان، بینینی پڕۆفایل و بەڕێوەبردنی سکرتێرە دیاریکراوەکان';
+
+  @override
+  String get adminDoctorSearchHint => 'ناو، بوار، نۆرینگە، مۆبایل یان ئیمەیڵ...';
+
+  @override
+  String get doctorInformation => 'زانیاری دکتۆر';
+
+  @override
+  String get assignedSecretaries => 'سکرتێرە دیاریکراوەکان';
+
+  @override
+  String secretariesCount(int count) {
+    return '$count سکرتێر';
+  }
+
+  @override
+  String get addSecretary => 'سکرتێر زیاد بکە';
+
+  @override
+  String get editSecretary => 'دەستکاری سکرتێر';
+
+  @override
+  String get deleteSecretary => 'سڕینەوەی سکرتێر';
+
+  @override
+  String get deleteSecretaryConfirm => 'ئەم هەژمارەی سکرتێرە بسڕیتەوە؟ ناگەڕێتەوە.';
+
+  @override
+  String get noSecretariesAssigned => 'هیچ سکرتێرێک بۆ ئەم دکتۆرە دیاری نەکراوە';
+
+  @override
+  String get loadMore => 'زیاتر بار بکە';
+
+  @override
+  String pageOf(int current, int total) {
+    return 'لاپەڕە $current لە $total';
+  }
+
+  @override
+  String get itemsPerPage => 'بۆ هەر لاپەڕەیەک';
+
+  @override
+  String get notAvailable => '—';
+
+  @override
+  String get clinicName => 'ناوی نۆرینگە';
+
+  @override
+  String get status => 'دۆخ';
 }

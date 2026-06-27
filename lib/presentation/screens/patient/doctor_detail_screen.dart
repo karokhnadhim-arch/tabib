@@ -573,6 +573,13 @@ class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
   Future<void> _bookQueue(BuildContext context, Doctor doctor) async {
     final auth = context.read<AuthService>();
     final l10n = AppLocalizations.of(context);
+    final data = context.read<ClinicDataService>();
+    if (!data.clinicAllowsQueue(doctor.clinicId)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.subscriptionBlocked)),
+      );
+      return;
+    }
     final entry = await context.read<QueueService>().bookQueue(
           doctorId: doctor.id,
           patientId: auth.patientId,

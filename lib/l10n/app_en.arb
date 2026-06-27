@@ -341,6 +341,7 @@
   "systemOwner": "System Owner",
   "viewAllDoctors": "View all doctors",
   "viewAllDoctorsHint": "Browse and manage doctor accounts",
+  "viewAllDoctorsSubscriptionHint": "Subscription plan, status, and renewals",
   "viewAllSecretaries": "View all secretaries",
   "viewAllSecretariesHint": "Browse and manage secretary accounts",
   "viewAllClinics": "View all clinics",
@@ -403,5 +404,37 @@
   "subscriptionRenewed": "Subscription renewed successfully",
   "viewPatientRecords": "View patient records",
   "assignedDoctors": "Doctors",
-  "noExpiry": "No expiry date"
+  "filterAll": "All",
+  "activateSubscription": "Activate subscription",
+  "doctorProfile": "Doctor profile",
+  "noExpiry": "No expiry date",
+  "doctorManagement": "Doctor management",
+  "doctorManagementHint": "Search doctors, view profiles, and manage assigned secretaries",
+  "adminDoctorSearchHint": "Name, specialty, clinic, mobile, or email...",
+  "doctorInformation": "Doctor information",
+  "assignedSecretaries": "Assigned secretaries",
+  "secretariesCount": "{count} secretaries",
+  "@secretariesCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "addSecretary": "Add secretary",
+  "editSecretary": "Edit secretary",
+  "deleteSecretary": "Delete secretary",
+  "deleteSecretaryConfirm": "Remove this secretary account? This cannot be undone.",
+  "noSecretariesAssigned": "No secretaries assigned to this doctor",
+  "loadMore": "Load more",
+  "pageOf": "Page {current} of {total}",
+  "@pageOf": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "itemsPerPage": "Per page",
+  "notAvailable": "—",
+  "clinicName": "Clinic name",
+  "fullName": "Full name",
+  "status": "Status"
 }

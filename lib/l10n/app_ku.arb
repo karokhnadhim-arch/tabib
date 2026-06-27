@@ -89,7 +89,7 @@
   "langEnglish": "ئینگلیزی",
   "firebaseNotConfigured": "Firebase ڕێکنەخراوە",
   "firebaseSetupHint": "flutterfire configure جێبەجێ بکە. README بخوێنەوە.",
-  "adminDashboard": "داشبۆردی بەڕێوەبەر",
+  "adminDashboard": "داشبۆردی بەڕێوەبەرایەتی",
   "manageClinics": "بەڕێوەبردنی نۆرینگەکان",
   "manageDoctors": "بەڕێوەبردنی دکتۆرەکان",
   "manageSpecialties": "بەڕێوەبردنی بوارەکان",
@@ -301,11 +301,12 @@
   "noScheduleSet": "خشتەی کار دیاری نەکراوە",
   "editWorkingSchedule": "دەستکاری خشتەی کار",
   "viewWorkingSchedule": "خشتەی کار",
-  "adminControlPanel": "پانێڵی کۆntrۆڵی بەڕێوەبەر",
+  "adminControlPanel": "پانێڵی کۆنترۆڵی بەڕێوەبەر",
   "adminControlPanelHint": "بەڕێوەبردنی دکتۆر، سکرتێر، نۆرینگە و بەشداریکردن",
   "systemOwner": "خاوەنی سیستەم",
   "viewAllDoctors": "هەموو دکتۆرەکان",
   "viewAllDoctorsHint": "گەڕان و بەڕێوەبردنی هەژمارەکانی دکتۆر",
+  "viewAllDoctorsSubscriptionHint": "پلان، دۆخ و نوێکردنەوەی بەشداریکردن",
   "viewAllSecretaries": "هەموو سکرتێرەکان",
   "viewAllSecretariesHint": "گەڕان و بەڕێوەبردنی هەژمارەکانی سکرتێر",
   "viewAllClinics": "هەموو نۆرینگەکان",
@@ -368,5 +369,37 @@
   "subscriptionRenewed": "بەشداریکردن بە سەرکەوتوویی نوێکرایەوە",
   "viewPatientRecords": "بینینی تۆمارەکانی نەخۆش",
   "assignedDoctors": "دکتۆرەکان",
-  "noExpiry": "بەبێ بەرواری بەسەرچوون"
+  "filterAll": "هەموو",
+  "activateSubscription": "چالاککردنی بەشداریکردن",
+  "doctorProfile": "پڕۆفایلی دکتۆر",
+  "noExpiry": "بەبێ بەرواری بەسەرچوون",
+  "doctorManagement": "بەڕێوەبردنی دکتۆرەکان",
+  "doctorManagementHint": "گەڕان، بینینی پڕۆفایل و بەڕێوەبردنی سکرتێرە دیاریکراوەکان",
+  "adminDoctorSearchHint": "ناو، بوار، نۆرینگە، مۆبایل یان ئیمەیڵ...",
+  "doctorInformation": "زانیاری دکتۆر",
+  "assignedSecretaries": "سکرتێرە دیاریکراوەکان",
+  "secretariesCount": "{count} سکرتێر",
+  "@secretariesCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "addSecretary": "سکرتێر زیاد بکە",
+  "editSecretary": "دەستکاری سکرتێر",
+  "deleteSecretary": "سڕینەوەی سکرتێر",
+  "deleteSecretaryConfirm": "ئەم هەژمارەی سکرتێرە بسڕیتەوە؟ ناگەڕێتەوە.",
+  "noSecretariesAssigned": "هیچ سکرتێرێک بۆ ئەم دکتۆرە دیاری نەکراوە",
+  "loadMore": "زیاتر بار بکە",
+  "pageOf": "لاپەڕە {current} لە {total}",
+  "@pageOf": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "itemsPerPage": "بۆ هەر لاپەڕەیەک",
+  "notAvailable": "—",
+  "clinicName": "ناوی نۆرینگە",
+  "fullName": "ناوی تەواو",
+  "status": "دۆخ"
 }

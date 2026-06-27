@@ -776,6 +776,67 @@ class AuthService extends ChangeNotifier {
     );
     return null;
   }
+
+  /// Admin-only: update a secretary assigned to a single doctor.
+  Future<String?> updateSecretaryAccount({
+    required String secretaryId,
+    required String name,
+    String? email,
+    String? phone,
+    bool? isActive,
+  }) async {
+    if (!isSystemOwner) return 'unauthorized';
+
+    final staff = await _backend.watchStaff().first;
+    final account = staff.where((s) => s.id == secretaryId).firstOrNull;
+    if (account == null || account.role != UserRole.secretary) return 'error';
+    if (account.isSystemOwner) return 'unauthorized';
+
+    final trimmedEmail = email?.trim();
+    final trimmedPhone = phone?.trim();
+
+    if (trimmedEmail != null &&
+        trimmedEmail.isNotEmpty &&
+        staff.any((s) =>
+            s.id != secretaryId &&
+            s.email != null &&
+            s.email!.toLowerCase() == trimmedEmail.toLowerCase())) {
+      return 'email_in_use';
+    }
+    if (trimmedPhone != null &&
+        trimmedPhone.isNotEmpty &&
+        staff.any((s) =>
+            s.id != secretaryId &&
+            s.phone != null &&
+            StaffAuthIdentifiers.normalizePhone(s.phone!) ==
+                StaffAuthIdentifiers.normalizePhone(trimmedPhone))) {
+      return 'phone_in_use';
+    }
+
+    final nameText = LocalizedText(ku: name, ar: name, en: name);
+    await _backend.upsertStaff(
+      account.copyWith(
+        name: nameText,
+        email: trimmedEmail?.isNotEmpty == true ? trimmedEmail : null,
+        phone: trimmedPhone?.isNotEmpty == true ? trimmedPhone : null,
+        isActive: isActive ?? account.isActive,
+      ),
+    );
+    return null;
+  }
+
+  /// Admin-only: delete a secretary account.
+  Future<String?> deleteSecretaryAccount(String secretaryId) async {
+    if (!isSystemOwner) return 'unauthorized';
+
+    final staff = await _backend.watchStaff().first;
+    final account = staff.where((s) => s.id == secretaryId).firstOrNull;
+    if (account == null || account.role != UserRole.secretary) return 'error';
+    if (account.isSystemOwner) return 'unauthorized';
+
+    await _backend.deleteStaff(secretaryId);
+    return null;
+  }
 }
 
 extension _FirstOrNull<T> on Iterable<T> {

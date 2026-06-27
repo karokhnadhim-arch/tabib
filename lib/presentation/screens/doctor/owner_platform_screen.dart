@@ -68,8 +68,8 @@ class OwnerPlatformScreen extends StatelessWidget {
             ),
             _SectionHeader(label: l10n.viewAndManage),
             _PlatformTile(
-              title: l10n.viewAllDoctors,
-              subtitle: l10n.viewAllDoctorsHint,
+              title: l10n.doctorManagement,
+              subtitle: l10n.doctorManagementHint,
               icon: Icons.medical_services_outlined,
               onTap: () => context.push('/doctor/platform/doctors'),
             ),

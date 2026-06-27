@@ -921,6 +921,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get viewAllDoctorsHint => 'تصفح وإدارة حسابات الأطباء';
 
   @override
+  String get viewAllDoctorsSubscriptionHint => 'خطة الاشتراك والحالة والتجديد';
+
+  @override
   String get viewAllSecretaries => 'عرض جميع السكرتaries';
 
   @override
@@ -1068,5 +1071,69 @@ class AppLocalizationsAr extends AppLocalizations {
   String get assignedDoctors => 'الأطباء';
 
   @override
+  String get filterAll => 'الكل';
+
+  @override
+  String get activateSubscription => 'تفعيل الاشتراك';
+
+  @override
+  String get doctorProfile => 'ملف الطبيب';
+
+  @override
   String get noExpiry => 'بدون تاريخ انتهاء';
+
+  @override
+  String get doctorManagement => 'إدارة الأطباء';
+
+  @override
+  String get doctorManagementHint => 'بحث الأطباء وعرض الملفات وإدارة السكرتaries المعينين';
+
+  @override
+  String get adminDoctorSearchHint => 'الاسم، التخصص، العيادة، الجوال، أو البريد...';
+
+  @override
+  String get doctorInformation => 'معلومات الطبيب';
+
+  @override
+  String get assignedSecretaries => 'السكرتaries المعينون';
+
+  @override
+  String secretariesCount(int count) {
+    return '$count سكرتaries';
+  }
+
+  @override
+  String get addSecretary => 'إضافة سكرتير';
+
+  @override
+  String get editSecretary => 'تعديل السكرتير';
+
+  @override
+  String get deleteSecretary => 'حذف السكرتير';
+
+  @override
+  String get deleteSecretaryConfirm => 'إزالة حساب هذا السكرتير؟ لا يمكن التراجع.';
+
+  @override
+  String get noSecretariesAssigned => 'لا يوجد سكرتaries معينون لهذا الطبيب';
+
+  @override
+  String get loadMore => 'تحميل المزيد';
+
+  @override
+  String pageOf(int current, int total) {
+    return 'صفحة $current من $total';
+  }
+
+  @override
+  String get itemsPerPage => 'لكل صفحة';
+
+  @override
+  String get notAvailable => '—';
+
+  @override
+  String get clinicName => 'اسم العيادة';
+
+  @override
+  String get status => 'الحالة';
 }

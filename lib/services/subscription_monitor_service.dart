@@ -102,8 +102,8 @@ class SubscriptionMonitorService extends ChangeNotifier {
             ? 'Subscription expiring soon'
             : 'Subscription expired',
         body: titleKey == 'warn7'
-            ? 'Your subscription will expire in 7 days. Please renew to avoid service interruption.'
-            : 'Your subscription has expired today. Please renew to restore full access.',
+            ? 'Your subscription will expire in 7 days.'
+            : 'Your subscription has expired. Please renew to restore access.',
         type: AppNotificationType.subscription.name,
       );
     }

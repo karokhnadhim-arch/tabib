@@ -306,6 +306,7 @@
   "systemOwner": "مالك النظام",
   "viewAllDoctors": "عرض جميع الأطباء",
   "viewAllDoctorsHint": "تصفح وإدارة حسابات الأطباء",
+  "viewAllDoctorsSubscriptionHint": "خطة الاشتراك والحالة والتجديد",
   "viewAllSecretaries": "عرض جميع السكرتaries",
   "viewAllSecretariesHint": "تصفح وإدارة حسابات السكرتaries",
   "viewAllClinics": "عرض جميع العيادات",
@@ -368,5 +369,37 @@
   "subscriptionRenewed": "تم تجديد الاشتراك بنجاح",
   "viewPatientRecords": "عرض سجلات المرضى",
   "assignedDoctors": "الأطباء",
-  "noExpiry": "بدون تاريخ انتهاء"
+  "filterAll": "الكل",
+  "activateSubscription": "تفعيل الاشتراك",
+  "doctorProfile": "ملف الطبيب",
+  "noExpiry": "بدون تاريخ انتهاء",
+  "doctorManagement": "إدارة الأطباء",
+  "doctorManagementHint": "بحث الأطباء وعرض الملفات وإدارة السكرتaries المعينين",
+  "adminDoctorSearchHint": "الاسم، التخصص، العيادة، الجوال، أو البريد...",
+  "doctorInformation": "معلومات الطبيب",
+  "assignedSecretaries": "السكرتaries المعينون",
+  "secretariesCount": "{count} سكرتaries",
+  "@secretariesCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "addSecretary": "إضافة سكرتير",
+  "editSecretary": "تعديل السكرتير",
+  "deleteSecretary": "حذف السكرتير",
+  "deleteSecretaryConfirm": "إزالة حساب هذا السكرتير؟ لا يمكن التراجع.",
+  "noSecretariesAssigned": "لا يوجد سكرتaries معينون لهذا الطبيب",
+  "loadMore": "تحميل المزيد",
+  "pageOf": "صفحة {current} من {total}",
+  "@pageOf": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "itemsPerPage": "لكل صفحة",
+  "notAvailable": "—",
+  "clinicName": "اسم العيادة",
+  "fullName": "الاسم الكامل",
+  "status": "الحالة"
 }

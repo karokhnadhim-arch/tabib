@@ -921,6 +921,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get viewAllDoctorsHint => 'Browse and manage doctor accounts';
 
   @override
+  String get viewAllDoctorsSubscriptionHint => 'Subscription plan, status, and renewals';
+
+  @override
   String get viewAllSecretaries => 'View all secretaries';
 
   @override
@@ -1068,5 +1071,69 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assignedDoctors => 'Doctors';
 
   @override
+  String get filterAll => 'All';
+
+  @override
+  String get activateSubscription => 'Activate subscription';
+
+  @override
+  String get doctorProfile => 'Doctor profile';
+
+  @override
   String get noExpiry => 'No expiry date';
+
+  @override
+  String get doctorManagement => 'Doctor management';
+
+  @override
+  String get doctorManagementHint => 'Search doctors, view profiles, and manage assigned secretaries';
+
+  @override
+  String get adminDoctorSearchHint => 'Name, specialty, clinic, mobile, or email...';
+
+  @override
+  String get doctorInformation => 'Doctor information';
+
+  @override
+  String get assignedSecretaries => 'Assigned secretaries';
+
+  @override
+  String secretariesCount(int count) {
+    return '$count secretaries';
+  }
+
+  @override
+  String get addSecretary => 'Add secretary';
+
+  @override
+  String get editSecretary => 'Edit secretary';
+
+  @override
+  String get deleteSecretary => 'Delete secretary';
+
+  @override
+  String get deleteSecretaryConfirm => 'Remove this secretary account? This cannot be undone.';
+
+  @override
+  String get noSecretariesAssigned => 'No secretaries assigned to this doctor';
+
+  @override
+  String get loadMore => 'Load more';
+
+  @override
+  String pageOf(int current, int total) {
+    return 'Page $current of $total';
+  }
+
+  @override
+  String get itemsPerPage => 'Per page';
+
+  @override
+  String get notAvailable => '—';
+
+  @override
+  String get clinicName => 'Clinic name';
+
+  @override
+  String get status => 'Status';
 }

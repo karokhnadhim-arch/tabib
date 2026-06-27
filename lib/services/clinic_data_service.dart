@@ -154,6 +154,8 @@ class ClinicDataService extends ChangeNotifier {
     return ClinicSubscriptionHelper.allowsNewAppointments(clinic);
   }
 
+  bool clinicAllowsQueue(String clinicId) => clinicAllowsAppointments(clinicId);
+
   /// Real-time clinic catalog for subscription dashboards and gates.
   void startRealtimeCatalog() {
     if (_realtimeStarted) return;

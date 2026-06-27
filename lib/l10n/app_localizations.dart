@@ -1895,6 +1895,12 @@ abstract class AppLocalizations {
   /// **'Browse and manage doctor accounts'**
   String get viewAllDoctorsHint;
 
+  /// No description provided for @viewAllDoctorsSubscriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription plan, status, and renewals'**
+  String get viewAllDoctorsSubscriptionHint;
+
   /// No description provided for @viewAllSecretaries.
   ///
   /// In en, this message translates to:
@@ -2177,11 +2183,131 @@ abstract class AppLocalizations {
   /// **'Doctors'**
   String get assignedDoctors;
 
+  /// No description provided for @filterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get filterAll;
+
+  /// No description provided for @activateSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate subscription'**
+  String get activateSubscription;
+
+  /// No description provided for @doctorProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor profile'**
+  String get doctorProfile;
+
   /// No description provided for @noExpiry.
   ///
   /// In en, this message translates to:
   /// **'No expiry date'**
   String get noExpiry;
+
+  /// No description provided for @doctorManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor management'**
+  String get doctorManagement;
+
+  /// No description provided for @doctorManagementHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search doctors, view profiles, and manage assigned secretaries'**
+  String get doctorManagementHint;
+
+  /// No description provided for @adminDoctorSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Name, specialty, clinic, mobile, or email...'**
+  String get adminDoctorSearchHint;
+
+  /// No description provided for @doctorInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor information'**
+  String get doctorInformation;
+
+  /// No description provided for @assignedSecretaries.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned secretaries'**
+  String get assignedSecretaries;
+
+  /// No description provided for @secretariesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} secretaries'**
+  String secretariesCount(int count);
+
+  /// No description provided for @addSecretary.
+  ///
+  /// In en, this message translates to:
+  /// **'Add secretary'**
+  String get addSecretary;
+
+  /// No description provided for @editSecretary.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit secretary'**
+  String get editSecretary;
+
+  /// No description provided for @deleteSecretary.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete secretary'**
+  String get deleteSecretary;
+
+  /// No description provided for @deleteSecretaryConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this secretary account? This cannot be undone.'**
+  String get deleteSecretaryConfirm;
+
+  /// No description provided for @noSecretariesAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'No secretaries assigned to this doctor'**
+  String get noSecretariesAssigned;
+
+  /// No description provided for @loadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Load more'**
+  String get loadMore;
+
+  /// No description provided for @pageOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Page {current} of {total}'**
+  String pageOf(int current, int total);
+
+  /// No description provided for @itemsPerPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Per page'**
+  String get itemsPerPage;
+
+  /// No description provided for @notAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'—'**
+  String get notAvailable;
+
+  /// No description provided for @clinicName.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic name'**
+  String get clinicName;
+
+  /// No description provided for @status.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get status;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

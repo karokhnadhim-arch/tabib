@@ -9,7 +9,9 @@ import '../../../l10n/app_localizations.dart';
 import '../../../models/appointment.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../utils/localization_utils.dart';
+import '../../../core/utils/doctor_subscription_resolver.dart';
 import '../../widgets/doctor_avatar.dart';
+import '../../widgets/subscription_status_badge.dart';
 import '../../../widgets/common_widgets.dart';
 import 'package:intl/intl.dart';
 
@@ -37,7 +39,12 @@ class _TabibDoctorListScreenState extends State<TabibDoctorListScreen> {
     super.initState();
     _specialtyFilter = widget.initialSpecialtyId;
     _scrollController.addListener(_onScroll);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _loadInitial());
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final data = context.read<ClinicDataService>();
+      await data.ensureCatalogLoaded();
+      data.startRealtimeCatalog();
+      await _loadInitial();
+    });
   }
 
   Future<void> _loadInitial() async {
@@ -199,6 +206,19 @@ class _TabibDoctorListScreenState extends State<TabibDoctorListScreen> {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
+                                  const SizedBox(height: 4),
+                                  SubscriptionStatusBadge(
+                                    status: DoctorSubscriptionResolver.statusFor(
+                                      doctor,
+                                      data,
+                                    ),
+                                    remainingDays:
+                                        DoctorSubscriptionResolver.remainingDays(
+                                      doctor,
+                                      data,
+                                    ),
+                                    compact: true,
+                                  ),
                                   const SizedBox(height: 4),
                                   Row(
                                     children: [
