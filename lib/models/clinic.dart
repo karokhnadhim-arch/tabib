@@ -1,17 +1,8 @@
 import 'localized_text.dart';
+import '../core/utils/clinic_subscription.dart';
 
-enum SubscriptionPlan { free, basic, premium }
-
-extension SubscriptionPlanX on SubscriptionPlan {
-  String get storageKey => name;
-
-  static SubscriptionPlan fromKey(String? key) {
-    return SubscriptionPlan.values.firstWhere(
-      (p) => p.name == key,
-      orElse: () => SubscriptionPlan.basic,
-    );
-  }
-}
+export '../core/utils/clinic_subscription.dart'
+    show SubscriptionPlan, SubscriptionPlanX;
 
 class Clinic {
   const Clinic({
@@ -21,9 +12,12 @@ class Clinic {
     required this.latitude,
     required this.longitude,
     required this.phone,
-    this.subscriptionPlan = SubscriptionPlan.basic,
+    this.subscriptionPlan = SubscriptionPlan.oneMonth,
     this.subscriptionActive = true,
+    this.subscriptionStartedAt,
     this.subscriptionExpiresAt,
+    this.subscriptionWarned7Days = false,
+    this.subscriptionExpiredNotified = false,
   });
 
   final String id;
@@ -34,7 +28,10 @@ class Clinic {
   final String phone;
   final SubscriptionPlan subscriptionPlan;
   final bool subscriptionActive;
+  final DateTime? subscriptionStartedAt;
   final DateTime? subscriptionExpiresAt;
+  final bool subscriptionWarned7Days;
+  final bool subscriptionExpiredNotified;
 
   Clinic copyWith({
     String? id,
@@ -45,7 +42,10 @@ class Clinic {
     String? phone,
     SubscriptionPlan? subscriptionPlan,
     bool? subscriptionActive,
+    DateTime? subscriptionStartedAt,
     DateTime? subscriptionExpiresAt,
+    bool? subscriptionWarned7Days,
+    bool? subscriptionExpiredNotified,
   }) {
     return Clinic(
       id: id ?? this.id,
@@ -56,8 +56,14 @@ class Clinic {
       phone: phone ?? this.phone,
       subscriptionPlan: subscriptionPlan ?? this.subscriptionPlan,
       subscriptionActive: subscriptionActive ?? this.subscriptionActive,
+      subscriptionStartedAt:
+          subscriptionStartedAt ?? this.subscriptionStartedAt,
       subscriptionExpiresAt:
           subscriptionExpiresAt ?? this.subscriptionExpiresAt,
+      subscriptionWarned7Days:
+          subscriptionWarned7Days ?? this.subscriptionWarned7Days,
+      subscriptionExpiredNotified:
+          subscriptionExpiredNotified ?? this.subscriptionExpiredNotified,
     );
   }
 
@@ -69,22 +75,17 @@ class Clinic {
         'phone': phone,
         'subscriptionPlan': subscriptionPlan.storageKey,
         'subscriptionActive': subscriptionActive,
+        if (subscriptionStartedAt != null)
+          'subscriptionStartedAt':
+              subscriptionStartedAt!.millisecondsSinceEpoch,
         if (subscriptionExpiresAt != null)
           'subscriptionExpiresAt':
               subscriptionExpiresAt!.millisecondsSinceEpoch,
+        if (subscriptionWarned7Days) 'subscriptionWarned7Days': true,
+        if (subscriptionExpiredNotified) 'subscriptionExpiredNotified': true,
       };
 
   factory Clinic.fromFirestore(String id, Map<String, dynamic> data) {
-    final expiresRaw = data['subscriptionExpiresAt'];
-    DateTime? expiresAt;
-    if (expiresRaw is int) {
-      expiresAt = DateTime.fromMillisecondsSinceEpoch(expiresRaw);
-    } else if (expiresRaw != null) {
-      try {
-        expiresAt = (expiresRaw as dynamic).toDate() as DateTime;
-      } catch (_) {}
-    }
-
     return Clinic(
       id: id,
       name: LocalizedText.fromMap(data['name'] as Map<String, dynamic>?),
@@ -95,7 +96,20 @@ class Clinic {
       subscriptionPlan:
           SubscriptionPlanX.fromKey(data['subscriptionPlan'] as String?),
       subscriptionActive: data['subscriptionActive'] != false,
-      subscriptionExpiresAt: expiresAt,
+      subscriptionStartedAt: _parseDate(data['subscriptionStartedAt']),
+      subscriptionExpiresAt: _parseDate(data['subscriptionExpiresAt']),
+      subscriptionWarned7Days: data['subscriptionWarned7Days'] == true,
+      subscriptionExpiredNotified: data['subscriptionExpiredNotified'] == true,
     );
+  }
+
+  static DateTime? _parseDate(dynamic raw) {
+    if (raw == null) return null;
+    if (raw is int) return DateTime.fromMillisecondsSinceEpoch(raw);
+    try {
+      return (raw as dynamic).toDate() as DateTime;
+    } catch (_) {
+      return null;
+    }
   }
 }

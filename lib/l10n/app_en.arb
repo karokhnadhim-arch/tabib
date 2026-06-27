@@ -363,10 +363,45 @@
   "createAccounts": "Create accounts",
   "viewAndManage": "View and manage",
   "subscriptionPlan": "Subscription plan",
+  "subscriptionPlan1Month": "1 Month",
+  "subscriptionPlan2Months": "2 Months",
+  "subscriptionPlan3Months": "3 Months",
+  "subscriptionPlan6Months": "6 Months",
+  "subscriptionPlan12Months": "12 Months (1 Year)",
   "subscriptionPlanFree": "Free",
   "subscriptionPlanBasic": "Basic",
   "subscriptionPlanPremium": "Premium",
   "subscriptionActive": "Subscription active",
   "subscriptionExpires": "Expires",
+  "subscriptionStarted": "Start date",
+  "subscriptionRemainingDays": "Remaining days",
+  "subscriptionStatusActive": "Active",
+  "subscriptionStatusExpiringSoon": "Expiring soon",
+  "subscriptionStatusExpired": "Expired",
+  "subscriptionDaysRemaining": "{days} days left",
+  "@subscriptionDaysRemaining": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "subscriptionExpiredDaysAgo": "Expired {days} days ago",
+  "@subscriptionExpiredDaysAgo": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "subscriptionExpiredTitle": "Subscription Expired",
+  "subscriptionExpiredMessage": "Your clinic subscription has expired. New appointments are disabled. Patient records remain available.",
+  "subscriptionExpiringBanner": "Your subscription expires in {days} days. Please renew soon.",
+  "@subscriptionExpiringBanner": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "subscriptionBlocked": "Cannot book — clinic subscription has expired.",
+  "renewSubscription": "Renew subscription",
+  "subscriptionRenewed": "Subscription renewed successfully",
+  "viewPatientRecords": "View patient records",
+  "assignedDoctors": "Doctors",
   "noExpiry": "No expiry date"
 }

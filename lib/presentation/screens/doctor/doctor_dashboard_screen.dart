@@ -8,6 +8,10 @@ import '../../../core/widgets/responsive_scaffold.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/appointment.dart';
 import '../../../models/doctor.dart';
+import '../../../core/utils/clinic_subscription.dart';
+import '../../../models/clinic.dart';
+import '../../../presentation/screens/subscription/subscription_expired_screen.dart';
+import '../../../presentation/widgets/subscription_status_badge.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../services/queue_service.dart';
@@ -29,13 +33,27 @@ class DoctorDashboardScreen extends StatefulWidget {
 
 class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
   int _tab = 0;
+  bool _recordsOnlyMode = false;
+
+  Clinic? _clinicForUser(ClinicDataService data, AuthService auth) {
+    final clinicId = auth.currentUser?.clinicId;
+    if (clinicId == null || clinicId.isEmpty) return null;
+    return data.clinicById(clinicId);
+  }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final auth = context.read<AuthService>();
+      final data = context.read<ClinicDataService>();
+      data.ensureCatalogLoaded();
+      data.startRealtimeCatalog();
       final doctorId = auth.currentUser?.doctorId ?? '';
+      final userId = auth.currentUser?.id;
+      if (userId != null && userId.isNotEmpty) {
+        context.read<NotificationProvider>().watch(userId);
+      }
       if (doctorId.isNotEmpty) {
         context.read<AppointmentProvider>().watchDoctor(doctorId);
         context.read<QueueService>().watchDoctorQueue(doctorId);
@@ -61,6 +79,24 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
     final appointments = context.watch<AppointmentProvider>();
     final doctorId = auth.currentUser?.doctorId ?? '';
     final doctor = doctorId.isEmpty ? null : data.doctorById(doctorId);
+    final clinic = _clinicForUser(data, auth);
+    final subscriptionStatus =
+        clinic != null ? ClinicSubscriptionHelper.statusFor(clinic) : null;
+    final remainingDays =
+        clinic != null ? ClinicSubscriptionHelper.remainingDays(clinic) : 0;
+
+    if (clinic != null &&
+        ClinicSubscriptionHelper.isExpired(clinic) &&
+        !_recordsOnlyMode) {
+      return SubscriptionExpiredScreen(
+        clinic: clinic,
+        onViewRecords: () => setState(() {
+          _recordsOnlyMode = true;
+          _tab = 3;
+        }),
+        onRenewed: () => setState(() => _recordsOnlyMode = false),
+      );
+    }
 
     final pending = appointments.appointments
         .where((a) => a.isPending && a.doctorId == doctorId)
@@ -99,6 +135,36 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
       body: ResponsiveBody(
         child: CustomScrollView(
           slivers: [
+            if (subscriptionStatus == ClinicSubscriptionStatus.expiringSoon &&
+                clinic != null)
+              SliverToBoxAdapter(
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFF8E1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: const Color(0xFFF9A825)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.warning_amber_rounded,
+                          color: Color(0xFFF9A825)),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          l10n.subscriptionExpiringBanner(remainingDays),
+                        ),
+                      ),
+                      SubscriptionStatusBadge(
+                        status: subscriptionStatus!,
+                        remainingDays: remainingDays,
+                        compact: true,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             SliverToBoxAdapter(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import '../../core/utils/clinic_subscription.dart';
 import '../../models/clinic.dart';
 import '../../models/doctor.dart';
 import '../../models/doctor_working_schedule.dart';
@@ -488,8 +489,16 @@ class InMemoryClinicBackend implements ClinicBackend {
       latitude: 36.1911,
       longitude: 44.0092,
       phone: '07501234567',
+      subscriptionPlan: SubscriptionPlan.oneMonth,
+      subscriptionActive: true,
+      subscriptionStartedAt: null,
+      subscriptionExpiresAt: null,
     );
-    _clinics.add(clinic);
+    final seededClinic = clinic.copyWith(
+      subscriptionStartedAt: DateTime.now().subtract(const Duration(days: 10)),
+      subscriptionExpiresAt: DateTime.now().add(const Duration(days: 20)),
+    );
+    _clinics.add(seededClinic);
 
     _doctors.add(
       Doctor(
@@ -501,8 +510,8 @@ class InMemoryClinicBackend implements ClinicBackend {
         ),
         specialtyId: 'general',
         specialty: specialties[0],
-        clinicId: clinic.id,
-        clinic: clinic,
+        clinicId: seededClinic.id,
+        clinic: seededClinic,
         rating: 4.8,
         experienceYears: 12,
         bio: const LocalizedText(
@@ -520,7 +529,7 @@ class InMemoryClinicBackend implements ClinicBackend {
           ar: 'دكتوراه في الطب – جامعة أربيل',
           en: 'MD – University of Erbil',
         ),
-        clinicName: clinic.name,
+        clinicName: seededClinic.name,
         contactPhone: '07501234567',
         whatsappNumber: '07501234567',
         contactEmail: 'doctor@tabib.demo',
@@ -534,8 +543,8 @@ class InMemoryClinicBackend implements ClinicBackend {
         ],
         workingSchedule: DoctorWorkingSchedule.demoSchedule(),
         languagesSpoken: const ['Kurdish', 'Arabic', 'English'],
-        latitude: clinic.latitude,
-        longitude: clinic.longitude,
+        latitude: seededClinic.latitude,
+        longitude: seededClinic.longitude,
       ),
     );
 
@@ -598,8 +607,8 @@ class InMemoryClinicBackend implements ClinicBackend {
         ),
         specialtyId: 'dental',
         specialty: specialties[1],
-        clinicId: clinic.id,
-        clinic: clinic,
+        clinicId: seededClinic.id,
+        clinic: seededClinic,
         rating: 4.6,
         experienceYears: 8,
         bio: const LocalizedText(
@@ -662,8 +671,8 @@ class InMemoryClinicBackend implements ClinicBackend {
         ),
         specialtyId: 'ortho',
         specialty: specialties[2],
-        clinicId: clinic.id,
-        clinic: clinic,
+        clinicId: seededClinic.id,
+        clinic: seededClinic,
         rating: 4.9,
         experienceYears: 15,
         bio: const LocalizedText(

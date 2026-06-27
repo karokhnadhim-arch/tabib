@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../core/constants/firestore_limits.dart';
+import '../core/utils/clinic_subscription.dart';
 import '../core/utils/subscription_manager.dart';
 import '../models/clinic.dart';
 import '../models/doctor.dart';
@@ -146,6 +147,32 @@ class ClinicDataService extends ChangeNotifier {
       return null;
     }
   }
+
+  bool clinicAllowsAppointments(String clinicId) {
+    final clinic = clinicById(clinicId);
+    if (clinic == null) return true;
+    return ClinicSubscriptionHelper.allowsNewAppointments(clinic);
+  }
+
+  /// Real-time clinic catalog for subscription dashboards and gates.
+  void startRealtimeCatalog() {
+    if (_realtimeStarted) return;
+    _realtimeStarted = true;
+    _subscriptions.replace(
+      'clinics',
+      _backend.watchClinics(),
+      (list) {
+        _clinics = list;
+        _catalogLoaded = true;
+        notifyListeners();
+      },
+    );
+  }
+
+  bool _realtimeStarted = false;
+
+  List<Doctor> doctorsForClinic(String clinicId) =>
+      _doctors.where((d) => d.clinicId == clinicId).toList();
 
   @override
   void dispose() {

@@ -987,6 +987,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get subscriptionPlan => 'خطة الاشتراك';
 
   @override
+  String get subscriptionPlan1Month => 'شهر واحد';
+
+  @override
+  String get subscriptionPlan2Months => 'شهران';
+
+  @override
+  String get subscriptionPlan3Months => '3 أشهر';
+
+  @override
+  String get subscriptionPlan6Months => '6 أشهر';
+
+  @override
+  String get subscriptionPlan12Months => '12 شهراً (سنة واحدة)';
+
+  @override
   String get subscriptionPlanFree => 'مجاني';
 
   @override
@@ -1000,6 +1015,57 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get subscriptionExpires => 'ينتهي';
+
+  @override
+  String get subscriptionStarted => 'تاريخ البدء';
+
+  @override
+  String get subscriptionRemainingDays => 'الأيام المتبقية';
+
+  @override
+  String get subscriptionStatusActive => 'نشط';
+
+  @override
+  String get subscriptionStatusExpiringSoon => 'ينتهي قريباً';
+
+  @override
+  String get subscriptionStatusExpired => 'منتهي';
+
+  @override
+  String subscriptionDaysRemaining(int days) {
+    return 'متبقي $days يوم';
+  }
+
+  @override
+  String subscriptionExpiredDaysAgo(int days) {
+    return 'انتهى منذ $days يوم';
+  }
+
+  @override
+  String get subscriptionExpiredTitle => 'انتهى الاشتراك';
+
+  @override
+  String get subscriptionExpiredMessage => 'انتهى اشتراك العيادة. لا يمكن إنشاء مواعيد جديدة. السجلات متاحة للقراءة.';
+
+  @override
+  String subscriptionExpiringBanner(int days) {
+    return 'ينتهي اشتراكك خلال $days يوم. يرجى التجديد قريباً.';
+  }
+
+  @override
+  String get subscriptionBlocked => 'لا يمكن الحجز — انتهى اشتراك العيادة.';
+
+  @override
+  String get renewSubscription => 'تجديد الاشتراك';
+
+  @override
+  String get subscriptionRenewed => 'تم تجديد الاشتراك بنجاح';
+
+  @override
+  String get viewPatientRecords => 'عرض سجلات المرضى';
+
+  @override
+  String get assignedDoctors => 'الأطباء';
 
   @override
   String get noExpiry => 'بدون تاريخ انتهاء';

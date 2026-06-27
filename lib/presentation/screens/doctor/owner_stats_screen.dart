@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/auth/admin_permissions.dart';
+import '../../../core/utils/clinic_subscription.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/user_account.dart';
@@ -41,8 +42,13 @@ class OwnerStatsScreen extends StatelessWidget {
                 staff.where((s) => s.role == UserRole.secretary).length;
             final activeStaff = staff.where((s) => s.isActive).length;
             final clinics = data.clinics;
-            final activeSubscriptions =
-                clinics.where((c) => c.subscriptionActive).length;
+            final activeSubscriptions = clinics
+                .where(
+                  (c) =>
+                      ClinicSubscriptionHelper.statusFor(c) ==
+                      ClinicSubscriptionStatus.active,
+                )
+                .length;
 
             return ListView(
               padding: const EdgeInsets.all(16),

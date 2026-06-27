@@ -24,6 +24,7 @@ import 'services/clinic_data_service.dart';
 import 'services/firebase_bootstrap.dart';
 import 'services/locale_service.dart';
 import 'services/queue_service.dart';
+import 'services/subscription_monitor_service.dart';
 
 /// Root widget for Tabib — medical appointment platform.
 class TabibApp extends StatefulWidget {
@@ -61,6 +62,7 @@ class _TabibAppState extends State<TabibApp> {
   late final PrescriptionProvider _prescriptionProvider;
   late final NotificationProvider _notificationProvider;
   late final ChatProvider _chatProvider;
+  late final SubscriptionMonitorService _subscriptionMonitor;
   late final GoRouter _router;
 
   @override
@@ -98,6 +100,11 @@ class _TabibAppState extends State<TabibApp> {
     _prescriptionProvider = PrescriptionProvider(repository: _prescriptionRepository);
     _notificationProvider = NotificationProvider(repository: _notificationRepository);
     _chatProvider = ChatProvider(repository: _chatRepository);
+    _subscriptionMonitor = SubscriptionMonitorService(
+      backend: _backend,
+      notifications: _notificationRepository,
+    )..start();
+    _dataService.startRealtimeCatalog();
     _router = AppRouter(
       authService: _authService,
       appReady: true,
@@ -118,6 +125,7 @@ class _TabibAppState extends State<TabibApp> {
         ChangeNotifierProvider.value(value: _prescriptionProvider),
         ChangeNotifierProvider.value(value: _notificationProvider),
         ChangeNotifierProvider.value(value: _chatProvider),
+        ChangeNotifierProvider.value(value: _subscriptionMonitor),
       ],
       child: Consumer<LocaleService>(
         builder: (context, localeService, _) {

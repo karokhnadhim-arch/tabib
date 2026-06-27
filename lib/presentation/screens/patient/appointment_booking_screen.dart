@@ -42,6 +42,13 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
     if (doctor == null || auth.currentUser == null) return;
 
     final l10n = AppLocalizations.of(context);
+    if (!data.clinicAllowsAppointments(doctor.clinicId)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.subscriptionBlocked)),
+      );
+      return;
+    }
+
     final dateTime = DateTime(
       _selectedDate.year,
       _selectedDate.month,

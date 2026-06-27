@@ -987,6 +987,21 @@ class AppLocalizationsKu extends AppLocalizations {
   String get subscriptionPlan => 'پلانی بەشداریکردن';
 
   @override
+  String get subscriptionPlan1Month => '١ مانگ';
+
+  @override
+  String get subscriptionPlan2Months => '٢ مانگ';
+
+  @override
+  String get subscriptionPlan3Months => '٣ مانگ';
+
+  @override
+  String get subscriptionPlan6Months => '٦ مانگ';
+
+  @override
+  String get subscriptionPlan12Months => '١٢ مانگ (١ ساڵ)';
+
+  @override
   String get subscriptionPlanFree => 'بەخۆڕایی';
 
   @override
@@ -1000,6 +1015,57 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get subscriptionExpires => 'بەسەردەچێت';
+
+  @override
+  String get subscriptionStarted => 'بەرواری دەستپێکردن';
+
+  @override
+  String get subscriptionRemainingDays => 'ڕۆژەکانی ماوە';
+
+  @override
+  String get subscriptionStatusActive => 'چالاک';
+
+  @override
+  String get subscriptionStatusExpiringSoon => 'بەزوویی بەسەردەچێت';
+
+  @override
+  String get subscriptionStatusExpired => 'بەسەرچووە';
+
+  @override
+  String subscriptionDaysRemaining(int days) {
+    return '$days ڕۆژ ماوە';
+  }
+
+  @override
+  String subscriptionExpiredDaysAgo(int days) {
+    return 'پێش $days ڕۆژ بەسەرچووە';
+  }
+
+  @override
+  String get subscriptionExpiredTitle => 'بەشداریکردن بەسەرچووە';
+
+  @override
+  String get subscriptionExpiredMessage => 'بەشداریکردنی نۆرینگەکەت بەسەرچووە. ناتوانیت نۆرەی نوێ دروست بکەیت. تۆمارەکانی نەخۆش بەردەستن بۆ خوێندنەوە.';
+
+  @override
+  String subscriptionExpiringBanner(int days) {
+    return 'بەشداریکردنەکەت لە $days ڕۆژدا بەسەردەچێت. تکایە بەزوویی نوێی بکەرەوە.';
+  }
+
+  @override
+  String get subscriptionBlocked => 'ناتوانیت نۆرە بگریت — بەشداریکردنی نۆرینگە بەسەرچووە.';
+
+  @override
+  String get renewSubscription => 'نوێکردنەوەی بەشداریکردن';
+
+  @override
+  String get subscriptionRenewed => 'بەشداریکردن بە سەرکەوتوویی نوێکرایەوە';
+
+  @override
+  String get viewPatientRecords => 'بینینی تۆمارەکانی نەخۆش';
+
+  @override
+  String get assignedDoctors => 'دکتۆرەکان';
 
   @override
   String get noExpiry => 'بەبێ بەرواری بەسەرچوون';

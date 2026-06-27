@@ -987,6 +987,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionPlan => 'Subscription plan';
 
   @override
+  String get subscriptionPlan1Month => '1 Month';
+
+  @override
+  String get subscriptionPlan2Months => '2 Months';
+
+  @override
+  String get subscriptionPlan3Months => '3 Months';
+
+  @override
+  String get subscriptionPlan6Months => '6 Months';
+
+  @override
+  String get subscriptionPlan12Months => '12 Months (1 Year)';
+
+  @override
   String get subscriptionPlanFree => 'Free';
 
   @override
@@ -1000,6 +1015,57 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subscriptionExpires => 'Expires';
+
+  @override
+  String get subscriptionStarted => 'Start date';
+
+  @override
+  String get subscriptionRemainingDays => 'Remaining days';
+
+  @override
+  String get subscriptionStatusActive => 'Active';
+
+  @override
+  String get subscriptionStatusExpiringSoon => 'Expiring soon';
+
+  @override
+  String get subscriptionStatusExpired => 'Expired';
+
+  @override
+  String subscriptionDaysRemaining(int days) {
+    return '$days days left';
+  }
+
+  @override
+  String subscriptionExpiredDaysAgo(int days) {
+    return 'Expired $days days ago';
+  }
+
+  @override
+  String get subscriptionExpiredTitle => 'Subscription Expired';
+
+  @override
+  String get subscriptionExpiredMessage => 'Your clinic subscription has expired. New appointments are disabled. Patient records remain available.';
+
+  @override
+  String subscriptionExpiringBanner(int days) {
+    return 'Your subscription expires in $days days. Please renew soon.';
+  }
+
+  @override
+  String get subscriptionBlocked => 'Cannot book — clinic subscription has expired.';
+
+  @override
+  String get renewSubscription => 'Renew subscription';
+
+  @override
+  String get subscriptionRenewed => 'Subscription renewed successfully';
+
+  @override
+  String get viewPatientRecords => 'View patient records';
+
+  @override
+  String get assignedDoctors => 'Doctors';
 
   @override
   String get noExpiry => 'No expiry date';

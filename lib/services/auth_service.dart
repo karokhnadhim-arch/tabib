@@ -9,6 +9,7 @@ import '../models/doctor.dart';
 import '../models/clinic.dart';
 import '../models/user_account.dart';
 import '../core/config/system_owner_config.dart';
+import '../core/utils/clinic_subscription.dart';
 import '../core/utils/staff_auth_identifiers.dart';
 import '../firebase_options.dart';
 import 'backend/clinic_backend.dart';
@@ -734,6 +735,7 @@ class AuthService extends ChangeNotifier {
     required String clinicId,
     required SubscriptionPlan plan,
     required bool active,
+    DateTime? startedAt,
     DateTime? expiresAt,
   }) async {
     if (!isSystemOwner) return 'unauthorized';
@@ -745,7 +747,31 @@ class AuthService extends ChangeNotifier {
       clinic.copyWith(
         subscriptionPlan: plan,
         subscriptionActive: active,
+        subscriptionStartedAt: startedAt ?? clinic.subscriptionStartedAt,
         subscriptionExpiresAt: expiresAt,
+        subscriptionWarned7Days: false,
+        subscriptionExpiredNotified: false,
+      ),
+    );
+    return null;
+  }
+
+  /// Admin-only: instantly renew a clinic subscription from today.
+  Future<String?> renewClinicSubscription({
+    required String clinicId,
+    required SubscriptionPlan plan,
+    DateTime? startDate,
+  }) async {
+    if (!isSystemOwner) return 'unauthorized';
+
+    final clinic = await _backend.getClinic(clinicId);
+    if (clinic == null) return 'error';
+
+    await _backend.upsertClinic(
+      ClinicSubscriptionHelper.renew(
+        clinic: clinic,
+        plan: plan,
+        startDate: startDate,
       ),
     );
     return null;

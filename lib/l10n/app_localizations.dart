@@ -2027,6 +2027,36 @@ abstract class AppLocalizations {
   /// **'Subscription plan'**
   String get subscriptionPlan;
 
+  /// No description provided for @subscriptionPlan1Month.
+  ///
+  /// In en, this message translates to:
+  /// **'1 Month'**
+  String get subscriptionPlan1Month;
+
+  /// No description provided for @subscriptionPlan2Months.
+  ///
+  /// In en, this message translates to:
+  /// **'2 Months'**
+  String get subscriptionPlan2Months;
+
+  /// No description provided for @subscriptionPlan3Months.
+  ///
+  /// In en, this message translates to:
+  /// **'3 Months'**
+  String get subscriptionPlan3Months;
+
+  /// No description provided for @subscriptionPlan6Months.
+  ///
+  /// In en, this message translates to:
+  /// **'6 Months'**
+  String get subscriptionPlan6Months;
+
+  /// No description provided for @subscriptionPlan12Months.
+  ///
+  /// In en, this message translates to:
+  /// **'12 Months (1 Year)'**
+  String get subscriptionPlan12Months;
+
   /// No description provided for @subscriptionPlanFree.
   ///
   /// In en, this message translates to:
@@ -2056,6 +2086,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Expires'**
   String get subscriptionExpires;
+
+  /// No description provided for @subscriptionStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Start date'**
+  String get subscriptionStarted;
+
+  /// No description provided for @subscriptionRemainingDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining days'**
+  String get subscriptionRemainingDays;
+
+  /// No description provided for @subscriptionStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get subscriptionStatusActive;
+
+  /// No description provided for @subscriptionStatusExpiringSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiring soon'**
+  String get subscriptionStatusExpiringSoon;
+
+  /// No description provided for @subscriptionStatusExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get subscriptionStatusExpired;
+
+  /// No description provided for @subscriptionDaysRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days left'**
+  String subscriptionDaysRemaining(int days);
+
+  /// No description provided for @subscriptionExpiredDaysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired {days} days ago'**
+  String subscriptionExpiredDaysAgo(int days);
+
+  /// No description provided for @subscriptionExpiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription Expired'**
+  String get subscriptionExpiredTitle;
+
+  /// No description provided for @subscriptionExpiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your clinic subscription has expired. New appointments are disabled. Patient records remain available.'**
+  String get subscriptionExpiredMessage;
+
+  /// No description provided for @subscriptionExpiringBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Your subscription expires in {days} days. Please renew soon.'**
+  String subscriptionExpiringBanner(int days);
+
+  /// No description provided for @subscriptionBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot book — clinic subscription has expired.'**
+  String get subscriptionBlocked;
+
+  /// No description provided for @renewSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Renew subscription'**
+  String get renewSubscription;
+
+  /// No description provided for @subscriptionRenewed.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription renewed successfully'**
+  String get subscriptionRenewed;
+
+  /// No description provided for @viewPatientRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'View patient records'**
+  String get viewPatientRecords;
+
+  /// No description provided for @assignedDoctors.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctors'**
+  String get assignedDoctors;
 
   /// No description provided for @noExpiry.
   ///

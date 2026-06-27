@@ -534,8 +534,16 @@ class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
                 ],
                 const SizedBox(height: 24),
                 FilledButton.icon(
-                  onPressed: () =>
-                      context.push('/doctors/${widget.doctorId}/book'),
+                  onPressed: () {
+                    final data = context.read<ClinicDataService>();
+                    if (!data.clinicAllowsAppointments(doctor.clinicId)) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(l10n.subscriptionBlocked)),
+                      );
+                      return;
+                    }
+                    context.push('/doctors/${widget.doctorId}/book');
+                  },
                   icon: const Icon(Icons.event_available),
                   label: Text(l10n.bookAppointment),
                   style: FilledButton.styleFrom(

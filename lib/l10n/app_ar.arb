@@ -328,10 +328,45 @@
   "createAccounts": "إنشاء حسابات",
   "viewAndManage": "عرض وإدارة",
   "subscriptionPlan": "خطة الاشتراك",
+  "subscriptionPlan1Month": "شهر واحد",
+  "subscriptionPlan2Months": "شهران",
+  "subscriptionPlan3Months": "3 أشهر",
+  "subscriptionPlan6Months": "6 أشهر",
+  "subscriptionPlan12Months": "12 شهراً (سنة واحدة)",
   "subscriptionPlanFree": "مجاني",
   "subscriptionPlanBasic": "أساسي",
   "subscriptionPlanPremium": "مميز",
   "subscriptionActive": "الاشتراك نشط",
   "subscriptionExpires": "ينتهي",
+  "subscriptionStarted": "تاريخ البدء",
+  "subscriptionRemainingDays": "الأيام المتبقية",
+  "subscriptionStatusActive": "نشط",
+  "subscriptionStatusExpiringSoon": "ينتهي قريباً",
+  "subscriptionStatusExpired": "منتهي",
+  "subscriptionDaysRemaining": "متبقي {days} يوم",
+  "@subscriptionDaysRemaining": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "subscriptionExpiredDaysAgo": "انتهى منذ {days} يوم",
+  "@subscriptionExpiredDaysAgo": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "subscriptionExpiredTitle": "انتهى الاشتراك",
+  "subscriptionExpiredMessage": "انتهى اشتراك العيادة. لا يمكن إنشاء مواعيد جديدة. السجلات متاحة للقراءة.",
+  "subscriptionExpiringBanner": "ينتهي اشتراكك خلال {days} يوم. يرجى التجديد قريباً.",
+  "@subscriptionExpiringBanner": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "subscriptionBlocked": "لا يمكن الحجز — انتهى اشتراك العيادة.",
+  "renewSubscription": "تجديد الاشتراك",
+  "subscriptionRenewed": "تم تجديد الاشتراك بنجاح",
+  "viewPatientRecords": "عرض سجلات المرضى",
+  "assignedDoctors": "الأطباء",
   "noExpiry": "بدون تاريخ انتهاء"
 }

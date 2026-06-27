@@ -6,6 +6,9 @@ import '../../../core/widgets/responsive_scaffold.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
+import '../../../core/utils/clinic_subscription.dart';
+import '../../../presentation/screens/subscription/subscription_expired_screen.dart';
+import '../../../presentation/widgets/subscription_status_badge.dart';
 import '../../../services/queue_service.dart';
 import '../../../utils/localization_utils.dart';
 import '../../providers/app_providers.dart';
@@ -24,6 +27,7 @@ class SecretaryDashboardScreen extends StatefulWidget {
 
 class _SecretaryDashboardScreenState extends State<SecretaryDashboardScreen> {
   int _tab = 0;
+  bool _scheduleOnlyMode = false;
   String? _watchedDoctorId;
   QueueService? _queueService;
 
@@ -40,10 +44,18 @@ class _SecretaryDashboardScreenState extends State<SecretaryDashboardScreen> {
     final doctorId = _linkedDoctorId;
     if (doctorId == null || doctorId.isEmpty) return;
 
+    final data = context.read<ClinicDataService>();
+    data.ensureCatalogLoaded();
+    data.startRealtimeCatalog();
+
     _queueService = context.read<QueueService>();
     _queueService!.watchSecretaryQueue(doctorId);
     _queueService!.watchDoctorQueue(doctorId);
     context.read<AppointmentProvider>().watchDoctor(doctorId);
+    final userId = context.read<AuthService>().currentUser?.id;
+    if (userId != null && userId.isNotEmpty) {
+      context.read<NotificationProvider>().watch(userId);
+    }
     _watchedDoctorId = doctorId;
   }
 
@@ -61,10 +73,30 @@ class _SecretaryDashboardScreenState extends State<SecretaryDashboardScreen> {
     final auth = context.watch<AuthService>();
     final clinicData = context.watch<ClinicDataService>();
     final linkedDoctorId = auth.currentUser?.linkedDoctorId;
-    final clinicId = auth.currentUser?.clinicId ?? 'clinic_erbil_1';
     final doctor = linkedDoctorId != null
         ? clinicData.doctorById(linkedDoctorId)
         : null;
+    final resolvedClinicId =
+        doctor?.clinicId ?? auth.currentUser?.clinicId ?? 'clinic_erbil_1';
+    final clinicId = resolvedClinicId;
+    final clinic = clinicData.clinicById(resolvedClinicId);
+    final subscriptionStatus =
+        clinic != null ? ClinicSubscriptionHelper.statusFor(clinic) : null;
+    final remainingDays =
+        clinic != null ? ClinicSubscriptionHelper.remainingDays(clinic) : 0;
+
+    if (clinic != null &&
+        ClinicSubscriptionHelper.isExpired(clinic) &&
+        !_scheduleOnlyMode) {
+      return SubscriptionExpiredScreen(
+        clinic: clinic,
+        onViewRecords: () => setState(() {
+          _scheduleOnlyMode = true;
+          _tab = 2;
+        }),
+        onRenewed: () => setState(() => _scheduleOnlyMode = false),
+      );
+    }
 
     return Scaffold(
       backgroundColor: AppTheme.medicalWhite,
@@ -83,6 +115,34 @@ class _SecretaryDashboardScreenState extends State<SecretaryDashboardScreen> {
             padding: const EdgeInsets.all(16),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
+                if (subscriptionStatus == ClinicSubscriptionStatus.expiringSoon &&
+                    clinic != null)
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFF8E1),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFFF9A825)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.warning_amber_rounded,
+                            color: Color(0xFFF9A825)),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            l10n.subscriptionExpiringBanner(remainingDays),
+                          ),
+                        ),
+                        SubscriptionStatusBadge(
+                          status: subscriptionStatus!,
+                          remainingDays: remainingDays,
+                          compact: true,
+                        ),
+                      ],
+                    ),
+                  ),
                 Card(
                   elevation: 2,
                   shape: RoundedRectangleBorder(

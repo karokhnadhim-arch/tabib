@@ -328,10 +328,45 @@
   "createAccounts": "دروستکردنی هەژمار",
   "viewAndManage": "بینین و بەڕێوەبردن",
   "subscriptionPlan": "پلانی بەشداریکردن",
+  "subscriptionPlan1Month": "١ مانگ",
+  "subscriptionPlan2Months": "٢ مانگ",
+  "subscriptionPlan3Months": "٣ مانگ",
+  "subscriptionPlan6Months": "٦ مانگ",
+  "subscriptionPlan12Months": "١٢ مانگ (١ ساڵ)",
   "subscriptionPlanFree": "بەخۆڕایی",
   "subscriptionPlanBasic": "ئاسایی",
   "subscriptionPlanPremium": "پریمیۆم",
   "subscriptionActive": "بەشداریکردن چالاکە",
   "subscriptionExpires": "بەسەردەچێت",
+  "subscriptionStarted": "بەرواری دەستپێکردن",
+  "subscriptionRemainingDays": "ڕۆژەکانی ماوە",
+  "subscriptionStatusActive": "چالاک",
+  "subscriptionStatusExpiringSoon": "بەزوویی بەسەردەچێت",
+  "subscriptionStatusExpired": "بەسەرچووە",
+  "subscriptionDaysRemaining": "{days} ڕۆژ ماوە",
+  "@subscriptionDaysRemaining": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "subscriptionExpiredDaysAgo": "پێش {days} ڕۆژ بەسەرچووە",
+  "@subscriptionExpiredDaysAgo": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "subscriptionExpiredTitle": "بەشداریکردن بەسەرچووە",
+  "subscriptionExpiredMessage": "بەشداریکردنی نۆرینگەکەت بەسەرچووە. ناتوانیت نۆرەی نوێ دروست بکەیت. تۆمارەکانی نەخۆش بەردەستن بۆ خوێندنەوە.",
+  "subscriptionExpiringBanner": "بەشداریکردنەکەت لە {days} ڕۆژدا بەسەردەچێت. تکایە بەزوویی نوێی بکەرەوە.",
+  "@subscriptionExpiringBanner": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "subscriptionBlocked": "ناتوانیت نۆرە بگریت — بەشداریکردنی نۆرینگە بەسەرچووە.",
+  "renewSubscription": "نوێکردنەوەی بەشداریکردن",
+  "subscriptionRenewed": "بەشداریکردن بە سەرکەوتوویی نوێکرایەوە",
+  "viewPatientRecords": "بینینی تۆمارەکانی نەخۆش",
+  "assignedDoctors": "دکتۆرەکان",
   "noExpiry": "بەبێ بەرواری بەسەرچوون"
 }

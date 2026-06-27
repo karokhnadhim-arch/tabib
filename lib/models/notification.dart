@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-enum AppNotificationType { appointment, prescription, general, queue }
+enum AppNotificationType { appointment, prescription, general, queue, subscription }
 
 class AppNotification {
   const AppNotification({
