@@ -56,6 +56,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get email => 'البريد الإلكتروني';
 
   @override
+  String get emailOptional => 'البريد الإلكتروني (اختياري)';
+
+  @override
+  String get phoneOptional => 'رقم الهاتف (اختياري)';
+
+  @override
+  String get accountLoginMethod => 'طريقة تسجيل الدخول';
+
+  @override
+  String get emailOrPhone => 'البريد الإلكتروني أو رقم الهاتف';
+
+  @override
+  String get emailOrPhoneHint => 'أدخل بريدك الإلكتروني أو رقم هاتفك';
+
+  @override
+  String get phoneInUse => 'رقم الهاتف مسجل مسبقاً';
+
+  @override
   String get password => 'كلمة المرور';
 
   @override

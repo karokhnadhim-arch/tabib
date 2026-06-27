@@ -197,6 +197,42 @@ abstract class AppLocalizations {
   /// **'Email'**
   String get email;
 
+  /// No description provided for @emailOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Email (optional)'**
+  String get emailOptional;
+
+  /// No description provided for @phoneOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number (optional)'**
+  String get phoneOptional;
+
+  /// No description provided for @accountLoginMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Login method'**
+  String get accountLoginMethod;
+
+  /// No description provided for @emailOrPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Email or mobile number'**
+  String get emailOrPhone;
+
+  /// No description provided for @emailOrPhoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email or mobile number'**
+  String get emailOrPhoneHint;
+
+  /// No description provided for @phoneInUse.
+  ///
+  /// In en, this message translates to:
+  /// **'This phone number is already registered'**
+  String get phoneInUse;
+
   /// No description provided for @password.
   ///
   /// In en, this message translates to:

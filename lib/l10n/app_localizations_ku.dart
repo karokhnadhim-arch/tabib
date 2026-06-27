@@ -56,6 +56,24 @@ class AppLocalizationsKu extends AppLocalizations {
   String get email => 'ئیمەیڵ';
 
   @override
+  String get emailOptional => 'ئیمەیڵ (ئارەزوومەندانە)';
+
+  @override
+  String get phoneOptional => 'ژمارەی مۆبایل (ئارەزوومەندانە)';
+
+  @override
+  String get accountLoginMethod => 'شێوازی چوونەژوورەوە';
+
+  @override
+  String get emailOrPhone => 'ئیمەیڵ یان ژمارەی مۆبایل';
+
+  @override
+  String get emailOrPhoneHint => 'ئیمەیڵ یان ژمارەی مۆبایلەکەت بنووسە';
+
+  @override
+  String get phoneInUse => 'ئەم ژمارەی مۆبایلە پێشتر تۆمار کراوە';
+
+  @override
   String get password => 'وشەی نهێنی';
 
   @override

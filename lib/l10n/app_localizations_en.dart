@@ -56,6 +56,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get email => 'Email';
 
   @override
+  String get emailOptional => 'Email (optional)';
+
+  @override
+  String get phoneOptional => 'Phone number (optional)';
+
+  @override
+  String get accountLoginMethod => 'Login method';
+
+  @override
+  String get emailOrPhone => 'Email or mobile number';
+
+  @override
+  String get emailOrPhoneHint => 'Enter your email or mobile number';
+
+  @override
+  String get phoneInUse => 'This phone number is already registered';
+
+  @override
   String get password => 'Password';
 
   @override

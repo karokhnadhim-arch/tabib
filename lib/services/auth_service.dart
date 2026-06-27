@@ -9,6 +9,7 @@ import '../models/doctor.dart';
 import '../models/clinic.dart';
 import '../models/user_account.dart';
 import '../core/config/system_owner_config.dart';
+import '../core/utils/staff_auth_identifiers.dart';
 import '../firebase_options.dart';
 import 'backend/clinic_backend.dart';
 import 'firebase_auth_service.dart';
@@ -245,19 +246,25 @@ class AuthService extends ChangeNotifier {
   }
 
   Future<String?> loginStaff({
-    required String email,
+    required String identifier,
     required String password,
   }) async {
+    final trimmed = identifier.trim();
+    final loginKind = StaffAuthIdentifiers.detectLoginKind(trimmed);
+    if (loginKind == StaffLoginKind.unknown) return 'invalid_credentials';
+
     if (_useDemoAuth) {
-      final err = await _demoStaffLogin(email.trim(), password);
+      final err = await _demoStaffLogin(trimmed, password);
       if (err != null) return err;
       notifyListeners();
       return null;
     }
 
+    final authEmail = StaffAuthIdentifiers.resolveAuthEmail(trimmed);
+
     try {
       await _firebaseAuth!.signInWithEmailAndPassword(
-        email: email,
+        email: authEmail,
         password: password,
       );
       final fbUser = _firebaseAuth!.currentUser;
@@ -267,12 +274,12 @@ class AuthService extends ChangeNotifier {
       if (_currentUser == null) return 'invalid_credentials';
       await _applySystemOwnerPrivileges(
         persist: true,
-        authEmail: fbUser?.email ?? email.trim(),
+        authEmail: fbUser?.email ?? authEmail,
       );
       return await _rejectInactiveStaff();
     } on FirebaseAuthException {
-      if (_isKnownDemoCredential(email.trim(), password)) {
-        final err = await _demoStaffLogin(email.trim(), password);
+      if (_isKnownDemoCredential(trimmed, password)) {
+        final err = await _demoStaffLogin(trimmed, password);
         if (err != null) return err;
         notifyListeners();
         return null;
