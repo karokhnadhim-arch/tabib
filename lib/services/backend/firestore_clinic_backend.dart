@@ -512,12 +512,17 @@ class FirestoreClinicBackend implements ClinicBackend {
   }
 
   @override
-  Future<void> upsertStaff(UserAccount account, {String? password}) async {
+  Future<void> upsertStaff(
+    UserAccount account, {
+    String? password,
+    String? authEmail,
+  }) async {
     await _users.doc(account.id).set(account.toMap(), SetOptions(merge: true));
-    if (password != null && account.email != null) {
+    final loginEmail = authEmail ?? account.email;
+    if (password != null && loginEmail != null) {
       try {
         await _auth.createUserWithEmailAndPassword(
-          email: account.email!,
+          email: loginEmail,
           password: password,
         );
       } on FirebaseAuthException catch (e) {
@@ -545,7 +550,7 @@ class FirestoreClinicBackend implements ClinicBackend {
 
   @override
   Future<UserAccount?> lookupStaffCredentials(
-    String email,
+    String identifier,
     String password,
   ) async {
     return null;

@@ -23,7 +23,10 @@ abstract class AuthRepository {
     required String password,
     required String phone,
   });
-  Future<String?> loginStaff({required String email, required String password});
+  Future<String?> loginStaff({
+    required String identifier,
+    required String password,
+  });
   Future<void> logout();
   Future<void> seedDemoData();
 }

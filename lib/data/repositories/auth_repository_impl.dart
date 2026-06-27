@@ -44,8 +44,11 @@ class AuthRepositoryImpl implements AuthRepository {
       );
 
   @override
-  Future<String?> loginStaff({required String email, required String password}) =>
-      _auth.loginStaff(email: email, password: password);
+  Future<String?> loginStaff({
+    required String identifier,
+    required String password,
+  }) =>
+      _auth.loginStaff(identifier: identifier, password: password);
 
   @override
   Future<void> logout() => _auth.logout();

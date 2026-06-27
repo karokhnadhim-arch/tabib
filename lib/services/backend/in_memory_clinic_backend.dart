@@ -8,6 +8,7 @@ import '../../models/queue_entry.dart';
 import '../../models/specialty.dart';
 import '../../models/user_account.dart';
 import '../../core/constants/firestore_limits.dart';
+import '../../core/utils/staff_auth_identifiers.dart';
 import '../../models/doctor_page.dart';
 import 'clinic_backend.dart';
 
@@ -364,25 +365,44 @@ class InMemoryClinicBackend implements ClinicBackend {
     _notify();
   }
 
-  void _upsertStaffSync(UserAccount account, {String? password}) {
+  void _upsertStaffSync(UserAccount account, {String? password, String? authEmail}) {
     _staff.removeWhere((s) => s.id == account.id);
     _staff.add(account);
-    if (password != null && account.email != null) {
-      _staffPasswords[account.email!.toLowerCase()] = password;
+    if (password != null) {
+      final loginKey = authEmail?.toLowerCase() ??
+          (account.email != null && account.email!.isNotEmpty
+              ? account.email!.toLowerCase()
+              : account.phone != null
+                  ? StaffAuthIdentifiers.phoneToAuthEmail(account.phone!)
+                  : null);
+      if (loginKey != null) {
+        _staffPasswords[loginKey] = password;
+      }
     }
   }
 
   @override
-  Future<void> upsertStaff(UserAccount account, {String? password}) async {
-    _upsertStaffSync(account, password: password);
+  Future<void> upsertStaff(
+    UserAccount account, {
+    String? password,
+    String? authEmail,
+  }) async {
+    _upsertStaffSync(account, password: password, authEmail: authEmail);
     _notify();
   }
 
   @override
   Future<void> deleteStaff(String id) async {
     final account = _staff.where((s) => s.id == id).firstOrNull;
-    if (account?.email != null) {
-      _staffPasswords.remove(account!.email!.toLowerCase());
+    if (account != null) {
+      if (account.email != null && account.email!.isNotEmpty) {
+        _staffPasswords.remove(account.email!.toLowerCase());
+      }
+      if (account.phone != null && account.phone!.isNotEmpty) {
+        _staffPasswords.remove(
+          StaffAuthIdentifiers.phoneToAuthEmail(account.phone!),
+        );
+      }
     }
     _staff.removeWhere((s) => s.id == id);
     _notify();
@@ -398,12 +418,28 @@ class InMemoryClinicBackend implements ClinicBackend {
 
   @override
   Future<UserAccount?> lookupStaffCredentials(
-    String email,
+    String identifier,
     String password,
   ) async {
-    final key = email.toLowerCase();
-    if (_staffPasswords[key] != password) return null;
-    return _staff.where((s) => s.email?.toLowerCase() == key).firstOrNull;
+    final authEmail = StaffAuthIdentifiers.resolveAuthEmail(identifier);
+    if (_staffPasswords[authEmail.toLowerCase()] != password) return null;
+
+    final kind = StaffAuthIdentifiers.detectLoginKind(identifier);
+    if (kind == StaffLoginKind.email) {
+      final key = identifier.trim().toLowerCase();
+      return _staff.where((s) => s.email?.toLowerCase() == key).firstOrNull;
+    }
+    if (kind == StaffLoginKind.phone) {
+      final phone = StaffAuthIdentifiers.normalizePhone(identifier);
+      return _staff
+          .where(
+            (s) =>
+                s.phone != null &&
+                StaffAuthIdentifiers.normalizePhone(s.phone!) == phone,
+          )
+          .firstOrNull;
+    }
+    return null;
   }
 
   @override

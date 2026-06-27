@@ -6,6 +6,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/medical_logo.dart';
 import '../../../core/widgets/medical_ui.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../core/utils/staff_auth_identifiers.dart';
 import '../../../services/auth_service.dart';
 import '../../../widgets/auth/auth_text_field.dart';
 import '../../../widgets/language_picker.dart';
@@ -103,20 +104,26 @@ class _TabibLoginScreenState extends State<TabibLoginScreen> {
         if (err != null) err = l10n.invalidPhone;
       }
     } else {
-      err = await auth.loginStaff(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-      );
-      if (err != null) {
-        err = err == 'account_deactivated'
-            ? l10n.accountDeactivated
-            : l10n.invalidCredentials;
-      } else if (_role == _LoginRole.doctor && !auth.isDoctor) {
-        await auth.logout();
+      final identifier = _emailController.text.trim();
+      if (StaffAuthIdentifiers.detectLoginKind(identifier) ==
+          StaffLoginKind.unknown) {
         err = l10n.invalidCredentials;
-      } else if (_role == _LoginRole.secretary && !auth.isSecretary) {
-        await auth.logout();
-        err = l10n.invalidCredentials;
+      } else {
+        err = await auth.loginStaff(
+          identifier: identifier,
+          password: _passwordController.text,
+        );
+        if (err != null) {
+          err = err == 'account_deactivated'
+              ? l10n.accountDeactivated
+              : l10n.invalidCredentials;
+        } else if (_role == _LoginRole.doctor && !auth.isDoctor) {
+          await auth.logout();
+          err = l10n.invalidCredentials;
+        } else if (_role == _LoginRole.secretary && !auth.isSecretary) {
+          await auth.logout();
+          err = l10n.invalidCredentials;
+        }
       }
     }
 
@@ -237,7 +244,46 @@ class _TabibLoginScreenState extends State<TabibLoginScreen> {
                         ),
                         const SizedBox(height: 16),
                       ],
-                      if (isStaff || _useEmailLogin) ...[
+                      if (isStaff) ...[
+                        AuthTextField(
+                          controller: _emailController,
+                          label: l10n.emailOrPhone,
+                          prefixIcon: Icons.badge_outlined,
+                          keyboardType: TextInputType.text,
+                          validator: (v) {
+                            if (v == null || v.trim().isEmpty) {
+                              return l10n.fieldRequired;
+                            }
+                            if (StaffAuthIdentifiers.detectLoginKind(v) ==
+                                StaffLoginKind.unknown) {
+                              return l10n.invalidCredentials;
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        AuthTextField(
+                          controller: _passwordController,
+                          label: l10n.password,
+                          prefixIcon: Icons.lock_outline,
+                          obscureText: _obscurePassword,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
+                            ),
+                            onPressed: () => setState(
+                                () => _obscurePassword = !_obscurePassword),
+                          ),
+                          validator: (v) {
+                            if (v == null || v.isEmpty) {
+                              return l10n.fieldRequired;
+                            }
+                            return null;
+                          },
+                        ),
+                      ] else if (_useEmailLogin) ...[
                         AuthTextField(
                           controller: _emailController,
                           label: l10n.email,
@@ -273,7 +319,7 @@ class _TabibLoginScreenState extends State<TabibLoginScreen> {
                             return null;
                           },
                         ),
-                      ] else ...[
+                      ] else if (!_useEmailLogin) ...[
                         AuthTextField(
                           controller: _nameController,
                           label: l10n.patientName,

@@ -355,7 +355,7 @@ class AuthService extends ChangeNotifier {
     required String email,
     required String password,
   }) async {
-    final err = await loginStaff(email: email, password: password);
+    final err = await loginStaff(identifier: email, password: password);
     if (err != null) return err;
     if (!isSystemOwner) {
       await logout();
@@ -375,24 +375,51 @@ class AuthService extends ChangeNotifier {
   /// Admin-only: create a doctor account and profile.
   Future<String?> createDoctorAccount({
     required String name,
-    required String email,
+    required StaffLoginMethod loginMethod,
+    String? email,
+    String? phone,
     required String password,
     required String specialtyId,
     required String clinicId,
-    String? phone,
   }) async {
     if (!isSystemOwner) return 'unauthorized';
     if (password.length < 6) return 'weak_password';
-    if (email.trim().isEmpty) return 'invalid_email';
+
+    final trimmedEmail = email?.trim();
+    final trimmedPhone = phone?.trim();
+    final authEmail = StaffAuthIdentifiers.resolveAuthEmailForAccount(
+      loginMethod: loginMethod,
+      email: trimmedEmail,
+      phone: trimmedPhone,
+    );
+    if (authEmail == null) {
+      return loginMethod == StaffLoginMethod.phone
+          ? 'invalid_phone'
+          : 'invalid_email';
+    }
 
     final doctorId = 'doc_${DateTime.now().millisecondsSinceEpoch}';
     final accountId = 'user_$doctorId';
     final nameText = LocalizedText(ku: name, ar: name, en: name);
+    final contactEmail = trimmedEmail;
+    final contactPhone = trimmedPhone;
 
     if (_demoMode) {
       final staff = await _backend.watchStaff().first;
-      if (staff.any((s) => s.email?.toLowerCase() == email.trim().toLowerCase())) {
+      if (staff.any((s) =>
+          s.email != null &&
+          trimmedEmail != null &&
+          trimmedEmail.isNotEmpty &&
+          s.email!.toLowerCase() == trimmedEmail.toLowerCase())) {
         return 'email_in_use';
+      }
+      if (trimmedPhone != null &&
+          trimmedPhone.isNotEmpty &&
+          staff.any((s) =>
+              s.phone != null &&
+              StaffAuthIdentifiers.normalizePhone(s.phone!) ==
+                  StaffAuthIdentifiers.normalizePhone(trimmedPhone))) {
+        return 'phone_in_use';
       }
       final existingDoctor = await _backend.getDoctor(doctorId);
       if (existingDoctor != null) return 'error';
@@ -422,17 +449,35 @@ class AuthService extends ChangeNotifier {
           id: accountId,
           name: nameText,
           role: UserRole.doctor,
-          email: email.trim(),
-          phone: phone,
+          email: contactEmail?.isNotEmpty == true ? contactEmail : null,
+          phone: contactPhone?.isNotEmpty == true ? contactPhone : null,
           doctorId: doctorId,
           clinicId: clinicId,
         ),
         password: password,
+        authEmail: authEmail,
       );
       return null;
     }
 
     try {
+      final staff = await _backend.watchStaff().first;
+      if (staff.any((s) =>
+          s.email != null &&
+          trimmedEmail != null &&
+          trimmedEmail.isNotEmpty &&
+          s.email!.toLowerCase() == trimmedEmail.toLowerCase())) {
+        return 'email_in_use';
+      }
+      if (trimmedPhone != null &&
+          trimmedPhone.isNotEmpty &&
+          staff.any((s) =>
+              s.phone != null &&
+              StaffAuthIdentifiers.normalizePhone(s.phone!) ==
+                  StaffAuthIdentifiers.normalizePhone(trimmedPhone))) {
+        return 'phone_in_use';
+      }
+
       final clinics = await _backend.fetchClinics();
       final specialties = await _backend.fetchSpecialties();
       final clinic = clinics.where((c) => c.id == clinicId).firstOrNull;
@@ -441,7 +486,7 @@ class AuthService extends ChangeNotifier {
       if (clinic == null || specialty == null) return 'error';
 
       final cred = await _firebaseAuth!.createStaffUserWithoutSessionSwitch(
-        email: email.trim(),
+        email: authEmail,
         password: password,
       );
       final uid = cred.user!.uid;
@@ -464,8 +509,8 @@ class AuthService extends ChangeNotifier {
           id: uid,
           name: nameText,
           role: UserRole.doctor,
-          email: email.trim(),
-          phone: phone,
+          email: contactEmail?.isNotEmpty == true ? contactEmail : null,
+          phone: contactPhone?.isNotEmpty == true ? contactPhone : null,
           doctorId: doctorId,
           clinicId: clinicId,
         ),
@@ -481,7 +526,9 @@ class AuthService extends ChangeNotifier {
   /// Admin-only: create a secretary linked to a doctor.
   Future<String?> createSecretaryAccount({
     required String name,
-    required String email,
+    required StaffLoginMethod loginMethod,
+    String? email,
+    String? phone,
     required String password,
     required String linkedDoctorId,
     String? clinicId,
@@ -490,16 +537,43 @@ class AuthService extends ChangeNotifier {
     if (password.length < 6) return 'weak_password';
     if (linkedDoctorId.isEmpty) return 'linked_doctor_required';
 
+    final trimmedEmail = email?.trim();
+    final trimmedPhone = phone?.trim();
+    final authEmail = StaffAuthIdentifiers.resolveAuthEmailForAccount(
+      loginMethod: loginMethod,
+      email: trimmedEmail,
+      phone: trimmedPhone,
+    );
+    if (authEmail == null) {
+      return loginMethod == StaffLoginMethod.phone
+          ? 'invalid_phone'
+          : 'invalid_email';
+    }
+
     final doctor = await _backend.getDoctor(linkedDoctorId);
     if (doctor == null) return 'linked_doctor_required';
 
     final nameText = LocalizedText(ku: name, ar: name, en: name);
     final resolvedClinicId = clinicId ?? doctor.clinicId;
+    final contactEmail = trimmedEmail;
+    final contactPhone = trimmedPhone;
 
     if (_demoMode) {
       final staff = await _backend.watchStaff().first;
-      if (staff.any((s) => s.email?.toLowerCase() == email.trim().toLowerCase())) {
+      if (staff.any((s) =>
+          s.email != null &&
+          trimmedEmail != null &&
+          trimmedEmail.isNotEmpty &&
+          s.email!.toLowerCase() == trimmedEmail.toLowerCase())) {
         return 'email_in_use';
+      }
+      if (trimmedPhone != null &&
+          trimmedPhone.isNotEmpty &&
+          staff.any((s) =>
+              s.phone != null &&
+              StaffAuthIdentifiers.normalizePhone(s.phone!) ==
+                  StaffAuthIdentifiers.normalizePhone(trimmedPhone))) {
+        return 'phone_in_use';
       }
 
       await _backend.upsertStaff(
@@ -507,18 +581,37 @@ class AuthService extends ChangeNotifier {
           id: 'sec_${DateTime.now().millisecondsSinceEpoch}',
           name: nameText,
           role: UserRole.secretary,
-          email: email.trim(),
+          email: contactEmail?.isNotEmpty == true ? contactEmail : null,
+          phone: contactPhone?.isNotEmpty == true ? contactPhone : null,
           clinicId: resolvedClinicId,
           linkedDoctorId: linkedDoctorId,
         ),
         password: password,
+        authEmail: authEmail,
       );
       return null;
     }
 
     try {
+      final staff = await _backend.watchStaff().first;
+      if (staff.any((s) =>
+          s.email != null &&
+          trimmedEmail != null &&
+          trimmedEmail.isNotEmpty &&
+          s.email!.toLowerCase() == trimmedEmail.toLowerCase())) {
+        return 'email_in_use';
+      }
+      if (trimmedPhone != null &&
+          trimmedPhone.isNotEmpty &&
+          staff.any((s) =>
+              s.phone != null &&
+              StaffAuthIdentifiers.normalizePhone(s.phone!) ==
+                  StaffAuthIdentifiers.normalizePhone(trimmedPhone))) {
+        return 'phone_in_use';
+      }
+
       final cred = await _firebaseAuth!.createStaffUserWithoutSessionSwitch(
-        email: email.trim(),
+        email: authEmail,
         password: password,
       );
       await _backend.upsertStaff(
@@ -526,7 +619,8 @@ class AuthService extends ChangeNotifier {
           id: cred.user!.uid,
           name: nameText,
           role: UserRole.secretary,
-          email: email.trim(),
+          email: contactEmail?.isNotEmpty == true ? contactEmail : null,
+          phone: contactPhone?.isNotEmpty == true ? contactPhone : null,
           clinicId: resolvedClinicId,
           linkedDoctorId: linkedDoctorId,
         ),
@@ -539,80 +633,77 @@ class AuthService extends ChangeNotifier {
     }
   }
 
-  bool _isKnownDemoCredential(String email, String password) {
+  bool _isKnownDemoCredential(String identifier, String password) {
     if (password != demoPassword) return false;
-    final normalizedEmail = email.trim().toLowerCase();
+    if (!StaffAuthIdentifiers.looksLikeEmail(identifier)) return false;
+    final normalizedEmail = identifier.trim().toLowerCase();
     return normalizedEmail == demoAdminEmail ||
         normalizedEmail == demoDoctorEmail ||
         normalizedEmail == demoSecretaryEmail;
   }
 
-  Future<String?> _demoStaffLogin(String email, String password) async {
-    final normalizedEmail = email.trim().toLowerCase();
+  Future<String?> _demoStaffLogin(String identifier, String password) async {
+    if (StaffAuthIdentifiers.looksLikeEmail(identifier) &&
+        password == demoPassword) {
+      final normalizedEmail = identifier.trim().toLowerCase();
 
-    if (password != demoPassword) {
-      final dynamic = await _backend.lookupStaffCredentials(
-        normalizedEmail,
-        password,
-      );
-      if (dynamic != null) {
-        _currentUser = dynamic;
+      if (normalizedEmail == demoAdminEmail) {
+        _currentUser = const UserAccount(
+          id: 'demo_admin',
+          name: LocalizedText(
+            ku: 'د. بەڕێوەبەر',
+            ar: 'د. المدير',
+            en: 'Dr. Owner',
+          ),
+          role: UserRole.doctor,
+          email: demoAdminEmail,
+          doctorId: 'doc_1',
+          clinicId: 'clinic_erbil_1',
+          isSystemOwner: true,
+        );
+        return await _rejectInactiveStaff();
+      }
+
+      if (normalizedEmail == demoDoctorEmail) {
+        _currentUser = UserAccount(
+          id: 'demo_doctor',
+          name: const LocalizedText(
+            ku: 'د. ئاراس محەمەد',
+            ar: 'د. أراس محمد',
+            en: 'Dr. Aras Mohammed',
+          ),
+          role: UserRole.doctor,
+          email: demoDoctorEmail,
+          doctorId: 'doc_1',
+          clinicId: 'clinic_erbil_1',
+        );
         await _applySystemOwnerPrivileges();
         return await _rejectInactiveStaff();
       }
-      return 'invalid_credentials';
+
+      if (normalizedEmail == demoSecretaryEmail) {
+        _currentUser = UserAccount(
+          id: 'demo_secretary',
+          name: const LocalizedText(
+            ku: 'سکرتێر',
+            ar: 'سكرتير',
+            en: 'Secretary',
+          ),
+          role: UserRole.secretary,
+          email: demoSecretaryEmail,
+          clinicId: 'clinic_erbil_1',
+          linkedDoctorId: 'doc_1',
+        );
+        return await _rejectInactiveStaff();
+      }
     }
 
-    if (normalizedEmail == demoAdminEmail) {
-      _currentUser = const UserAccount(
-        id: 'demo_admin',
-        name: LocalizedText(
-          ku: 'د. بەڕێوەبەر',
-          ar: 'د. المدير',
-          en: 'Dr. Owner',
-        ),
-        role: UserRole.doctor,
-        email: demoAdminEmail,
-        doctorId: 'doc_1',
-        clinicId: 'clinic_erbil_1',
-        isSystemOwner: true,
-      );
-      return await _rejectInactiveStaff();
-    }
-
-    if (normalizedEmail == demoDoctorEmail) {
-      _currentUser = UserAccount(
-        id: 'demo_doctor',
-        name: const LocalizedText(
-          ku: 'د. ئاراس محەمەد',
-          ar: 'د. أراس محمد',
-          en: 'Dr. Aras Mohammed',
-        ),
-        role: UserRole.doctor,
-        email: email,
-        doctorId: 'doc_1',
-        clinicId: 'clinic_erbil_1',
-      );
+    final dynamic = await _backend.lookupStaffCredentials(identifier, password);
+    if (dynamic != null) {
+      _currentUser = dynamic;
       await _applySystemOwnerPrivileges();
       return await _rejectInactiveStaff();
     }
-
-    if (normalizedEmail == demoSecretaryEmail) {
-      _currentUser = UserAccount(
-        id: 'demo_secretary',
-        name: const LocalizedText(
-          ku: 'سکرتێر',
-          ar: 'سكرتير',
-          en: 'Secretary',
-        ),
-        role: UserRole.secretary,
-        email: email,
-        clinicId: 'clinic_erbil_1',
-        linkedDoctorId: 'doc_1',
-      );
-      return await _rejectInactiveStaff();
-    }
-
     return 'invalid_credentials';
   }
 

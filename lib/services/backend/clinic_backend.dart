@@ -54,10 +54,13 @@ abstract class ClinicBackend {
   Future<void> deleteClinic(String id);
   Future<void> upsertDoctor(Doctor doctor);
   Future<void> deleteDoctor(String id);
-  Future<void> upsertStaff(UserAccount account, {String? password});
+  Future<void> upsertStaff(UserAccount account, {String? password, String? authEmail});
   Future<void> deleteStaff(String id);
   Stream<List<UserAccount>> watchStaff();
-  Future<UserAccount?> lookupStaffCredentials(String email, String password);
+  Future<UserAccount?> lookupStaffCredentials(
+    String identifier,
+    String password,
+  );
 
   Future<void> seedDemoData();
 }
