@@ -13,6 +13,7 @@ class UserAccount {
     this.clinicId,
     this.linkedDoctorId,
     this.isSystemOwner = false,
+    this.isActive = true,
   });
 
   final String id;
@@ -26,6 +27,33 @@ class UserAccount {
   final String? linkedDoctorId;
   /// Hidden platform owner — full admin permissions, logs in via doctor UI.
   final bool isSystemOwner;
+  final bool isActive;
+
+  UserAccount copyWith({
+    String? id,
+    LocalizedText? name,
+    UserRole? role,
+    String? email,
+    String? phone,
+    String? doctorId,
+    String? clinicId,
+    String? linkedDoctorId,
+    bool? isSystemOwner,
+    bool? isActive,
+  }) {
+    return UserAccount(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      role: role ?? this.role,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      doctorId: doctorId ?? this.doctorId,
+      clinicId: clinicId ?? this.clinicId,
+      linkedDoctorId: linkedDoctorId ?? this.linkedDoctorId,
+      isSystemOwner: isSystemOwner ?? this.isSystemOwner,
+      isActive: isActive ?? this.isActive,
+    );
+  }
 
   Map<String, dynamic> toMap() => {
         'name': name.toMap(),
@@ -36,6 +64,7 @@ class UserAccount {
         'clinicId': clinicId,
         'linkedDoctorId': linkedDoctorId,
         if (isSystemOwner) 'isSystemOwner': true,
+        'isActive': isActive,
       };
 
   factory UserAccount.fromFirestore(String id, Map<String, dynamic> data) {
@@ -54,6 +83,7 @@ class UserAccount {
       linkedDoctorId: data['linkedDoctorId'] as String?,
       isSystemOwner:
           data['isSystemOwner'] == true || role == UserRole.admin,
+      isActive: data['isActive'] != false,
     );
   }
 }

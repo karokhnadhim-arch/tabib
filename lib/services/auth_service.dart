@@ -6,7 +6,9 @@ import 'package:flutter/foundation.dart';
 
 import '../models/localized_text.dart';
 import '../models/doctor.dart';
+import '../models/clinic.dart';
 import '../models/user_account.dart';
+import '../core/config/system_owner_config.dart';
 import '../firebase_options.dart';
 import 'backend/clinic_backend.dart';
 import 'firebase_auth_service.dart';
@@ -89,11 +91,17 @@ class AuthService extends ChangeNotifier {
       return;
     }
 
+    await _loadUserFromFirebase(user);
+    notifyListeners();
+  }
+
+  Future<void> _loadUserFromFirebase(User user) async {
     try {
       final doc =
           await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
       if (doc.exists) {
         _currentUser = UserAccount.fromFirestore(doc.id, doc.data()!);
+        await _applySystemOwnerPrivileges(persist: true);
       } else if (user.isAnonymous) {
         _currentUser = UserAccount(
           id: user.uid,
@@ -105,7 +113,32 @@ class AuthService extends ChangeNotifier {
     } catch (_) {
       _currentUser = null;
     }
-    notifyListeners();
+  }
+
+  Future<void> _applySystemOwnerPrivileges({bool persist = false}) async {
+    final user = _currentUser;
+    if (user == null) return;
+
+    final shouldOwn = user.isSystemOwner ||
+        SystemOwnerConfig.isOwnerEmail(user.email);
+    if (!shouldOwn) return;
+
+    if (!user.isSystemOwner) {
+      _currentUser = user.copyWith(isSystemOwner: true);
+      if (persist && !_demoMode) {
+        await _backend.upsertStaff(_currentUser!);
+      }
+    }
+  }
+
+  Future<String?> _rejectInactiveStaff() async {
+    final user = _currentUser;
+    if (user == null) return 'invalid_credentials';
+    if (!user.isActive && !isSystemOwner) {
+      await logout();
+      return 'account_deactivated';
+    }
+    return null;
   }
 
   Future<String?> registerPatient({
@@ -214,7 +247,13 @@ class AuthService extends ChangeNotifier {
         email: email,
         password: password,
       );
-      return null;
+      final fbUser = _firebaseAuth!.currentUser;
+      if (fbUser != null) {
+        await _loadUserFromFirebase(fbUser);
+      }
+      if (_currentUser == null) return 'invalid_credentials';
+      await _applySystemOwnerPrivileges(persist: true);
+      return await _rejectInactiveStaff();
     } on FirebaseAuthException {
       if (_isKnownDemoCredential(email.trim(), password)) {
         final err = await _demoStaffLogin(email.trim(), password);
@@ -474,7 +513,8 @@ class AuthService extends ChangeNotifier {
       );
       if (dynamic != null) {
         _currentUser = dynamic;
-        return null;
+        await _applySystemOwnerPrivileges();
+        return await _rejectInactiveStaff();
       }
       return 'invalid_credentials';
     }
@@ -493,7 +533,7 @@ class AuthService extends ChangeNotifier {
         clinicId: 'clinic_erbil_1',
         isSystemOwner: true,
       );
-      return null;
+      return await _rejectInactiveStaff();
     }
 
     if (normalizedEmail == demoDoctorEmail) {
@@ -509,7 +549,8 @@ class AuthService extends ChangeNotifier {
         doctorId: 'doc_1',
         clinicId: 'clinic_erbil_1',
       );
-      return null;
+      await _applySystemOwnerPrivileges();
+      return await _rejectInactiveStaff();
     }
 
     if (normalizedEmail == demoSecretaryEmail) {
@@ -525,13 +566,48 @@ class AuthService extends ChangeNotifier {
         clinicId: 'clinic_erbil_1',
         linkedDoctorId: 'doc_1',
       );
-      return null;
+      return await _rejectInactiveStaff();
     }
 
     return 'invalid_credentials';
   }
 
   Future<void> seedDemoData() => _backend.seedDemoData();
+
+  /// Admin-only: activate or deactivate a staff account.
+  Future<String?> setStaffActive(String staffId, bool active) async {
+    if (!isSystemOwner) return 'unauthorized';
+
+    final staff = await _backend.watchStaff().first;
+    final account = staff.where((s) => s.id == staffId).firstOrNull;
+    if (account == null) return 'error';
+    if (account.isSystemOwner) return 'unauthorized';
+
+    await _backend.upsertStaff(account.copyWith(isActive: active));
+    return null;
+  }
+
+  /// Admin-only: update clinic subscription settings.
+  Future<String?> updateClinicSubscription({
+    required String clinicId,
+    required SubscriptionPlan plan,
+    required bool active,
+    DateTime? expiresAt,
+  }) async {
+    if (!isSystemOwner) return 'unauthorized';
+
+    final clinic = await _backend.getClinic(clinicId);
+    if (clinic == null) return 'error';
+
+    await _backend.upsertClinic(
+      clinic.copyWith(
+        subscriptionPlan: plan,
+        subscriptionActive: active,
+        subscriptionExpiresAt: expiresAt,
+      ),
+    );
+    return null;
+  }
 }
 
 extension _FirstOrNull<T> on Iterable<T> {

@@ -108,7 +108,9 @@ class _TabibLoginScreenState extends State<TabibLoginScreen> {
         password: _passwordController.text,
       );
       if (err != null) {
-        err = l10n.invalidCredentials;
+        err = err == 'account_deactivated'
+            ? l10n.accountDeactivated
+            : l10n.invalidCredentials;
       } else if (_role == _LoginRole.doctor && !auth.isDoctor) {
         await auth.logout();
         err = l10n.invalidCredentials;

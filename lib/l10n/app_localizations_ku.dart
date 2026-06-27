@@ -2,7 +2,7 @@ import 'app_localizations.dart';
 
 /// The translations for Kurdish (`ku`).
 class AppLocalizationsKu extends AppLocalizations {
-  AppLocalizationsKu([super.locale = 'ku']);
+  AppLocalizationsKu([String locale = 'ku']) : super(locale);
 
   @override
   String get appTitle => 'Tabib';
@@ -886,4 +886,103 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get viewWorkingSchedule => 'خشتەی کار';
+
+  @override
+  String get adminControlPanel => 'پانێڵی کۆntrۆڵی بەڕێوەبەر';
+
+  @override
+  String get adminControlPanelHint => 'بەڕێوەبردنی دکتۆر، سکرتێر، نۆرینگە و بەشداریکردن';
+
+  @override
+  String get systemOwner => 'خاوەنی سیستەم';
+
+  @override
+  String get viewAllDoctors => 'هەموو دکتۆرەکان';
+
+  @override
+  String get viewAllDoctorsHint => 'گەڕان و بەڕێوەبردنی هەژمارەکانی دکتۆر';
+
+  @override
+  String get viewAllSecretaries => 'هەموو سکرتێرەکان';
+
+  @override
+  String get viewAllSecretariesHint => 'گەڕان و بەڕێوەبردنی هەژمارەکانی سکرتێر';
+
+  @override
+  String get viewAllClinics => 'هەموو نۆرینگەکان';
+
+  @override
+  String get viewAllClinicsHint => 'گەڕان و بەڕێوەبردنی تۆمارەکانی نۆرینگە';
+
+  @override
+  String get activateDeactivateAccounts => 'چالاککردن یان ناچالاککردنی هەژمارەکان';
+
+  @override
+  String get accountActive => 'چالاک';
+
+  @override
+  String get accountInactive => 'ناچالاک';
+
+  @override
+  String get accountDeactivated => 'ئەم هەژمارە ناچالاک کراوە';
+
+  @override
+  String get manageSubscriptions => 'بەڕێوەبردنی بەشداریکردن';
+
+  @override
+  String get manageSubscriptionsHint => 'پلان و بەرواری بەسەرچوونی بەشداریکردنی نۆرینگە';
+
+  @override
+  String get systemStatistics => 'ئاماری سیستەم';
+
+  @override
+  String get systemStatisticsHint => 'پوختەی گشتی پلاتفۆرم';
+
+  @override
+  String get totalDoctors => 'کۆی دکتۆرەکان';
+
+  @override
+  String get totalSecretaries => 'کۆی سکرتێرەکان';
+
+  @override
+  String get totalClinics => 'کۆی نۆرینگەکان';
+
+  @override
+  String get activeSubscriptions => 'بەشداریکردنی چالاک';
+
+  @override
+  String get activeStaffAccounts => 'هەژمارە چالاکەکانی کارمەند';
+
+  @override
+  String get totalDoctorsListed => 'دکتۆر لە پێڕست';
+
+  @override
+  String get noStaffAccounts => 'هێشتا هیچ هەژمارێکی کارمەند نییە';
+
+  @override
+  String get createAccounts => 'دروستکردنی هەژمار';
+
+  @override
+  String get viewAndManage => 'بینین و بەڕێوەبردن';
+
+  @override
+  String get subscriptionPlan => 'پلانی بەشداریکردن';
+
+  @override
+  String get subscriptionPlanFree => 'بەخۆڕایی';
+
+  @override
+  String get subscriptionPlanBasic => 'ئاسایی';
+
+  @override
+  String get subscriptionPlanPremium => 'پریمیۆم';
+
+  @override
+  String get subscriptionActive => 'بەشداریکردن چالاکە';
+
+  @override
+  String get subscriptionExpires => 'بەسەردەچێت';
+
+  @override
+  String get noExpiry => 'بەبێ بەرواری بەسەرچوون';
 }

@@ -1828,6 +1828,204 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Working schedule'**
   String get viewWorkingSchedule;
+
+  /// No description provided for @adminControlPanel.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin Control Panel'**
+  String get adminControlPanel;
+
+  /// No description provided for @adminControlPanelHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage doctors, secretaries, clinics, and subscriptions'**
+  String get adminControlPanelHint;
+
+  /// No description provided for @systemOwner.
+  ///
+  /// In en, this message translates to:
+  /// **'System Owner'**
+  String get systemOwner;
+
+  /// No description provided for @viewAllDoctors.
+  ///
+  /// In en, this message translates to:
+  /// **'View all doctors'**
+  String get viewAllDoctors;
+
+  /// No description provided for @viewAllDoctorsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse and manage doctor accounts'**
+  String get viewAllDoctorsHint;
+
+  /// No description provided for @viewAllSecretaries.
+  ///
+  /// In en, this message translates to:
+  /// **'View all secretaries'**
+  String get viewAllSecretaries;
+
+  /// No description provided for @viewAllSecretariesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse and manage secretary accounts'**
+  String get viewAllSecretariesHint;
+
+  /// No description provided for @viewAllClinics.
+  ///
+  /// In en, this message translates to:
+  /// **'View all clinics'**
+  String get viewAllClinics;
+
+  /// No description provided for @viewAllClinicsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse and manage clinic records'**
+  String get viewAllClinicsHint;
+
+  /// No description provided for @activateDeactivateAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate or deactivate staff accounts'**
+  String get activateDeactivateAccounts;
+
+  /// No description provided for @accountActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get accountActive;
+
+  /// No description provided for @accountInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get accountInactive;
+
+  /// No description provided for @accountDeactivated.
+  ///
+  /// In en, this message translates to:
+  /// **'This account has been deactivated'**
+  String get accountDeactivated;
+
+  /// No description provided for @manageSubscriptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage subscriptions'**
+  String get manageSubscriptions;
+
+  /// No description provided for @manageSubscriptionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Set clinic subscription plans and expiry'**
+  String get manageSubscriptionsHint;
+
+  /// No description provided for @systemStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'System statistics'**
+  String get systemStatistics;
+
+  /// No description provided for @systemStatisticsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Platform-wide overview'**
+  String get systemStatisticsHint;
+
+  /// No description provided for @totalDoctors.
+  ///
+  /// In en, this message translates to:
+  /// **'Total doctors'**
+  String get totalDoctors;
+
+  /// No description provided for @totalSecretaries.
+  ///
+  /// In en, this message translates to:
+  /// **'Total secretaries'**
+  String get totalSecretaries;
+
+  /// No description provided for @totalClinics.
+  ///
+  /// In en, this message translates to:
+  /// **'Total clinics'**
+  String get totalClinics;
+
+  /// No description provided for @activeSubscriptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Active subscriptions'**
+  String get activeSubscriptions;
+
+  /// No description provided for @activeStaffAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Active staff accounts'**
+  String get activeStaffAccounts;
+
+  /// No description provided for @totalDoctorsListed.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctors in catalog'**
+  String get totalDoctorsListed;
+
+  /// No description provided for @noStaffAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'No staff accounts yet'**
+  String get noStaffAccounts;
+
+  /// No description provided for @createAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Create accounts'**
+  String get createAccounts;
+
+  /// No description provided for @viewAndManage.
+  ///
+  /// In en, this message translates to:
+  /// **'View and manage'**
+  String get viewAndManage;
+
+  /// No description provided for @subscriptionPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription plan'**
+  String get subscriptionPlan;
+
+  /// No description provided for @subscriptionPlanFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get subscriptionPlanFree;
+
+  /// No description provided for @subscriptionPlanBasic.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic'**
+  String get subscriptionPlanBasic;
+
+  /// No description provided for @subscriptionPlanPremium.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium'**
+  String get subscriptionPlanPremium;
+
+  /// No description provided for @subscriptionActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription active'**
+  String get subscriptionActive;
+
+  /// No description provided for @subscriptionExpires.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires'**
+  String get subscriptionExpires;
+
+  /// No description provided for @noExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'No expiry date'**
+  String get noExpiry;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

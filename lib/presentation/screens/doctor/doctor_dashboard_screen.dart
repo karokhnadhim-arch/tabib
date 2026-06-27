@@ -76,8 +76,8 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
         actions: [
           if (auth.isSystemOwner)
             IconButton(
-              icon: const Icon(Icons.settings_outlined),
-              tooltip: l10n.adminDashboard,
+              icon: const Icon(Icons.admin_panel_settings_outlined),
+              tooltip: l10n.adminControlPanel,
               onPressed: () => context.push('/doctor/platform'),
             ),
           IconButton(
@@ -103,6 +103,64 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  if (auth.isSystemOwner) ...[
+                    Card(
+                      color: AppTheme.primaryDark.withOpacity(0.08),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        side: BorderSide(
+                          color: AppTheme.primaryDark.withOpacity(0.35),
+                        ),
+                      ),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(16),
+                        onTap: () => context.push('/doctor/platform'),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.primaryDark.withOpacity(0.12),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Icon(
+                                  Icons.admin_panel_settings_outlined,
+                                  color: AppTheme.primaryDark,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      l10n.adminControlPanel,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: AppTheme.primaryDark,
+                                          ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(l10n.adminControlPanelHint),
+                                  ],
+                                ),
+                              ),
+                              const Icon(
+                                Icons.chevron_right,
+                                color: AppTheme.primaryDark,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
                   Card(
               color: AppTheme.doctorColor.withOpacity(0.06),
               shape: RoundedRectangleBorder(

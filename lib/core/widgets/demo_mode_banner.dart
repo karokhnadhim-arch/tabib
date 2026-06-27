@@ -23,7 +23,6 @@ class DemoModeBanner extends StatelessWidget {
               Expanded(
                 child: Text(
                   'دۆخی تاقیکردنەوە — Firebase ڕێکنەخراوە. '
-                  'بەڕێوەبەر: ${AuthService.demoAdminEmail} / ${AuthService.demoPassword} · '
                   'دکتۆر: ${AuthService.demoDoctorEmail} / ${AuthService.demoPassword}',
                   style: TextStyle(color: Colors.white, fontSize: 12),
                 ),

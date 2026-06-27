@@ -2,7 +2,7 @@ import 'app_localizations.dart';
 
 /// The translations for Arabic (`ar`).
 class AppLocalizationsAr extends AppLocalizations {
-  AppLocalizationsAr([super.locale = 'ar']);
+  AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
   String get appTitle => 'Tabib';
@@ -886,4 +886,103 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get viewWorkingSchedule => 'جدول العمل';
+
+  @override
+  String get adminControlPanel => 'لوحة تحكم المدير';
+
+  @override
+  String get adminControlPanelHint => 'إدارة الأطباء والسكرتaries والعيادات والاشتراكات';
+
+  @override
+  String get systemOwner => 'مالك النظام';
+
+  @override
+  String get viewAllDoctors => 'عرض جميع الأطباء';
+
+  @override
+  String get viewAllDoctorsHint => 'تصفح وإدارة حسابات الأطباء';
+
+  @override
+  String get viewAllSecretaries => 'عرض جميع السكرتaries';
+
+  @override
+  String get viewAllSecretariesHint => 'تصفح وإدارة حسابات السكرتaries';
+
+  @override
+  String get viewAllClinics => 'عرض جميع العيادات';
+
+  @override
+  String get viewAllClinicsHint => 'تصفح وإدارة سجلات العيادات';
+
+  @override
+  String get activateDeactivateAccounts => 'تفعيل أو تعطيل حسابات الموظفين';
+
+  @override
+  String get accountActive => 'نشط';
+
+  @override
+  String get accountInactive => 'غير نشط';
+
+  @override
+  String get accountDeactivated => 'تم تعطيل هذا الحساب';
+
+  @override
+  String get manageSubscriptions => 'إدارة الاشتراكات';
+
+  @override
+  String get manageSubscriptionsHint => 'تعيين خطط اشتراك العيادات وتاريخ الانتهاء';
+
+  @override
+  String get systemStatistics => 'إحصائيات النظام';
+
+  @override
+  String get systemStatisticsHint => 'نظرة عامة على المنصة';
+
+  @override
+  String get totalDoctors => 'إجمالي الأطباء';
+
+  @override
+  String get totalSecretaries => 'إجمالي السكرتaries';
+
+  @override
+  String get totalClinics => 'إجمالي العيادات';
+
+  @override
+  String get activeSubscriptions => 'الاشتراكات النشطة';
+
+  @override
+  String get activeStaffAccounts => 'حسابات الموظفين النشطة';
+
+  @override
+  String get totalDoctorsListed => 'الأطباء في الدليل';
+
+  @override
+  String get noStaffAccounts => 'لا توجد حسابات موظفين بعد';
+
+  @override
+  String get createAccounts => 'إنشاء حسابات';
+
+  @override
+  String get viewAndManage => 'عرض وإدارة';
+
+  @override
+  String get subscriptionPlan => 'خطة الاشتراك';
+
+  @override
+  String get subscriptionPlanFree => 'مجاني';
+
+  @override
+  String get subscriptionPlanBasic => 'أساسي';
+
+  @override
+  String get subscriptionPlanPremium => 'مميز';
+
+  @override
+  String get subscriptionActive => 'الاشتراك نشط';
+
+  @override
+  String get subscriptionExpires => 'ينتهي';
+
+  @override
+  String get noExpiry => 'بدون تاريخ انتهاء';
 }

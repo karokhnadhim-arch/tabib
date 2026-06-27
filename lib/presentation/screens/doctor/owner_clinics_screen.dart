@@ -6,6 +6,8 @@ import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/clinic.dart';
 import '../../../models/localized_text.dart';
+import '../../../core/auth/admin_permissions.dart';
+import '../../../presentation/widgets/admin_guard.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../utils/localization_utils.dart';
@@ -105,35 +107,37 @@ class _OwnerClinicsScreenState extends State<OwnerClinicsScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final auth = context.watch<AuthService>();
-    if (!auth.isSystemOwner) return const SizedBox.shrink();
+    if (!AdminPermissions.canManageClinics(auth)) return const SizedBox.shrink();
 
     final clinics = context.watch<ClinicDataService>().clinics;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.manageClinics),
-        backgroundColor: AppTheme.primaryDark,
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showForm(),
-        child: const Icon(Icons.add),
-      ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: clinics.length,
-        itemBuilder: (context, i) {
-          final c = clinics[i];
-          return Card(
-            child: ListTile(
-              title: Text(c.name.localized(context)),
-              subtitle: Text(c.address.localized(context)),
-              trailing: IconButton(
-                icon: const Icon(Icons.edit),
-                onPressed: () => _showForm(existing: c),
+    return AdminGuard(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(l10n.manageClinics),
+          backgroundColor: AppTheme.primaryDark,
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => _showForm(),
+          child: const Icon(Icons.add),
+        ),
+        body: ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: clinics.length,
+          itemBuilder: (context, i) {
+            final c = clinics[i];
+            return Card(
+              child: ListTile(
+                title: Text(c.name.localized(context)),
+                subtitle: Text(c.address.localized(context)),
+                trailing: IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () => _showForm(existing: c),
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

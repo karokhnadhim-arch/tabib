@@ -2,7 +2,7 @@ import 'app_localizations.dart';
 
 /// The translations for English (`en`).
 class AppLocalizationsEn extends AppLocalizations {
-  AppLocalizationsEn([super.locale = 'en']);
+  AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
   String get appTitle => 'Tabib';
@@ -886,4 +886,103 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get viewWorkingSchedule => 'Working schedule';
+
+  @override
+  String get adminControlPanel => 'Admin Control Panel';
+
+  @override
+  String get adminControlPanelHint => 'Manage doctors, secretaries, clinics, and subscriptions';
+
+  @override
+  String get systemOwner => 'System Owner';
+
+  @override
+  String get viewAllDoctors => 'View all doctors';
+
+  @override
+  String get viewAllDoctorsHint => 'Browse and manage doctor accounts';
+
+  @override
+  String get viewAllSecretaries => 'View all secretaries';
+
+  @override
+  String get viewAllSecretariesHint => 'Browse and manage secretary accounts';
+
+  @override
+  String get viewAllClinics => 'View all clinics';
+
+  @override
+  String get viewAllClinicsHint => 'Browse and manage clinic records';
+
+  @override
+  String get activateDeactivateAccounts => 'Activate or deactivate staff accounts';
+
+  @override
+  String get accountActive => 'Active';
+
+  @override
+  String get accountInactive => 'Inactive';
+
+  @override
+  String get accountDeactivated => 'This account has been deactivated';
+
+  @override
+  String get manageSubscriptions => 'Manage subscriptions';
+
+  @override
+  String get manageSubscriptionsHint => 'Set clinic subscription plans and expiry';
+
+  @override
+  String get systemStatistics => 'System statistics';
+
+  @override
+  String get systemStatisticsHint => 'Platform-wide overview';
+
+  @override
+  String get totalDoctors => 'Total doctors';
+
+  @override
+  String get totalSecretaries => 'Total secretaries';
+
+  @override
+  String get totalClinics => 'Total clinics';
+
+  @override
+  String get activeSubscriptions => 'Active subscriptions';
+
+  @override
+  String get activeStaffAccounts => 'Active staff accounts';
+
+  @override
+  String get totalDoctorsListed => 'Doctors in catalog';
+
+  @override
+  String get noStaffAccounts => 'No staff accounts yet';
+
+  @override
+  String get createAccounts => 'Create accounts';
+
+  @override
+  String get viewAndManage => 'View and manage';
+
+  @override
+  String get subscriptionPlan => 'Subscription plan';
+
+  @override
+  String get subscriptionPlanFree => 'Free';
+
+  @override
+  String get subscriptionPlanBasic => 'Basic';
+
+  @override
+  String get subscriptionPlanPremium => 'Premium';
+
+  @override
+  String get subscriptionActive => 'Subscription active';
+
+  @override
+  String get subscriptionExpires => 'Expires';
+
+  @override
+  String get noExpiry => 'No expiry date';
 }

@@ -10,6 +10,9 @@ import '../../presentation/screens/doctor/doctor_dashboard_screen.dart';
 import '../../presentation/screens/doctor/doctor_profile_edit_screen.dart';
 import '../../presentation/screens/doctor/owner_clinics_screen.dart';
 import '../../presentation/screens/doctor/owner_platform_screen.dart';
+import '../../presentation/screens/doctor/owner_staff_list_screen.dart';
+import '../../presentation/screens/doctor/owner_stats_screen.dart';
+import '../../presentation/screens/doctor/owner_subscriptions_screen.dart';
 import '../../presentation/screens/doctor/owner_users_screen.dart';
 import '../../presentation/screens/doctor/write_prescription_screen.dart';
 import '../../presentation/screens/patient/appointment_booking_screen.dart';
@@ -123,6 +126,26 @@ class AppRouter {
                   GoRoute(
                     path: 'users',
                     builder: (_, __) => const OwnerUsersScreen(),
+                  ),
+                  GoRoute(
+                    path: 'doctors',
+                    builder: (_, __) => const OwnerStaffListScreen(
+                      filter: OwnerStaffFilter.doctors,
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'secretaries',
+                    builder: (_, __) => const OwnerStaffListScreen(
+                      filter: OwnerStaffFilter.secretaries,
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'stats',
+                    builder: (_, __) => const OwnerStatsScreen(),
+                  ),
+                  GoRoute(
+                    path: 'subscriptions',
+                    builder: (_, __) => const OwnerSubscriptionsScreen(),
                   ),
                 ],
               ),
