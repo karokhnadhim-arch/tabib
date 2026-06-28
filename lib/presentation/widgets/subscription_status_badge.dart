@@ -53,12 +53,14 @@ class SubscriptionStatusBadge extends StatelessWidget {
         children: [
           Icon(Icons.circle, size: 10, color: _color),
           const SizedBox(width: 6),
-          Text(
-            compact ? _label(l10n) : '${_label(l10n)} · $countdown',
-            style: TextStyle(
-              color: _color,
-              fontWeight: FontWeight.w600,
-              fontSize: compact ? 12 : 13,
+          Flexible(
+            child: Text(
+              compact ? _label(l10n) : '${_label(l10n)} · $countdown',
+              style: TextStyle(
+                color: _color,
+                fontWeight: FontWeight.w600,
+                fontSize: compact ? 12 : 13,
+              ),
             ),
           ),
         ],

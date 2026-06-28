@@ -71,59 +71,60 @@ class SecretaryQueueManagementTab extends StatelessWidget {
       );
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _DoctorQueueHeader(doctorName: doctor.name.localized(context)),
-        const SizedBox(height: 12),
-        ...queue.map(
-          (entry) => _SecretaryQueueRow(
-            entry: entry,
-            appointment: _appointmentFor(appointments.appointments, entry),
-            clinicId: clinicId,
-            doctorId: doctorId,
-            onMarkEntered: () async {
-              final queue = context.read<QueueService>();
-              final provider = context.read<AppointmentProvider>();
-              await queue.enterDoctorRoom(entry.id, doctorId);
-              if (!context.mounted) return;
-              await _syncVisitStatus(
-                provider,
-                entry,
-                provider.markArrived,
-              );
-            },
-            onMarkAbsent: () async {
-              final queue = context.read<QueueService>();
-              final provider = context.read<AppointmentProvider>();
-              await queue.updateEntryStatus(
-                entry.id,
-                doctorId,
-                QueueStatus.absent,
-              );
-              if (!context.mounted) return;
-              await _syncVisitStatus(
-                provider,
-                entry,
-                provider.markAbsent,
-              );
-            },
-            onReturnToReview: () => context
-                .read<QueueService>()
-                .returnToReview(entry.id, doctorId),
-            onMoveUp: entry.status == QueueStatus.waiting
-                ? () => context
-                    .read<QueueService>()
-                    .moveUp(entry.id, doctorId)
-                : null,
-            onMoveDown: entry.status == QueueStatus.waiting
-                ? () => context
-                    .read<QueueService>()
-                    .moveDown(entry.id, doctorId)
-                : null,
-          ),
-        ),
-      ],
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: queue.length + 1,
+      separatorBuilder: (_, index) =>
+          index == 0 ? const SizedBox(height: 12) : const SizedBox(height: 0),
+      itemBuilder: (context, index) {
+        if (index == 0) {
+          return _DoctorQueueHeader(doctorName: doctor.name.localized(context));
+        }
+
+        final entry = queue[index - 1];
+        return _SecretaryQueueRow(
+          entry: entry,
+          appointment: _appointmentFor(appointments.appointments, entry),
+          clinicId: clinicId,
+          doctorId: doctorId,
+          onMarkEntered: () async {
+            final queue = context.read<QueueService>();
+            final provider = context.read<AppointmentProvider>();
+            await queue.enterDoctorRoom(entry.id, doctorId);
+            if (!context.mounted) return;
+            await _syncVisitStatus(
+              provider,
+              entry,
+              provider.markArrived,
+            );
+          },
+          onMarkAbsent: () async {
+            final queue = context.read<QueueService>();
+            final provider = context.read<AppointmentProvider>();
+            await queue.updateEntryStatus(
+              entry.id,
+              doctorId,
+              QueueStatus.absent,
+            );
+            if (!context.mounted) return;
+            await _syncVisitStatus(
+              provider,
+              entry,
+              provider.markAbsent,
+            );
+          },
+          onReturnToReview: () => context
+              .read<QueueService>()
+              .returnToReview(entry.id, doctorId),
+          onMoveUp: entry.status == QueueStatus.waiting
+              ? () => context.read<QueueService>().moveUp(entry.id, doctorId)
+              : null,
+          onMoveDown: entry.status == QueueStatus.waiting
+              ? () => context.read<QueueService>().moveDown(entry.id, doctorId)
+              : null,
+        );
+      },
     );
   }
 }
@@ -153,33 +154,37 @@ class _DoctorQueueHeader extends StatelessWidget {
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: AppTheme.medicalGreen.withOpacity(0.12),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: const BoxDecoration(
-                    color: AppTheme.medicalGreen,
-                    shape: BoxShape.circle,
+          Flexible(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppTheme.medicalGreen.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: const BoxDecoration(
+                      color: AppTheme.medicalGreen,
+                      shape: BoxShape.circle,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  l10n.live,
-                  style: const TextStyle(
-                    color: AppTheme.medicalGreen,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: Text(
+                      l10n.live,
+                      style: const TextStyle(
+                        color: AppTheme.medicalGreen,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
@@ -215,7 +220,6 @@ class _SecretaryQueueRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final statusColor = entry.status.color();
-    final isWide = MediaQuery.sizeOf(context).width >= 720;
     final timeLabel = appointment != null
         ? DateFormat.jm().format(appointment!.dateTime)
         : DateFormat.jm().format(entry.bookedAt);
@@ -227,31 +231,18 @@ class _SecretaryQueueRow extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: isWide
-            ? _WideRowLayout(
-                entry: entry,
-                statusColor: statusColor,
-                timeLabel: timeLabel,
-                l10n: l10n,
-                onMarkEntered: onMarkEntered,
-                onMarkAbsent: onMarkAbsent,
-                onReturnToReview: onReturnToReview,
-                onMoveUp: onMoveUp,
-                onMoveDown: onMoveDown,
-                clinicId: clinicId,
-              )
-            : _NarrowRowLayout(
-                entry: entry,
-                statusColor: statusColor,
-                timeLabel: timeLabel,
-                l10n: l10n,
-                onMarkEntered: onMarkEntered,
-                onMarkAbsent: onMarkAbsent,
-                onReturnToReview: onReturnToReview,
-                onMoveUp: onMoveUp,
-                onMoveDown: onMoveDown,
-                clinicId: clinicId,
-              ),
+        child: _QueueRowLayout(
+          entry: entry,
+          statusColor: statusColor,
+          timeLabel: timeLabel,
+          l10n: l10n,
+          onMarkEntered: onMarkEntered,
+          onMarkAbsent: onMarkAbsent,
+          onReturnToReview: onReturnToReview,
+          onMoveUp: onMoveUp,
+          onMoveDown: onMoveDown,
+          clinicId: clinicId,
+        ),
       ),
     );
   }
@@ -409,8 +400,8 @@ class _RowActions extends StatelessWidget {
   }
 }
 
-class _WideRowLayout extends StatelessWidget {
-  const _WideRowLayout({
+class _QueueRowLayout extends StatelessWidget {
+  const _QueueRowLayout({
     required this.entry,
     required this.statusColor,
     required this.timeLabel,
@@ -436,111 +427,29 @@ class _WideRowLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _QueueNumberBadge(entry: entry),
-        const SizedBox(width: 16),
-        Expanded(
-          flex: 3,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                entry.patientName,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 17,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                '${l10n.appointmentTime}: $timeLabel',
-                style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          flex: 2,
-          child: _StatusBadge(entry: entry),
-        ),
-        Expanded(
-          flex: 4,
-          child: _RowActions(
-            entry: entry,
-            l10n: l10n,
-            onMarkEntered: onMarkEntered,
-            onMarkAbsent: onMarkAbsent,
-            onReturnToReview: onReturnToReview,
-            onMoveUp: onMoveUp,
-            onMoveDown: onMoveDown,
-            clinicId: clinicId,
-          ),
-        ),
-      ],
-    );
-  }
-}
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final useSideBySide = constraints.maxWidth >= 900;
 
-class _NarrowRowLayout extends StatelessWidget {
-  const _NarrowRowLayout({
-    required this.entry,
-    required this.statusColor,
-    required this.timeLabel,
-    required this.l10n,
-    required this.onMarkEntered,
-    required this.onMarkAbsent,
-    required this.onReturnToReview,
-    this.onMoveUp,
-    this.onMoveDown,
-    required this.clinicId,
-  });
-
-  final QueueEntry entry;
-  final Color statusColor;
-  final String timeLabel;
-  final AppLocalizations l10n;
-  final VoidCallback onMarkEntered;
-  final VoidCallback onMarkAbsent;
-  final VoidCallback onReturnToReview;
-  final VoidCallback? onMoveUp;
-  final VoidCallback? onMoveDown;
-  final String clinicId;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
+        final patientInfo = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _QueueNumberBadge(entry: entry),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    entry.patientName,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 17,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${l10n.appointmentTime}: $timeLabel',
-                    style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
-                  ),
-                ],
+            Text(
+              entry.patientName,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 17,
               ),
             ),
-            _StatusBadge(entry: entry),
+            const SizedBox(height: 4),
+            Text(
+              '${l10n.appointmentTime}: $timeLabel',
+              style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
+            ),
           ],
-        ),
-        const SizedBox(height: 12),
-        _RowActions(
+        );
+
+        final actions = _RowActions(
           entry: entry,
           l10n: l10n,
           onMarkEntered: onMarkEntered,
@@ -549,8 +458,46 @@ class _NarrowRowLayout extends StatelessWidget {
           onMoveUp: onMoveUp,
           onMoveDown: onMoveDown,
           clinicId: clinicId,
-        ),
-      ],
+        );
+
+        if (useSideBySide) {
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _QueueNumberBadge(entry: entry),
+              const SizedBox(width: 16),
+              Expanded(flex: 3, child: patientInfo),
+              const SizedBox(width: 12),
+              Flexible(child: _StatusBadge(entry: entry)),
+              const SizedBox(width: 12),
+              Expanded(flex: 4, child: actions),
+            ],
+          );
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _QueueNumberBadge(entry: entry),
+                const SizedBox(width: 14),
+                Expanded(child: patientInfo),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Align(
+                    alignment: AlignmentDirectional.topEnd,
+                    child: _StatusBadge(entry: entry),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            actions,
+          ],
+        );
+      },
     );
   }
 }

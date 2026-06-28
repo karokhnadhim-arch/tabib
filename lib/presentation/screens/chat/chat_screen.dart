@@ -93,7 +93,11 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       backgroundColor: AppTheme.medicalWhite,
       appBar: AppBar(
-        title: Text(title),
+        title: Text(
+          title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
         backgroundColor: auth.isPatient
             ? AppTheme.patientColor
             : AppTheme.secretaryColor,

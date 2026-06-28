@@ -23,7 +23,7 @@ class MedicalGradientHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: height,
+      constraints: BoxConstraints(minHeight: height),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -42,6 +42,7 @@ class MedicalGradientHeader extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               if (actions != null)
                 Row(
@@ -49,7 +50,7 @@ class MedicalGradientHeader extends StatelessWidget {
                   children: actions!,
                 ),
               if (leading != null) leading!,
-              const Spacer(),
+              const SizedBox(height: 12),
               Text(
                 title,
                 style: const TextStyle(
@@ -129,6 +130,7 @@ class MedicalStatCard extends StatelessWidget {
               Text(
                 label,
                 style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                maxLines: 3,
               ),
             ],
           ),
@@ -287,8 +289,12 @@ class MedicalActionChip extends StatelessWidget {
             children: [
               Icon(icon, color: color, size: 18),
               const SizedBox(width: 6),
-              Text(label,
-                  style: TextStyle(color: color, fontWeight: FontWeight.w600)),
+              Flexible(
+                child: Text(
+                  label,
+                  style: TextStyle(color: color, fontWeight: FontWeight.w600),
+                ),
+              ),
             ],
           ),
         ),

@@ -208,9 +208,11 @@ class _PatientDashboardScreenState extends State<PatientDashboardScreen> {
                               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                           ),
-                          QueueStatusChip(
-                            label: _statusLabel(l10n, appointment.status),
-                            color: _statusColor(appointment.status),
+                          Flexible(
+                            child: QueueStatusChip(
+                              label: _statusLabel(l10n, appointment.status),
+                              color: _statusColor(appointment.status),
+                            ),
                           ),
                         ],
                       ),

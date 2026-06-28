@@ -39,6 +39,8 @@ class QueueStatusChip extends StatelessWidget {
         label,
         style:
             TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 12),
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }
@@ -59,10 +61,16 @@ class InfoTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(icon, size: 20, color: Colors.grey.shade600),
         const SizedBox(width: 8),
-        Text('$label: ', style: TextStyle(color: Colors.grey.shade600)),
+        Flexible(
+          child: Text(
+            '$label: ',
+            style: TextStyle(color: Colors.grey.shade600),
+          ),
+        ),
         Expanded(
           child: Text(
             value,

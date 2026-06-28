@@ -301,10 +301,12 @@ class _DoctorListCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SubscriptionStatusBadge(
-                    status: status,
-                    remainingDays: days,
-                    compact: true,
+                  Flexible(
+                    child: SubscriptionStatusBadge(
+                      status: status,
+                      remainingDays: days,
+                      compact: true,
+                    ),
                   ),
                 ],
               ),
@@ -350,13 +352,21 @@ class _Meta extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 14, color: Colors.grey.shade600),
-        const SizedBox(width: 4),
-        Text(text, style: TextStyle(fontSize: 12, color: Colors.grey.shade800)),
-      ],
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 280),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: Colors.grey.shade600),
+          const SizedBox(width: 4),
+          Flexible(
+            child: Text(
+              text,
+              style: TextStyle(fontSize: 12, color: Colors.grey.shade800),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

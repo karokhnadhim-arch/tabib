@@ -80,14 +80,18 @@ class OwnerStaffListScreen extends StatelessWidget {
                   final user = staff[i];
                   return Card(
                     child: ListTile(
-                    leading: Icon(
-                      user.role == UserRole.secretary
-                          ? Icons.badge_outlined
-                          : Icons.medical_services_outlined,
-                      color: user.isActive
-                          ? AppTheme.primaryDark
-                          : Colors.grey,
-                    ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      leading: Icon(
+                        user.role == UserRole.secretary
+                            ? Icons.badge_outlined
+                            : Icons.medical_services_outlined,
+                        color: user.isActive
+                            ? AppTheme.primaryDark
+                            : Colors.grey,
+                      ),
                       title: Text(user.name.localized(context)),
                       subtitle: Text(
                         [
@@ -97,6 +101,7 @@ class OwnerStaffListScreen extends StatelessWidget {
                               ? l10n.accountActive
                               : l10n.accountInactive,
                         ].join(' · '),
+                        maxLines: 3,
                       ),
                       isThreeLine: true,
                       trailing: user.isSystemOwner

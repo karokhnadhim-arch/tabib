@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/clinic_subscription.dart';
+import '../../core/widgets/responsive_scaffold.dart';
 import '../../core/utils/doctor_subscription_resolver.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/clinic.dart';
@@ -173,24 +174,7 @@ class _Row extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 130,
-            child: Text(
-              label,
-              style: TextStyle(color: Colors.grey.shade700),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(fontWeight: FontWeight.w500),
-            ),
-          ),
-        ],
-      ),
+      child: ResponsiveLabelValueRow(label: label, value: value),
     );
   }
 }
@@ -228,13 +212,14 @@ class DoctorSubscriptionListSubtitle extends StatelessWidget {
         Row(
           children: [
             if (days < 999)
-              Text(
-                days < 0
-                    ? l10n.subscriptionExpiredDaysAgo(-days)
-                    : l10n.subscriptionDaysRemaining(days),
-                style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+              Expanded(
+                child: Text(
+                  days < 0
+                      ? l10n.subscriptionExpiredDaysAgo(-days)
+                      : l10n.subscriptionDaysRemaining(days),
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                ),
               ),
-            const Spacer(),
             SubscriptionStatusBadge(
               status: status,
               remainingDays: days,

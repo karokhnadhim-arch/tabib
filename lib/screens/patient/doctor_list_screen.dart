@@ -104,41 +104,59 @@ class DoctorCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
-      child: ListTile(
+      child: InkWell(
         onTap: onTap,
-        leading: CircleAvatar(
-          backgroundColor: AppTheme.patientColor.withOpacity(0.1),
-          child: Icon(SpecialtyIcon.forName(doctor.specialty.iconName), color: AppTheme.patientColor),
-        ),
-        title: Text(doctor.name.localized(context)),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(doctor.specialty.name.localized(context)),
-            Text(
-              doctor.clinic.name.localized(context),
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
-            ),
-          ],
-        ),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.star, size: 16, color: Colors.amber),
-                Text('${doctor.rating}'),
-              ],
-            ),
-            Text(
-              doctor.isAvailableToday ? l10n.available : l10n.unavailable,
-              style: TextStyle(
-                fontSize: 11,
-                color: doctor.isAvailableToday ? Colors.green : Colors.red,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CircleAvatar(
+                backgroundColor: AppTheme.patientColor.withOpacity(0.1),
+                child: Icon(
+                  SpecialtyIcon.forName(doctor.specialty.iconName),
+                  color: AppTheme.patientColor,
+                ),
               ),
-            ),
-          ],
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      doctor.name.localized(context),
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    Text(doctor.specialty.name.localized(context)),
+                    Text(
+                      doctor.clinic.name.localized(context),
+                      style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.star, size: 16, color: Colors.amber),
+                      Text('${doctor.rating}'),
+                    ],
+                  ),
+                  Text(
+                    doctor.isAvailableToday ? l10n.available : l10n.unavailable,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: doctor.isAvailableToday ? Colors.green : Colors.red,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

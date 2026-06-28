@@ -51,7 +51,11 @@ class _QueueManagementScreenState extends State<QueueManagementScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('${l10n.queueManagement} — ${doctor.name.localized(context)}'),
+        title: Text(
+          '${l10n.queueManagement} — ${doctor.name.localized(context)}',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
         backgroundColor: AppTheme.staffColor,
       ),
       body: Column(
@@ -155,32 +159,67 @@ class _QueueEntryTile extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: statusColor.withOpacity(0.15),
-          child: Text('${entry.position}', style: TextStyle(color: statusColor, fontWeight: FontWeight.bold)),
-        ),
-        title: Text(entry.patientName),
-        subtitle: Text(entry.patientPhone),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            QueueStatusChip(label: statusLabel, color: statusColor),
-            if (canManage && entry.status == QueueStatus.waiting) ...[
-              IconButton(
-                icon: const Icon(Icons.arrow_upward, size: 20),
-                onPressed: () => queueService.moveUp(entry.id, doctorId),
-              ),
-              IconButton(
-                icon: const Icon(Icons.arrow_downward, size: 20),
-                onPressed: () => queueService.moveDown(entry.id, doctorId),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(
+                  backgroundColor: statusColor.withOpacity(0.15),
+                  child: Text(
+                    '${entry.position}',
+                    style: TextStyle(
+                      color: statusColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        entry.patientName,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      Text(entry.patientPhone),
+                    ],
+                  ),
+                ),
+                QueueStatusChip(label: statusLabel, color: statusColor),
+              ],
+            ),
+            if (canManage) ...[
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 4,
+                children: [
+                  if (entry.status == QueueStatus.waiting) ...[
+                    IconButton(
+                      icon: const Icon(Icons.arrow_upward, size: 20),
+                      onPressed: () => queueService.moveUp(entry.id, doctorId),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.arrow_downward, size: 20),
+                      onPressed: () => queueService.moveDown(entry.id, doctorId),
+                    ),
+                  ],
+                  IconButton(
+                    icon: const Icon(
+                      Icons.cancel_outlined,
+                      color: Colors.red,
+                      size: 20,
+                    ),
+                    onPressed: () =>
+                        queueService.cancelEntry(entry.id, doctorId),
+                  ),
+                ],
               ),
             ],
-            if (canManage)
-              IconButton(
-                icon: const Icon(Icons.cancel_outlined, color: Colors.red, size: 20),
-                onPressed: () => queueService.cancelEntry(entry.id, doctorId),
-              ),
           ],
         ),
       ),

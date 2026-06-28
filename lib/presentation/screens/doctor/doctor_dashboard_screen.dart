@@ -156,10 +156,12 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
                           l10n.subscriptionExpiringBanner(remainingDays),
                         ),
                       ),
-                      SubscriptionStatusBadge(
-                        status: subscriptionStatus!,
-                        remainingDays: remainingDays,
-                        compact: true,
+                      Flexible(
+                        child: SubscriptionStatusBadge(
+                          status: subscriptionStatus!,
+                          remainingDays: remainingDays,
+                          compact: true,
+                        ),
                       ),
                     ],
                   ),

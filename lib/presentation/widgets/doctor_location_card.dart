@@ -69,10 +69,12 @@ class _DoctorLocationCardState extends State<DoctorLocationCard> {
                 const Icon(Icons.map_outlined,
                     color: AppTheme.medicalBlue, size: 22),
                 const SizedBox(width: 8),
-                Text(
-                  l10n.clinicLocationGps,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
+                Expanded(
+                  child: Text(
+                    l10n.clinicLocationGps,
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ],
             ),

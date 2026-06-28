@@ -77,18 +77,10 @@ class _DayScheduleCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    dayLabel,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-                Text(
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final stackStatus = constraints.maxWidth < 420;
+                final statusLabel = Text(
                   isOpen ? l10n.markDayOpen : l10n.markDayClosed,
                   style: TextStyle(
                     fontSize: 12,
@@ -97,9 +89,8 @@ class _DayScheduleCard extends StatelessWidget {
                         ? AppTheme.medicalGreen
                         : Colors.grey.shade600,
                   ),
-                ),
-                const SizedBox(width: 8),
-                Switch.adaptive(
+                );
+                final toggle = Switch.adaptive(
                   value: isOpen,
                   activeColor: AppTheme.doctorColor,
                   onChanged: (open) {
@@ -116,8 +107,47 @@ class _DayScheduleCard extends StatelessWidget {
                       onChanged(day.copyWith(isClosed: true, periods: []));
                     }
                   },
-                ),
-              ],
+                );
+
+                if (stackStatus) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        dayLabel,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Expanded(child: statusLabel),
+                          toggle,
+                        ],
+                      ),
+                    ],
+                  );
+                }
+
+                return Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        dayLabel,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    Flexible(child: statusLabel),
+                    const SizedBox(width: 8),
+                    toggle,
+                  ],
+                );
+              },
             ),
             if (isOpen) ...[
               const SizedBox(height: 8),
@@ -229,7 +259,11 @@ class _PeriodEditorRow extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6),
-            child: Icon(Icons.arrow_forward, color: Colors.grey.shade500, size: 18),
+            child: Icon(
+              Icons.arrow_forward,
+              color: Colors.grey.shade500,
+              size: 18,
+            ),
           ),
           Expanded(
             child: _TimeChip(
@@ -243,6 +277,9 @@ class _PeriodEditorRow extends StatelessWidget {
               tooltip: l10n.removeTimePeriod,
               onPressed: onRemove,
               icon: Icon(Icons.delete_outline, color: Colors.red.shade400),
+              visualDensity: VisualDensity.compact,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
             ),
         ],
       ),

@@ -145,8 +145,11 @@ class _AdminSecretaryFormDialogState extends State<AdminSecretaryFormDialog> {
       title: Text(
         widget.isEdit ? l10n.editSecretary : l10n.addSecretary,
       ),
-      content: SizedBox(
-        width: 420,
+      content: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.sizeOf(context).width * 0.92,
+          maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+        ),
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,

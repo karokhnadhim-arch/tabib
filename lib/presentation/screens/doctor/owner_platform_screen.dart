@@ -143,8 +143,8 @@ class _PlatformTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: Icon(icon, color: AppTheme.primaryDark),
-        title: Text(title),
-        subtitle: Text(subtitle),
+        title: Text(title, maxLines: 2, overflow: TextOverflow.ellipsis),
+        subtitle: Text(subtitle, maxLines: 3, overflow: TextOverflow.ellipsis),
         trailing: const Icon(Icons.chevron_right),
         onTap: onTap,
       ),

@@ -150,20 +150,17 @@ class _HomeTab extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-              Row(
-                children: [
-                  Expanded(
-                    child: MedicalStatCard(
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final statCards = [
+                    MedicalStatCard(
                       icon: Icons.event_available,
                       label: l10n.myAppointments,
                       value: '$upcomingCount',
                       color: AppTheme.medicalBlue,
                       onTap: () => context.push('/appointments'),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: MedicalStatCard(
+                    MedicalStatCard(
                       icon: Icons.chat_bubble_outline,
                       label: l10n.chatWithClinic,
                       value: '💬',
@@ -172,8 +169,26 @@ class _HomeTab extends StatelessWidget {
                         '/chat?clinicId=clinic_erbil_1',
                       ),
                     ),
-                  ),
-                ],
+                  ];
+
+                  if (constraints.maxWidth < 400) {
+                    return Column(
+                      children: [
+                        statCards[0],
+                        const SizedBox(height: 12),
+                        statCards[1],
+                      ],
+                    );
+                  }
+
+                  return Row(
+                    children: [
+                      Expanded(child: statCards[0]),
+                      const SizedBox(width: 12),
+                      Expanded(child: statCards[1]),
+                    ],
+                  );
+                },
               ),
               const SizedBox(height: 20),
               SectionHeader(

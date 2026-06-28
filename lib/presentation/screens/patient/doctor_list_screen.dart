@@ -301,18 +301,39 @@ class AppointmentHistoryScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               final a = list[index];
               return Card(
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: _statusColor(a.status).withOpacity(0.15),
-                    child: Icon(Icons.event, color: _statusColor(a.status)),
-                  ),
-                  title: Text(a.doctorName),
-                  subtitle: Text(
-                    '${a.specialty}\n${DateFormat.yMMMd().add_jm().format(a.dateTime)}',
-                  ),
-                  trailing: QueueStatusChip(
-                    label: _statusLabel(l10n, a.status),
-                    color: _statusColor(a.status),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        backgroundColor:
+                            _statusColor(a.status).withOpacity(0.15),
+                        child: Icon(Icons.event, color: _statusColor(a.status)),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              a.doctorName,
+                              style: const TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                            Text(
+                              '${a.specialty}\n${DateFormat.yMMMd().add_jm().format(a.dateTime)}',
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: QueueStatusChip(
+                          label: _statusLabel(l10n, a.status),
+                          color: _statusColor(a.status),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               );

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../core/auth/admin_permissions.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/admin_doctor_staff_resolver.dart';
+import '../../../core/widgets/responsive_scaffold.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/doctor.dart';
 import '../../../presentation/widgets/admin_doctor_secretaries_section.dart';
@@ -213,25 +214,12 @@ class _InfoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 6),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, size: 16, color: Colors.grey.shade600),
-          const SizedBox(width: 8),
-          SizedBox(
-            width: 72,
-            child: Text(
-              label,
-              style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-            ),
-          ),
-        ],
+      child: ResponsiveLabelValueRow(
+        icon: icon,
+        label: label,
+        value: value,
+        labelFlex: 2,
+        valueFlex: 4,
       ),
     );
   }

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/admin_doctor_staff_resolver.dart';
+import '../../core/widgets/responsive_scaffold.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/user_account.dart';
 import '../../services/auth_service.dart';
@@ -92,21 +93,18 @@ class AdminDoctorSecretariesSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    l10n.assignedSecretaries,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                ),
+            ResponsiveHeaderRow(
+              title: Text(
+                l10n.assignedSecretaries,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              trailing: [
                 Text(
                   l10n.secretariesCount(secretaries.length),
                   style: TextStyle(color: Colors.grey.shade600),
                 ),
-                const SizedBox(width: 8),
                 FilledButton.icon(
                   onPressed: () async {
                     await AdminSecretaryFormDialog.show(
@@ -243,8 +241,10 @@ class _SecretaryCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+            Wrap(
+              alignment: WrapAlignment.end,
+              spacing: 4,
+              runSpacing: 4,
               children: [
                 TextButton.icon(
                   onPressed: onEdit,
@@ -263,10 +263,15 @@ class _SecretaryCard extends StatelessWidget {
                     style: TextStyle(color: Colors.red.shade700),
                   ),
                 ),
-                Switch(
-                  value: secretary.isActive,
-                  activeColor: AppTheme.medicalGreen,
-                  onChanged: onToggleActive,
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Switch(
+                      value: secretary.isActive,
+                      activeColor: AppTheme.medicalGreen,
+                      onChanged: onToggleActive,
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -316,8 +321,9 @@ class _SecretaryTable extends StatelessWidget {
               DataCell(Text(s.email ?? l10n.notAvailable)),
               DataCell(_StatusChip(isActive: s.isActive)),
               DataCell(
-                Row(
-                  mainAxisSize: MainAxisSize.min,
+                Wrap(
+                  spacing: 0,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     IconButton(
                       tooltip: l10n.edit,

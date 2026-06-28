@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../core/auth/admin_permissions.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/clinic_subscription.dart';
+import '../../../core/widgets/responsive_scaffold.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/clinic.dart';
 import '../../../models/doctor.dart';
@@ -319,24 +320,19 @@ class _ClinicSubscriptionCard extends StatelessWidget {
               ),
             ],
             const SizedBox(height: 14),
-            Row(
+            ResponsiveActionButtons(
               children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: onEdit,
-                    icon: const Icon(Icons.edit_outlined, size: 18),
-                    label: Text(l10n.edit),
-                  ),
+                OutlinedButton.icon(
+                  onPressed: onEdit,
+                  icon: const Icon(Icons.edit_outlined, size: 18),
+                  label: Text(l10n.edit),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: FilledButton.icon(
-                    onPressed: onRenew,
-                    icon: const Icon(Icons.autorenew, size: 18),
-                    label: Text(l10n.renewSubscription),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppTheme.primaryDark,
-                    ),
+                FilledButton.icon(
+                  onPressed: onRenew,
+                  icon: const Icon(Icons.autorenew, size: 18),
+                  label: Text(l10n.renewSubscription),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppTheme.primaryDark,
                   ),
                 ),
               ],
@@ -361,18 +357,10 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, size: 18, color: AppTheme.primaryDark),
-        const SizedBox(width: 8),
-        Text('$label: ', style: TextStyle(color: Colors.grey.shade700)),
-        Expanded(
-          child: Text(
-            value,
-            style: const TextStyle(fontWeight: FontWeight.w500),
-          ),
-        ),
-      ],
+    return ResponsiveLabelValueRow(
+      icon: icon,
+      label: '$label:',
+      value: value,
     );
   }
 }

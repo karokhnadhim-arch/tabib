@@ -124,13 +124,15 @@ class _AdminSpecialtiesScreenState extends State<AdminSpecialtiesScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(l10n.addSpecialty),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(controller: ku, decoration: InputDecoration(labelText: l10n.nameKu)),
-            TextField(controller: ar, decoration: InputDecoration(labelText: l10n.nameAr)),
-            TextField(controller: en, decoration: InputDecoration(labelText: l10n.nameEn)),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(controller: ku, decoration: InputDecoration(labelText: l10n.nameKu)),
+              TextField(controller: ar, decoration: InputDecoration(labelText: l10n.nameAr)),
+              TextField(controller: en, decoration: InputDecoration(labelText: l10n.nameEn)),
+            ],
+          ),
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.cancelQueue)),

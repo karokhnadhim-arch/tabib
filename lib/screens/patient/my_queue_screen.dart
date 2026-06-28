@@ -143,9 +143,16 @@ class _StatBox extends StatelessWidget {
         children: [
           Icon(icon, color: AppTheme.patientColor),
           const SizedBox(width: 12),
-          Text(label, style: TextStyle(color: Colors.grey.shade700)),
-          const Spacer(),
-          Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          Expanded(
+            child: Text(label, style: TextStyle(color: Colors.grey.shade700)),
+          ),
+          Flexible(
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ),
         ],
       ),
     );

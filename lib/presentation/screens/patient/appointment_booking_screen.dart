@@ -121,7 +121,7 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
         title: Text(l10n.bookAppointment),
         backgroundColor: AppTheme.patientColor,
       ),
-      body: ResponsiveBody(
+      body: ScrollableResponsiveBody(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -192,7 +192,7 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
                 hintText: l10n.notesHint,
               ),
             ),
-            const Spacer(),
+            const SizedBox(height: 24),
             FilledButton(
               onPressed: _loading ? null : _book,
               style: FilledButton.styleFrom(

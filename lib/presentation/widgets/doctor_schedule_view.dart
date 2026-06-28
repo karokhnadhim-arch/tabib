@@ -63,13 +63,14 @@ class _DayScheduleRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 132,
+          Flexible(
+            flex: 2,
             child: Text(
               dayLabel,
               style: const TextStyle(fontWeight: FontWeight.w600),
             ),
           ),
+          const SizedBox(width: 8),
           Expanded(
             child: isClosed
                 ? Container(
