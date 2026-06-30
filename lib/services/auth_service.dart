@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 
 import '../models/localized_text.dart';
 import '../models/doctor.dart';
+import '../models/service_provider_type.dart';
 import '../models/clinic.dart';
 import '../models/user_account.dart';
 import '../core/config/system_owner_config.dart';
@@ -373,7 +374,7 @@ class AuthService extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Admin-only: create a doctor account and profile.
+  /// Admin-only: create a doctor or business account and catalog profile.
   Future<String?> createDoctorAccount({
     required String name,
     required StaffLoginMethod loginMethod,
@@ -382,9 +383,14 @@ class AuthService extends ChangeNotifier {
     required String password,
     required String specialtyId,
     required String clinicId,
+    ServiceProviderAccountType accountType = ServiceProviderAccountType.doctor,
+    BusinessCategory? businessCategory,
   }) async {
     if (!isSystemOwner) return 'unauthorized';
     if (password.length < 6) return 'weak_password';
+    if (accountType.isBusiness && businessCategory == null) {
+      return 'business_category_required';
+    }
 
     final trimmedEmail = email?.trim();
     final trimmedPhone = phone?.trim();
@@ -443,6 +449,8 @@ class AuthService extends ChangeNotifier {
           experienceYears: 0,
           bio: const LocalizedText(ku: '', ar: '', en: ''),
           isAvailableToday: true,
+          accountType: accountType,
+          businessCategory: businessCategory,
         ),
       );
       await _backend.upsertStaff(
@@ -503,6 +511,8 @@ class AuthService extends ChangeNotifier {
           experienceYears: 0,
           bio: const LocalizedText(ku: '', ar: '', en: ''),
           isAvailableToday: true,
+          accountType: accountType,
+          businessCategory: businessCategory,
         ),
       );
       await _backend.upsertStaff(

@@ -1142,4 +1142,91 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get status => 'دۆخ';
+
+  @override
+  String get doctorName => 'ناوی دکتۆر';
+
+  @override
+  String get businessName => 'ناوی کار';
+
+  @override
+  String get businessProfile => 'پرۆفایلی کار';
+
+  @override
+  String get editBusinessProfile => 'دەستکاری پرۆفایلی کار';
+
+  @override
+  String get editDoctorProfile => 'دەستکاری پرۆفایلی دکتۆر';
+
+  @override
+  String get aboutBusiness => 'دەربارەی کار';
+
+  @override
+  String get businessDashboard => 'داشبۆردی کار';
+
+  @override
+  String get linkedBusiness => 'کاری بەستراو';
+
+  @override
+  String get accountType => 'جۆری هەژمار';
+
+  @override
+  String get accountTypeDoctor => 'دکتۆر';
+
+  @override
+  String get accountTypeBusiness => 'کار';
+
+  @override
+  String get createBusinessAccount => 'دروستکردنی هەژماری کار';
+
+  @override
+  String get createBusinessAccountHint => 'کارێکی تەندروستی زیاد بکە لەگەڵ زانیاری چوونەژوورەوە';
+
+  @override
+  String get selectBusinessCategory => 'جۆری کار';
+
+  @override
+  String get searchProviders => 'گەڕان بۆ دکتۆر و کار';
+
+  @override
+  String get searchHintProviders => 'ناو، پسپۆڕی، جۆری کار، نۆرینگە...';
+
+  @override
+  String get businessCategoryClinic => 'نۆرینگە';
+
+  @override
+  String get businessCategoryBeautyCenter => 'سەنتەری جوانکاری';
+
+  @override
+  String get businessCategoryMedicalLaboratory => 'تاقیگەی پزیشکی';
+
+  @override
+  String get businessCategoryRadiologyCenter => 'سەنتەری تیشک';
+
+  @override
+  String get businessCategoryPhysiotherapyCenter => 'سەنتەری فیزیۆتێراپی';
+
+  @override
+  String get businessCategoryDentalCenter => 'سەنتەری ددان';
+
+  @override
+  String get businessCategoryEyeCenter => 'سەنتەری چاو';
+
+  @override
+  String get businessCategoryHearingCenter => 'سەنتەری بیستن';
+
+  @override
+  String get businessCategoryVaccinationCenter => 'سەنتەری کوتان';
+
+  @override
+  String get businessCategoryBloodTestCenter => 'سەنتەری تاقیکردنەوەی خوێن';
+
+  @override
+  String get businessCategoryPharmacy => 'دەرمانخانە';
+
+  @override
+  String get businessCategoryOtherHealthcare => 'خزمەتگوزاری تەندروستی تر';
+
+  @override
+  String get noSecretariesAssignedBusiness => 'هیچ سکرتێرێک بۆ ئەم کارە دیاری نەکراوە';
 }

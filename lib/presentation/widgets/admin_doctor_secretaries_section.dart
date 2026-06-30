@@ -7,6 +7,7 @@ import '../../core/widgets/responsive_scaffold.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/user_account.dart';
 import '../../services/auth_service.dart';
+import '../../services/clinic_data_service.dart';
 import '../../utils/localization_utils.dart';
 import 'admin_secretary_form_dialog.dart';
 
@@ -84,6 +85,8 @@ class AdminDoctorSecretariesSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final secretaries = _secretaries;
+    final provider =
+        context.watch<ClinicDataService>().doctorById(doctorId);
     final width = MediaQuery.sizeOf(context).width;
     final isWide = width >= 720;
 
@@ -126,7 +129,9 @@ class AdminDoctorSecretariesSection extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 24),
                 child: Text(
-                  l10n.noSecretariesAssigned,
+                  provider?.isBusiness == true
+                      ? l10n.noSecretariesAssignedBusiness
+                      : l10n.noSecretariesAssigned,
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.grey.shade600),
                 ),

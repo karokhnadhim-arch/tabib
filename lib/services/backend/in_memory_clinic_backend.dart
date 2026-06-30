@@ -3,6 +3,7 @@ import 'dart:async';
 import '../../models/clinic.dart';
 import '../../models/doctor.dart';
 import '../../models/doctor_working_schedule.dart';
+import '../../models/service_provider_type.dart';
 import '../../models/localized_text.dart';
 import '../../models/queue_entry.dart';
 import '../../models/specialty.dart';
@@ -494,6 +495,20 @@ class InMemoryClinicBackend implements ClinicBackend {
         name: LocalizedText(ku: 'ئێسک و جومگە', ar: 'عظام', en: 'Orthopedics'),
         iconName: 'ortho',
       ),
+      Specialty(
+        id: 'eye',
+        name: LocalizedText(ku: 'چاو', ar: 'عيون', en: 'Eye care'),
+        iconName: 'eye',
+      ),
+      Specialty(
+        id: 'healthcare_services',
+        name: LocalizedText(
+          ku: 'خزمەتگوزاری تەندروستی',
+          ar: 'خدمات صحية',
+          en: 'Healthcare services',
+        ),
+        iconName: 'medical',
+      ),
     ];
     _specialties.addAll(specialties);
 
@@ -620,6 +635,22 @@ class InMemoryClinicBackend implements ClinicBackend {
       password: 'demo123',
     );
 
+    _upsertStaffSync(
+      const UserAccount(
+        id: 'demo_business',
+        name: LocalizedText(
+          ku: 'سەنتەری جوانکاری ڕۆژ',
+          ar: 'مركز روز للتجميل',
+          en: 'Roz Beauty Center',
+        ),
+        role: UserRole.doctor,
+        email: 'business@tabib.demo',
+        doctorId: 'biz_1',
+        clinicId: 'clinic_erbil_1',
+      ),
+      password: 'demo123',
+    );
+
     _doctors.add(
       Doctor(
         id: 'doc_2',
@@ -741,6 +772,47 @@ class InMemoryClinicBackend implements ClinicBackend {
         languagesSpoken: const ['Kurdish', 'Arabic', 'English', 'German'],
         latitude: 36.1905,
         longitude: 44.0085,
+      ),
+    );
+
+    _doctors.add(
+      Doctor(
+        id: 'biz_1',
+        name: const LocalizedText(
+          ku: 'سەنتەری جوانکاری ڕۆژ',
+          ar: 'مركز روز للتجميل',
+          en: 'Roz Beauty Center',
+        ),
+        specialtyId: 'healthcare_services',
+        specialty: specialties[4],
+        clinicId: seededClinic.id,
+        clinic: seededClinic,
+        rating: 4.6,
+        experienceYears: 0,
+        bio: const LocalizedText(
+          ku:
+              'خزمەتگوزاری جوانکاری و چاودێری پێست. نۆرەیەک بۆ هەموو خزمەتگوزارییەکان.',
+          ar:
+              'خدمات التجميل والعناية بالبشرة. احجز موعداً لجميع الخدمات.',
+          en:
+              'Beauty and skincare services. Book an appointment for all treatments.',
+        ),
+        isAvailableToday: true,
+        photoUrl: 'https://i.pravatar.cc/300?u=biz_1',
+        clinicName: const LocalizedText(
+          ku: 'سەنتەری جوانکاری ڕۆژ',
+          ar: 'مركز روز للتجميل',
+          en: 'Roz Beauty Center',
+        ),
+        contactPhone: '07505556677',
+        whatsappNumber: '07505556677',
+        contactEmail: 'beauty@tabib.demo',
+        workingSchedule: DoctorWorkingSchedule.demoSchedule(),
+        languagesSpoken: const ['Kurdish', 'Arabic', 'English'],
+        latitude: seededClinic.latitude,
+        longitude: seededClinic.longitude,
+        accountType: ServiceProviderAccountType.business,
+        businessCategory: BusinessCategory.beautyCenter,
       ),
     );
 

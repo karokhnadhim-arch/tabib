@@ -1142,4 +1142,91 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get status => 'الحالة';
+
+  @override
+  String get doctorName => 'اسم الطبيب';
+
+  @override
+  String get businessName => 'اسم المنشأة';
+
+  @override
+  String get businessProfile => 'ملف المنشأة';
+
+  @override
+  String get editBusinessProfile => 'تعديل ملف المنشأة';
+
+  @override
+  String get editDoctorProfile => 'تعديل ملف الطبيب';
+
+  @override
+  String get aboutBusiness => 'عن المنشأة';
+
+  @override
+  String get businessDashboard => 'لوحة المنشأة';
+
+  @override
+  String get linkedBusiness => 'المنشأة المرتبطة';
+
+  @override
+  String get accountType => 'نوع الحساب';
+
+  @override
+  String get accountTypeDoctor => 'طبيب';
+
+  @override
+  String get accountTypeBusiness => 'منشأة';
+
+  @override
+  String get createBusinessAccount => 'إنشاء حساب منشأة';
+
+  @override
+  String get createBusinessAccountHint => 'إضافة منشأة رعاية صحية مع بيانات الدخول';
+
+  @override
+  String get selectBusinessCategory => 'فئة المنشأة';
+
+  @override
+  String get searchProviders => 'البحث عن أطباء ومنشآت';
+
+  @override
+  String get searchHintProviders => 'الاسم، التخصص، فئة المنشأة، العيادة...';
+
+  @override
+  String get businessCategoryClinic => 'عيادة';
+
+  @override
+  String get businessCategoryBeautyCenter => 'مركز تجميل';
+
+  @override
+  String get businessCategoryMedicalLaboratory => 'مختبر طبي';
+
+  @override
+  String get businessCategoryRadiologyCenter => 'مركز أشعة';
+
+  @override
+  String get businessCategoryPhysiotherapyCenter => 'مركز علاج طبيعي';
+
+  @override
+  String get businessCategoryDentalCenter => 'مركز أسنان';
+
+  @override
+  String get businessCategoryEyeCenter => 'مركز عيون';
+
+  @override
+  String get businessCategoryHearingCenter => 'مركز سمع';
+
+  @override
+  String get businessCategoryVaccinationCenter => 'مركز تطعيم';
+
+  @override
+  String get businessCategoryBloodTestCenter => 'مركز فحص دم';
+
+  @override
+  String get businessCategoryPharmacy => 'صيدلية';
+
+  @override
+  String get businessCategoryOtherHealthcare => 'خدمات صحية أخرى';
+
+  @override
+  String get noSecretariesAssignedBusiness => 'لا يوجد سكرتير معين لهذه المنشأة';
 }

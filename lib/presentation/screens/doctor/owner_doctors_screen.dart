@@ -17,6 +17,7 @@ import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../services/staff_data_service.dart';
 import '../../../utils/localization_utils.dart';
+import '../../../utils/provider_labels.dart';
 
 class OwnerDoctorsScreen extends StatefulWidget {
   const OwnerDoctorsScreen({super.key});
@@ -63,6 +64,7 @@ class _OwnerDoctorsScreenState extends State<OwnerDoctorsScreen> {
   List<Doctor> _filteredDoctors(
     ClinicDataService data,
     List<UserAccount> staff,
+    AppLocalizations l10n,
   ) {
     final query = _searchController.text.trim();
     return data.doctors.where((d) {
@@ -74,6 +76,7 @@ class _OwnerDoctorsScreenState extends State<OwnerDoctorsScreen> {
         staff,
         query,
         (s) => s,
+        l10n,
       );
     }).toList();
   }
@@ -95,7 +98,7 @@ class _OwnerDoctorsScreenState extends State<OwnerDoctorsScreen> {
     final staff = staffData.staff;
     final width = MediaQuery.sizeOf(context).width;
     final isWide = width >= 960;
-    final filtered = _filteredDoctors(data, staff);
+    final filtered = _filteredDoctors(data, staff, l10n);
     final pages = pageCountFor(filtered.length, _pageSize);
     final safePage = _page.clamp(0, pages - 1);
     if (safePage != _page) {
@@ -285,7 +288,11 @@ class _DoctorListCard extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          doctor.specialty.name.localized(context),
+                          ProviderLabels.displayCategory(
+                            context,
+                            l10n,
+                            doctor,
+                          ),
                           style: TextStyle(
                             color: Colors.grey.shade700,
                             fontSize: 13,

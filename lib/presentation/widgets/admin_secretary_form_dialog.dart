@@ -8,6 +8,7 @@ import '../../models/user_account.dart';
 import '../../services/auth_service.dart';
 import '../../services/clinic_data_service.dart';
 import '../../utils/localization_utils.dart';
+import '../../utils/provider_labels.dart';
 import '../../widgets/auth/auth_text_field.dart';
 import 'staff_account_login_fields.dart';
 
@@ -167,7 +168,7 @@ class _AdminSecretaryFormDialogState extends State<AdminSecretaryFormDialog> {
                 const SizedBox(height: 12),
                 InputDecorator(
                   decoration: InputDecoration(
-                    labelText: l10n.linkedDoctor,
+                    labelText: ProviderLabels.linkedProviderLabel(l10n, doctor),
                     prefixIcon: const Icon(Icons.link),
                     border: const OutlineInputBorder(),
                   ),

@@ -9,6 +9,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../models/appointment.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../utils/localization_utils.dart';
+import '../../../utils/provider_labels.dart';
 import '../../../core/utils/doctor_subscription_resolver.dart';
 import '../../widgets/doctor_avatar.dart';
 import '../../widgets/subscription_status_badge.dart';
@@ -91,10 +92,11 @@ class _TabibDoctorListScreenState extends State<TabibDoctorListScreen> {
     if (query.isNotEmpty) {
       doctors = doctors.where((d) {
         final name = d.name.localized(context).toLowerCase();
-        final spec = d.specialty.name.localized(context).toLowerCase();
+        final category =
+            ProviderLabels.displayCategory(context, l10n, d).toLowerCase();
         final clinic = d.clinic.name.localized(context).toLowerCase();
         return name.contains(query) ||
-            spec.contains(query) ||
+            category.contains(query) ||
             clinic.contains(query);
       }).toList();
     }
@@ -106,7 +108,7 @@ class _TabibDoctorListScreenState extends State<TabibDoctorListScreen> {
             controller: _searchController,
             onChanged: (_) => setState(() {}),
             decoration: InputDecoration(
-              hintText: l10n.searchHint,
+              hintText: ProviderLabels.searchHint(l10n),
               prefixIcon: const Icon(Icons.search),
             ),
           ),
@@ -191,7 +193,7 @@ class _TabibDoctorListScreenState extends State<TabibDoctorListScreen> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    '${doctor.specialty.name.localized(context)} • ${doctor.clinic.name.localized(context)}',
+                                    '${ProviderLabels.displayCategory(context, l10n, doctor)} • ${doctor.clinic.name.localized(context)}',
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -267,7 +269,7 @@ class _TabibDoctorListScreenState extends State<TabibDoctorListScreen> {
         children: [
           MedicalGradientHeader(
             height: 120,
-            title: l10n.searchDoctors,
+            title: ProviderLabels.searchProvidersTitle(l10n),
             subtitle: l10n.appSubtitle,
           ),
           Expanded(child: body),

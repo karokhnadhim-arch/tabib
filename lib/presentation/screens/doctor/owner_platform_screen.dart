@@ -49,6 +49,12 @@ class OwnerPlatformScreen extends StatelessWidget {
             ),
             _SectionHeader(label: l10n.createAccounts),
             _PlatformTile(
+              title: l10n.createBusinessAccount,
+              subtitle: l10n.createBusinessAccountHint,
+              icon: Icons.storefront_outlined,
+              onTap: () => context.push('/doctor/platform/create-doctor'),
+            ),
+            _PlatformTile(
               title: l10n.createDoctorAccount,
               subtitle: l10n.createDoctorAccountHint,
               icon: Icons.person_add_outlined,

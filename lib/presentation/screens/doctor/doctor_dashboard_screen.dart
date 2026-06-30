@@ -16,6 +16,7 @@ import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../services/queue_service.dart';
 import '../../../utils/localization_utils.dart';
+import '../../../utils/provider_labels.dart';
 import '../../../utils/schedule_utils.dart';
 import '../../../widgets/language_picker.dart';
 import '../../providers/app_providers.dart';
@@ -107,7 +108,7 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.doctorDashboard),
+        title: Text(ProviderLabels.dashboardTitle(l10n, doctor)),
         backgroundColor: AppTheme.doctorColor,
         actions: [
           if (auth.isSystemOwner)
@@ -118,7 +119,7 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
             ),
           IconButton(
             icon: const Icon(Icons.edit),
-            tooltip: l10n.editProfile,
+            tooltip: ProviderLabels.editProfileTitle(l10n, doctor),
             onPressed: () => context.push('/doctor/profile'),
           ),
           const LanguagePicker(),
@@ -334,7 +335,7 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
                       FilledButton.icon(
                         onPressed: () => context.push('/doctor/profile'),
                         icon: const Icon(Icons.edit_outlined),
-                        label: Text(l10n.editProfile),
+                        label: Text(ProviderLabels.editProfileTitle(l10n, doctor)),
                         style: FilledButton.styleFrom(
                           backgroundColor: AppTheme.doctorColor,
                           minimumSize: const Size.fromHeight(44),

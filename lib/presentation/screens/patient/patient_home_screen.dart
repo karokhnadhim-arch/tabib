@@ -13,6 +13,7 @@ import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../services/queue_service.dart';
 import '../../../utils/localization_utils.dart';
+import '../../../utils/provider_labels.dart';
 import '../../../widgets/common_widgets.dart';
 import '../../../widgets/language_picker.dart';
 import '../../providers/app_providers.dart';
@@ -77,7 +78,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
           NavigationDestination(
             icon: const Icon(Icons.medical_services_outlined),
             selectedIcon: const Icon(Icons.medical_services),
-            label: l10n.searchDoctors,
+            label: ProviderLabels.searchProvidersTitle(l10n),
           ),
           NavigationDestination(
             icon: const Icon(Icons.event_note_outlined),
@@ -195,7 +196,7 @@ class _HomeTab extends StatelessWidget {
                 title: l10n.medicalSpecialties,
                 action: TextButton(
                   onPressed: () => context.push('/doctors'),
-                  child: Text(l10n.searchDoctors),
+                  child: Text(ProviderLabels.searchProvidersTitle(l10n)),
                 ),
               ),
               GridView.builder(

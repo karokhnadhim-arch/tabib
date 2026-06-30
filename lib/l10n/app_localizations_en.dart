@@ -1142,4 +1142,91 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get status => 'Status';
+
+  @override
+  String get doctorName => 'Doctor name';
+
+  @override
+  String get businessName => 'Business name';
+
+  @override
+  String get businessProfile => 'Business profile';
+
+  @override
+  String get editBusinessProfile => 'Edit business profile';
+
+  @override
+  String get editDoctorProfile => 'Edit doctor profile';
+
+  @override
+  String get aboutBusiness => 'About the business';
+
+  @override
+  String get businessDashboard => 'Business dashboard';
+
+  @override
+  String get linkedBusiness => 'Linked business';
+
+  @override
+  String get accountType => 'Account type';
+
+  @override
+  String get accountTypeDoctor => 'Doctor';
+
+  @override
+  String get accountTypeBusiness => 'Business';
+
+  @override
+  String get createBusinessAccount => 'Create business account';
+
+  @override
+  String get createBusinessAccountHint => 'Add a healthcare business with login credentials';
+
+  @override
+  String get selectBusinessCategory => 'Business category';
+
+  @override
+  String get searchProviders => 'Search doctors & businesses';
+
+  @override
+  String get searchHintProviders => 'Name, specialty, business category, clinic...';
+
+  @override
+  String get businessCategoryClinic => 'Clinic';
+
+  @override
+  String get businessCategoryBeautyCenter => 'Beauty center';
+
+  @override
+  String get businessCategoryMedicalLaboratory => 'Medical laboratory';
+
+  @override
+  String get businessCategoryRadiologyCenter => 'Radiology center';
+
+  @override
+  String get businessCategoryPhysiotherapyCenter => 'Physiotherapy center';
+
+  @override
+  String get businessCategoryDentalCenter => 'Dental center';
+
+  @override
+  String get businessCategoryEyeCenter => 'Eye center';
+
+  @override
+  String get businessCategoryHearingCenter => 'Hearing center';
+
+  @override
+  String get businessCategoryVaccinationCenter => 'Vaccination center';
+
+  @override
+  String get businessCategoryBloodTestCenter => 'Blood test center';
+
+  @override
+  String get businessCategoryPharmacy => 'Pharmacy';
+
+  @override
+  String get businessCategoryOtherHealthcare => 'Other healthcare services';
+
+  @override
+  String get noSecretariesAssignedBusiness => 'No secretaries assigned to this business';
 }

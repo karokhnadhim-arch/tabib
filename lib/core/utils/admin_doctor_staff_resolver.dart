@@ -1,5 +1,7 @@
+import '../../l10n/app_localizations.dart';
 import '../../models/doctor.dart';
 import '../../models/user_account.dart';
+import '../../utils/provider_labels.dart';
 
 /// Resolves staff accounts and secretaries for admin doctor management.
 class AdminDoctorStaffResolver {
@@ -54,6 +56,7 @@ class AdminDoctorStaffResolver {
     List<UserAccount> staff,
     String query,
     String Function(String) localize,
+    AppLocalizations l10n,
   ) {
     if (query.isEmpty) return true;
     final q = query.toLowerCase();
@@ -64,6 +67,7 @@ class AdminDoctorStaffResolver {
       localize(doctor.specialty.name.ku),
       localize(doctor.specialty.name.ar),
       localize(doctor.specialty.name.en),
+      ...ProviderLabels.searchableCategoryTerms(l10n, doctor),
       localize(doctor.clinic.name.ku),
       localize(doctor.clinic.name.ar),
       localize(doctor.clinic.name.en),

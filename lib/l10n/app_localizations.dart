@@ -2320,6 +2320,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Status'**
   String get status;
+
+  /// No description provided for @doctorName.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor name'**
+  String get doctorName;
+
+  /// No description provided for @businessName.
+  ///
+  /// In en, this message translates to:
+  /// **'Business name'**
+  String get businessName;
+
+  /// No description provided for @businessProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Business profile'**
+  String get businessProfile;
+
+  /// No description provided for @editBusinessProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit business profile'**
+  String get editBusinessProfile;
+
+  /// No description provided for @editDoctorProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit doctor profile'**
+  String get editDoctorProfile;
+
+  /// No description provided for @aboutBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'About the business'**
+  String get aboutBusiness;
+
+  /// No description provided for @businessDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Business dashboard'**
+  String get businessDashboard;
+
+  /// No description provided for @linkedBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked business'**
+  String get linkedBusiness;
+
+  /// No description provided for @accountType.
+  ///
+  /// In en, this message translates to:
+  /// **'Account type'**
+  String get accountType;
+
+  /// No description provided for @accountTypeDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor'**
+  String get accountTypeDoctor;
+
+  /// No description provided for @accountTypeBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get accountTypeBusiness;
+
+  /// No description provided for @createBusinessAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create business account'**
+  String get createBusinessAccount;
+
+  /// No description provided for @createBusinessAccountHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a healthcare business with login credentials'**
+  String get createBusinessAccountHint;
+
+  /// No description provided for @selectBusinessCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Business category'**
+  String get selectBusinessCategory;
+
+  /// No description provided for @searchProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'Search doctors & businesses'**
+  String get searchProviders;
+
+  /// No description provided for @searchHintProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'Name, specialty, business category, clinic...'**
+  String get searchHintProviders;
+
+  /// No description provided for @businessCategoryClinic.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic'**
+  String get businessCategoryClinic;
+
+  /// No description provided for @businessCategoryBeautyCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Beauty center'**
+  String get businessCategoryBeautyCenter;
+
+  /// No description provided for @businessCategoryMedicalLaboratory.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical laboratory'**
+  String get businessCategoryMedicalLaboratory;
+
+  /// No description provided for @businessCategoryRadiologyCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Radiology center'**
+  String get businessCategoryRadiologyCenter;
+
+  /// No description provided for @businessCategoryPhysiotherapyCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Physiotherapy center'**
+  String get businessCategoryPhysiotherapyCenter;
+
+  /// No description provided for @businessCategoryDentalCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Dental center'**
+  String get businessCategoryDentalCenter;
+
+  /// No description provided for @businessCategoryEyeCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Eye center'**
+  String get businessCategoryEyeCenter;
+
+  /// No description provided for @businessCategoryHearingCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Hearing center'**
+  String get businessCategoryHearingCenter;
+
+  /// No description provided for @businessCategoryVaccinationCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Vaccination center'**
+  String get businessCategoryVaccinationCenter;
+
+  /// No description provided for @businessCategoryBloodTestCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Blood test center'**
+  String get businessCategoryBloodTestCenter;
+
+  /// No description provided for @businessCategoryPharmacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Pharmacy'**
+  String get businessCategoryPharmacy;
+
+  /// No description provided for @businessCategoryOtherHealthcare.
+  ///
+  /// In en, this message translates to:
+  /// **'Other healthcare services'**
+  String get businessCategoryOtherHealthcare;
+
+  /// No description provided for @noSecretariesAssignedBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'No secretaries assigned to this business'**
+  String get noSecretariesAssignedBusiness;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

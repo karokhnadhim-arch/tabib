@@ -15,6 +15,7 @@ import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../services/staff_data_service.dart';
 import '../../../utils/localization_utils.dart';
+import '../../../utils/provider_labels.dart';
 
 class OwnerDoctorDetailScreen extends StatefulWidget {
   const OwnerDoctorDetailScreen({super.key, required this.doctorId});
@@ -57,7 +58,7 @@ class _OwnerDoctorDetailScreenState extends State<OwnerDoctorDetailScreen> {
     return AdminGuard(
       child: Scaffold(
         appBar: AppBar(
-          title: Text(l10n.doctorProfile),
+          title: Text(ProviderLabels.profileTitle(l10n, doctor)),
           backgroundColor: AppTheme.primaryDark,
         ),
         body: doctor == null

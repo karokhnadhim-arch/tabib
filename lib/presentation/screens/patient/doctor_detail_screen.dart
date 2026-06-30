@@ -11,6 +11,7 @@ import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../services/queue_service.dart';
 import '../../../utils/localization_utils.dart';
+import '../../../utils/provider_labels.dart';
 import '../../../utils/schedule_utils.dart';
 import '../../../widgets/common_widgets.dart';
 import '../../widgets/doctor_avatar.dart';
@@ -175,7 +176,11 @@ class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              doctor.specialty.name.localized(context),
+                              ProviderLabels.displayCategory(
+                                context,
+                                l10n,
+                                doctor,
+                              ),
                               style: TextStyle(
                                 color: Colors.white.withOpacity(0.9),
                                 fontSize: 15,
@@ -302,7 +307,9 @@ class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
                   const SizedBox(height: 16),
                 ],
                 if (doctor.patientShowsBio(context)) ...[
-                  SectionHeader(title: l10n.aboutDoctor),
+                  SectionHeader(
+                    title: ProviderLabels.aboutTitle(l10n, doctor),
+                  ),
                   Card(
                     elevation: 0,
                     shape: RoundedRectangleBorder(

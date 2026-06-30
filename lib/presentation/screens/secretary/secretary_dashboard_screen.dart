@@ -11,6 +11,7 @@ import '../../../presentation/screens/subscription/subscription_expired_screen.d
 import '../../../presentation/widgets/subscription_status_badge.dart';
 import '../../../services/queue_service.dart';
 import '../../../utils/localization_utils.dart';
+import '../../../utils/provider_labels.dart';
 import '../../providers/app_providers.dart';
 import 'daily_schedule_screen.dart';
 import 'register_patient_screen.dart';
@@ -164,7 +165,10 @@ class _SecretaryDashboardScreenState extends State<SecretaryDashboardScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                l10n.linkedDoctor,
+                                ProviderLabels.linkedProviderLabel(
+                                  l10n,
+                                  doctor,
+                                ),
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey.shade600,

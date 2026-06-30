@@ -4,6 +4,7 @@ import 'clinic.dart';
 import 'doctor_profile_visibility.dart';
 import 'doctor_working_schedule.dart';
 import 'localized_text.dart';
+import 'service_provider_type.dart';
 import 'specialty.dart';
 
 import '../utils/localization_utils.dart';
@@ -38,6 +39,8 @@ class Doctor {
     this.clinicPhotos,
     this.clinicPhotoThumbnails,
     this.profileVisibility = const DoctorProfileVisibility(),
+    this.accountType = ServiceProviderAccountType.doctor,
+    this.businessCategory,
   });
 
   final String id;
@@ -69,6 +72,11 @@ class Doctor {
   final List<String>? clinicPhotos;
   final List<String>? clinicPhotoThumbnails;
   final DoctorProfileVisibility profileVisibility;
+  final ServiceProviderAccountType accountType;
+  final BusinessCategory? businessCategory;
+
+  bool get isBusiness => accountType.isBusiness;
+  bool get isDoctorAccount => accountType.isDoctor;
 
   LocalizedText get effectiveClinicName => clinicName ?? clinic.name;
   LocalizedText get effectiveAddress => clinicAddress ?? clinic.address;
@@ -239,6 +247,12 @@ class Doctor {
       profileVisibility: DoctorProfileVisibility.fromMap(
         data['profileVisibility'] as Map<String, dynamic>?,
       ),
+      accountType: ServiceProviderAccountType.fromStorage(
+        data['accountType'] as String?,
+      ),
+      businessCategory: BusinessCategory.fromStorage(
+        data['businessCategory'] as String?,
+      ),
     );
   }
 
@@ -274,6 +288,9 @@ class Doctor {
         if (clinicPhotoThumbnails != null && clinicPhotoThumbnails!.isNotEmpty)
           'clinicPhotoThumbnails': clinicPhotoThumbnails,
         'profileVisibility': profileVisibility.toMap(),
+        'accountType': accountType.storageKey,
+        if (businessCategory != null)
+          'businessCategory': businessCategory!.storageKey,
       };
 
   Doctor copyWith({
@@ -305,6 +322,8 @@ class Doctor {
     List<String>? clinicPhotos,
     List<String>? clinicPhotoThumbnails,
     DoctorProfileVisibility? profileVisibility,
+    ServiceProviderAccountType? accountType,
+    BusinessCategory? businessCategory,
   }) {
     return Doctor(
       id: id,
@@ -337,6 +356,8 @@ class Doctor {
       clinicPhotoThumbnails:
           clinicPhotoThumbnails ?? this.clinicPhotoThumbnails,
       profileVisibility: profileVisibility ?? this.profileVisibility,
+      accountType: accountType ?? this.accountType,
+      businessCategory: businessCategory ?? this.businessCategory,
     );
   }
 

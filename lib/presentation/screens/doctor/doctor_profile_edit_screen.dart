@@ -27,6 +27,7 @@ import '../../../services/clinic_data_service.dart';
 import '../../../services/location_service.dart';
 
 import '../../../utils/localization_utils.dart';
+import '../../../utils/provider_labels.dart';
 
 import '../../../presentation/widgets/doctor_avatar.dart';
 import '../../../presentation/widgets/doctor_schedule_editor.dart';
@@ -813,7 +814,7 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
 
         appBar: AppBar(
 
-          title: Text(l10n.editProfile),
+          title: Text(ProviderLabels.editProfileTitle(l10n, _doctor)),
 
           backgroundColor: AppTheme.doctorColor,
 
@@ -869,7 +870,9 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
 
       return Scaffold(
 
-        appBar: AppBar(title: Text(l10n.editProfile)),
+        appBar: AppBar(
+          title: Text(ProviderLabels.editProfileTitle(l10n, _doctor)),
+        ),
 
         body: Center(child: Text(l10n.errorGeneric)),
 
@@ -885,7 +888,7 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
 
       appBar: AppBar(
 
-        title: Text(l10n.editProfile),
+        title: Text(ProviderLabels.editProfileTitle(l10n, _doctor)),
 
         backgroundColor: AppTheme.doctorColor,
 
@@ -1125,6 +1128,25 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
 
                   const SizedBox(height: 12),
 
+                  if (_doctor?.isBusiness == true &&
+                      _doctor?.businessCategory != null) ...[
+                    InputDecorator(
+                      decoration: InputDecoration(
+                        labelText: l10n.selectBusinessCategory,
+                        prefixIcon: const Icon(Icons.storefront_outlined),
+                        border: const OutlineInputBorder(),
+                      ),
+                      child: Text(
+                        ProviderLabels.businessCategoryLabel(
+                          l10n,
+                          _doctor!.businessCategory!,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+
+                  if (_doctor?.isBusiness != true) ...[
                   AuthTextField(
 
                     controller: _degreeKuController,
@@ -1180,6 +1202,7 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
                   ),
 
                   const SizedBox(height: 12),
+                  ],
 
                   AuthTextField(
                     controller: _consultationFeeController,
