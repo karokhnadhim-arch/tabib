@@ -56,8 +56,13 @@ class InMemoryClinicBackend implements ClinicBackend {
     }
   }
 
-  List<Doctor> _filteredDoctors(String? specialtyId, String? clinicId) {
+  List<Doctor> _filteredDoctors(
+    String? specialtyId,
+    String? clinicId, {
+    ServiceProviderAccountType? accountType,
+  }) {
     return _doctors.where((d) {
+      if (accountType != null && d.accountType != accountType) return false;
       if (specialtyId != null && d.specialtyId != specialtyId) return false;
       if (clinicId != null && d.clinicId != clinicId) return false;
       return true;
@@ -76,10 +81,15 @@ class InMemoryClinicBackend implements ClinicBackend {
   Future<DoctorPage> fetchDoctorsPage({
     String? specialtyId,
     String? clinicId,
+    ServiceProviderAccountType? accountType,
     int limit = FirestoreLimits.doctorsPageSize,
     Object? startAfterCursor,
   }) async {
-    final all = _filteredDoctors(specialtyId, clinicId);
+    final all = _filteredDoctors(
+      specialtyId,
+      clinicId,
+      accountType: accountType,
+    );
     var startIndex = 0;
     if (startAfterCursor is int) startIndex = startAfterCursor;
     final end = (startIndex + limit).clamp(0, all.length);
@@ -177,6 +187,9 @@ class InMemoryClinicBackend implements ClinicBackend {
     required String patientId,
     required String patientName,
     required String patientPhone,
+    required String queueDate,
+    required String slotStart,
+    required String slotEnd,
   }) async {
     final existing = _queues.where(
       (q) =>
@@ -185,11 +198,11 @@ class InMemoryClinicBackend implements ClinicBackend {
     );
     if (existing.isNotEmpty) return null;
 
-    final active = _queues
-        .where((q) =>
-            q.doctorId == doctorId &&
-            activeQueueStatuses.contains(q.status))
-        .toList();
+    final active = _activeQueue(
+      doctorId,
+      queueDate: queueDate,
+      slotStart: slotStart,
+    );
     final position = active.length + 1;
     final entry = QueueEntry(
       id: 'demo_queue_${_queues.length}',
@@ -201,6 +214,9 @@ class InMemoryClinicBackend implements ClinicBackend {
       status: QueueStatus.waiting,
       bookedAt: DateTime.now(),
       estimatedWaitMinutes: (position - 1) * 15,
+      queueDate: queueDate,
+      slotStart: slotStart,
+      slotEnd: slotEnd,
     );
     _queues.add(entry);
     _notify();
@@ -212,7 +228,11 @@ class InMemoryClinicBackend implements ClinicBackend {
     final entry = _queues.where((q) => q.id == entryId).firstOrNull;
     if (entry == null) return;
     entry.status = QueueStatus.cancelled;
-    _reindexDoctorQueue(doctorId);
+    _reindexDoctorQueue(
+      doctorId,
+      queueDate: entry.effectiveQueueDate,
+      slotStart: entry.effectiveSlotStart,
+    );
     _notify();
   }
 
@@ -227,7 +247,13 @@ class InMemoryClinicBackend implements ClinicBackend {
   }
 
   Future<void> _swapEntry(String entryId, String doctorId, int direction) async {
-    final entries = _activeQueue(doctorId);
+    final entry = _queues.where((q) => q.id == entryId).firstOrNull;
+    if (entry == null) return;
+    final entries = _activeQueue(
+      doctorId,
+      queueDate: entry.effectiveQueueDate,
+      slotStart: entry.effectiveSlotStart,
+    );
     final index = entries.indexWhere((e) => e.id == entryId);
     if (index == -1) return;
     final newIndex = index + direction;
@@ -263,15 +289,25 @@ class InMemoryClinicBackend implements ClinicBackend {
         .firstOrNull;
     if (current == null) return;
     current.status = QueueStatus.completed;
-    _reindexDoctorQueue(doctorId);
+    _reindexDoctorQueue(
+      doctorId,
+      queueDate: current.effectiveQueueDate,
+      slotStart: current.effectiveSlotStart,
+    );
     _notify();
   }
 
-  List<QueueEntry> _activeQueue(String doctorId) {
+  List<QueueEntry> _activeQueue(
+    String doctorId, {
+    String? queueDate,
+    String? slotStart,
+  }) {
     return _queues
         .where((q) =>
             q.doctorId == doctorId &&
-            activeQueueStatuses.contains(q.status))
+            activeQueueStatuses.contains(q.status) &&
+            (queueDate == null || q.effectiveQueueDate == queueDate) &&
+            (slotStart == null || q.effectiveSlotStart == slotStart))
         .toList()
       ..sort((a, b) => a.position.compareTo(b.position));
   }
@@ -290,7 +326,11 @@ class InMemoryClinicBackend implements ClinicBackend {
         status == QueueStatus.cancelled ||
         status == QueueStatus.examination ||
         status == QueueStatus.sentForTests) {
-      _reindexDoctorQueue(doctorId);
+      _reindexDoctorQueue(
+        doctorId,
+        queueDate: entry.effectiveQueueDate,
+        slotStart: entry.effectiveSlotStart,
+      );
     }
     _notify();
   }
@@ -313,7 +353,11 @@ class InMemoryClinicBackend implements ClinicBackend {
     final entry = _queues.where((q) => q.id == entryId).firstOrNull;
     if (entry == null || entry.doctorId != doctorId) return;
     entry.status = QueueStatus.examination;
-    _reindexDoctorQueue(doctorId);
+    _reindexDoctorQueue(
+      doctorId,
+      queueDate: entry.effectiveQueueDate,
+      slotStart: entry.effectiveSlotStart,
+    );
     _notify();
   }
 
@@ -343,8 +387,16 @@ class InMemoryClinicBackend implements ClinicBackend {
     _notify();
   }
 
-  void _reindexDoctorQueue(String doctorId) {
-    final active = _activeQueue(doctorId);
+  void _reindexDoctorQueue(
+    String doctorId, {
+    String? queueDate,
+    String? slotStart,
+  }) {
+    final active = _activeQueue(
+      doctorId,
+      queueDate: queueDate,
+      slotStart: slotStart,
+    );
     for (var i = 0; i < active.length; i++) {
       active[i].position = i + 1;
       active[i].estimatedWaitMinutes = i * 15;

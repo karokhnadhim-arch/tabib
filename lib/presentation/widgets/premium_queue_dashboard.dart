@@ -6,6 +6,7 @@ import '../../l10n/app_localizations.dart';
 import '../../models/doctor.dart';
 import '../../models/queue_entry.dart';
 import '../../utils/localization_utils.dart';
+import '../../utils/queue_slot_utils.dart';
 import '../../utils/queue_status_utils.dart';
 import 'doctor_avatar.dart';
 
@@ -45,6 +46,35 @@ class PremiumQueueDashboard extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         if (doctor != null) _DoctorHeader(doctor: doctor!),
+        if (entry.slotStart.isNotEmpty && entry.queueDate.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: AppTheme.medicalBlue.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.schedule, color: AppTheme.medicalBlue, size: 20),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    QueueSlotUtils.formatSlot(
+                      context,
+                      QueueTimeSlot(
+                        date: DateTime.parse(entry.effectiveQueueDate),
+                        start: entry.effectiveSlotStart,
+                        end: entry.effectiveSlotEnd,
+                      ),
+                    ),
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
         const SizedBox(height: 20),
         Container(
           padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 20),

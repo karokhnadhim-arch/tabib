@@ -6,6 +6,8 @@ import '../core/utils/clinic_subscription.dart';
 import '../core/utils/subscription_manager.dart';
 import '../models/clinic.dart';
 import '../models/doctor.dart';
+import '../models/provider_catalog_mode.dart';
+import '../models/service_provider_type.dart';
 import '../models/specialty.dart';
 import 'backend/clinic_backend.dart';
 
@@ -30,6 +32,7 @@ class ClinicDataService extends ChangeNotifier {
   Object? _doctorsCursor;
   String? _doctorsSpecialtyFilter;
   String? _doctorsClinicFilter;
+  ServiceProviderAccountType? _doctorsAccountTypeFilter;
 
   List<Specialty> get specialties => List.unmodifiable(_specialties);
   List<Clinic> get clinics => List.unmodifiable(_clinics);
@@ -67,17 +70,26 @@ class ClinicDataService extends ChangeNotifier {
   Future<void> loadDoctors({
     String? specialtyId,
     String? clinicId,
+    ProviderCatalogMode? catalogMode,
     bool refresh = false,
   }) async {
+    final accountType = catalogMode == null
+        ? null
+        : catalogMode == ProviderCatalogMode.businesses
+            ? ServiceProviderAccountType.business
+            : ServiceProviderAccountType.doctor;
+
     if (_doctorsLoading) return;
     if (refresh ||
         specialtyId != _doctorsSpecialtyFilter ||
-        clinicId != _doctorsClinicFilter) {
+        clinicId != _doctorsClinicFilter ||
+        accountType != _doctorsAccountTypeFilter) {
       _doctors = [];
       _doctorsCursor = null;
       _hasMoreDoctors = true;
       _doctorsSpecialtyFilter = specialtyId;
       _doctorsClinicFilter = clinicId;
+      _doctorsAccountTypeFilter = accountType;
     }
     if (!_hasMoreDoctors) return;
 
@@ -88,13 +100,20 @@ class ClinicDataService extends ChangeNotifier {
       final page = await _backend.fetchDoctorsPage(
         specialtyId: specialtyId,
         clinicId: clinicId,
+        accountType: accountType,
         limit: FirestoreLimits.doctorsPageSize,
         startAfterCursor: _doctorsCursor,
       );
-      for (final d in page.doctors) {
+      var loaded = page.doctors;
+      if (catalogMode == ProviderCatalogMode.doctors) {
+        loaded = loaded.where((d) => d.isDoctorAccount).toList();
+      } else if (catalogMode == ProviderCatalogMode.businesses) {
+        loaded = loaded.where((d) => d.isBusiness).toList();
+      }
+      for (final d in loaded) {
         _doctorCache[d.id] = d;
       }
-      _doctors = [..._doctors, ...page.doctors];
+      _doctors = [..._doctors, ...loaded];
       _doctorsCursor = page.nextCursor;
       _hasMoreDoctors = page.hasMore;
     } finally {

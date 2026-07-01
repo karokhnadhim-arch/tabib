@@ -39,11 +39,17 @@ class QueueRepositoryImpl implements QueueRepository {
     required String patientId,
     required String patientName,
     required String patientPhone,
+    required String queueDate,
+    required String slotStart,
+    required String slotEnd,
   }) =>
       _backend.bookQueue(
         doctorId: doctorId,
         patientId: patientId,
         patientName: patientName,
         patientPhone: patientPhone,
+        queueDate: queueDate,
+        slotStart: slotStart,
+        slotEnd: slotEnd,
       );
 }

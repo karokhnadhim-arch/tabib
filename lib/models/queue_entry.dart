@@ -45,6 +45,9 @@ class QueueEntry {
     required this.status,
     required this.bookedAt,
     this.estimatedWaitMinutes,
+    this.queueDate = '',
+    this.slotStart = '',
+    this.slotEnd = '',
   });
 
   final String id;
@@ -56,6 +59,31 @@ class QueueEntry {
   QueueStatus status;
   final DateTime bookedAt;
   int? estimatedWaitMinutes;
+  /// Calendar day for this queue (YYYY-MM-DD).
+  final String queueDate;
+  /// Slot start/end in 24h HH:mm — positions are scoped per day + slot.
+  final String slotStart;
+  final String slotEnd;
+
+  static String dateKey(DateTime date) {
+    final d = DateTime(date.year, date.month, date.day);
+    return '${d.year.toString().padLeft(4, '0')}-'
+        '${d.month.toString().padLeft(2, '0')}-'
+        '${d.day.toString().padLeft(2, '0')}';
+  }
+
+  String get effectiveQueueDate =>
+      queueDate.isNotEmpty ? queueDate : dateKey(bookedAt);
+
+  String get effectiveSlotStart =>
+      slotStart.isNotEmpty ? slotStart : '09:00';
+
+  String get effectiveSlotEnd => slotEnd.isNotEmpty ? slotEnd : '17:00';
+
+  bool isSameSlotAs(QueueEntry other) =>
+      doctorId == other.doctorId &&
+      effectiveQueueDate == other.effectiveQueueDate &&
+      effectiveSlotStart == other.effectiveSlotStart;
 
   bool get isActive =>
       status == QueueStatus.waiting ||
@@ -78,6 +106,9 @@ class QueueEntry {
         'status': _persistedStatusName(status),
         'bookedAt': bookedAt.toUtc().millisecondsSinceEpoch,
         'estimatedWaitMinutes': estimatedWaitMinutes,
+        if (queueDate.isNotEmpty) 'queueDate': queueDate,
+        if (slotStart.isNotEmpty) 'slotStart': slotStart,
+        if (slotEnd.isNotEmpty) 'slotEnd': slotEnd,
       };
 
   static String _persistedStatusName(QueueStatus status) {
@@ -107,6 +138,9 @@ class QueueEntry {
             DateTime.now().millisecondsSinceEpoch,
       ),
       estimatedWaitMinutes: (data['estimatedWaitMinutes'] as num?)?.toInt(),
+      queueDate: data['queueDate'] as String? ?? '',
+      slotStart: data['slotStart'] as String? ?? '',
+      slotEnd: data['slotEnd'] as String? ?? '',
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import '../l10n/app_localizations.dart';
 import '../models/doctor.dart';
+import '../models/provider_catalog_mode.dart';
 import '../models/service_provider_type.dart';
 import 'localization_utils.dart';
 
@@ -35,6 +36,42 @@ abstract final class ProviderLabels {
       l10n.searchProviders;
 
   static String searchHint(AppLocalizations l10n) => l10n.searchHintProviders;
+
+  static String catalogTitle(
+    AppLocalizations l10n,
+    ProviderCatalogMode mode,
+  ) =>
+      switch (mode) {
+        ProviderCatalogMode.doctors => l10n.doctorsSection,
+        ProviderCatalogMode.businesses => l10n.clinicsHealthcareCenters,
+      };
+
+  static String catalogSearchHint(
+    AppLocalizations l10n,
+    ProviderCatalogMode mode,
+  ) =>
+      switch (mode) {
+        ProviderCatalogMode.doctors => l10n.searchDoctorsOnly,
+        ProviderCatalogMode.businesses => l10n.searchBusinessesOnly,
+      };
+
+  static String catalogEmptyMessage(
+    AppLocalizations l10n,
+    ProviderCatalogMode mode,
+  ) =>
+      switch (mode) {
+        ProviderCatalogMode.doctors => l10n.noDoctorsFound,
+        ProviderCatalogMode.businesses => l10n.noBusinessesFound,
+      };
+
+  static String detailRoute(
+    ProviderCatalogMode mode,
+    String providerId,
+  ) =>
+      switch (mode) {
+        ProviderCatalogMode.doctors => '/doctors/$providerId',
+        ProviderCatalogMode.businesses => '/businesses/$providerId',
+      };
 
   static String createAccountTitle(
     AppLocalizations l10n,

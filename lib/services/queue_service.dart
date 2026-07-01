@@ -79,7 +79,7 @@ class QueueService extends ChangeNotifier {
   int peopleAhead(QueueEntry entry) {
     if (!entry.isWaitingInLine) return 0;
     final inLine = queueForDoctor(entry.doctorId)
-        .where((e) => e.isWaitingInLine)
+        .where((e) => e.isWaitingInLine && e.isSameSlotAs(entry))
         .toList()
       ..sort((a, b) => a.position.compareTo(b.position));
     final index = inLine.indexWhere((e) => e.id == entry.id);
@@ -87,12 +87,28 @@ class QueueService extends ChangeNotifier {
     return index;
   }
 
-  int? currentServingNumber(String doctorId) {
-    final active = queueForDoctor(doctorId);
+  int? currentServingNumber(QueueEntry entry) {
+    final active = queueForDoctor(entry.doctorId)
+        .where((e) => e.isSameSlotAs(entry))
+        .toList();
     for (final e in active) {
       if (e.status == QueueStatus.inProgress) return e.position;
     }
     if (active.isEmpty) return 0;
+    final waiting = active
+        .where((e) => e.status == QueueStatus.waiting)
+        .toList()
+      ..sort((a, b) => a.position.compareTo(b.position));
+    if (waiting.isEmpty) return 0;
+    return waiting.first.position > 1 ? waiting.first.position - 1 : 0;
+  }
+
+  int? currentServingNumberForDoctor(String doctorId) {
+    final active = queueForDoctor(doctorId);
+    if (active.isEmpty) return 0;
+    for (final e in active) {
+      if (e.status == QueueStatus.inProgress) return e.position;
+    }
     final waiting = active
         .where((e) => e.status == QueueStatus.waiting)
         .toList()
@@ -121,12 +137,18 @@ class QueueService extends ChangeNotifier {
     required String patientId,
     required String patientName,
     required String patientPhone,
+    required String queueDate,
+    required String slotStart,
+    required String slotEnd,
   }) {
     return _backend.bookQueue(
       doctorId: doctorId,
       patientId: patientId,
       patientName: patientName,
       patientPhone: patientPhone,
+      queueDate: queueDate,
+      slotStart: slotStart,
+      slotEnd: slotEnd,
     );
   }
 

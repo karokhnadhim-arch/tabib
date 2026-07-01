@@ -432,5 +432,19 @@
   "businessCategoryBloodTestCenter": "سەنتەری تاقیکردنەوەی خوێن",
   "businessCategoryPharmacy": "دەرمانخانە",
   "businessCategoryOtherHealthcare": "خزمەتگوزاری تەندروستی تر",
-  "noSecretariesAssignedBusiness": "هیچ سکرتێرێک بۆ ئەم کارە دیاری نەکراوە"
+  "noSecretariesAssignedBusiness": "هیچ سکرتێرێک بۆ ئەم کارە دیاری نەکراوە",
+  "doctorsSection": "دکتۆرەکان",
+  "clinicsHealthcareCenters": "نۆرینگە و ناوەندەکانی تەندروستی",
+  "searchDoctorsOnly": "گەڕان بە ناوی دکتۆر یان پسپۆڕی",
+  "searchBusinessesOnly": "گەڕان بە ناوی کار",
+  "noBusinessesFound": "هیچ کارێک نەدۆزرایەوە",
+  "allBusinessCategories": "هەموو جۆرەکان",
+  "browseHealthcare": "گەڕان لە خزمەتگوزاری تەندروستی",
+  "browseDoctorsHint": "دکتۆر بدۆزەوە و بچۆ ناو سەرە",
+  "browseBusinessesHint": "نۆرینگە، تاقیگە، دەرمانخانە و زیاتر",
+  "selectQueueSlot": "کاتی سەرە هەڵبژێرە",
+  "selectTimeSlotHint": "کاتێکی بەردەست هەڵبژێرە بۆ سەردانت",
+  "noQueueSlotsAvailable": "ئێستا هیچ کاتێکی سەرە بەردەست نییە",
+  "joinQueue": "بچۆ ناو سەرە",
+  "queueSlot": "کاتی سەرە"
 }

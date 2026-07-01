@@ -6,19 +6,19 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/responsive.dart';
 import '../../../core/widgets/medical_ui.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../models/appointment.dart';
+import '../../../models/provider_catalog_mode.dart';
 import '../../../models/queue_entry.dart';
 import '../../../models/specialty.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../services/queue_service.dart';
 import '../../../utils/localization_utils.dart';
-import '../../../utils/provider_labels.dart';
 import '../../../widgets/common_widgets.dart';
 import '../../../widgets/language_picker.dart';
 import '../../providers/app_providers.dart';
 import '../../widgets/simple_queue_circles.dart';
 import 'doctor_list_screen.dart';
+import 'queue_tracking_screen.dart';
 
 class PatientHomeScreen extends StatefulWidget {
   const PatientHomeScreen({super.key});
@@ -35,7 +35,6 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final auth = context.read<AuthService>();
-      context.read<AppointmentProvider>().watchPatient(auth.patientId);
       context.read<NotificationProvider>().watch(auth.patientId);
       context.read<QueueService>().watchPatientQueue(auth.patientId);
       await context.read<ClinicDataService>().ensureCatalogLoaded();
@@ -46,7 +45,6 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final auth = context.watch<AuthService>();
-    final appointments = context.watch<AppointmentProvider>();
     final queue = context.watch<QueueService>();
     final activeQueue = queue.activeEntryForPatient(auth.patientId);
 
@@ -56,14 +54,20 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
         children: [
           _HomeTab(
             userName: auth.currentUser?.name.localized(context) ?? '',
-            upcomingCount: appointments.appointments
-                .where((a) => a.isPending || a.isAccepted)
-                .length,
             activeQueue: activeQueue,
-            onQueueTap: () => context.push('/queue'),
+            onQueueTap: () => setState(() => _navIndex = 3),
+            onDoctorsTap: () => setState(() => _navIndex = 1),
+            onBusinessesTap: () => setState(() => _navIndex = 2),
           ),
-          const _DoctorsTab(),
-          _AppointmentsTab(appointments: appointments.appointments),
+          const TabibDoctorListScreen(
+            embedded: true,
+            catalogMode: ProviderCatalogMode.doctors,
+          ),
+          const TabibDoctorListScreen(
+            embedded: true,
+            catalogMode: ProviderCatalogMode.businesses,
+          ),
+          const QueueTrackingScreen(embedded: true),
         ],
       ),
       bottomNavigationBar: NavigationBar(
@@ -78,18 +82,23 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
           NavigationDestination(
             icon: const Icon(Icons.medical_services_outlined),
             selectedIcon: const Icon(Icons.medical_services),
-            label: ProviderLabels.searchProvidersTitle(l10n),
+            label: l10n.doctorsSection,
           ),
           NavigationDestination(
-            icon: const Icon(Icons.event_note_outlined),
-            selectedIcon: const Icon(Icons.event_note),
-            label: l10n.myAppointments,
+            icon: const Icon(Icons.local_hospital_outlined),
+            selectedIcon: const Icon(Icons.local_hospital),
+            label: l10n.clinicsHealthcareCenters,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.queue_play_next_outlined),
+            selectedIcon: const Icon(Icons.queue_play_next),
+            label: l10n.myQueue,
           ),
         ],
       ),
-      floatingActionButton: activeQueue != null
+      floatingActionButton: activeQueue != null && _navIndex != 3
           ? FloatingActionButton.extended(
-              onPressed: () => context.push('/queue'),
+              onPressed: () => setState(() => _navIndex = 3),
               backgroundColor: AppTheme.medicalGreen,
               icon: const Icon(Icons.queue_play_next),
               label: Text(l10n.myQueue),
@@ -102,15 +111,17 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
 class _HomeTab extends StatelessWidget {
   const _HomeTab({
     required this.userName,
-    required this.upcomingCount,
     required this.activeQueue,
     required this.onQueueTap,
+    required this.onDoctorsTap,
+    required this.onBusinessesTap,
   });
 
   final String userName;
-  final int upcomingCount;
   final QueueEntry? activeQueue;
   final VoidCallback onQueueTap;
+  final VoidCallback onDoctorsTap;
+  final VoidCallback onBusinessesTap;
 
   @override
   Widget build(BuildContext context) {
@@ -151,52 +162,29 @@ class _HomeTab extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  final statCards = [
-                    MedicalStatCard(
-                      icon: Icons.event_available,
-                      label: l10n.myAppointments,
-                      value: '$upcomingCount',
-                      color: AppTheme.medicalBlue,
-                      onTap: () => context.push('/appointments'),
-                    ),
-                    MedicalStatCard(
-                      icon: Icons.chat_bubble_outline,
-                      label: l10n.chatWithClinic,
-                      value: '💬',
-                      color: AppTheme.medicalBlue,
-                      onTap: () => context.push(
-                        '/chat?clinicId=clinic_erbil_1',
-                      ),
-                    ),
-                  ];
-
-                  if (constraints.maxWidth < 400) {
-                    return Column(
-                      children: [
-                        statCards[0],
-                        const SizedBox(height: 12),
-                        statCards[1],
-                      ],
-                    );
-                  }
-
-                  return Row(
-                    children: [
-                      Expanded(child: statCards[0]),
-                      const SizedBox(width: 12),
-                      Expanded(child: statCards[1]),
-                    ],
-                  );
-                },
+              SectionHeader(title: l10n.browseHealthcare),
+              const SizedBox(height: 8),
+              _CatalogSectionCard(
+                icon: Icons.medical_services_outlined,
+                title: l10n.doctorsSection,
+                subtitle: l10n.browseDoctorsHint,
+                color: AppTheme.medicalBlue,
+                onTap: onDoctorsTap,
+              ),
+              const SizedBox(height: 12),
+              _CatalogSectionCard(
+                icon: Icons.local_hospital_outlined,
+                title: l10n.clinicsHealthcareCenters,
+                subtitle: l10n.browseBusinessesHint,
+                color: AppTheme.medicalGreen,
+                onTap: onBusinessesTap,
               ),
               const SizedBox(height: 20),
               SectionHeader(
                 title: l10n.medicalSpecialties,
                 action: TextButton(
                   onPressed: () => context.push('/doctors'),
-                  child: Text(ProviderLabels.searchProvidersTitle(l10n)),
+                  child: Text(l10n.doctorsSection),
                 ),
               ),
               GridView.builder(
@@ -214,10 +202,89 @@ class _HomeTab extends StatelessWidget {
                   return _SpecialtyCard(specialty: specialty);
                 },
               ),
+              const SizedBox(height: 12),
+              MedicalStatCard(
+                icon: Icons.chat_bubble_outline,
+                label: l10n.chatWithClinic,
+                value: '💬',
+                color: AppTheme.medicalBlue,
+                onTap: () => context.push('/chat?clinicId=clinic_erbil_1'),
+              ),
             ]),
           ),
         ),
       ],
+    );
+  }
+}
+
+class _CatalogSectionCard extends StatelessWidget {
+  const _CatalogSectionCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.color,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: Colors.grey.shade200),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: color, size: 28),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, color: Colors.grey.shade400),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -320,7 +387,7 @@ class _HomeQueueDashboardState extends State<_HomeQueueDashboard>
       peopleAhead = _demoPeopleAhead;
     } else {
       myNumber = entry.position;
-      currentNumber = queue.currentServingNumber(entry.doctorId) ?? 0;
+      currentNumber = queue.currentServingNumber(entry) ?? 0;
       peopleAhead = queue.peopleAhead(entry);
     }
 
@@ -374,29 +441,6 @@ class _SpecialtyCard extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _DoctorsTab extends StatelessWidget {
-  const _DoctorsTab();
-
-  @override
-  Widget build(BuildContext context) {
-    return const TabibDoctorListScreen(embedded: true);
-  }
-}
-
-class _AppointmentsTab extends StatelessWidget {
-  const _AppointmentsTab({required this.appointments});
-
-  final List<Appointment> appointments;
-
-  @override
-  Widget build(BuildContext context) {
-    return AppointmentHistoryScreen(
-      embedded: true,
-      appointments: appointments,
     );
   }
 }

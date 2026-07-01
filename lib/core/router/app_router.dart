@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../services/auth_service.dart';
 import '../auth/admin_routes.dart';
+import '../../models/provider_catalog_mode.dart';
 import '../../presentation/screens/admin/create_doctor_screen.dart';
 import '../../presentation/screens/admin/create_secretary_screen.dart';
 import '../../presentation/screens/auth/register_screen.dart';
@@ -63,6 +64,7 @@ class AppRouter {
             path: '/doctors',
             builder: (context, state) => TabibDoctorListScreen(
               initialSpecialtyId: state.uri.queryParameters['specialty'],
+              catalogMode: ProviderCatalogMode.doctors,
             ),
             routes: [
               GoRoute(
@@ -70,14 +72,20 @@ class AppRouter {
                 builder: (_, state) => TabibDoctorDetailScreen(
                   doctorId: state.pathParameters['id']!,
                 ),
-                routes: [
-                  GoRoute(
-                    path: 'book',
-                    builder: (_, state) => AppointmentBookingScreen(
-                      doctorId: state.pathParameters['id']!,
-                    ),
-                  ),
-                ],
+              ),
+            ],
+          ),
+          GoRoute(
+            path: '/businesses',
+            builder: (_, __) => const TabibDoctorListScreen(
+              catalogMode: ProviderCatalogMode.businesses,
+            ),
+            routes: [
+              GoRoute(
+                path: ':id',
+                builder: (_, state) => TabibDoctorDetailScreen(
+                  doctorId: state.pathParameters['id']!,
+                ),
               ),
             ],
           ),

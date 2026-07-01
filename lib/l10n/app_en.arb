@@ -467,5 +467,19 @@
   "businessCategoryBloodTestCenter": "Blood test center",
   "businessCategoryPharmacy": "Pharmacy",
   "businessCategoryOtherHealthcare": "Other healthcare services",
-  "noSecretariesAssignedBusiness": "No secretaries assigned to this business"
+  "noSecretariesAssignedBusiness": "No secretaries assigned to this business",
+  "doctorsSection": "Doctors",
+  "clinicsHealthcareCenters": "Clinics & Healthcare Centers",
+  "searchDoctorsOnly": "Search by doctor name or specialty",
+  "searchBusinessesOnly": "Search by business name",
+  "noBusinessesFound": "No businesses found",
+  "allBusinessCategories": "All categories",
+  "browseHealthcare": "Browse healthcare",
+  "browseDoctorsHint": "Find doctors and join their queue",
+  "browseBusinessesHint": "Clinics, labs, pharmacies and more",
+  "selectQueueSlot": "Select queue time slot",
+  "selectTimeSlotHint": "Choose an available time slot for your visit",
+  "noQueueSlotsAvailable": "No queue slots available right now",
+  "joinQueue": "Join queue",
+  "queueSlot": "Queue slot"
 }

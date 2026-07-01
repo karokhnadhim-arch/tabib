@@ -15,7 +15,9 @@ import '../../widgets/premium_queue_dashboard.dart';
 
 
 class QueueTrackingScreen extends StatefulWidget {
-  const QueueTrackingScreen({super.key});
+  const QueueTrackingScreen({super.key, this.embedded = false});
+
+  final bool embedded;
 
   @override
   State<QueueTrackingScreen> createState() => _QueueTrackingScreenState();
@@ -128,48 +130,123 @@ class _QueueTrackingScreenState extends State<QueueTrackingScreen>
     }
 
     if (entry == null) {
+      final emptyBody = SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppTheme.medicalBlue.withOpacity(0.08),
+              ),
+              child: Icon(Icons.event_busy,
+                  size: 72, color: Colors.grey.shade400),
+            ),
+            const SizedBox(height: 20),
+            Text(l10n.noActiveQueue,
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text(l10n.bookQueueHint,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey.shade600)),
+            const SizedBox(height: 28),
+            FilledButton.icon(
+              onPressed: () => context.go('/doctors'),
+              icon: const Icon(Icons.search),
+              label: Text(l10n.searchDoctors),
+            ),
+          ],
+        ),
+      );
+
+      if (widget.embedded) {
+        return emptyBody;
+      }
+
       return Scaffold(
         backgroundColor: AppTheme.medicalWhite,
         appBar: AppBar(
           title: Text(l10n.queueTracking),
           backgroundColor: AppTheme.patientColor,
         ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            children: [
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppTheme.medicalBlue.withOpacity(0.08),
-                  ),
-                  child: Icon(Icons.event_busy,
-                      size: 72, color: Colors.grey.shade400),
-                ),
-                const SizedBox(height: 20),
-                Text(l10n.noActiveQueue,
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                Text(l10n.bookQueueHint,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey.shade600)),
-                const SizedBox(height: 28),
-                FilledButton.icon(
-                  onPressed: () => context.go('/home'),
-                  icon: const Icon(Icons.search),
-                  label: Text(l10n.searchDoctors),
-                ),
-              ],
-            ),
-          ),
+        body: emptyBody,
       );
     }
 
     final doctor = data.doctorById(entry.doctorId);
     final ahead = queue.peopleAhead(entry);
-    final current = queue.currentServingNumber(entry.doctorId) ?? 0;
+    final current = queue.currentServingNumber(entry) ?? 0;
     final waitMin = queue.estimatedWaitMinutes(entry);
+
+    final queueBody = ResponsiveBody(
+      child: Column(
+        children: [
+          if (widget.embedded)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  l10n.myQueue,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              child: PremiumQueueDashboard(
+                entry: entry,
+                doctor: doctor,
+                currentNumber: current,
+                peopleAhead: ahead,
+                waitMinutes: waitMin,
+                pulseController: _pulseController,
+                numberScaleAnimation: _numberScale,
+              ),
+            ),
+          ),
+          SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: ResponsiveActionButtons(
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: () => context.push(
+                      '/chat?clinicId=${doctor?.clinicId ?? 'clinic_erbil_1'}',
+                    ),
+                    icon: const Icon(Icons.chat_bubble_outline),
+                    label: Text(l10n.chatWithClinic),
+                  ),
+                  FilledButton.icon(
+                    onPressed: () async {
+                      await queue.cancelEntry(entry.id, entry.doctorId);
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(l10n.queueCancelled)),
+                      );
+                      if (!widget.embedded) context.go('/home');
+                    },
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Colors.red.shade600,
+                    ),
+                    icon: const Icon(Icons.cancel_outlined),
+                    label: Text(l10n.cancelQueue),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (widget.embedded) return queueBody;
 
     return Scaffold(
       backgroundColor: AppTheme.medicalWhite,
@@ -178,58 +255,7 @@ class _QueueTrackingScreenState extends State<QueueTrackingScreen>
         backgroundColor: AppTheme.patientColor,
         elevation: 0,
       ),
-      body: ResponsiveBody(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                child: PremiumQueueDashboard(
-                  entry: entry,
-                  doctor: doctor,
-                  currentNumber: current,
-                  peopleAhead: ahead,
-                  waitMinutes: waitMin,
-                  pulseController: _pulseController,
-                  numberScaleAnimation: _numberScale,
-                ),
-              ),
-            ),
-            SafeArea(
-              top: false,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                child: ResponsiveActionButtons(
-                  children: [
-                    OutlinedButton.icon(
-                      onPressed: () => context.push(
-                        '/chat?clinicId=${doctor?.clinicId ?? 'clinic_erbil_1'}',
-                      ),
-                      icon: const Icon(Icons.chat_bubble_outline),
-                      label: Text(l10n.chatWithClinic),
-                    ),
-                    FilledButton.icon(
-                      onPressed: () async {
-                        await queue.cancelEntry(entry.id, entry.doctorId);
-                        if (!context.mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(l10n.queueCancelled)),
-                        );
-                        context.go('/home');
-                      },
-                      style: FilledButton.styleFrom(
-                        backgroundColor: Colors.red.shade600,
-                      ),
-                      icon: const Icon(Icons.cancel_outlined),
-                      label: Text(l10n.cancelQueue),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+      body: queueBody,
     );
   }
 }

@@ -2,6 +2,7 @@ import '../../models/clinic.dart';
 import '../../models/doctor.dart';
 import '../../models/doctor_page.dart';
 import '../../models/queue_entry.dart';
+import '../../models/service_provider_type.dart';
 import '../../models/specialty.dart';
 import '../../models/user_account.dart';
 
@@ -17,6 +18,7 @@ abstract class ClinicBackend {
   Future<DoctorPage> fetchDoctorsPage({
     String? specialtyId,
     String? clinicId,
+    ServiceProviderAccountType? accountType,
     int limit = 24,
     Object? startAfterCursor,
   });
@@ -41,6 +43,9 @@ abstract class ClinicBackend {
     required String patientId,
     required String patientName,
     required String patientPhone,
+    required String queueDate,
+    required String slotStart,
+    required String slotEnd,
   });
 
   Future<void> cancelEntry(String entryId, String doctorId);

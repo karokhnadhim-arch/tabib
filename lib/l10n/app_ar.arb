@@ -432,5 +432,19 @@
   "businessCategoryBloodTestCenter": "مركز فحص دم",
   "businessCategoryPharmacy": "صيدلية",
   "businessCategoryOtherHealthcare": "خدمات صحية أخرى",
-  "noSecretariesAssignedBusiness": "لا يوجد سكرتير معين لهذه المنشأة"
+  "noSecretariesAssignedBusiness": "لا يوجد سكرتير معين لهذه المنشأة",
+  "doctorsSection": "الأطباء",
+  "clinicsHealthcareCenters": "العيادات ومراكز الرعاية الصحية",
+  "searchDoctorsOnly": "البحث باسم الطبيب أو التخصص",
+  "searchBusinessesOnly": "البحث باسم المنشأة",
+  "noBusinessesFound": "لم يتم العثور على منشآت",
+  "allBusinessCategories": "جميع الفئات",
+  "browseHealthcare": "تصفح الرعاية الصحية",
+  "browseDoctorsHint": "ابحث عن الأطباء وانضم إلى الدور",
+  "browseBusinessesHint": "عيادات، مختبرات، صيدليات والمزيد",
+  "selectQueueSlot": "اختر وقت الدور",
+  "selectTimeSlotHint": "اختر وقتًا متاحًا لزيارتك",
+  "noQueueSlotsAvailable": "لا توجد أوقات دور متاحة حاليًا",
+  "joinQueue": "انضم إلى الدور",
+  "queueSlot": "وقت الدور"
 }

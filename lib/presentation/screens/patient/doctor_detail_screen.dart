@@ -17,6 +17,7 @@ import '../../../widgets/common_widgets.dart';
 import '../../widgets/doctor_avatar.dart';
 import '../../widgets/doctor_location_card.dart';
 import '../../widgets/doctor_schedule_view.dart';
+import '../../widgets/queue_booking_sheet.dart';
 import '../../widgets/tabib_image.dart';
 
 class TabibDoctorDetailScreen extends StatefulWidget {
@@ -76,7 +77,7 @@ class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
 
     if (_loadingDoctor || (doctor == null && _doctor == null)) {
       return Scaffold(
-        appBar: AppBar(title: Text(l10n.doctor)),
+        appBar: AppBar(title: Text(ProviderLabels.profileTitle(l10n, doctor))),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
@@ -89,7 +90,6 @@ class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
     }
 
     final inQueue = queue.queueForDoctor(widget.doctorId).length;
-    final current = queue.currentServingNumber(widget.doctorId) ?? 0;
     final degree = doctor.patientVisibleDegree(context);
     final whatsapp = doctor.patientVisibleWhatsapp;
     final showContact = doctor.patientShowsPhone ||
@@ -269,15 +269,17 @@ class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
               delegate: SliverChildListDelegate([
                 Row(
                   children: [
-                    Expanded(
-                      child: MedicalStatCard(
-                        icon: Icons.star,
-                        label: l10n.rating,
-                        value: '${doctor.rating}',
-                        color: Colors.amber.shade700,
+                    if (!doctor.isBusiness) ...[
+                      Expanded(
+                        child: MedicalStatCard(
+                          icon: Icons.star,
+                          label: l10n.rating,
+                          value: '${doctor.rating}',
+                          color: Colors.amber.shade700,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
+                      const SizedBox(width: 12),
+                    ],
                     Expanded(
                       child: MedicalStatCard(
                         icon: Icons.groups_outlined,
@@ -287,13 +289,6 @@ class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
                       ),
                     ),
                   ],
-                ),
-                const SizedBox(height: 12),
-                MedicalStatCard(
-                  icon: Icons.confirmation_number_outlined,
-                  label: l10n.currentQueueNumber,
-                  value: '$current',
-                  color: AppTheme.medicalGreen,
                 ),
                 const SizedBox(height: 20),
                 if (doctor.patientShowsConsultationFee) ...[
@@ -541,32 +536,12 @@ class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
                 ],
                 const SizedBox(height: 24),
                 FilledButton.icon(
-                  onPressed: () {
-                    final data = context.read<ClinicDataService>();
-                    if (!data.clinicAllowsAppointments(doctor.clinicId)) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(l10n.subscriptionBlocked)),
-                      );
-                      return;
-                    }
-                    context.push('/doctors/${widget.doctorId}/book');
-                  },
-                  icon: const Icon(Icons.event_available),
-                  label: Text(l10n.bookAppointment),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppTheme.medicalBlue,
-                    minimumSize: const Size.fromHeight(52),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                OutlinedButton.icon(
                   onPressed: () => _bookQueue(context, doctor),
                   icon: const Icon(Icons.queue_play_next),
-                  label: Text(l10n.bookQueue),
-                  style: OutlinedButton.styleFrom(
+                  label: Text(l10n.joinQueue),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppTheme.medicalGreen,
                     minimumSize: const Size.fromHeight(52),
-                    foregroundColor: AppTheme.medicalGreen,
-                    side: const BorderSide(color: AppTheme.medicalGreen),
                   ),
                 ),
               ]),
@@ -587,11 +562,18 @@ class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
       );
       return;
     }
+
+    final slot = await showQueueBookingSheet(context, doctor);
+    if (slot == null || !context.mounted) return;
+
     final entry = await context.read<QueueService>().bookQueue(
           doctorId: doctor.id,
           patientId: auth.patientId,
           patientName: auth.currentUser?.name.localized(context) ?? '',
           patientPhone: auth.currentUser?.phone ?? '',
+          queueDate: slot.dateKey,
+          slotStart: slot.start,
+          slotEnd: slot.end,
         );
     if (!context.mounted) return;
     if (entry != null) {

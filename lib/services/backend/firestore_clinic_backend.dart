@@ -6,6 +6,7 @@ import '../../models/doctor.dart';
 import '../../models/doctor_working_schedule.dart';
 import '../../models/localized_text.dart';
 import '../../models/queue_entry.dart';
+import '../../models/service_provider_type.dart';
 import '../../models/specialty.dart';
 import '../../models/user_account.dart';
 import '../../core/constants/firestore_limits.dart';
@@ -102,8 +103,12 @@ class FirestoreClinicBackend implements ClinicBackend {
   Query<Map<String, dynamic>> _doctorsQuery({
     String? specialtyId,
     String? clinicId,
+    ServiceProviderAccountType? accountType,
   }) {
     Query<Map<String, dynamic>> query = _doctors.orderBy(FieldPath.documentId);
+    if (accountType != null) {
+      query = query.where('accountType', isEqualTo: accountType.storageKey);
+    }
     if (specialtyId != null) {
       query = query.where('specialtyId', isEqualTo: specialtyId);
     }
@@ -144,6 +149,7 @@ class FirestoreClinicBackend implements ClinicBackend {
   Future<DoctorPage> fetchDoctorsPage({
     String? specialtyId,
     String? clinicId,
+    ServiceProviderAccountType? accountType,
     int limit = FirestoreLimits.doctorsPageSize,
     Object? startAfterCursor,
   }) async {
@@ -151,6 +157,7 @@ class FirestoreClinicBackend implements ClinicBackend {
     var query = _doctorsQuery(
       specialtyId: specialtyId,
       clinicId: clinicId,
+      accountType: accountType,
     ).limit(limit + 1);
     if (startAfterCursor is DocumentSnapshot<Map<String, dynamic>>) {
       query = query.startAfterDocument(startAfterCursor);
@@ -317,6 +324,9 @@ class FirestoreClinicBackend implements ClinicBackend {
     required String patientId,
     required String patientName,
     required String patientPhone,
+    required String queueDate,
+    required String slotStart,
+    required String slotEnd,
   }) async {
     final existing = await _queues
         .where('patientId', isEqualTo: patientId)
@@ -327,6 +337,8 @@ class FirestoreClinicBackend implements ClinicBackend {
 
     final active = await _queues
         .where('doctorId', isEqualTo: doctorId)
+        .where('queueDate', isEqualTo: queueDate)
+        .where('slotStart', isEqualTo: slotStart)
         .where('status', whereIn: activeQueueStatusNames)
         .orderBy('position', descending: true)
         .limit(1)
@@ -346,6 +358,9 @@ class FirestoreClinicBackend implements ClinicBackend {
       status: QueueStatus.waiting,
       bookedAt: DateTime.now(),
       estimatedWaitMinutes: (position - 1) * 15,
+      queueDate: queueDate,
+      slotStart: slotStart,
+      slotEnd: slotEnd,
     );
     await ref.set(entry.toMap());
     return entry;
@@ -353,8 +368,16 @@ class FirestoreClinicBackend implements ClinicBackend {
 
   @override
   Future<void> cancelEntry(String entryId, String doctorId) async {
+    final doc = await _queues.doc(entryId).get();
     await _queues.doc(entryId).update({'status': 'cancelled'});
-    await _reindexDoctorQueue(doctorId);
+    if (doc.exists && doc.data() != null) {
+      final entry = QueueEntry.fromFirestore(entryId, doc.data()!);
+      await _reindexDoctorQueue(
+        doctorId,
+        queueDate: entry.effectiveQueueDate,
+        slotStart: entry.effectiveSlotStart,
+      );
+    }
   }
 
   @override
@@ -368,8 +391,14 @@ class FirestoreClinicBackend implements ClinicBackend {
   }
 
   Future<void> _swapEntry(String entryId, String doctorId, int direction) async {
+    final entryDoc = await _queues.doc(entryId).get();
+    if (!entryDoc.exists || entryDoc.data() == null) return;
+    final entry = QueueEntry.fromFirestore(entryId, entryDoc.data()!);
+
     final snap = await _queues
         .where('doctorId', isEqualTo: doctorId)
+        .where('queueDate', isEqualTo: entry.effectiveQueueDate)
+        .where('slotStart', isEqualTo: entry.effectiveSlotStart)
         .where('status', whereIn: activeQueueStatusNames)
         .orderBy('position')
         .get();
@@ -419,7 +448,13 @@ class FirestoreClinicBackend implements ClinicBackend {
         .get();
     if (snap.docs.isEmpty) return;
     await snap.docs.first.reference.update({'status': 'completed'});
-    await _reindexDoctorQueue(doctorId);
+    final data = snap.docs.first.data();
+    final current = QueueEntry.fromFirestore(snap.docs.first.id, data);
+    await _reindexDoctorQueue(
+      doctorId,
+      queueDate: current.effectiveQueueDate,
+      slotStart: current.effectiveSlotStart,
+    );
   }
 
   @override
@@ -508,12 +543,21 @@ class FirestoreClinicBackend implements ClinicBackend {
     await batch.commit();
   }
 
-  Future<void> _reindexDoctorQueue(String doctorId) async {
-    final snap = await _queues
+  Future<void> _reindexDoctorQueue(
+    String doctorId, {
+    String? queueDate,
+    String? slotStart,
+  }) async {
+    var query = _queues
         .where('doctorId', isEqualTo: doctorId)
-        .where('status', whereIn: activeQueueStatusNames)
-        .orderBy('position')
-        .get();
+        .where('status', whereIn: activeQueueStatusNames);
+    if (queueDate != null) {
+      query = query.where('queueDate', isEqualTo: queueDate);
+    }
+    if (slotStart != null) {
+      query = query.where('slotStart', isEqualTo: slotStart);
+    }
+    final snap = await query.orderBy('position').get();
     final batch = _db.batch();
     for (var i = 0; i < snap.docs.length; i++) {
       batch.update(snap.docs[i].reference, {
