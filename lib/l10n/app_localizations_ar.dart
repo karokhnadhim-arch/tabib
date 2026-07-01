@@ -1229,4 +1229,46 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noSecretariesAssignedBusiness => 'لا يوجد سكرتير معين لهذه المنشأة';
+
+  @override
+  String get doctorsSection => 'الأطباء';
+
+  @override
+  String get clinicsHealthcareCenters => 'العيادات ومراكز الرعاية الصحية';
+
+  @override
+  String get searchDoctorsOnly => 'البحث باسم الطبيب أو التخصص';
+
+  @override
+  String get searchBusinessesOnly => 'البحث باسم المنشأة';
+
+  @override
+  String get noBusinessesFound => 'لم يتم العثور على منشآت';
+
+  @override
+  String get allBusinessCategories => 'جميع الفئات';
+
+  @override
+  String get browseHealthcare => 'تصفح الرعاية الصحية';
+
+  @override
+  String get browseDoctorsHint => 'ابحث عن الأطباء وانضم إلى الدور';
+
+  @override
+  String get browseBusinessesHint => 'عيادات، مختبرات، صيدليات والمزيد';
+
+  @override
+  String get selectQueueSlot => 'اختر وقت الدور';
+
+  @override
+  String get selectTimeSlotHint => 'اختر وقتًا متاحًا لزيارتك';
+
+  @override
+  String get noQueueSlotsAvailable => 'لا توجد أوقات دور متاحة حاليًا';
+
+  @override
+  String get joinQueue => 'انضم إلى الدور';
+
+  @override
+  String get queueSlot => 'وقت الدور';
 }

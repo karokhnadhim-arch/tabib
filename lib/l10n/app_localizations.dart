@@ -2494,6 +2494,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No secretaries assigned to this business'**
   String get noSecretariesAssignedBusiness;
+
+  /// No description provided for @doctorsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctors'**
+  String get doctorsSection;
+
+  /// No description provided for @clinicsHealthcareCenters.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinics & Healthcare Centers'**
+  String get clinicsHealthcareCenters;
+
+  /// No description provided for @searchDoctorsOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by doctor name or specialty'**
+  String get searchDoctorsOnly;
+
+  /// No description provided for @searchBusinessesOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by business name'**
+  String get searchBusinessesOnly;
+
+  /// No description provided for @noBusinessesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No businesses found'**
+  String get noBusinessesFound;
+
+  /// No description provided for @allBusinessCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'All categories'**
+  String get allBusinessCategories;
+
+  /// No description provided for @browseHealthcare.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse healthcare'**
+  String get browseHealthcare;
+
+  /// No description provided for @browseDoctorsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Find doctors and join their queue'**
+  String get browseDoctorsHint;
+
+  /// No description provided for @browseBusinessesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinics, labs, pharmacies and more'**
+  String get browseBusinessesHint;
+
+  /// No description provided for @selectQueueSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Select queue time slot'**
+  String get selectQueueSlot;
+
+  /// No description provided for @selectTimeSlotHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an available time slot for your visit'**
+  String get selectTimeSlotHint;
+
+  /// No description provided for @noQueueSlotsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No queue slots available right now'**
+  String get noQueueSlotsAvailable;
+
+  /// No description provided for @joinQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'Join queue'**
+  String get joinQueue;
+
+  /// No description provided for @queueSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue slot'**
+  String get queueSlot;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

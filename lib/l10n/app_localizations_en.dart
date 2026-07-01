@@ -1229,4 +1229,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noSecretariesAssignedBusiness => 'No secretaries assigned to this business';
+
+  @override
+  String get doctorsSection => 'Doctors';
+
+  @override
+  String get clinicsHealthcareCenters => 'Clinics & Healthcare Centers';
+
+  @override
+  String get searchDoctorsOnly => 'Search by doctor name or specialty';
+
+  @override
+  String get searchBusinessesOnly => 'Search by business name';
+
+  @override
+  String get noBusinessesFound => 'No businesses found';
+
+  @override
+  String get allBusinessCategories => 'All categories';
+
+  @override
+  String get browseHealthcare => 'Browse healthcare';
+
+  @override
+  String get browseDoctorsHint => 'Find doctors and join their queue';
+
+  @override
+  String get browseBusinessesHint => 'Clinics, labs, pharmacies and more';
+
+  @override
+  String get selectQueueSlot => 'Select queue time slot';
+
+  @override
+  String get selectTimeSlotHint => 'Choose an available time slot for your visit';
+
+  @override
+  String get noQueueSlotsAvailable => 'No queue slots available right now';
+
+  @override
+  String get joinQueue => 'Join queue';
+
+  @override
+  String get queueSlot => 'Queue slot';
 }

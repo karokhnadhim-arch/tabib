@@ -1229,4 +1229,46 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get noSecretariesAssignedBusiness => 'هیچ سکرتێرێک بۆ ئەم کارە دیاری نەکراوە';
+
+  @override
+  String get doctorsSection => 'دکتۆرەکان';
+
+  @override
+  String get clinicsHealthcareCenters => 'نۆرینگە و ناوەندەکانی تەندروستی';
+
+  @override
+  String get searchDoctorsOnly => 'گەڕان بە ناوی دکتۆر یان پسپۆڕی';
+
+  @override
+  String get searchBusinessesOnly => 'گەڕان بە ناوی کار';
+
+  @override
+  String get noBusinessesFound => 'هیچ کارێک نەدۆزرایەوە';
+
+  @override
+  String get allBusinessCategories => 'هەموو جۆرەکان';
+
+  @override
+  String get browseHealthcare => 'گەڕان لە خزمەتگوزاری تەندروستی';
+
+  @override
+  String get browseDoctorsHint => 'دکتۆر بدۆزەوە و بچۆ ناو سەرە';
+
+  @override
+  String get browseBusinessesHint => 'نۆرینگە، تاقیگە، دەرمانخانە و زیاتر';
+
+  @override
+  String get selectQueueSlot => 'کاتی سەرە هەڵبژێرە';
+
+  @override
+  String get selectTimeSlotHint => 'کاتێکی بەردەست هەڵبژێرە بۆ سەردانت';
+
+  @override
+  String get noQueueSlotsAvailable => 'ئێستا هیچ کاتێکی سەرە بەردەست نییە';
+
+  @override
+  String get joinQueue => 'بچۆ ناو سەرە';
+
+  @override
+  String get queueSlot => 'کاتی سەرە';
 }

@@ -9,6 +9,7 @@ import '../../services/queue_service.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/localization_utils.dart';
 import '../../widgets/common_widgets.dart';
+import '../../presentation/widgets/queue_booking_sheet.dart';
 
 class DoctorDetailScreen extends StatefulWidget {
   const DoctorDetailScreen({super.key, required this.doctorId});
@@ -125,17 +126,30 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
     final l10n = AppLocalizations.of(context);
     final auth = context.read<AuthService>();
     final queueService = context.read<QueueService>();
+    final data = context.read<ClinicDataService>();
 
     if (queueService.activeEntryForPatient(auth.patientId) != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.alreadyHasQueue)));
       return;
     }
 
+    final doctor = data.doctorById(doctorId);
+    if (doctor == null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.bookFailed)));
+      return;
+    }
+
+    final slot = await showQueueBookingSheet(context, doctor);
+    if (slot == null || !context.mounted) return;
+
     final entry = await queueService.bookQueue(
       doctorId: doctorId,
       patientId: auth.patientId,
       patientName: auth.currentUser?.name.localized(context) ?? l10n.patientName,
       patientPhone: auth.currentUser?.phone ?? '',
+      queueDate: slot.dateKey,
+      slotStart: slot.start,
+      slotEnd: slot.end,
     );
 
     if (!context.mounted) return;
