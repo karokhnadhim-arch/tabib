@@ -134,6 +134,7 @@ class ClinicDataService extends ChangeNotifier {
           if (index >= 0) {
             _doctors[index] = doctor;
           }
+          _doctorFetchCache.invalidate(doctor.id);
         }
         onUpdate(doctor);
         notifyListeners();
@@ -157,15 +158,38 @@ class ClinicDataService extends ChangeNotifier {
     }
   }
 
+  void putDoctorInCache(Doctor doctor) {
+    _doctorCache[doctor.id] = doctor;
+    final index = _doctors.indexWhere((d) => d.id == doctor.id);
+    if (index >= 0) {
+      _doctors[index] = doctor;
+    }
+    _doctorFetchCache.invalidate(doctor.id);
+    notifyListeners();
+  }
+
+  Future<void> saveDoctor(Doctor doctor) async {
+    await _backend.upsertDoctor(doctor);
+    putDoctorInCache(doctor);
+  }
+
   /// Fetch single doctor on demand (1 read) when not in cache — deduped.
-  Future<Doctor?> fetchDoctorById(String id) {
-    final cached = doctorById(id);
-    if (cached != null) return Future.value(cached);
-    return _doctorFetchCache.run(id, () async {
-      final loaded = await _backend.getDoctor(id);
-      if (loaded != null) _doctorCache[id] = loaded;
-      return loaded;
-    });
+  Future<Doctor?> fetchDoctorById(String id, {bool forceRefresh = false}) {
+    if (!forceRefresh) {
+      final cached = doctorById(id);
+      if (cached != null) return Future.value(cached);
+    } else {
+      _doctorFetchCache.invalidate(id);
+    }
+    return _doctorFetchCache.run(
+      id,
+      () async {
+        final loaded = await _backend.getDoctor(id);
+        if (loaded != null) putDoctorInCache(loaded);
+        return loaded;
+      },
+      forceRefresh: forceRefresh,
+    );
   }
 
   Clinic? clinicById(String id) {

@@ -31,31 +31,40 @@ class TabibDoctorDetailScreen extends StatefulWidget {
 }
 
 class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
-  Doctor? _doctor;
   bool _loadingDoctor = false;
+  bool _profileWatchStarted = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<QueueService>().watchDoctorQueue(widget.doctorId);
+      _startProfileWatch();
       _loadDoctor();
     });
   }
 
+  void _startProfileWatch() {
+    if (_profileWatchStarted) return;
+    _profileWatchStarted = true;
+    context.read<ClinicDataService>().watchDoctorProfile(
+      widget.doctorId,
+      (_) {
+        if (mounted) setState(() {});
+      },
+    );
+  }
+
   Future<void> _loadDoctor() async {
     final data = context.read<ClinicDataService>();
-    var doctor = data.doctorById(widget.doctorId);
-    if (doctor == null) {
-      setState(() => _loadingDoctor = true);
-      doctor = await data.fetchDoctorById(widget.doctorId);
-      if (mounted) setState(() => _loadingDoctor = false);
-    }
-    if (mounted) setState(() => _doctor = doctor);
+    setState(() => _loadingDoctor = true);
+    await data.fetchDoctorById(widget.doctorId, forceRefresh: true);
+    if (mounted) setState(() => _loadingDoctor = false);
   }
 
   @override
   void dispose() {
+    context.read<ClinicDataService>().stopWatchingDoctorProfile(widget.doctorId);
     context.read<QueueService>().stopWatchingDoctorQueue(widget.doctorId);
     super.dispose();
   }
@@ -73,9 +82,9 @@ class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
     final l10n = AppLocalizations.of(context);
     final data = context.watch<ClinicDataService>();
     final queue = context.watch<QueueService>();
-    final doctor = _doctor ?? data.doctorById(widget.doctorId);
+    final doctor = data.doctorById(widget.doctorId);
 
-    if (_loadingDoctor || (doctor == null && _doctor == null)) {
+    if (_loadingDoctor && doctor == null) {
       return Scaffold(
         appBar: AppBar(title: Text(ProviderLabels.profileTitle(l10n, doctor))),
         body: const Center(child: CircularProgressIndicator()),
@@ -92,9 +101,7 @@ class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
     final inQueue = queue.queueForDoctor(widget.doctorId).length;
     final degree = doctor.patientVisibleDegree(context);
     final whatsapp = doctor.patientVisibleWhatsapp;
-    final showContact = doctor.patientShowsPhone ||
-        doctor.patientShowsWhatsapp ||
-        (doctor.contactEmail != null && doctor.contactEmail!.isNotEmpty);
+    final showContact = doctor.patientShowsAnyContact;
 
     return Scaffold(
       backgroundColor: AppTheme.medicalWhite,
@@ -518,15 +525,14 @@ class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
                               },
                             ),
                           ],
-                          if (doctor.contactEmail != null &&
-                              doctor.contactEmail!.isNotEmpty) ...[
+                          if (doctor.patientShowsEmail) ...[
                             if (doctor.patientShowsPhone ||
                                 doctor.patientShowsWhatsapp)
                               const SizedBox(height: 12),
                             InfoTile(
                               icon: Icons.email_outlined,
                               label: l10n.email,
-                              value: doctor.contactEmail!,
+                              value: doctor.patientVisibleEmail!,
                             ),
                           ],
                         ],

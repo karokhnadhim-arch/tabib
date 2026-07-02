@@ -756,7 +756,7 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
 
 
 
-    await data.backend.upsertDoctor(updated);
+    await data.saveDoctor(updated);
 
 
 
@@ -1616,6 +1616,13 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
 
                     keyboardType: TextInputType.emailAddress,
 
+                  ),
+                  _showToPatientsSwitch(
+                    l10n: l10n,
+                    value: _visibility.showEmail,
+                    onChanged: (v) => setState(
+                      () => _visibility = _visibility.copyWith(showEmail: v),
+                    ),
                   ),
 
                 ],

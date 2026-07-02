@@ -135,6 +135,17 @@ class Doctor {
   String? get patientVisibleWhatsapp =>
       patientShowsWhatsapp ? whatsappNumber!.trim() : null;
 
+  bool get patientShowsEmail =>
+      profileVisibility.showEmail &&
+      contactEmail != null &&
+      contactEmail!.trim().isNotEmpty;
+
+  String? get patientVisibleEmail =>
+      patientShowsEmail ? contactEmail!.trim() : null;
+
+  bool get patientShowsAnyContact =>
+      patientShowsPhone || patientShowsWhatsapp || patientShowsEmail;
+
   bool get patientShowsGpsLocation =>
       profileVisibility.showGpsLocation && hasOwnGpsCoordinates;
 
@@ -244,8 +255,8 @@ class Doctor {
           ?.map((p) => p as String)
           .where((p) => p.trim().isNotEmpty)
           .toList(),
-      profileVisibility: DoctorProfileVisibility.fromMap(
-        data['profileVisibility'] as Map<String, dynamic>?,
+      profileVisibility: DoctorProfileVisibility.fromFirestore(
+        data['profileVisibility'],
       ),
       accountType: ServiceProviderAccountType.fromStorage(
         data['accountType'] as String?,
