@@ -1109,6 +1109,40 @@ class AppLocalizationsKu extends AppLocalizations {
   }
 
   @override
+  String doctorSecretarySingle(String name) {
+    return 'سکرتێر: $name';
+  }
+
+  @override
+  String doctorSecretariesMultiple(String names) {
+    return 'سکرتێرەکان: $names';
+  }
+
+  @override
+  String doctorSecretariesMultipleWithMore(String names, int more) {
+    return 'سکرتێرەکان: $names (+$more زیاتر)';
+  }
+
+  @override
+  String get transferSecretary => 'گواستنەوە';
+
+  @override
+  String get transferSecretaryTitle => 'گواستنەوەی سکرتێر';
+
+  @override
+  String transferSecretaryHint(String name) {
+    return 'گواستنەوەی $name بۆ دکتۆرێکی تر';
+  }
+
+  @override
+  String get transferredSuccessfully => 'بە سەرکەوتوویی گواسترایەوە';
+
+  @override
+  String secretaryAssignedToDoctor(String doctorName) {
+    return 'دیاریکراو بۆ: $doctorName';
+  }
+
+  @override
   String get addSecretary => 'سکرتێر زیاد بکە';
 
   @override

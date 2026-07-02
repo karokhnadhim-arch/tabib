@@ -1109,6 +1109,40 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String doctorSecretarySingle(String name) {
+    return 'سكرتير: $name';
+  }
+
+  @override
+  String doctorSecretariesMultiple(String names) {
+    return 'سكرتaries: $names';
+  }
+
+  @override
+  String doctorSecretariesMultipleWithMore(String names, int more) {
+    return 'سكرتaries: $names (+$more أخرى)';
+  }
+
+  @override
+  String get transferSecretary => 'نقل';
+
+  @override
+  String get transferSecretaryTitle => 'نقل السكرتير';
+
+  @override
+  String transferSecretaryHint(String name) {
+    return 'نقل $name إلى طبيب آخر';
+  }
+
+  @override
+  String get transferredSuccessfully => 'تم النقل بنجاح';
+
+  @override
+  String secretaryAssignedToDoctor(String doctorName) {
+    return 'معين لـ: $doctorName';
+  }
+
+  @override
   String get addSecretary => 'إضافة سكرتير';
 
   @override

@@ -13,6 +13,7 @@ import '../../services/clinic_data_service.dart';
 import '../../utils/account_status_labels.dart';
 import '../../utils/localization_utils.dart';
 import 'admin_secretary_form_dialog.dart';
+import 'admin_transfer_secretary_dialog.dart';
 
 /// Secretaries assigned to one doctor — minimal internal staff records only.
 class AdminDoctorSecretariesSection extends StatelessWidget {
@@ -99,6 +100,23 @@ class AdminDoctorSecretariesSection extends StatelessWidget {
     }
   }
 
+  Future<void> _transfer(
+    BuildContext context,
+    UserAccount secretary,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+    final ok = await AdminTransferSecretaryDialog.show(
+      context,
+      secretary: secretary,
+      currentDoctorId: doctorId,
+    );
+    if (ok == true && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.transferredSuccessfully)),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -164,6 +182,7 @@ class AdminDoctorSecretariesSection extends StatelessWidget {
                 ),
                 onDelete: (s) => _confirmDelete(context, s),
                 onChangeStatus: (s) => _pickStatus(context, s),
+                onTransfer: (s) => _transfer(context, s),
               )
             else
               ...secretaries.map(
@@ -176,6 +195,7 @@ class AdminDoctorSecretariesSection extends StatelessWidget {
                   ),
                   onDelete: () => _confirmDelete(context, s),
                   onChangeStatus: () => _pickStatus(context, s),
+                  onTransfer: () => _transfer(context, s),
                 ),
               ),
           ],
@@ -191,12 +211,14 @@ class _SecretaryCard extends StatelessWidget {
     required this.onEdit,
     required this.onDelete,
     required this.onChangeStatus,
+    required this.onTransfer,
   });
 
   final UserAccount secretary;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
   final VoidCallback onChangeStatus;
+  final VoidCallback onTransfer;
 
   @override
   Widget build(BuildContext context) {
@@ -265,6 +287,11 @@ class _SecretaryCard extends StatelessWidget {
                   ),
                 ),
                 TextButton.icon(
+                  onPressed: onTransfer,
+                  icon: const Icon(Icons.swap_horiz_outlined, size: 18),
+                  label: Text(l10n.transferSecretary),
+                ),
+                TextButton.icon(
                   onPressed: onChangeStatus,
                   icon: const Icon(Icons.tune_outlined, size: 18),
                   label: Text(l10n.changeAccountStatus),
@@ -284,12 +311,14 @@ class _SecretaryTable extends StatelessWidget {
     required this.onEdit,
     required this.onDelete,
     required this.onChangeStatus,
+    required this.onTransfer,
   });
 
   final List<UserAccount> secretaries;
   final Future<void> Function(UserAccount) onEdit;
   final Future<void> Function(UserAccount) onDelete;
   final Future<void> Function(UserAccount) onChangeStatus;
+  final Future<void> Function(UserAccount) onTransfer;
 
   @override
   Widget build(BuildContext context) {
@@ -338,6 +367,11 @@ class _SecretaryTable extends StatelessWidget {
                         color: Colors.red.shade700,
                       ),
                       onPressed: () => onDelete(s),
+                    ),
+                    IconButton(
+                      tooltip: l10n.transferSecretary,
+                      icon: const Icon(Icons.swap_horiz_outlined),
+                      onPressed: () => onTransfer(s),
                     ),
                     IconButton(
                       tooltip: l10n.changeAccountStatus,

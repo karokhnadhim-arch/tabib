@@ -7,9 +7,11 @@ import '../../../core/utils/admin_doctor_staff_resolver.dart';
 import '../../../core/widgets/responsive_scaffold.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/doctor.dart';
+import '../../../models/user_account.dart';
 import '../../../presentation/widgets/admin_doctor_secretaries_section.dart';
 import '../../../presentation/widgets/admin_doctor_subscription_card.dart';
 import '../../../presentation/widgets/admin_guard.dart';
+import '../../../presentation/widgets/doctor_secretaries_summary.dart';
 import '../../../presentation/widgets/doctor_avatar.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
@@ -18,9 +20,14 @@ import '../../../utils/localization_utils.dart';
 import '../../../utils/provider_labels.dart';
 
 class OwnerDoctorDetailScreen extends StatefulWidget {
-  const OwnerDoctorDetailScreen({super.key, required this.doctorId});
+  const OwnerDoctorDetailScreen({
+    super.key,
+    required this.doctorId,
+    this.focusSecretaries = false,
+  });
 
   final String doctorId;
+  final bool focusSecretaries;
 
   @override
   State<OwnerDoctorDetailScreen> createState() =>
@@ -28,6 +35,8 @@ class OwnerDoctorDetailScreen extends StatefulWidget {
 }
 
 class _OwnerDoctorDetailScreenState extends State<OwnerDoctorDetailScreen> {
+  final _secretariesSectionKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -38,6 +47,23 @@ class _OwnerDoctorDetailScreenState extends State<OwnerDoctorDetailScreen> {
       data.startRealtimeCatalog();
       staffData.startRealtime();
       await data.fetchDoctorById(widget.doctorId);
+      if (widget.focusSecretaries) {
+        _scrollToSecretaries();
+      }
+    });
+  }
+
+  void _scrollToSecretaries() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final target = _secretariesSectionKey.currentContext;
+      if (target != null) {
+        Scrollable.ensureVisible(
+          target,
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.easeInOut,
+          alignment: 0.05,
+        );
+      }
     });
   }
 
@@ -82,6 +108,8 @@ class _OwnerDoctorDetailScreenState extends State<OwnerDoctorDetailScreen> {
                                 doctor: doctor,
                                 email: email,
                                 phone: phone,
+                                staff: staff,
+                                onSecretariesTap: _scrollToSecretaries,
                               ),
                             ),
                             const SizedBox(width: 16),
@@ -98,6 +126,8 @@ class _OwnerDoctorDetailScreenState extends State<OwnerDoctorDetailScreen> {
                           doctor: doctor,
                           email: email,
                           phone: phone,
+                          staff: staff,
+                          onSecretariesTap: _scrollToSecretaries,
                         ),
                         const SizedBox(height: 16),
                         AdminDoctorSubscriptionCard(
@@ -106,9 +136,12 @@ class _OwnerDoctorDetailScreenState extends State<OwnerDoctorDetailScreen> {
                         ),
                       ],
                       const SizedBox(height: 16),
-                      AdminDoctorSecretariesSection(
-                        doctorId: doctor.id,
-                        staff: staff,
+                      KeyedSubtree(
+                        key: _secretariesSectionKey,
+                        child: AdminDoctorSecretariesSection(
+                          doctorId: doctor.id,
+                          staff: staff,
+                        ),
                       ),
                     ],
                   );
@@ -124,11 +157,15 @@ class _DoctorInfoCard extends StatelessWidget {
     required this.doctor,
     required this.email,
     required this.phone,
+    required this.staff,
+    this.onSecretariesTap,
   });
 
   final Doctor doctor;
   final String? email;
   final String? phone;
+  final List<UserAccount> staff;
+  final VoidCallback? onSecretariesTap;
 
   @override
   Widget build(BuildContext context) {
@@ -167,7 +204,26 @@ class _DoctorInfoCard extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                       ),
-                      const SizedBox(height: 4),
+                      DoctorSecretariesSummary(
+                        doctorId: doctor.id,
+                        staff: staff,
+                        onTap: onSecretariesTap,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4, bottom: 4),
+                        child: Text(
+                          l10n.secretariesCount(
+                            AdminDoctorStaffResolver.secretaryCount(
+                              doctor.id,
+                              staff,
+                            ),
+                          ),
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ),
                       _InfoRow(
                         icon: Icons.medical_services_outlined,
                         label: l10n.specialty,

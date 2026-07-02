@@ -386,6 +386,40 @@
       "count": {"type": "int"}
     }
   },
+  "doctorSecretarySingle": "سکرتێر: {name}",
+  "@doctorSecretarySingle": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "doctorSecretariesMultiple": "سکرتێرەکان: {names}",
+  "@doctorSecretariesMultiple": {
+    "placeholders": {
+      "names": {"type": "String"}
+    }
+  },
+  "doctorSecretariesMultipleWithMore": "سکرتێرەکان: {names} (+{more} زیاتر)",
+  "@doctorSecretariesMultipleWithMore": {
+    "placeholders": {
+      "names": {"type": "String"},
+      "more": {"type": "int"}
+    }
+  },
+  "transferSecretary": "گواستنەوە",
+  "transferSecretaryTitle": "گواستنەوەی سکرتێر",
+  "transferSecretaryHint": "گواستنەوەی {name} بۆ دکتۆرێکی تر",
+  "@transferSecretaryHint": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "transferredSuccessfully": "بە سەرکەوتوویی گواسترایەوە",
+  "secretaryAssignedToDoctor": "دیاریکراو بۆ: {doctorName}",
+  "@secretaryAssignedToDoctor": {
+    "placeholders": {
+      "doctorName": {"type": "String"}
+    }
+  },
   "addSecretary": "سکرتێر زیاد بکە",
   "editSecretary": "دەستکاری سکرتێر",
   "deleteSecretary": "سڕینەوەی سکرتێر",

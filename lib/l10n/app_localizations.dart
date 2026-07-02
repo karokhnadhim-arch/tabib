@@ -2255,6 +2255,54 @@ abstract class AppLocalizations {
   /// **'{count} secretaries'**
   String secretariesCount(int count);
 
+  /// No description provided for @doctorSecretarySingle.
+  ///
+  /// In en, this message translates to:
+  /// **'Secretary: {name}'**
+  String doctorSecretarySingle(String name);
+
+  /// No description provided for @doctorSecretariesMultiple.
+  ///
+  /// In en, this message translates to:
+  /// **'Secretaries: {names}'**
+  String doctorSecretariesMultiple(String names);
+
+  /// No description provided for @doctorSecretariesMultipleWithMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Secretaries: {names} (+{more} more)'**
+  String doctorSecretariesMultipleWithMore(String names, int more);
+
+  /// No description provided for @transferSecretary.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer'**
+  String get transferSecretary;
+
+  /// No description provided for @transferSecretaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer secretary'**
+  String get transferSecretaryTitle;
+
+  /// No description provided for @transferSecretaryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Move {name} to another doctor'**
+  String transferSecretaryHint(String name);
+
+  /// No description provided for @transferredSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Transferred successfully'**
+  String get transferredSuccessfully;
+
+  /// No description provided for @secretaryAssignedToDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned to: {doctorName}'**
+  String secretaryAssignedToDoctor(String doctorName);
+
   /// No description provided for @addSecretary.
   ///
   /// In en, this message translates to:

@@ -12,6 +12,7 @@ import '../../../models/user_account.dart';
 import '../../../presentation/widgets/admin_guard.dart';
 import '../../../presentation/widgets/admin_pagination_bar.dart';
 import '../../../presentation/widgets/doctor_avatar.dart';
+import '../../../presentation/widgets/doctor_secretaries_summary.dart';
 import '../../../presentation/widgets/subscription_status_badge.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
@@ -287,6 +288,10 @@ class _DoctorListCard extends StatelessWidget {
                             fontSize: 16,
                           ),
                         ),
+                        DoctorSecretariesSummary(
+                          doctorId: doctor.id,
+                          staff: staff,
+                        ),
                         Text(
                           ProviderLabels.displayCategory(
                             context,
@@ -434,7 +439,19 @@ class _DoctorDataTable extends StatelessWidget {
                         AppTheme.doctorColor.withOpacity(0.1),
                   ),
                 ),
-                DataCell(Text(doctor.name.localized(context))),
+                DataCell(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(doctor.name.localized(context)),
+                      DoctorSecretariesSummary(
+                        doctorId: doctor.id,
+                        staff: staff,
+                      ),
+                    ],
+                  ),
+                ),
                 DataCell(Text(doctor.specialty.name.localized(context))),
                 DataCell(Text(doctor.clinic.name.localized(context))),
                 DataCell(Text(
@@ -464,7 +481,29 @@ class _DoctorDataTable extends StatelessWidget {
                           ? l10n.noExpiry
                           : l10n.subscriptionDaysRemaining(days),
                 )),
-                DataCell(Text(l10n.secretariesCount(secCount))),
+                DataCell(
+                  Builder(
+                    builder: (context) => InkWell(
+                      onTap: secCount > 0
+                          ? () => context.push(
+                                DoctorSecretariesSummary
+                                    .doctorDetailSecretariesRoute(doctor.id),
+                              )
+                          : null,
+                      child: Text(
+                        l10n.secretariesCount(secCount),
+                        style: TextStyle(
+                          color: secCount > 0
+                              ? AppTheme.primaryDark
+                              : Colors.grey.shade700,
+                          decoration: secCount > 0
+                              ? TextDecoration.underline
+                              : null,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             );
           }).toList(),

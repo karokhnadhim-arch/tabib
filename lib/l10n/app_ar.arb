@@ -386,6 +386,40 @@
       "count": {"type": "int"}
     }
   },
+  "doctorSecretarySingle": "سكرتير: {name}",
+  "@doctorSecretarySingle": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "doctorSecretariesMultiple": "سكرتaries: {names}",
+  "@doctorSecretariesMultiple": {
+    "placeholders": {
+      "names": {"type": "String"}
+    }
+  },
+  "doctorSecretariesMultipleWithMore": "سكرتaries: {names} (+{more} أخرى)",
+  "@doctorSecretariesMultipleWithMore": {
+    "placeholders": {
+      "names": {"type": "String"},
+      "more": {"type": "int"}
+    }
+  },
+  "transferSecretary": "نقل",
+  "transferSecretaryTitle": "نقل السكرتير",
+  "transferSecretaryHint": "نقل {name} إلى طبيب آخر",
+  "@transferSecretaryHint": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "transferredSuccessfully": "تم النقل بنجاح",
+  "secretaryAssignedToDoctor": "معين لـ: {doctorName}",
+  "@secretaryAssignedToDoctor": {
+    "placeholders": {
+      "doctorName": {"type": "String"}
+    }
+  },
   "addSecretary": "إضافة سكرتير",
   "editSecretary": "تعديل السكرتير",
   "deleteSecretary": "حذف السكرتير",

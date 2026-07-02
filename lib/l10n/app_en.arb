@@ -421,6 +421,40 @@
       "count": {"type": "int"}
     }
   },
+  "doctorSecretarySingle": "Secretary: {name}",
+  "@doctorSecretarySingle": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "doctorSecretariesMultiple": "Secretaries: {names}",
+  "@doctorSecretariesMultiple": {
+    "placeholders": {
+      "names": {"type": "String"}
+    }
+  },
+  "doctorSecretariesMultipleWithMore": "Secretaries: {names} (+{more} more)",
+  "@doctorSecretariesMultipleWithMore": {
+    "placeholders": {
+      "names": {"type": "String"},
+      "more": {"type": "int"}
+    }
+  },
+  "transferSecretary": "Transfer",
+  "transferSecretaryTitle": "Transfer secretary",
+  "transferSecretaryHint": "Move {name} to another doctor",
+  "@transferSecretaryHint": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "transferredSuccessfully": "Transferred successfully",
+  "secretaryAssignedToDoctor": "Assigned to: {doctorName}",
+  "@secretaryAssignedToDoctor": {
+    "placeholders": {
+      "doctorName": {"type": "String"}
+    }
+  },
   "addSecretary": "Add secretary",
   "editSecretary": "Edit secretary",
   "deleteSecretary": "Delete secretary",

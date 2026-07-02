@@ -890,6 +890,32 @@ class AuthService extends ChangeNotifier {
     return null;
   }
 
+  /// Admin-only: move a secretary to another doctor.
+  Future<String?> transferSecretaryAccount({
+    required String secretaryId,
+    required String newLinkedDoctorId,
+  }) async {
+    if (!isSystemOwner) return 'unauthorized';
+    if (newLinkedDoctorId.isEmpty) return 'linked_doctor_required';
+
+    final staff = await _backend.fetchStaff();
+    final account = staff.where((s) => s.id == secretaryId).firstOrNull;
+    if (account == null || account.role != UserRole.secretary) return 'error';
+    if (account.isSystemOwner) return 'unauthorized';
+    if (account.linkedDoctorId == newLinkedDoctorId) return null;
+
+    final doctor = await _backend.getDoctor(newLinkedDoctorId);
+    if (doctor == null) return 'linked_doctor_required';
+
+    await _backend.upsertStaff(
+      account.copyWith(
+        linkedDoctorId: newLinkedDoctorId,
+        clinicId: doctor.clinicId,
+      ),
+    );
+    return null;
+  }
+
   /// Whether the signed-in user can change their own password (email auth only).
   bool get canChangePassword {
     final user = _currentUser;

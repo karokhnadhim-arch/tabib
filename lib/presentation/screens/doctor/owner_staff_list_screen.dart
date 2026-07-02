@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/auth/admin_permissions.dart';
@@ -8,8 +9,10 @@ import '../../../models/account_status.dart';
 import '../../../models/user_account.dart';
 import '../../../presentation/widgets/account_status_badge.dart';
 import '../../../presentation/widgets/admin_guard.dart';
+import '../../../presentation/widgets/doctor_secretaries_summary.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/backend/clinic_backend.dart';
+import '../../../services/clinic_data_service.dart';
 import '../../../utils/localization_utils.dart';
 
 enum OwnerStaffFilter { doctors, secretaries, patients, all }
@@ -25,6 +28,16 @@ class OwnerStaffListScreen extends StatefulWidget {
 
 class _OwnerStaffListScreenState extends State<OwnerStaffListScreen> {
   AccountStatus? _statusFilter;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final data = context.read<ClinicDataService>();
+      await data.ensureCatalogLoaded();
+      data.startRealtimeCatalog();
+    });
+  }
 
   String _title(AppLocalizations l10n) {
     switch (widget.filter) {
@@ -131,6 +144,7 @@ class _OwnerStaffListScreenState extends State<OwnerStaffListScreen> {
     }
 
     final backend = context.read<ClinicBackend>();
+    final clinicData = context.watch<ClinicDataService>();
 
     return AdminGuard(
       child: Scaffold(
@@ -185,6 +199,13 @@ class _OwnerStaffListScreenState extends State<OwnerStaffListScreen> {
                     itemCount: accounts.length,
                     itemBuilder: (context, i) {
                       final user = accounts[i];
+                      final subtitleExtras = _subtitleExtras(
+                        context,
+                        l10n,
+                        user,
+                        accounts,
+                        clinicData,
+                      );
                       return Card(
                         child: ListTile(
                           contentPadding: const EdgeInsets.symmetric(
@@ -209,6 +230,10 @@ class _OwnerStaffListScreenState extends State<OwnerStaffListScreen> {
                                 ].join(' · '),
                                 maxLines: 3,
                               ),
+                              if (subtitleExtras != null) ...[
+                                const SizedBox(height: 4),
+                                subtitleExtras,
+                              ],
                               const SizedBox(height: 8),
                               AccountStatusBadge(
                                 status: user.accountStatus,
@@ -224,10 +249,13 @@ class _OwnerStaffListScreenState extends State<OwnerStaffListScreen> {
                                       AppTheme.medicalGreen.withOpacity(0.15),
                                 )
                               : IconButton(
-                                  icon: const Icon(Icons.manage_accounts_outlined),
+                                  icon: const Icon(
+                                    Icons.manage_accounts_outlined,
+                                  ),
                                   tooltip: l10n.changeAccountStatus,
                                   onPressed: () => _pickStatus(context, user),
                                 ),
+                          onTap: _onAccountTap(context, user),
                         ),
                       );
                     },
@@ -246,4 +274,58 @@ class _OwnerStaffListScreenState extends State<OwnerStaffListScreen> {
         UserRole.patient => Icons.person_outline,
         _ => Icons.medical_services_outlined,
       };
+
+  Widget? _subtitleExtras(
+    BuildContext context,
+    AppLocalizations l10n,
+    UserAccount user,
+    List<UserAccount> accounts,
+    ClinicDataService clinicData,
+  ) {
+    if (user.role == UserRole.secretary &&
+        user.linkedDoctorId != null &&
+        user.linkedDoctorId!.isNotEmpty) {
+      final doctor = clinicData.doctorById(user.linkedDoctorId!);
+      final doctorName = doctor?.name.localized(context) ?? l10n.notAvailable;
+      return Text(
+        l10n.secretaryAssignedToDoctor(doctorName),
+        style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+      );
+    }
+
+    final doctorId = user.doctorId;
+    if ((user.role == UserRole.doctor || user.role == UserRole.admin) &&
+        doctorId != null &&
+        doctorId.isNotEmpty) {
+      return DoctorSecretariesSummary(
+        doctorId: doctorId,
+        staff: accounts,
+      );
+    }
+
+    return null;
+  }
+
+  VoidCallback? _onAccountTap(BuildContext context, UserAccount user) {
+    if (user.role == UserRole.secretary &&
+        user.linkedDoctorId != null &&
+        user.linkedDoctorId!.isNotEmpty) {
+      return () => context.push(
+            DoctorSecretariesSummary.doctorDetailSecretariesRoute(
+              user.linkedDoctorId!,
+            ),
+          );
+    }
+
+    final doctorId = user.doctorId;
+    if ((user.role == UserRole.doctor || user.role == UserRole.admin) &&
+        doctorId != null &&
+        doctorId.isNotEmpty) {
+      return () => context.push(
+            DoctorSecretariesSummary.doctorDetailSecretariesRoute(doctorId),
+          );
+    }
+
+    return null;
+  }
 }

@@ -74,7 +74,25 @@ class AdminDoctorStaffResolver {
       emailFor(doctor, staff) ?? '',
       phoneFor(doctor, staff) ?? '',
     ];
+    appendSecretarySearchFields(fields, doctor.id, staff, localize);
     return fields.any((f) => f.toLowerCase().contains(q));
+  }
+
+  static void appendSecretarySearchFields(
+    List<String> fields,
+    String doctorId,
+    List<UserAccount> staff,
+    String Function(String) localize,
+  ) {
+    for (final secretary in secretariesFor(doctorId, staff)) {
+      fields.addAll([
+        localize(secretary.name.ku),
+        localize(secretary.name.ar),
+        localize(secretary.name.en),
+        secretary.email ?? '',
+        secretary.phone ?? '',
+      ]);
+    }
   }
 }
 

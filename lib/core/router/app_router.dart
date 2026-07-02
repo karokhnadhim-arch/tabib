@@ -157,6 +157,9 @@ class AppRouter {
                         path: ':doctorId',
                         builder: (_, state) => OwnerDoctorDetailScreen(
                           doctorId: state.pathParameters['doctorId']!,
+                          focusSecretaries:
+                              state.uri.queryParameters['section'] ==
+                                  'secretaries',
                         ),
                       ),
                     ],
