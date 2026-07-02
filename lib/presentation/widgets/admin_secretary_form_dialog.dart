@@ -4,9 +4,12 @@ import 'package:provider/provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/staff_auth_identifiers.dart';
 import '../../l10n/app_localizations.dart';
+import '../../models/account_status.dart';
 import '../../models/user_account.dart';
+import '../../presentation/widgets/account_status_badge.dart';
 import '../../services/auth_service.dart';
 import '../../services/clinic_data_service.dart';
+import '../../utils/account_status_labels.dart';
 import '../../utils/localization_utils.dart';
 import '../../utils/provider_labels.dart';
 import '../../widgets/auth/auth_text_field.dart';
@@ -52,7 +55,7 @@ class _AdminSecretaryFormDialogState extends State<AdminSecretaryFormDialog> {
   late final TextEditingController _passwordController;
 
   StaffLoginMethod _loginMethod = StaffLoginMethod.phone;
-  bool _isActive = true;
+  AccountStatus _accountStatus = AccountStatus.active;
   bool _loading = false;
   String? _error;
 
@@ -68,7 +71,7 @@ class _AdminSecretaryFormDialogState extends State<AdminSecretaryFormDialog> {
     _emailController = TextEditingController(text: s?.email ?? '');
     _phoneController = TextEditingController(text: s?.phone ?? '');
     _passwordController = TextEditingController();
-    _isActive = s?.isActive ?? true;
+    _accountStatus = s?.accountStatus ?? AccountStatus.active;
     if (s?.email != null && s!.email!.trim().isNotEmpty) {
       _loginMethod = StaffLoginMethod.email;
     }
@@ -113,7 +116,8 @@ class _AdminSecretaryFormDialogState extends State<AdminSecretaryFormDialog> {
         name: name,
         email: _emailController.text.trim(),
         phone: _phoneController.text.trim(),
-        isActive: _isActive,
+        isActive: null,
+        accountStatus: _accountStatus,
       );
     } else {
       err = await auth.createSecretaryAccount(
@@ -190,15 +194,29 @@ class _AdminSecretaryFormDialogState extends State<AdminSecretaryFormDialog> {
                     keyboardType: TextInputType.phone,
                   ),
                   const SizedBox(height: 8),
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(l10n.status),
-                    subtitle: Text(
-                      _isActive ? l10n.accountActive : l10n.accountInactive,
+                  DropdownButtonFormField<AccountStatus>(
+                    value: _accountStatus,
+                    decoration: InputDecoration(
+                      labelText: l10n.status,
+                      border: const OutlineInputBorder(),
                     ),
-                    value: _isActive,
-                    activeColor: AppTheme.medicalGreen,
-                    onChanged: (v) => setState(() => _isActive = v),
+                    items: AccountStatus.values
+                        .map(
+                          (status) => DropdownMenuItem(
+                            value: status,
+                            child: Row(
+                              children: [
+                                AccountStatusBadge(status: status, compact: true),
+                                const SizedBox(width: 8),
+                                Text(AccountStatusLabels.label(l10n, status)),
+                              ],
+                            ),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (v) {
+                      if (v != null) setState(() => _accountStatus = v);
+                    },
                   ),
                 ] else
                   StaffAccountLoginFields(

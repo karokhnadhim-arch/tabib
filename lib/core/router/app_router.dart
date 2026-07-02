@@ -18,6 +18,7 @@ import '../../presentation/screens/doctor/owner_staff_list_screen.dart';
 import '../../presentation/screens/doctor/owner_stats_screen.dart';
 import '../../presentation/screens/doctor/owner_subscriptions_screen.dart';
 import '../../presentation/screens/doctor/owner_users_screen.dart';
+import '../../presentation/screens/doctor/owner_patients_screen.dart';
 import '../../presentation/screens/doctor/write_prescription_screen.dart';
 import '../../presentation/screens/patient/appointment_booking_screen.dart';
 import '../../presentation/screens/patient/doctor_detail_screen.dart';
@@ -27,7 +28,13 @@ import '../../presentation/screens/patient/patient_home_screen.dart';
 import '../../presentation/screens/chat/chat_screen.dart';
 import '../../presentation/screens/patient/queue_tracking_screen.dart';
 import '../../presentation/screens/secretary/secretary_dashboard_screen.dart';
+import '../../presentation/screens/settings/change_password_screen.dart';
+import '../../presentation/screens/settings/favorites_screen.dart';
+import '../../presentation/screens/settings/legal_content_screen.dart';
+import '../../presentation/screens/settings/provider_settings_screen.dart';
+import '../../presentation/screens/settings/settings_screen.dart';
 import '../../presentation/screens/splash/splash_screen.dart';
+import '../../services/favorites_service.dart';
 
 class AppRouter {
   AppRouter({
@@ -139,6 +146,10 @@ class AppRouter {
                     builder: (_, __) => const OwnerUsersScreen(),
                   ),
                   GoRoute(
+                    path: 'patients',
+                    builder: (_, __) => const OwnerPatientsScreen(),
+                  ),
+                  GoRoute(
                     path: 'doctors',
                     builder: (_, __) => const OwnerDoctorsScreen(),
                     routes: [
@@ -183,6 +194,36 @@ class AppRouter {
           GoRoute(
             path: '/secretary',
             builder: (_, __) => const SecretaryDashboardScreen(),
+          ),
+          GoRoute(
+            path: '/settings',
+            builder: (_, __) => const SettingsScreen(),
+            routes: [
+              GoRoute(
+                path: 'password',
+                builder: (_, __) => const ChangePasswordScreen(),
+              ),
+              GoRoute(
+                path: 'favorites',
+                builder: (_, state) => FavoritesScreen(
+                  kind: state.uri.queryParameters['kind'] == 'business'
+                      ? FavoriteKind.business
+                      : FavoriteKind.doctor,
+                ),
+              ),
+              GoRoute(
+                path: 'provider',
+                builder: (_, state) => ProviderSettingsScreen(
+                  initialSection: state.uri.queryParameters['section'],
+                ),
+              ),
+              GoRoute(
+                path: 'legal',
+                builder: (_, state) => LegalContentScreen(
+                  document: state.uri.queryParameters['doc'] ?? 'about',
+                ),
+              ),
+            ],
           ),
         ],
       );

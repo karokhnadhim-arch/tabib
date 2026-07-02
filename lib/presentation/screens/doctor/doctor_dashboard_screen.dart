@@ -118,6 +118,11 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
               onPressed: () => context.push('/doctor/platform'),
             ),
           IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: l10n.settings,
+            onPressed: () => context.push('/settings'),
+          ),
+          IconButton(
             icon: const Icon(Icons.edit),
             tooltip: ProviderLabels.editProfileTitle(l10n, doctor),
             onPressed: () => context.push('/doctor/profile'),

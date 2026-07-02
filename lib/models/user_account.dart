@@ -1,3 +1,4 @@
+import 'account_status.dart';
 import 'localized_text.dart';
 
 enum UserRole { patient, doctor, secretary, admin }
@@ -14,6 +15,7 @@ class UserAccount {
     this.linkedDoctorId,
     this.isSystemOwner = false,
     this.isActive = true,
+    this.accountStatus = AccountStatus.active,
   });
 
   final String id;
@@ -23,13 +25,11 @@ class UserAccount {
   final String? phone;
   final String? doctorId;
   final String? clinicId;
-  /// Secretary accounts are minimal internal staff records:
-  /// name, phone or email, password (auth), linked doctor, and active status.
-  /// They do not have public profiles — only doctors have patient-visible profiles.
   final String? linkedDoctorId;
-  /// Hidden platform owner — full admin permissions, logs in via doctor UI.
   final bool isSystemOwner;
+  /// Legacy flag — kept in sync with [accountStatus] for older clients.
   final bool isActive;
+  final AccountStatus accountStatus;
 
   UserAccount copyWith({
     String? id,
@@ -42,7 +42,12 @@ class UserAccount {
     String? linkedDoctorId,
     bool? isSystemOwner,
     bool? isActive,
+    AccountStatus? accountStatus,
   }) {
+    final nextStatus = accountStatus ??
+        (isActive != null
+            ? (isActive ? AccountStatus.active : AccountStatus.disabled)
+            : this.accountStatus);
     return UserAccount(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -53,7 +58,8 @@ class UserAccount {
       clinicId: clinicId ?? this.clinicId,
       linkedDoctorId: linkedDoctorId ?? this.linkedDoctorId,
       isSystemOwner: isSystemOwner ?? this.isSystemOwner,
-      isActive: isActive ?? this.isActive,
+      accountStatus: nextStatus,
+      isActive: nextStatus.isActive,
     );
   }
 
@@ -66,13 +72,19 @@ class UserAccount {
         'clinicId': clinicId,
         'linkedDoctorId': linkedDoctorId,
         if (isSystemOwner) 'isSystemOwner': true,
-        'isActive': isActive,
+        'isActive': accountStatus.isActive,
+        'accountStatus': accountStatus.storageKey,
       };
 
   factory UserAccount.fromFirestore(String id, Map<String, dynamic> data) {
     final role = UserRole.values.firstWhere(
       (r) => r.name == data['role'],
       orElse: () => UserRole.patient,
+    );
+    final legacyActive = data['isActive'] != false;
+    final status = AccountStatus.fromStorage(
+      data['accountStatus'] as String?,
+      legacyIsActive: legacyActive,
     );
     return UserAccount(
       id: id,
@@ -85,7 +97,8 @@ class UserAccount {
       linkedDoctorId: data['linkedDoctorId'] as String?,
       isSystemOwner:
           data['isSystemOwner'] == true || role == UserRole.admin,
-      isActive: data['isActive'] != false,
+      accountStatus: status,
+      isActive: status.isActive,
     );
   }
 }

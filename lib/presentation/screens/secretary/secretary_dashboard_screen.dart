@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_theme.dart';
@@ -104,12 +105,19 @@ class _SecretaryDashboardScreenState extends State<SecretaryDashboardScreen> {
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
-            child: MedicalGradientHeader(
+            child:             MedicalGradientHeader(
               title: l10n.secretaryDashboard,
               subtitle: doctor != null
                   ? doctor.name.localized(context)
                   : l10n.roleSecretary,
               height: 140,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.settings_outlined, color: Colors.white),
+                  tooltip: l10n.settings,
+                  onPressed: () => context.push('/settings'),
+                ),
+              ],
             ),
           ),
           SliverPadding(

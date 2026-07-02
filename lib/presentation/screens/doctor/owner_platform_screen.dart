@@ -98,6 +98,12 @@ class OwnerPlatformScreen extends StatelessWidget {
               onTap: () => context.push('/doctor/platform/users'),
             ),
             _PlatformTile(
+              title: l10n.managePatients,
+              subtitle: l10n.managePatientsHint,
+              icon: Icons.people_alt_outlined,
+              onTap: () => context.push('/doctor/platform/patients'),
+            ),
+            _PlatformTile(
               title: l10n.manageSubscriptions,
               subtitle: l10n.manageSubscriptionsHint,
               icon: Icons.card_membership_outlined,

@@ -307,6 +307,30 @@ class FirestoreClinicBackend implements ClinicBackend {
   }
 
   @override
+  Future<List<UserAccount>> fetchAllAccounts() async {
+    final snap = await _users
+        .where('role', whereIn: ['doctor', 'secretary', 'admin', 'patient'])
+        .limit(FirestoreLimits.staffFetchMax)
+        .get();
+    return snap.docs
+        .map((d) => UserAccount.fromFirestore(d.id, d.data()))
+        .toList();
+  }
+
+  @override
+  Stream<List<UserAccount>> watchAllAccounts() {
+    return _users
+        .where('role', whereIn: ['doctor', 'secretary', 'admin', 'patient'])
+        .limit(FirestoreLimits.staffFetchMax)
+        .snapshots()
+        .map(
+          (snap) => snap.docs
+              .map((d) => UserAccount.fromFirestore(d.id, d.data()))
+              .toList(),
+        );
+  }
+
+  @override
   Future<List<UserAccount>> fetchSecretariesForDoctor(String doctorId) async {
     final snap = await _users
         .where('role', isEqualTo: 'secretary')

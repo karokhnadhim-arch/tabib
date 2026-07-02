@@ -1886,7 +1886,7 @@ abstract class AppLocalizations {
   /// No description provided for @adminControlPanelHint.
   ///
   /// In en, this message translates to:
-  /// **'Manage doctors, secretaries, clinics, and subscriptions'**
+  /// **'Manage clinics, users, and subscriptions'**
   String get adminControlPanelHint;
 
   /// No description provided for @systemOwner.
@@ -2578,6 +2578,450 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Queue slot'**
   String get queueSlot;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @appearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearance;
+
+  /// No description provided for @theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get theme;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeLight;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeDark;
+
+  /// No description provided for @themeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System default'**
+  String get themeSystem;
+
+  /// No description provided for @accountSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Account & security'**
+  String get accountSecurity;
+
+  /// No description provided for @changePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get changePassword;
+
+  /// No description provided for @changePasswordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your login password'**
+  String get changePasswordHint;
+
+  /// No description provided for @changePasswordDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your current password and choose a new secure password. Only you can change your own password.'**
+  String get changePasswordDescription;
+
+  /// No description provided for @currentPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Current password'**
+  String get currentPassword;
+
+  /// No description provided for @newPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get newPassword;
+
+  /// No description provided for @passwordChangeUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Password change is not available for this account type'**
+  String get passwordChangeUnavailable;
+
+  /// No description provided for @passwordChangedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed successfully'**
+  String get passwordChangedSuccessfully;
+
+  /// No description provided for @passwordSameAsCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'New password must be different from the current password'**
+  String get passwordSameAsCurrent;
+
+  /// No description provided for @passwordsDoNotMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwordsDoNotMatch;
+
+  /// No description provided for @accountInfoReadOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Account details'**
+  String get accountInfoReadOnly;
+
+  /// No description provided for @accountInfoReadOnlyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Email, phone, account type, and permissions are managed by your clinic administrator'**
+  String get accountInfoReadOnlyHint;
+
+  /// No description provided for @pushNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Push notifications'**
+  String get pushNotifications;
+
+  /// No description provided for @queueNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue notifications'**
+  String get queueNotifications;
+
+  /// No description provided for @sound.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound'**
+  String get sound;
+
+  /// No description provided for @vibration.
+  ///
+  /// In en, this message translates to:
+  /// **'Vibration'**
+  String get vibration;
+
+  /// No description provided for @patientPreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient preferences'**
+  String get patientPreferences;
+
+  /// No description provided for @favoriteDoctors.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite doctors'**
+  String get favoriteDoctors;
+
+  /// No description provided for @favoriteBusinesses.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite businesses'**
+  String get favoriteBusinesses;
+
+  /// No description provided for @noFavoriteDoctors.
+  ///
+  /// In en, this message translates to:
+  /// **'No favorite doctors yet'**
+  String get noFavoriteDoctors;
+
+  /// No description provided for @noFavoriteBusinesses.
+  ///
+  /// In en, this message translates to:
+  /// **'No favorite businesses yet'**
+  String get noFavoriteBusinesses;
+
+  /// No description provided for @doctorSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor settings'**
+  String get doctorSettings;
+
+  /// No description provided for @businessSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Business settings'**
+  String get businessSettings;
+
+  /// No description provided for @workingDaysAndHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Working days & hours'**
+  String get workingDaysAndHours;
+
+  /// No description provided for @queueSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue settings'**
+  String get queueSettings;
+
+  /// No description provided for @profileVisibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile visibility'**
+  String get profileVisibility;
+
+  /// No description provided for @contactVisibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact visibility'**
+  String get contactVisibility;
+
+  /// No description provided for @whatsappVisibility.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp visibility'**
+  String get whatsappVisibility;
+
+  /// No description provided for @secretarySettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Secretary settings'**
+  String get secretarySettings;
+
+  /// No description provided for @queueAutoRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-refresh queue'**
+  String get queueAutoRefresh;
+
+  /// No description provided for @queueAutoRefreshHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep the queue view updated in real time'**
+  String get queueAutoRefreshHint;
+
+  /// No description provided for @privacySettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get privacySettings;
+
+  /// No description provided for @showInSearchResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Show in search results'**
+  String get showInSearchResults;
+
+  /// No description provided for @showInSearchResultsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow your profile to appear in patient search'**
+  String get showInSearchResultsHint;
+
+  /// No description provided for @shareUsageAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Share usage analytics'**
+  String get shareUsageAnalytics;
+
+  /// No description provided for @shareUsageAnalyticsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Help improve Tabib with anonymous usage data'**
+  String get shareUsageAnalyticsHint;
+
+  /// No description provided for @supportAndLegal.
+  ///
+  /// In en, this message translates to:
+  /// **'Support & legal'**
+  String get supportAndLegal;
+
+  /// No description provided for @about.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get about;
+
+  /// No description provided for @helpAndSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & support'**
+  String get helpAndSupport;
+
+  /// No description provided for @termsAndConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms & conditions'**
+  String get termsAndConditions;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @appVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'App version'**
+  String get appVersion;
+
+  /// No description provided for @providerSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider settings'**
+  String get providerSettings;
+
+  /// No description provided for @queueNotificationsProviderHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Notify when patients join or move in the queue'**
+  String get queueNotificationsProviderHint;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get saveChanges;
+
+  /// No description provided for @patient.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient'**
+  String get patient;
+
+  /// No description provided for @secretary.
+  ///
+  /// In en, this message translates to:
+  /// **'Secretary'**
+  String get secretary;
+
+  /// No description provided for @admin.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin'**
+  String get admin;
+
+  /// No description provided for @bio.
+  ///
+  /// In en, this message translates to:
+  /// **'Bio'**
+  String get bio;
+
+  /// No description provided for @profilePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile photo'**
+  String get profilePhoto;
+
+  /// No description provided for @degrees.
+  ///
+  /// In en, this message translates to:
+  /// **'Degrees'**
+  String get degrees;
+
+  /// No description provided for @experience.
+  ///
+  /// In en, this message translates to:
+  /// **'Experience'**
+  String get experience;
+
+  /// No description provided for @error.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get error;
+
+  /// No description provided for @termsContent.
+  ///
+  /// In en, this message translates to:
+  /// **'By using Tabib you agree to follow clinic queue rules, respect healthcare staff, and use the app only for legitimate medical appointments and queue management. Misuse may result in account suspension.'**
+  String get termsContent;
+
+  /// No description provided for @privacyPolicyContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Tabib collects only the data needed to manage queues, appointments, and clinic communication. Your information is not sold to third parties. Contact your clinic administrator for data access requests.'**
+  String get privacyPolicyContent;
+
+  /// No description provided for @aboutContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Tabib v{version} — a modern healthcare queue and clinic management platform for patients, doctors, businesses, and secretaries.'**
+  String aboutContent(String version);
+
+  /// No description provided for @helpContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Need help? Email us at {email} or contact your clinic administrator for account and queue issues.'**
+  String helpContent(String email);
+
+  /// No description provided for @accountStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get accountStatusActive;
+
+  /// No description provided for @accountStatusSuspended.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspended'**
+  String get accountStatusSuspended;
+
+  /// No description provided for @accountStatusDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled'**
+  String get accountStatusDisabled;
+
+  /// No description provided for @accountStatusExpiredSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired subscription'**
+  String get accountStatusExpiredSubscription;
+
+  /// No description provided for @allStatuses.
+  ///
+  /// In en, this message translates to:
+  /// **'All statuses'**
+  String get allStatuses;
+
+  /// No description provided for @changeAccountStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Change account status'**
+  String get changeAccountStatus;
+
+  /// No description provided for @accountSuspendedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This account has been suspended. Contact your clinic administrator.'**
+  String get accountSuspendedMessage;
+
+  /// No description provided for @accountDisabledMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This account has been disabled. Contact your clinic administrator.'**
+  String get accountDisabledMessage;
+
+  /// No description provided for @accountSubscriptionExpiredLoginMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Access is blocked because the clinic subscription has expired. Please renew to continue.'**
+  String get accountSubscriptionExpiredLoginMessage;
+
+  /// No description provided for @managePatients.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage patients'**
+  String get managePatients;
+
+  /// No description provided for @managePatientsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'View patient accounts and manage their status'**
+  String get managePatientsHint;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

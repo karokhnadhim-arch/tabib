@@ -915,7 +915,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adminControlPanel => 'لوحة تحكم المدير';
 
   @override
-  String get adminControlPanelHint => 'إدارة الأطباء والسكرتaries والعيادات والاشتراكات';
+  String get adminControlPanelHint => 'إدارة العيادات والمستخدمين والاشتراكات';
 
   @override
   String get systemOwner => 'مالك النظام';
@@ -1271,4 +1271,230 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get queueSlot => 'وقت الدور';
+
+  @override
+  String get settings => 'الإعدادات';
+
+  @override
+  String get appearance => 'المظهر';
+
+  @override
+  String get theme => 'السمة';
+
+  @override
+  String get themeLight => 'فاتح';
+
+  @override
+  String get themeDark => 'داكن';
+
+  @override
+  String get themeSystem => 'افتراضي النظام';
+
+  @override
+  String get accountSecurity => 'الحساب والأمان';
+
+  @override
+  String get changePassword => 'تغيير كلمة المرور';
+
+  @override
+  String get changePasswordHint => 'تحديث كلمة مرور تسجيل الدخول';
+
+  @override
+  String get changePasswordDescription => 'أدخل كلمة المرور الحالية واختر كلمة مرور جديدة. يمكنك تغيير كلمة مرورك فقط.';
+
+  @override
+  String get currentPassword => 'كلمة المرور الحالية';
+
+  @override
+  String get newPassword => 'كلمة المرور الجديدة';
+
+  @override
+  String get passwordChangeUnavailable => 'تغيير كلمة المرور غير متاح لهذا الحساب';
+
+  @override
+  String get passwordChangedSuccessfully => 'تم تغيير كلمة المرور بنجاح';
+
+  @override
+  String get passwordSameAsCurrent => 'يجب أن تكون كلمة المرور الجديدة مختلفة عن الحالية';
+
+  @override
+  String get passwordsDoNotMatch => 'كلمتا المرور غير متطابقتين';
+
+  @override
+  String get accountInfoReadOnly => 'تفاصيل الحساب';
+
+  @override
+  String get accountInfoReadOnlyHint => 'البريد والهاتف ونوع الحساب والصلاحيات يديرها مسؤول العيادة';
+
+  @override
+  String get pushNotifications => 'إشعارات الدفع';
+
+  @override
+  String get queueNotifications => 'إشعارات الدور';
+
+  @override
+  String get sound => 'الصوت';
+
+  @override
+  String get vibration => 'الاهتزاز';
+
+  @override
+  String get patientPreferences => 'تفضيلات المريض';
+
+  @override
+  String get favoriteDoctors => 'الأطباء المفضلون';
+
+  @override
+  String get favoriteBusinesses => 'المنشآت المفضلة';
+
+  @override
+  String get noFavoriteDoctors => 'لا يوجد أطباء مفضلون بعد';
+
+  @override
+  String get noFavoriteBusinesses => 'لا توجد منشآت مفضلة بعد';
+
+  @override
+  String get doctorSettings => 'إعدادات الطبيب';
+
+  @override
+  String get businessSettings => 'إعدادات المنشأة';
+
+  @override
+  String get workingDaysAndHours => 'أيام وساعات العمل';
+
+  @override
+  String get queueSettings => 'إعدادات الدور';
+
+  @override
+  String get profileVisibility => 'ظهور الملف الشخصي';
+
+  @override
+  String get contactVisibility => 'ظهور بيانات الاتصال';
+
+  @override
+  String get whatsappVisibility => 'ظهور واتساب';
+
+  @override
+  String get secretarySettings => 'إعدادات السكرتير';
+
+  @override
+  String get queueAutoRefresh => 'تحديث الدور تلقائياً';
+
+  @override
+  String get queueAutoRefreshHint => 'إبقاء عرض الدور محدثاً في الوقت الفعلي';
+
+  @override
+  String get privacySettings => 'الخصوصية';
+
+  @override
+  String get showInSearchResults => 'الظهور في نتائج البحث';
+
+  @override
+  String get showInSearchResultsHint => 'السماح بظهور ملفك في بحث المرضى';
+
+  @override
+  String get shareUsageAnalytics => 'مشاركة إحصائيات الاستخدام';
+
+  @override
+  String get shareUsageAnalyticsHint => 'ساعد في تحسين تطبيب ببيانات مجهولة';
+
+  @override
+  String get supportAndLegal => 'الدعم والقانون';
+
+  @override
+  String get about => 'حول التطبيق';
+
+  @override
+  String get helpAndSupport => 'المساعدة والدعم';
+
+  @override
+  String get termsAndConditions => 'الشروط والأحكام';
+
+  @override
+  String get privacyPolicy => 'سياسة الخصوصية';
+
+  @override
+  String get appVersion => 'إصدار التطبيق';
+
+  @override
+  String get providerSettings => 'إعدادات مقدم الخدمة';
+
+  @override
+  String get queueNotificationsProviderHint => 'إشعار عند انضمام المرضى أو تحركهم في الدور';
+
+  @override
+  String get saveChanges => 'حفظ التغييرات';
+
+  @override
+  String get patient => 'مريض';
+
+  @override
+  String get secretary => 'سكرتير';
+
+  @override
+  String get admin => 'مسؤول';
+
+  @override
+  String get bio => 'نبذة';
+
+  @override
+  String get profilePhoto => 'صورة الملف';
+
+  @override
+  String get degrees => 'الشهادات';
+
+  @override
+  String get experience => 'الخبرة';
+
+  @override
+  String get error => 'حدث خطأ';
+
+  @override
+  String get termsContent => 'باستخدام تطبيب، فإنك توافق على الالتزام بقواعد دور العيادة واحترام طاقم الرعاية الصحية.';
+
+  @override
+  String get privacyPolicyContent => 'يجمع تطبيب البيانات اللازمة فقط لإدارة الدور والتواصل مع العيادة. لا تُباع معلوماتك لأطراف ثالثة.';
+
+  @override
+  String aboutContent(String version) {
+    return 'تطبيب v$version — منصة حديثة لإدارة الدور والعيادات.';
+  }
+
+  @override
+  String helpContent(String email) {
+    return 'تحتاج مساعدة؟ راسلنا على $email أو تواصل مع مسؤول عيادتك.';
+  }
+
+  @override
+  String get accountStatusActive => 'نشط';
+
+  @override
+  String get accountStatusSuspended => 'موقوف';
+
+  @override
+  String get accountStatusDisabled => 'معطل';
+
+  @override
+  String get accountStatusExpiredSubscription => 'اشتراك منتهٍ';
+
+  @override
+  String get allStatuses => 'كل الحالات';
+
+  @override
+  String get changeAccountStatus => 'تغيير حالة الحساب';
+
+  @override
+  String get accountSuspendedMessage => 'تم تعليق هذا الحساب. تواصل مع مسؤول العيادة.';
+
+  @override
+  String get accountDisabledMessage => 'تم تعطيل هذا الحساب. تواصل مع مسؤول العيادة.';
+
+  @override
+  String get accountSubscriptionExpiredLoginMessage => 'تم حظر الوصول لأن اشتراك العيادة منتهٍ. يرجى التجديد للمتابعة.';
+
+  @override
+  String get managePatients => 'إدارة المرضى';
+
+  @override
+  String get managePatientsHint => 'عرض حسابات المرضى وإدارة حالتها';
 }

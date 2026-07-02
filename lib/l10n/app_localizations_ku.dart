@@ -915,7 +915,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get adminControlPanel => 'پانێڵی کۆنترۆڵی بەڕێوەبەر';
 
   @override
-  String get adminControlPanelHint => 'بەڕێوەبردنی دکتۆر، سکرتێر، نۆرینگە و بەشداریکردن';
+  String get adminControlPanelHint => 'بەڕێوەبردنی نۆرینگە، بەکارهێنەران و بەشداریکردنەکان';
 
   @override
   String get systemOwner => 'خاوەنی سیستەم';
@@ -1271,4 +1271,230 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get queueSlot => 'کاتی سەرە';
+
+  @override
+  String get settings => 'ڕێکخستنەکان';
+
+  @override
+  String get appearance => 'ڕووکار';
+
+  @override
+  String get theme => 'ڕەنگ';
+
+  @override
+  String get themeLight => 'ڕووناک';
+
+  @override
+  String get themeDark => 'تاریک';
+
+  @override
+  String get themeSystem => 'سیستەم';
+
+  @override
+  String get accountSecurity => 'هەژمار و ئاسایش';
+
+  @override
+  String get changePassword => 'گۆڕینی وشەی نهێنی';
+
+  @override
+  String get changePasswordHint => 'وشەی نهێنی چوونەژوورەوە نوێ بکەرەوە';
+
+  @override
+  String get changePasswordDescription => 'وشەی نهێنی ئێستات بنووسە و دانەیەکی نوێ هەڵبژێرە. تەنها خۆت دەتوانیت وشەی نهێنی خۆت بگۆڕیت.';
+
+  @override
+  String get currentPassword => 'وشەی نهێنی ئێستا';
+
+  @override
+  String get newPassword => 'وشەی نهێنی نوێ';
+
+  @override
+  String get passwordChangeUnavailable => 'گۆڕینی وشەی نهێنی بۆ ئەم هەژمارە بەردەست نییە';
+
+  @override
+  String get passwordChangedSuccessfully => 'وشەی نهێنی بە سەرکەوتوویی گۆڕدرا';
+
+  @override
+  String get passwordSameAsCurrent => 'وشەی نهێنی نوێ دەبێت جیاواز بێت لە ئێستا';
+
+  @override
+  String get passwordsDoNotMatch => 'وشەکانی نهێنی یەک ناگرنەوە';
+
+  @override
+  String get accountInfoReadOnly => 'وردەکاری هەژمار';
+
+  @override
+  String get accountInfoReadOnlyHint => 'ئیمەیڵ، تەلەفۆن، جۆری هەژمار و دەسەڵاتەکان لەلایەن بەڕێوەبەری نۆرینگەوە بەڕێوە دەبرێن';
+
+  @override
+  String get pushNotifications => 'ئاگادارکردنەوەی پوش';
+
+  @override
+  String get queueNotifications => 'ئاگادارکردنەوەی سەرە';
+
+  @override
+  String get sound => 'دەنگ';
+
+  @override
+  String get vibration => 'لەرزین';
+
+  @override
+  String get patientPreferences => 'هەڵبژاردەکانی نەخۆش';
+
+  @override
+  String get favoriteDoctors => 'دکتۆرە دڵخوازەکان';
+
+  @override
+  String get favoriteBusinesses => 'کارە دڵخوازەکان';
+
+  @override
+  String get noFavoriteDoctors => 'هێشتا دکتۆری دڵخواز نییە';
+
+  @override
+  String get noFavoriteBusinesses => 'هێشتا کاری دڵخواز نییە';
+
+  @override
+  String get doctorSettings => 'ڕێکخستنی دکتۆر';
+
+  @override
+  String get businessSettings => 'ڕێکخستنی کار';
+
+  @override
+  String get workingDaysAndHours => 'ڕۆژ و کاتژمێری کار';
+
+  @override
+  String get queueSettings => 'ڕێکخستنی سەرە';
+
+  @override
+  String get profileVisibility => 'دیاربوونی پرۆفایل';
+
+  @override
+  String get contactVisibility => 'دیاربوونی پەیوەندی';
+
+  @override
+  String get whatsappVisibility => 'دیاربوونی واتساپ';
+
+  @override
+  String get secretarySettings => 'ڕێکخستنی سکرتێر';
+
+  @override
+  String get queueAutoRefresh => 'نوێکردنەوەی خۆکاری سەرە';
+
+  @override
+  String get queueAutoRefreshHint => 'دیمەنی سەرە بە شێوەی ڕاستەوخۆ نوێ بکەرەوە';
+
+  @override
+  String get privacySettings => 'تایبەتمەندی';
+
+  @override
+  String get showInSearchResults => 'نیشاندان لە گەڕان';
+
+  @override
+  String get showInSearchResultsHint => 'ڕێگە بدە پرۆفایلەکەت لە گەڕانی نەخۆشدا دەربکەوێت';
+
+  @override
+  String get shareUsageAnalytics => 'هاوبەشکردنی ئامار';
+
+  @override
+  String get shareUsageAnalyticsHint => 'یارمەتی باشترکردنی تەبیب بدە بە داتای نەناسراو';
+
+  @override
+  String get supportAndLegal => 'پاڵپشتی و یاسایی';
+
+  @override
+  String get about => 'دەربارە';
+
+  @override
+  String get helpAndSupport => 'یارمەتی و پاڵپشتی';
+
+  @override
+  String get termsAndConditions => 'مەرج و ڕێساکان';
+
+  @override
+  String get privacyPolicy => 'سیاسەتی تایبەتمەندی';
+
+  @override
+  String get appVersion => 'وەشانی ئەپ';
+
+  @override
+  String get providerSettings => 'ڕێکخستنی دابینکەر';
+
+  @override
+  String get queueNotificationsProviderHint => 'ئاگادار بکەرەوە کاتێک نەخۆش دەچێتە ناو سەرە';
+
+  @override
+  String get saveChanges => 'پاشەکەوتکردنی گۆڕانکاریەکان';
+
+  @override
+  String get patient => 'نەخۆش';
+
+  @override
+  String get secretary => 'سکرتێر';
+
+  @override
+  String get admin => 'بەڕێوەبەر';
+
+  @override
+  String get bio => 'ژیاننامە';
+
+  @override
+  String get profilePhoto => 'وێنەی پرۆفایل';
+
+  @override
+  String get degrees => 'پلەکان';
+
+  @override
+  String get experience => 'ئەزموون';
+
+  @override
+  String get error => 'هەڵەیەک ڕوویدا';
+
+  @override
+  String get termsContent => 'بە بەکارهێنانی تەبیب، ڕازیت بە پابەندبوون بە یاساکانی سەرەی نۆرینگە و ڕێزگرتن لە کارمەندانی تەندروستی.';
+
+  @override
+  String get privacyPolicyContent => 'تەبیب تەنها ئەو داتایە کۆدەکاتەوە کە پێویستە بۆ بەڕێوەبردنی سەرە و پەیوەندی نۆرینگە. زانیارییەکانت نافرۆشرێن.';
+
+  @override
+  String aboutContent(String version) {
+    return 'تەبیب v$version — پلاتفۆرمێکی مۆدێرن بۆ سەرە و بەڕێوەبردنی نۆرینگەی تەندروستی.';
+  }
+
+  @override
+  String helpContent(String email) {
+    return 'پێویستت بە یارمەتییە؟ ئیمەیڵ بنێرە بۆ $email یان پەیوەندی بە بەڕێوەبەری نۆرینگەکەت بکە.';
+  }
+
+  @override
+  String get accountStatusActive => 'چالاک';
+
+  @override
+  String get accountStatusSuspended => 'هەڵواسراو';
+
+  @override
+  String get accountStatusDisabled => 'ناچالاک';
+
+  @override
+  String get accountStatusExpiredSubscription => 'بەشداریکردن بەسەرچووە';
+
+  @override
+  String get allStatuses => 'هەموو دۆخەکان';
+
+  @override
+  String get changeAccountStatus => 'گۆڕینی دۆخی هەژمار';
+
+  @override
+  String get accountSuspendedMessage => 'ئەم هەژمارە هەڵواسراوە. پەیوەندی بە بەڕێوەبەری نۆرینگەکەت بکە.';
+
+  @override
+  String get accountDisabledMessage => 'ئەم هەژمارە ناچالاک کراوە. پەیوەندی بە بەڕێوەبەری نۆرینگەکەت بکە.';
+
+  @override
+  String get accountSubscriptionExpiredLoginMessage => 'دەستگەیشتن ڕاگیراوە چونکە بەشداریکردنی نۆرینگە بەسەرچووە. تکایە نوێی بکەرەوە.';
+
+  @override
+  String get managePatients => 'بەڕێوەبردنی نەخۆشەکان';
+
+  @override
+  String get managePatientsHint => 'بینینی هەژماری نەخۆش و بەڕێوەبردنی دۆخیان';
 }

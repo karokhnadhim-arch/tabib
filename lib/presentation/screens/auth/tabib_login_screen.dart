@@ -3,11 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/staff_auth_identifiers.dart';
 import '../../../core/widgets/medical_logo.dart';
 import '../../../core/widgets/medical_ui.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../core/utils/staff_auth_identifiers.dart';
 import '../../../services/auth_service.dart';
+import '../../../utils/account_status_labels.dart';
 import '../../../widgets/auth/auth_text_field.dart';
 import '../../../widgets/language_picker.dart';
 
@@ -95,13 +96,17 @@ class _TabibLoginScreenState extends State<TabibLoginScreen> {
           email: _emailController.text.trim(),
           password: _passwordController.text,
         );
-        if (err != null) err = l10n.invalidCredentials;
+        if (err != null) err = AccountStatusLabels.loginBlockMessage(l10n, err);
       } else {
         err = await auth.loginPatient(
           name: _nameController.text.trim(),
           phone: _phoneController.text.trim(),
         );
-        if (err != null) err = l10n.invalidPhone;
+        if (err != null) {
+          err = err == 'invalid_phone'
+              ? l10n.invalidPhone
+              : AccountStatusLabels.loginBlockMessage(l10n, err);
+        }
       }
     } else {
       final identifier = _emailController.text.trim();
@@ -114,9 +119,7 @@ class _TabibLoginScreenState extends State<TabibLoginScreen> {
           password: _passwordController.text,
         );
         if (err != null) {
-          err = err == 'account_deactivated'
-              ? l10n.accountDeactivated
-              : l10n.invalidCredentials;
+          err = AccountStatusLabels.loginBlockMessage(l10n, err);
         } else if (_role == _LoginRole.doctor && !auth.isDoctor) {
           await auth.logout();
           err = l10n.invalidCredentials;

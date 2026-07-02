@@ -915,7 +915,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminControlPanel => 'Admin Control Panel';
 
   @override
-  String get adminControlPanelHint => 'Manage doctors, secretaries, clinics, and subscriptions';
+  String get adminControlPanelHint => 'Manage clinics, users, and subscriptions';
 
   @override
   String get systemOwner => 'System Owner';
@@ -1271,4 +1271,230 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get queueSlot => 'Queue slot';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get theme => 'Theme';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
+
+  @override
+  String get themeSystem => 'System default';
+
+  @override
+  String get accountSecurity => 'Account & security';
+
+  @override
+  String get changePassword => 'Change password';
+
+  @override
+  String get changePasswordHint => 'Update your login password';
+
+  @override
+  String get changePasswordDescription => 'Enter your current password and choose a new secure password. Only you can change your own password.';
+
+  @override
+  String get currentPassword => 'Current password';
+
+  @override
+  String get newPassword => 'New password';
+
+  @override
+  String get passwordChangeUnavailable => 'Password change is not available for this account type';
+
+  @override
+  String get passwordChangedSuccessfully => 'Password changed successfully';
+
+  @override
+  String get passwordSameAsCurrent => 'New password must be different from the current password';
+
+  @override
+  String get passwordsDoNotMatch => 'Passwords do not match';
+
+  @override
+  String get accountInfoReadOnly => 'Account details';
+
+  @override
+  String get accountInfoReadOnlyHint => 'Email, phone, account type, and permissions are managed by your clinic administrator';
+
+  @override
+  String get pushNotifications => 'Push notifications';
+
+  @override
+  String get queueNotifications => 'Queue notifications';
+
+  @override
+  String get sound => 'Sound';
+
+  @override
+  String get vibration => 'Vibration';
+
+  @override
+  String get patientPreferences => 'Patient preferences';
+
+  @override
+  String get favoriteDoctors => 'Favorite doctors';
+
+  @override
+  String get favoriteBusinesses => 'Favorite businesses';
+
+  @override
+  String get noFavoriteDoctors => 'No favorite doctors yet';
+
+  @override
+  String get noFavoriteBusinesses => 'No favorite businesses yet';
+
+  @override
+  String get doctorSettings => 'Doctor settings';
+
+  @override
+  String get businessSettings => 'Business settings';
+
+  @override
+  String get workingDaysAndHours => 'Working days & hours';
+
+  @override
+  String get queueSettings => 'Queue settings';
+
+  @override
+  String get profileVisibility => 'Profile visibility';
+
+  @override
+  String get contactVisibility => 'Contact visibility';
+
+  @override
+  String get whatsappVisibility => 'WhatsApp visibility';
+
+  @override
+  String get secretarySettings => 'Secretary settings';
+
+  @override
+  String get queueAutoRefresh => 'Auto-refresh queue';
+
+  @override
+  String get queueAutoRefreshHint => 'Keep the queue view updated in real time';
+
+  @override
+  String get privacySettings => 'Privacy';
+
+  @override
+  String get showInSearchResults => 'Show in search results';
+
+  @override
+  String get showInSearchResultsHint => 'Allow your profile to appear in patient search';
+
+  @override
+  String get shareUsageAnalytics => 'Share usage analytics';
+
+  @override
+  String get shareUsageAnalyticsHint => 'Help improve Tabib with anonymous usage data';
+
+  @override
+  String get supportAndLegal => 'Support & legal';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get helpAndSupport => 'Help & support';
+
+  @override
+  String get termsAndConditions => 'Terms & conditions';
+
+  @override
+  String get privacyPolicy => 'Privacy policy';
+
+  @override
+  String get appVersion => 'App version';
+
+  @override
+  String get providerSettings => 'Provider settings';
+
+  @override
+  String get queueNotificationsProviderHint => 'Notify when patients join or move in the queue';
+
+  @override
+  String get saveChanges => 'Save changes';
+
+  @override
+  String get patient => 'Patient';
+
+  @override
+  String get secretary => 'Secretary';
+
+  @override
+  String get admin => 'Admin';
+
+  @override
+  String get bio => 'Bio';
+
+  @override
+  String get profilePhoto => 'Profile photo';
+
+  @override
+  String get degrees => 'Degrees';
+
+  @override
+  String get experience => 'Experience';
+
+  @override
+  String get error => 'Something went wrong';
+
+  @override
+  String get termsContent => 'By using Tabib you agree to follow clinic queue rules, respect healthcare staff, and use the app only for legitimate medical appointments and queue management. Misuse may result in account suspension.';
+
+  @override
+  String get privacyPolicyContent => 'Tabib collects only the data needed to manage queues, appointments, and clinic communication. Your information is not sold to third parties. Contact your clinic administrator for data access requests.';
+
+  @override
+  String aboutContent(String version) {
+    return 'Tabib v$version — a modern healthcare queue and clinic management platform for patients, doctors, businesses, and secretaries.';
+  }
+
+  @override
+  String helpContent(String email) {
+    return 'Need help? Email us at $email or contact your clinic administrator for account and queue issues.';
+  }
+
+  @override
+  String get accountStatusActive => 'Active';
+
+  @override
+  String get accountStatusSuspended => 'Suspended';
+
+  @override
+  String get accountStatusDisabled => 'Disabled';
+
+  @override
+  String get accountStatusExpiredSubscription => 'Expired subscription';
+
+  @override
+  String get allStatuses => 'All statuses';
+
+  @override
+  String get changeAccountStatus => 'Change account status';
+
+  @override
+  String get accountSuspendedMessage => 'This account has been suspended. Contact your clinic administrator.';
+
+  @override
+  String get accountDisabledMessage => 'This account has been disabled. Contact your clinic administrator.';
+
+  @override
+  String get accountSubscriptionExpiredLoginMessage => 'Access is blocked because the clinic subscription has expired. Please renew to continue.';
+
+  @override
+  String get managePatients => 'Manage patients';
+
+  @override
+  String get managePatientsHint => 'View patient accounts and manage their status';
 }

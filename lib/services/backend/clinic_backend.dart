@@ -32,6 +32,11 @@ abstract class ClinicBackend {
   /// One-shot staff fetch — prefer over [watchStaff].first for uniqueness checks.
   Future<List<UserAccount>> fetchStaff();
 
+  /// All platform accounts (admin account management).
+  Future<List<UserAccount>> fetchAllAccounts();
+
+  Stream<List<UserAccount>> watchAllAccounts();
+
   /// Secretaries assigned to exactly one doctor (scoped query).
   Future<List<UserAccount>> fetchSecretariesForDoctor(String doctorId);
 

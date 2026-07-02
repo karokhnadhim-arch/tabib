@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
+import '../models/account_status.dart';
 import '../models/localized_text.dart';
 import '../models/doctor.dart';
 import '../models/service_provider_type.dart';
@@ -12,6 +13,7 @@ import '../models/user_account.dart';
 import '../core/config/system_owner_config.dart';
 import '../core/utils/clinic_subscription.dart';
 import '../core/utils/staff_auth_identifiers.dart';
+import '../utils/account_access.dart';
 import '../firebase_options.dart';
 import 'backend/clinic_backend.dart';
 import 'firebase_auth_service.dart';
@@ -95,6 +97,12 @@ class AuthService extends ChangeNotifier {
     }
 
     await _loadUserFromFirebase(user);
+    final blockCode = await _rejectBlockedAccount();
+    if (blockCode != null) {
+      _currentUser = null;
+      notifyListeners();
+      return;
+    }
     notifyListeners();
   }
 
@@ -147,12 +155,20 @@ class AuthService extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String?> _rejectInactiveStaff() async {
+  Future<String?> _rejectBlockedAccount() async {
     final user = _currentUser;
     if (user == null) return 'invalid_credentials';
-    if (!user.isActive && !isSystemOwner) {
+    if (user.isSystemOwner) return null;
+
+    Clinic? clinic;
+    if (user.clinicId != null && user.clinicId!.isNotEmpty) {
+      clinic = await _backend.getClinic(user.clinicId!);
+    }
+
+    final blockCode = AccountAccess.loginBlockCode(user: user, clinic: clinic);
+    if (blockCode != null) {
       await logout();
-      return 'account_deactivated';
+      return blockCode;
     }
     return null;
   }
@@ -221,25 +237,31 @@ class AuthService extends ChangeNotifier {
         phone: phone,
       );
       notifyListeners();
-      return null;
+      return await _rejectBlockedAccount();
     }
 
     try {
       final cred = await _firebaseAuth!.signInAnonymously();
       final uid = cred.user!.uid;
-      final account = UserAccount(
-        id: uid,
-        name: LocalizedText(ku: name, ar: name, en: name),
-        role: UserRole.patient,
-        phone: phone,
-      );
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .set(account.toMap(), SetOptions(merge: true));
-      _currentUser = account;
+      final doc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      if (doc.exists && doc.data() != null) {
+        _currentUser = UserAccount.fromFirestore(doc.id, doc.data()!);
+      } else {
+        final account = UserAccount(
+          id: uid,
+          name: LocalizedText(ku: name, ar: name, en: name),
+          role: UserRole.patient,
+          phone: phone,
+        );
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid)
+            .set(account.toMap(), SetOptions(merge: true));
+        _currentUser = account;
+      }
       notifyListeners();
-      return null;
+      return await _rejectBlockedAccount();
     } on FirebaseAuthException catch (e) {
       return e.message ?? e.code;
     } on FirebaseException catch (e) {
@@ -278,7 +300,7 @@ class AuthService extends ChangeNotifier {
         persist: true,
         authEmail: fbUser?.email ?? authEmail,
       );
-      return await _rejectInactiveStaff();
+      return await _rejectBlockedAccount();
     } on FirebaseAuthException {
       if (_isKnownDemoCredential(trimmed, password)) {
         final err = await _demoStaffLogin(trimmed, password);
@@ -313,7 +335,11 @@ class AuthService extends ChangeNotifier {
         email: email.trim(),
         password: password,
       );
-      return null;
+      final fbUser = _firebaseAuth!.currentUser;
+      if (fbUser != null) {
+        await _loadUserFromFirebase(fbUser);
+      }
+      return await _rejectBlockedAccount();
     } on FirebaseAuthException {
       return 'invalid_credentials';
     } on FirebaseException catch (e) {
@@ -672,7 +698,7 @@ class AuthService extends ChangeNotifier {
           clinicId: 'clinic_erbil_1',
           isSystemOwner: true,
         );
-        return await _rejectInactiveStaff();
+        return await _rejectBlockedAccount();
       }
 
       if (normalizedEmail == demoDoctorEmail) {
@@ -689,7 +715,7 @@ class AuthService extends ChangeNotifier {
           clinicId: 'clinic_erbil_1',
         );
         await _applySystemOwnerPrivileges();
-        return await _rejectInactiveStaff();
+        return await _rejectBlockedAccount();
       }
 
       if (normalizedEmail == demoSecretaryEmail) {
@@ -705,7 +731,7 @@ class AuthService extends ChangeNotifier {
           clinicId: 'clinic_erbil_1',
           linkedDoctorId: 'doc_1',
         );
-        return await _rejectInactiveStaff();
+        return await _rejectBlockedAccount();
       }
     }
 
@@ -713,7 +739,7 @@ class AuthService extends ChangeNotifier {
     if (dynamic != null) {
       _currentUser = dynamic;
       await _applySystemOwnerPrivileges();
-      return await _rejectInactiveStaff();
+      return await _rejectBlockedAccount();
     }
     return 'invalid_credentials';
   }
@@ -727,17 +753,28 @@ class AuthService extends ChangeNotifier {
     return null;
   }
 
-  /// Admin-only: activate or deactivate a staff account.
-  Future<String?> setStaffActive(String staffId, bool active) async {
+  /// Admin-only: set account status (suspend, disable, reactivate, etc.).
+  Future<String?> setAccountStatus(
+    String accountId,
+    AccountStatus status,
+  ) async {
     if (!isSystemOwner) return 'unauthorized';
 
-    final staff = await _backend.fetchStaff();
-    final account = staff.where((s) => s.id == staffId).firstOrNull;
+    final accounts = await _backend.fetchAllAccounts();
+    final account = accounts.where((s) => s.id == accountId).firstOrNull;
     if (account == null) return 'error';
     if (account.isSystemOwner) return 'unauthorized';
 
-    await _backend.upsertStaff(account.copyWith(isActive: active));
+    await _backend.upsertStaff(account.copyWith(accountStatus: status));
     return null;
+  }
+
+  /// Admin-only: activate or deactivate a staff account.
+  Future<String?> setStaffActive(String staffId, bool active) async {
+    return setAccountStatus(
+      staffId,
+      active ? AccountStatus.active : AccountStatus.disabled,
+    );
   }
 
   /// Admin-only: update clinic subscription settings.
@@ -794,6 +831,7 @@ class AuthService extends ChangeNotifier {
     String? email,
     String? phone,
     bool? isActive,
+    AccountStatus? accountStatus,
   }) async {
     if (!isSystemOwner) return 'unauthorized';
 
@@ -824,12 +862,16 @@ class AuthService extends ChangeNotifier {
     }
 
     final nameText = LocalizedText(ku: name, ar: name, en: name);
+    final resolvedStatus = accountStatus ??
+        (isActive == null
+            ? account.accountStatus
+            : (isActive ? AccountStatus.active : AccountStatus.disabled));
     await _backend.upsertStaff(
       account.copyWith(
         name: nameText,
         email: trimmedEmail?.isNotEmpty == true ? trimmedEmail : null,
         phone: trimmedPhone?.isNotEmpty == true ? trimmedPhone : null,
-        isActive: isActive ?? account.isActive,
+        accountStatus: resolvedStatus,
       ),
     );
     return null;
@@ -846,6 +888,61 @@ class AuthService extends ChangeNotifier {
 
     await _backend.deleteStaff(secretaryId);
     return null;
+  }
+
+  /// Whether the signed-in user can change their own password (email auth only).
+  bool get canChangePassword {
+    final user = _currentUser;
+    if (user == null) return false;
+    if (_useDemoAuth) {
+      return user.role != UserRole.patient || user.email?.isNotEmpty == true;
+    }
+    final fb = _firebaseAuth?.currentUser;
+    if (fb == null) return false;
+    if (fb.isAnonymous) return false;
+    return fb.email != null && fb.email!.isNotEmpty;
+  }
+
+  /// Changes only the current user's password. Does not affect admin permissions.
+  Future<String?> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    if (!canChangePassword) return 'password_change_unavailable';
+    if (newPassword.length < 6) return 'weak_password';
+    if (currentPassword == newPassword) return 'password_same';
+
+    if (_useDemoAuth) {
+      if (!_validateDemoCurrentPassword(currentPassword)) {
+        return 'invalid_credentials';
+      }
+      return null;
+    }
+
+    final fb = _firebaseAuth?.currentUser;
+    final email = fb?.email;
+    if (fb == null || email == null || email.isEmpty) {
+      return 'password_change_unavailable';
+    }
+
+    try {
+      await _firebaseAuth!.reauthenticateWithPassword(
+        email: email,
+        password: currentPassword,
+      );
+      await _firebaseAuth!.updatePassword(newPassword);
+      return null;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
+        return 'invalid_credentials';
+      }
+      if (e.code == 'weak-password') return 'weak_password';
+      return e.message ?? e.code;
+    }
+  }
+
+  bool _validateDemoCurrentPassword(String currentPassword) {
+    return currentPassword == demoPassword;
   }
 }
 

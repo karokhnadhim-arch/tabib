@@ -172,6 +172,18 @@ class InMemoryClinicBackend implements ClinicBackend {
       List.unmodifiable(_staff);
 
   @override
+  Future<List<UserAccount>> fetchAllAccounts() async =>
+      List.unmodifiable(_staff);
+
+  @override
+  Stream<List<UserAccount>> watchAllAccounts() async* {
+    yield List.unmodifiable(_staff);
+    await for (final _ in _change.stream) {
+      yield List.unmodifiable(_staff);
+    }
+  }
+
+  @override
   Future<List<UserAccount>> fetchSecretariesForDoctor(String doctorId) async {
     return _staff
         .where(

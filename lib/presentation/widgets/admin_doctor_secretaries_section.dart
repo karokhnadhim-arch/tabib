@@ -5,9 +5,12 @@ import '../../core/theme/app_theme.dart';
 import '../../core/utils/admin_doctor_staff_resolver.dart';
 import '../../core/widgets/responsive_scaffold.dart';
 import '../../l10n/app_localizations.dart';
+import '../../models/account_status.dart';
 import '../../models/user_account.dart';
+import '../../presentation/widgets/account_status_badge.dart';
 import '../../services/auth_service.dart';
 import '../../services/clinic_data_service.dart';
+import '../../utils/account_status_labels.dart';
 import '../../utils/localization_utils.dart';
 import 'admin_secretary_form_dialog.dart';
 
@@ -63,15 +66,30 @@ class AdminDoctorSecretariesSection extends StatelessWidget {
     );
   }
 
-  Future<void> _toggleActive(
-    BuildContext context,
-    UserAccount secretary,
-    bool active,
-  ) async {
+  Future<void> _pickStatus(BuildContext context, UserAccount secretary) async {
     final l10n = AppLocalizations.of(context);
-    final err = await context.read<AuthService>().setStaffActive(
+    final selected = await showModalBottomSheet<AccountStatus>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: AccountStatus.values.map((status) {
+            return ListTile(
+              leading: AccountStatusBadge(status: status, compact: true),
+              title: Text(AccountStatusLabels.label(l10n, status)),
+              selected: secretary.accountStatus == status,
+              onTap: () => Navigator.pop(context, status),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+    if (selected == null || selected == secretary.accountStatus) return;
+
+    final err = await context.read<AuthService>().setAccountStatus(
           secretary.id,
-          active,
+          selected,
         );
     if (!context.mounted) return;
     if (err != null) {
@@ -145,7 +163,7 @@ class AdminDoctorSecretariesSection extends StatelessWidget {
                   secretary: s,
                 ),
                 onDelete: (s) => _confirmDelete(context, s),
-                onToggleActive: (s, active) => _toggleActive(context, s, active),
+                onChangeStatus: (s) => _pickStatus(context, s),
               )
             else
               ...secretaries.map(
@@ -157,8 +175,7 @@ class AdminDoctorSecretariesSection extends StatelessWidget {
                     secretary: s,
                   ),
                   onDelete: () => _confirmDelete(context, s),
-                  onToggleActive: (active) =>
-                      _toggleActive(context, s, active),
+                  onChangeStatus: () => _pickStatus(context, s),
                 ),
               ),
           ],
@@ -168,43 +185,18 @@ class AdminDoctorSecretariesSection extends StatelessWidget {
   }
 }
 
-class _StatusChip extends StatelessWidget {
-  const _StatusChip({required this.isActive});
-
-  final bool isActive;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    return Chip(
-      label: Text(
-        isActive ? l10n.accountActive : l10n.accountInactive,
-        style: const TextStyle(fontSize: 12),
-      ),
-      backgroundColor: isActive
-          ? AppTheme.medicalGreen.withOpacity(0.12)
-          : Colors.red.shade50,
-      side: BorderSide(
-        color: isActive ? AppTheme.medicalGreen : Colors.red.shade300,
-      ),
-      visualDensity: VisualDensity.compact,
-      padding: EdgeInsets.zero,
-    );
-  }
-}
-
 class _SecretaryCard extends StatelessWidget {
   const _SecretaryCard({
     required this.secretary,
     required this.onEdit,
     required this.onDelete,
-    required this.onToggleActive,
+    required this.onChangeStatus,
   });
 
   final UserAccount secretary;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
-  final ValueChanged<bool> onToggleActive;
+  final VoidCallback onChangeStatus;
 
   @override
   Widget build(BuildContext context) {
@@ -242,7 +234,11 @@ class _SecretaryCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                _StatusChip(isActive: secretary.isActive),
+                InkWell(
+                  onTap: onChangeStatus,
+                  borderRadius: BorderRadius.circular(16),
+                  child: AccountStatusBadge(status: secretary.accountStatus),
+                ),
               ],
             ),
             const SizedBox(height: 8),
@@ -268,15 +264,10 @@ class _SecretaryCard extends StatelessWidget {
                     style: TextStyle(color: Colors.red.shade700),
                   ),
                 ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Switch(
-                      value: secretary.isActive,
-                      activeColor: AppTheme.medicalGreen,
-                      onChanged: onToggleActive,
-                    ),
-                  ],
+                TextButton.icon(
+                  onPressed: onChangeStatus,
+                  icon: const Icon(Icons.tune_outlined, size: 18),
+                  label: Text(l10n.changeAccountStatus),
                 ),
               ],
             ),
@@ -292,13 +283,13 @@ class _SecretaryTable extends StatelessWidget {
     required this.secretaries,
     required this.onEdit,
     required this.onDelete,
-    required this.onToggleActive,
+    required this.onChangeStatus,
   });
 
   final List<UserAccount> secretaries;
   final Future<void> Function(UserAccount) onEdit;
   final Future<void> Function(UserAccount) onDelete;
-  final Future<void> Function(UserAccount, bool) onToggleActive;
+  final Future<void> Function(UserAccount) onChangeStatus;
 
   @override
   Widget build(BuildContext context) {
@@ -324,7 +315,12 @@ class _SecretaryTable extends StatelessWidget {
               DataCell(Text(name)),
               DataCell(Text(s.phone ?? l10n.notAvailable)),
               DataCell(Text(s.email ?? l10n.notAvailable)),
-              DataCell(_StatusChip(isActive: s.isActive)),
+              DataCell(
+                InkWell(
+                  onTap: () => onChangeStatus(s),
+                  child: AccountStatusBadge(status: s.accountStatus),
+                ),
+              ),
               DataCell(
                 Wrap(
                   spacing: 0,
@@ -343,10 +339,10 @@ class _SecretaryTable extends StatelessWidget {
                       ),
                       onPressed: () => onDelete(s),
                     ),
-                    Switch(
-                      value: s.isActive,
-                      activeColor: AppTheme.medicalGreen,
-                      onChanged: (v) => onToggleActive(s, v),
+                    IconButton(
+                      tooltip: l10n.changeAccountStatus,
+                      icon: const Icon(Icons.tune_outlined),
+                      onPressed: () => onChangeStatus(s),
                     ),
                   ],
                 ),

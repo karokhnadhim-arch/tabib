@@ -9,6 +9,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../models/doctor.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
+import '../../../services/favorites_service.dart';
 import '../../../services/queue_service.dart';
 import '../../../utils/localization_utils.dart';
 import '../../../utils/provider_labels.dart';
@@ -102,6 +103,12 @@ class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
     final degree = doctor.patientVisibleDegree(context);
     final whatsapp = doctor.patientVisibleWhatsapp;
     final showContact = doctor.patientShowsAnyContact;
+    final auth = context.watch<AuthService>();
+    final favorites = context.watch<FavoritesService>();
+    final favoriteKind =
+        doctor.isBusiness ? FavoriteKind.business : FavoriteKind.doctor;
+    final isFavorite = auth.isPatient &&
+        favorites.isFavorite(widget.doctorId, favoriteKind);
 
     return Scaffold(
       backgroundColor: AppTheme.medicalWhite,
@@ -115,6 +122,17 @@ class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
                     : 280,
             pinned: true,
             backgroundColor: AppTheme.patientColor,
+            actions: [
+              if (auth.isPatient)
+                IconButton(
+                  icon: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: isFavorite ? Colors.redAccent : Colors.white,
+                  ),
+                  onPressed: () =>
+                      favorites.toggle(widget.doctorId, favoriteKind),
+                ),
+            ],
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 decoration: const BoxDecoration(

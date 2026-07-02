@@ -141,6 +141,11 @@ class _HomeTab extends StatelessWidget {
                     color: Colors.white),
                 onPressed: () => context.push('/notifications'),
               ),
+              IconButton(
+                icon: const Icon(Icons.settings_outlined, color: Colors.white),
+                tooltip: AppLocalizations.of(context).settings,
+                onPressed: () => context.push('/settings'),
+              ),
               const LanguagePicker(),
               IconButton(
                 icon: const Icon(Icons.logout, color: Colors.white),

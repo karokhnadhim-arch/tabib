@@ -21,11 +21,14 @@ import 'services/backend/clinic_backend.dart';
 import 'services/backend/firestore_clinic_backend.dart';
 import 'services/backend/in_memory_clinic_backend.dart';
 import 'services/clinic_data_service.dart';
+import 'services/favorites_service.dart';
 import 'services/firebase_bootstrap.dart';
 import 'services/locale_service.dart';
 import 'services/queue_service.dart';
 import 'services/staff_data_service.dart';
 import 'services/subscription_monitor_service.dart';
+import 'services/theme_service.dart';
+import 'services/user_preferences_service.dart';
 
 /// Root widget for Tabib — medical appointment platform.
 class TabibApp extends StatefulWidget {
@@ -56,6 +59,9 @@ class _TabibAppState extends State<TabibApp> {
   late final QueueService _queueService;
   late final AppointmentService _appointmentService;
   late final LocaleService _localeService;
+  late final ThemeService _themeService;
+  late final UserPreferencesService _userPreferencesService;
+  late final FavoritesService _favoritesService;
   late final AppointmentRepository _appointmentRepository;
   late final PrescriptionRepository _prescriptionRepository;
   late final NotificationRepository _notificationRepository;
@@ -99,6 +105,10 @@ class _TabibAppState extends State<TabibApp> {
     _staffDataService = StaffDataService(backend: _backend);
     _queueService = QueueService(backend: _backend);
     _localeService = LocaleService();
+    _themeService = ThemeService();
+    _userPreferencesService = UserPreferencesService();
+    _favoritesService = FavoritesService();
+    _authService.addListener(_onAuthChanged);
     _appointmentProvider = AppointmentProvider(repository: _appointmentRepository);
     _prescriptionProvider = PrescriptionProvider(repository: _prescriptionRepository);
     _notificationProvider = NotificationProvider(repository: _notificationRepository);
@@ -117,6 +127,19 @@ class _TabibAppState extends State<TabibApp> {
     ).router;
   }
 
+  void _onAuthChanged() {
+    final userId = _authService.currentUser?.id;
+    _userPreferencesService.bindUser(userId);
+    _favoritesService.bindUser(userId);
+  }
+
+  @override
+  void dispose() {
+    _authService.removeListener(_onAuthChanged);
+    _subscriptionMonitor.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -128,18 +151,23 @@ class _TabibAppState extends State<TabibApp> {
         ChangeNotifierProvider.value(value: _queueService),
         ChangeNotifierProvider.value(value: _appointmentService),
         ChangeNotifierProvider.value(value: _localeService),
+        ChangeNotifierProvider.value(value: _themeService),
+        ChangeNotifierProvider.value(value: _userPreferencesService),
+        ChangeNotifierProvider.value(value: _favoritesService),
         ChangeNotifierProvider.value(value: _appointmentProvider),
         ChangeNotifierProvider.value(value: _prescriptionProvider),
         ChangeNotifierProvider.value(value: _notificationProvider),
         ChangeNotifierProvider.value(value: _chatProvider),
         ChangeNotifierProvider.value(value: _subscriptionMonitor),
       ],
-      child: Consumer<LocaleService>(
-        builder: (context, localeService, _) {
+      child: Consumer2<LocaleService, ThemeService>(
+        builder: (context, localeService, themeService, _) {
           return MaterialApp.router(
             title: 'Tabib',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.light(),
+            darkTheme: AppTheme.dark(),
+            themeMode: themeService.themeMode,
             locale: localeService.locale,
             supportedLocales: LocaleService.supportedLocales,
             localizationsDelegates: TabibApp.localizationsDelegates,
