@@ -145,182 +145,169 @@ class _PatientProfileScreenState extends State<PatientProfileScreen> {
       preferThumbnail: false,
     );
 
-    final body = ResponsiveBody(
-      child: ListView(
-        padding: const EdgeInsets.all(16),
+    final body = ScrollableResponsiveBody(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (widget.embedded) ...[
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    l10n.patientProfile,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: _saving ? null : _save,
-                  child: _saving
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text(l10n.save),
+            ResponsiveHeaderRow(
+              title: Text(
+                l10n.patientProfile,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              trailing: [
+                _ProfileSaveButton(
+                  saving: _saving,
+                  onSave: _save,
+                  l10n: l10n,
                 ),
               ],
             ),
             const SizedBox(height: 8),
           ],
-          Center(
-              child: Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 52,
-                    backgroundColor: AppTheme.medicalBlue.withOpacity(0.1),
-                    backgroundImage: photoProvider,
-                    child: photoProvider == null
-                        ? Icon(
-                            Icons.person,
-                            size: 52,
-                            color: AppTheme.medicalBlue.withOpacity(0.5),
-                          )
-                        : null,
-                  ),
-                  Positioned(
-                    right: 0,
-                    bottom: 0,
-                    child: Material(
-                      color: AppTheme.medicalBlue,
-                      shape: const CircleBorder(),
-                      child: IconButton(
-                        icon: const Icon(Icons.camera_alt, color: Colors.white),
-                        onPressed: _pickPhoto,
-                        tooltip: l10n.uploadPhoto,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-            TextField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: l10n.patientName,
-                prefixIcon: const Icon(Icons.person_outline),
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _phoneController,
-              keyboardType: TextInputType.phone,
-              decoration: InputDecoration(
-                labelText: l10n.phoneNumber,
-                prefixIcon: const Icon(Icons.phone_outlined),
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                labelText: l10n.emailOptional,
-                prefixIcon: const Icon(Icons.email_outlined),
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _cityController,
-              decoration: InputDecoration(
-                labelText: l10n.city,
-                prefixIcon: const Icon(Icons.location_city_outlined),
-              ),
-            ),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<String?>(
-              value: _gender?.isEmpty == true ? null : _gender,
-              decoration: InputDecoration(
-                labelText: l10n.genderOptional,
-                prefixIcon: const Icon(Icons.wc_outlined),
-              ),
-              items: [
-                DropdownMenuItem(value: null, child: Text(l10n.notSpecified)),
-                DropdownMenuItem(value: 'male', child: Text(l10n.male)),
-                DropdownMenuItem(value: 'female', child: Text(l10n.female)),
-              ],
-              onChanged: (v) => setState(() => _gender = v),
-            ),
-            const SizedBox(height: 24),
-            SettingsSection(
-              title: l10n.appearance,
-              icon: Icons.palette_outlined,
-              children: [
-                SettingsTile(
-                  icon: Icons.dark_mode_outlined,
-                  title: l10n.theme,
-                  subtitle: _themeLabel(l10n, themeService.themeMode),
-                  onTap: () => _showThemePicker(themeService, l10n),
+          _ProfilePhotoSection(
+            photoProvider: photoProvider,
+            onPickPhoto: _pickPhoto,
+            uploadLabel: l10n.uploadPhoto,
+          ),
+          const SizedBox(height: 24),
+          ResponsiveColumns(
+            children: [
+              TextField(
+                controller: _nameController,
+                decoration: InputDecoration(
+                  labelText: l10n.patientName,
+                  prefixIcon: const Icon(Icons.person_outline),
                 ),
-                const SettingsDivider(),
-                SettingsTile(
-                  icon: Icons.language,
-                  title: l10n.language,
-                  subtitle: _languageLabel(l10n, locale.locale),
-                  onTap: () => _showLanguagePicker(locale, l10n),
+              ),
+              TextField(
+                controller: _phoneController,
+                keyboardType: TextInputType.phone,
+                decoration: InputDecoration(
+                  labelText: l10n.phoneNumber,
+                  prefixIcon: const Icon(Icons.phone_outlined),
                 ),
-              ],
-            ),
-            SettingsSection(
-              title: l10n.privacySettings,
-              icon: Icons.shield_outlined,
-              children: [
-                SwitchListTile(
-                  secondary: const Icon(Icons.photo_outlined),
-                  title: Text(l10n.showProfilePhoto),
-                  value: profile.showProfilePhoto,
-                  onChanged: (v) => context
-                      .read<PatientProfileService>()
-                      .updateField((p) => p.copyWith(showProfilePhoto: v)),
-                ),
-                SwitchListTile(
-                  secondary: const Icon(Icons.phone_android_outlined),
-                  title: Text(l10n.showPhoneNumber),
-                  value: profile.showPhoneNumber,
-                  onChanged: (v) => context
-                      .read<PatientProfileService>()
-                      .updateField((p) => p.copyWith(showPhoneNumber: v)),
-                ),
-                SwitchListTile(
-                  secondary: const Icon(Icons.visibility_outlined),
-                  title: Text(l10n.profileVisibleToVisitedOnly),
-                  value: profile.visibleToVisitedOnly,
-                  onChanged: (v) => context
-                      .read<PatientProfileService>()
-                      .updateField(
-                        (p) => p.copyWith(visibleToVisitedOnly: v),
-                      ),
-                ),
-              ],
-            ),
-            if (auth.canChangePassword) ...[
-              const SizedBox(height: 8),
-              SettingsSection(
-                title: l10n.accountSecurity,
-                icon: Icons.lock_outline,
-                children: [
-                  SettingsTile(
-                    icon: Icons.vpn_key_outlined,
-                    title: l10n.changePassword,
-                    onTap: () => context.push('/settings/password'),
-                  ),
-                ],
               ),
             ],
+          ),
+          const SizedBox(height: 12),
+          ResponsiveColumns(
+            children: [
+              TextField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  labelText: l10n.emailOptional,
+                  prefixIcon: const Icon(Icons.email_outlined),
+                ),
+              ),
+              TextField(
+                controller: _cityController,
+                decoration: InputDecoration(
+                  labelText: l10n.city,
+                  prefixIcon: const Icon(Icons.location_city_outlined),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          DropdownButtonFormField<String?>(
+            isExpanded: true,
+            value: _gender?.isEmpty == true ? null : _gender,
+            decoration: InputDecoration(
+              labelText: l10n.genderOptional,
+              prefixIcon: const Icon(Icons.wc_outlined),
+            ),
+            items: [
+              DropdownMenuItem(
+                value: null,
+                child: Text(
+                  l10n.notSpecified,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              DropdownMenuItem(
+                value: 'male',
+                child: Text(l10n.male, overflow: TextOverflow.ellipsis),
+              ),
+              DropdownMenuItem(
+                value: 'female',
+                child: Text(l10n.female, overflow: TextOverflow.ellipsis),
+              ),
+            ],
+            onChanged: (v) => setState(() => _gender = v),
+          ),
+          const SizedBox(height: 24),
+          SettingsSection(
+            title: l10n.appearance,
+            icon: Icons.palette_outlined,
+            children: [
+              SettingsTile(
+                icon: Icons.dark_mode_outlined,
+                title: l10n.theme,
+                subtitle: _themeLabel(l10n, themeService.themeMode),
+                onTap: () => _showThemePicker(themeService, l10n),
+              ),
+              const SettingsDivider(),
+              SettingsTile(
+                icon: Icons.language,
+                title: l10n.language,
+                subtitle: _languageLabel(l10n, locale.locale),
+                onTap: () => _showLanguagePicker(locale, l10n),
+              ),
+            ],
+          ),
+          SettingsSection(
+            title: l10n.privacySettings,
+            icon: Icons.shield_outlined,
+            children: [
+              SettingsSwitchTile(
+                icon: Icons.photo_outlined,
+                title: l10n.showProfilePhoto,
+                value: profile.showProfilePhoto,
+                onChanged: (v) => context
+                    .read<PatientProfileService>()
+                    .updateField((p) => p.copyWith(showProfilePhoto: v)),
+              ),
+              SettingsSwitchTile(
+                icon: Icons.phone_android_outlined,
+                title: l10n.showPhoneNumber,
+                value: profile.showPhoneNumber,
+                onChanged: (v) => context
+                    .read<PatientProfileService>()
+                    .updateField((p) => p.copyWith(showPhoneNumber: v)),
+              ),
+              SettingsSwitchTile(
+                icon: Icons.visibility_outlined,
+                title: l10n.profileVisibleToVisitedOnly,
+                value: profile.visibleToVisitedOnly,
+                onChanged: (v) => context
+                    .read<PatientProfileService>()
+                    .updateField((p) => p.copyWith(visibleToVisitedOnly: v)),
+              ),
+            ],
+          ),
+          if (auth.canChangePassword) ...[
+            const SizedBox(height: 8),
+            SettingsSection(
+              title: l10n.accountSecurity,
+              icon: Icons.lock_outline,
+              children: [
+                SettingsTile(
+                  icon: Icons.vpn_key_outlined,
+                  title: l10n.changePassword,
+                  onTap: () => context.push('/settings/password'),
+                ),
+              ],
+            ),
           ],
-        ),
+          const SizedBox(height: 16),
+        ],
+      ),
     );
 
     if (widget.embedded) return body;
@@ -330,15 +317,11 @@ class _PatientProfileScreenState extends State<PatientProfileScreen> {
         title: Text(l10n.patientProfile),
         backgroundColor: AppTheme.patientColor,
         actions: [
-          TextButton(
-            onPressed: _saving ? null : _save,
-            child: _saving
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : Text(l10n.save),
+          _ProfileSaveButton(
+            saving: _saving,
+            onSave: _save,
+            l10n: l10n,
+            compact: true,
           ),
         ],
       ),
@@ -439,6 +422,136 @@ class _PatientProfileScreenState extends State<PatientProfileScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ProfileSaveButton extends StatelessWidget {
+  const _ProfileSaveButton({
+    required this.saving,
+    required this.onSave,
+    required this.l10n,
+    this.compact = false,
+  });
+
+  final bool saving;
+  final VoidCallback onSave;
+  final AppLocalizations l10n;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    if (saving) {
+      return const SizedBox(
+        width: 48,
+        height: 48,
+        child: Center(
+          child: SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ),
+      );
+    }
+
+    final useIcon =
+        compact || MediaQuery.sizeOf(context).width < 400;
+
+    if (useIcon) {
+      return IconButton(
+        onPressed: onSave,
+        tooltip: l10n.save,
+        icon: const Icon(Icons.check),
+      );
+    }
+
+    return TextButton(
+      onPressed: onSave,
+      child: Text(l10n.save, overflow: TextOverflow.ellipsis),
+    );
+  }
+}
+
+class _ProfilePhotoSection extends StatelessWidget {
+  const _ProfilePhotoSection({
+    required this.photoProvider,
+    required this.onPickPhoto,
+    required this.uploadLabel,
+  });
+
+  final ImageProvider? photoProvider;
+  final VoidCallback onPickPhoto;
+  final String uploadLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final photoSize = (constraints.maxWidth * 0.34).clamp(80.0, 112.0);
+        final cameraSize = (photoSize * 0.34).clamp(32.0, 40.0);
+        final stackSize = photoSize + cameraSize * 0.3;
+
+        return Center(
+          child: SizedBox(
+            width: stackSize,
+            height: stackSize,
+            child: Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.center,
+              children: [
+                AspectRatio(
+                  aspectRatio: 1,
+                  child: SizedBox(
+                    width: photoSize,
+                    height: photoSize,
+                    child: ClipOval(
+                      child: photoProvider != null
+                          ? Image(
+                              image: photoProvider!,
+                              fit: BoxFit.cover,
+                              width: photoSize,
+                              height: photoSize,
+                            )
+                          : ColoredBox(
+                              color: AppTheme.medicalBlue.withOpacity(0.1),
+                              child: Icon(
+                                Icons.person,
+                                size: photoSize * 0.5,
+                                color: AppTheme.medicalBlue.withOpacity(0.5),
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: 0,
+                  bottom: 0,
+                  child: Material(
+                    color: AppTheme.medicalBlue,
+                    shape: const CircleBorder(),
+                    child: SizedBox(
+                      width: cameraSize,
+                      height: cameraSize,
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        icon: Icon(
+                          Icons.camera_alt,
+                          color: Colors.white,
+                          size: cameraSize * 0.48,
+                        ),
+                        onPressed: onPickPhoto,
+                        tooltip: uploadLabel,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
