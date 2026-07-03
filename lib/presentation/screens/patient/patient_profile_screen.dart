@@ -290,22 +290,30 @@ class _PatientProfileScreenState extends State<PatientProfileScreen> {
         builder: (context, constraints) {
           final maxW = constraints.maxWidth.clamp(0.0, 960.0);
           return SingleChildScrollView(
+            primary: true,
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _ProfileCoverHeader(
-                  photoProvider: photoProvider,
-                  displayName: displayName,
-                  city: city,
-                  memberSince: memberSince,
-                  memberSinceLabel: l10n.memberSince,
-                  notSpecified: l10n.notSpecified,
-                  editLabel: l10n.editProfile,
-                  uploadLabel: l10n.uploadPhoto,
-                  onEdit: _openEditSheet,
-                  onPickPhoto: _pickPhoto,
-                ),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight.isFinite
+                    ? constraints.maxHeight
+                    : 0,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _ProfileCoverHeader(
+                    photoProvider: photoProvider,
+                    displayName: displayName,
+                    city: city,
+                    memberSince: memberSince,
+                    memberSinceLabel: l10n.memberSince,
+                    notSpecified: l10n.notSpecified,
+                    editLabel: l10n.editProfile,
+                    uploadLabel: l10n.uploadPhoto,
+                    onEdit: _openEditSheet,
+                    onPickPhoto: _pickPhoto,
+                  ),
                 Center(
                   child: ConstrainedBox(
                     constraints: BoxConstraints(maxWidth: maxW),
@@ -523,7 +531,8 @@ class _PatientProfileScreenState extends State<PatientProfileScreen> {
                     ),
                   ),
                 ),
-              ],
+                ],
+              ),
             ),
           );
         },
@@ -672,41 +681,55 @@ class _ProfileCoverHeader extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final coverHeight = screenSizeOf(context) == ScreenSize.mobile
-            ? 148.0
-            : 176.0;
-        final avatarRadius = screenSizeOf(context) == ScreenSize.mobile
-            ? 52.0
-            : 60.0;
+        final maxWidth = constraints.maxWidth;
+        final avatarRadius =
+            (maxWidth * 0.13).clamp(44.0, screenSizeOf(context) == ScreenSize.mobile ? 54.0 : 60.0);
+        final coverHeight = (avatarRadius * 2.35).clamp(120.0, 176.0);
+        final cameraSize = (avatarRadius * 0.36).clamp(30.0, 38.0);
+        // Reserve space for avatar overlap + camera badge (no negative Stack offsets).
+        final headerBlockHeight = coverHeight + avatarRadius + cameraSize * 0.35;
         final ring = Border.all(color: theme.colorScheme.surface, width: 4);
 
         return Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Stack(
-              clipBehavior: Clip.none,
-              alignment: Alignment.bottomCenter,
-              children: [
-                SizedBox(
-                  height: coverHeight,
-                  width: double.infinity,
-                  child: _CoverBackground(photoProvider: photoProvider),
-                ),
-                Positioned(
-                  bottom: -(avatarRadius),
-                  child: _OverlappingAvatar(
-                    radius: avatarRadius,
-                    ring: ring,
-                    photoProvider: photoProvider,
-                    uploadLabel: uploadLabel,
-                    onPickPhoto: onPickPhoto,
+            SizedBox(
+              width: double.infinity,
+              height: headerBlockHeight,
+              child: Stack(
+                clipBehavior: Clip.hardEdge,
+                alignment: Alignment.topCenter,
+                children: [
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: coverHeight,
+                    child: _CoverBackground(photoProvider: photoProvider),
                   ),
-                ),
-              ],
+                  Positioned(
+                    top: coverHeight - avatarRadius,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: _OverlappingAvatar(
+                        radius: avatarRadius,
+                        ring: ring,
+                        photoProvider: photoProvider,
+                        uploadLabel: uploadLabel,
+                        onPickPhoto: onPickPhoto,
+                        cameraSize: cameraSize,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            SizedBox(height: avatarRadius + 16),
+            const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     displayName,
@@ -721,7 +744,7 @@ class _ProfileCoverHeader extends StatelessWidget {
                   Wrap(
                     alignment: WrapAlignment.center,
                     crossAxisAlignment: WrapCrossAlignment.center,
-                    spacing: 16,
+                    spacing: 12,
                     runSpacing: 6,
                     children: [
                       _MetaChip(
@@ -729,26 +752,35 @@ class _ProfileCoverHeader extends StatelessWidget {
                         label: city?.isNotEmpty == true
                             ? city!
                             : notSpecified,
+                        maxWidth: maxWidth * 0.42,
                       ),
                       _MetaChip(
                         icon: Icons.calendar_month_outlined,
                         label: memberSince != null
                             ? '$memberSinceLabel $memberSince'
                             : '$memberSinceLabel $notSpecified',
+                        maxWidth: maxWidth * 0.52,
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  FilledButton.icon(
-                    onPressed: onEdit,
-                    icon: const Icon(Icons.edit_outlined, size: 18),
-                    label: Text(editLabel),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppTheme.patientColor,
-                      minimumSize: const Size(0, 44),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 10,
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      onPressed: onEdit,
+                      icon: const Icon(Icons.edit_outlined, size: 18),
+                      label: Text(
+                        editLabel,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: AppTheme.patientColor,
+                        minimumSize: const Size(0, 44),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 10,
+                        ),
                       ),
                     ),
                   ),
@@ -814,6 +846,7 @@ class _OverlappingAvatar extends StatelessWidget {
     required this.photoProvider,
     required this.uploadLabel,
     required this.onPickPhoto,
+    required this.cameraSize,
   });
 
   final double radius;
@@ -821,20 +854,23 @@ class _OverlappingAvatar extends StatelessWidget {
   final ImageProvider? photoProvider;
   final String uploadLabel;
   final VoidCallback onPickPhoto;
+  final double cameraSize;
 
   @override
   Widget build(BuildContext context) {
     final size = radius * 2;
-    final cameraSize = (radius * 0.38).clamp(34.0, 42.0);
+    final frameSize = size + cameraSize * 0.25;
 
     return SizedBox(
-      width: size + 8,
-      height: size + 8,
+      width: frameSize,
+      height: frameSize,
       child: Stack(
-        clipBehavior: Clip.none,
         alignment: Alignment.center,
+        clipBehavior: Clip.none,
         children: [
           Container(
+            width: size,
+            height: size,
             decoration: BoxDecoration(shape: BoxShape.circle, border: ring),
             child: ClipOval(
               child: SizedBox(
@@ -846,12 +882,13 @@ class _OverlappingAvatar extends StatelessWidget {
                         fit: BoxFit.cover,
                         width: size,
                         height: size,
+                        gaplessPlayback: true,
                       )
                     : ColoredBox(
                         color: AppTheme.medicalBlue.withOpacity(0.12),
                         child: Icon(
                           Icons.person,
-                          size: radius,
+                          size: radius * 0.92,
                           color: AppTheme.medicalBlue.withOpacity(0.55),
                         ),
                       ),
@@ -859,8 +896,8 @@ class _OverlappingAvatar extends StatelessWidget {
             ),
           ),
           Positioned(
-            right: 0,
-            bottom: 0,
+            right: frameSize * 0.02,
+            bottom: frameSize * 0.02,
             child: Material(
               elevation: 2,
               color: AppTheme.patientColor,
@@ -876,7 +913,7 @@ class _OverlappingAvatar extends StatelessWidget {
                   icon: Icon(
                     Icons.camera_alt_rounded,
                     color: Colors.white,
-                    size: cameraSize * 0.48,
+                    size: cameraSize * 0.46,
                   ),
                 ),
               ),
@@ -889,27 +926,35 @@ class _OverlappingAvatar extends StatelessWidget {
 }
 
 class _MetaChip extends StatelessWidget {
-  const _MetaChip({required this.icon, required this.label});
+  const _MetaChip({
+    required this.icon,
+    required this.label,
+    required this.maxWidth,
+  });
 
   final IconData icon;
   final String label;
+  final double maxWidth;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 16, color: Colors.grey.shade600),
-        const SizedBox(width: 4),
-        Flexible(
-          child: Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: maxWidth),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: Colors.grey.shade600),
+          const SizedBox(width: 4),
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -1471,7 +1516,7 @@ class _FavoriteDoctorsStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 124,
+      height: 132,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: doctors.length,
@@ -1485,9 +1530,10 @@ class _FavoriteDoctorsStrip extends StatelessWidget {
             doctor.id,
           );
           return SizedBox(
-            width: 112,
+            width: 108,
             child: Card(
               elevation: 0,
+              margin: EdgeInsets.zero,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(18),
                 side: BorderSide(color: Colors.grey.shade200),
@@ -1496,15 +1542,19 @@ class _FavoriteDoctorsStrip extends StatelessWidget {
                 onTap: () => context.push(route),
                 borderRadius: BorderRadius.circular(18),
                 child: Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 10,
+                  ),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       DoctorAvatar(
                         photoUrl: doctor.photoUrl,
                         thumbnailUrl: doctor.photoThumbnailUrl,
-                        radius: 28,
+                        radius: 24,
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 6),
                       Text(
                         doctor.name.localized(context),
                         textAlign: TextAlign.center,
@@ -1513,6 +1563,7 @@ class _FavoriteDoctorsStrip extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
+                          height: 1.15,
                         ),
                       ),
                     ],

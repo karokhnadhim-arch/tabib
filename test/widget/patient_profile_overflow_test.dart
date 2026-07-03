@@ -153,4 +153,24 @@ void main() {
       ),
     );
   });
+
+  testWidgets('PatientProfileScreen in IndexedStack at 360x640', (
+    tester,
+  ) async {
+    await pumpSized(
+      tester,
+      const Size(360, 640),
+      wrap(
+        Scaffold(
+          body: IndexedStack(
+            index: 0,
+            children: const [
+              PatientProfileScreen(embedded: true),
+            ],
+          ),
+          bottomNavigationBar: const SizedBox(height: 80),
+        ),
+      ),
+    );
+  });
 }
