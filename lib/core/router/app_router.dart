@@ -18,6 +18,7 @@ import '../../presentation/screens/doctor/owner_staff_list_screen.dart';
 import '../../presentation/screens/doctor/owner_stats_screen.dart';
 import '../../presentation/screens/doctor/owner_subscriptions_screen.dart';
 import '../../presentation/screens/doctor/owner_users_screen.dart';
+import '../../presentation/screens/doctor/owner_admins_screen.dart';
 import '../../presentation/screens/doctor/owner_patients_screen.dart';
 import '../../presentation/screens/doctor/write_prescription_screen.dart';
 import '../../presentation/screens/patient/appointment_booking_screen.dart';
@@ -150,6 +151,10 @@ class AppRouter {
                     builder: (_, __) => const OwnerPatientsScreen(),
                   ),
                   GoRoute(
+                    path: 'admins',
+                    builder: (_, __) => const OwnerAdminsScreen(),
+                  ),
+                  GoRoute(
                     path: 'doctors',
                     builder: (_, __) => const OwnerDoctorsScreen(),
                     routes: [
@@ -243,12 +248,15 @@ class AppRouter {
 
     if (loggedIn &&
         (path == '/login' || path == '/register' || path == '/splash')) {
+      if (_auth.canAccessAdminPanel && !_auth.isDoctor) {
+        return '/doctor/platform';
+      }
       if (_auth.isDoctor) return '/doctor';
       if (_auth.isSecretary) return '/secretary';
       return '/home';
     }
 
-    if (loggedIn && AdminRoutes.isAdminRoute(path) && !_auth.isSystemOwner) {
+    if (loggedIn && AdminRoutes.isAdminRoute(path) && !_auth.canAccessAdminPanel) {
       return '/doctor';
     }
 

@@ -314,7 +314,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ],
             ),
-            if (auth.isSystemOwner)
+            if (auth.canAccessAdminPanel)
               SettingsSection(
                 title: l10n.adminControlPanel,
                 icon: Icons.admin_panel_settings_outlined,
@@ -450,13 +450,20 @@ class _AccountHeader extends StatelessWidget {
     final user = auth.currentUser;
     if (user == null) return const SizedBox.shrink();
 
-    final roleLabel = switch (user.role) {
-      UserRole.patient => l10n.patient,
-      UserRole.secretary => l10n.secretary,
-      UserRole.admin => l10n.admin,
-      UserRole.doctor =>
-        doctor?.isBusiness == true ? l10n.accountTypeBusiness : l10n.doctor,
-    };
+    final roleLabel = user.isSystemOwner
+        ? (doctor?.isBusiness == true
+            ? l10n.accountTypeBusiness
+            : l10n.doctor)
+        : user.role == UserRole.admin
+            ? l10n.roleAdmin
+            : switch (user.role) {
+            UserRole.patient => l10n.patient,
+            UserRole.secretary => l10n.secretary,
+            UserRole.admin => l10n.doctor,
+            UserRole.doctor => doctor?.isBusiness == true
+                ? l10n.accountTypeBusiness
+                : l10n.doctor,
+          };
 
     return Card(
       child: Padding(

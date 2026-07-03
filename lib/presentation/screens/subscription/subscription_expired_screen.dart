@@ -142,7 +142,7 @@ class SubscriptionExpiredScreen extends StatelessWidget {
                         minimumSize: const Size.fromHeight(48),
                       ),
                     ),
-                  if (auth.isSystemOwner) ...[
+                  if (auth.canAccessAdminPanel) ...[
                     const SizedBox(height: 12),
                     FilledButton.icon(
                       onPressed: () => _renew(context),

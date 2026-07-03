@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/privacy/system_owner_privacy.dart';
 import '../../../core/auth/admin_permissions.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
@@ -66,12 +67,10 @@ class _OwnerStaffListScreenState extends State<OwnerStaffListScreen> {
   }
 
   List<UserAccount> _filterAccounts(List<UserAccount> accounts) {
-    var list = accounts;
+    var list = SystemOwnerPrivacy.filterPublic(accounts);
     switch (widget.filter) {
       case OwnerStaffFilter.doctors:
-        list = list
-            .where((s) => s.role == UserRole.doctor || s.role == UserRole.admin)
-            .toList();
+        list = list.where((s) => s.role == UserRole.doctor).toList();
       case OwnerStaffFilter.secretaries:
         list = list.where((s) => s.role == UserRole.secretary).toList();
       case OwnerStaffFilter.patients:
@@ -242,19 +241,13 @@ class _OwnerStaffListScreenState extends State<OwnerStaffListScreen> {
                             ],
                           ),
                           isThreeLine: true,
-                          trailing: user.isSystemOwner
-                              ? Chip(
-                                  label: Text(l10n.systemOwner),
-                                  backgroundColor:
-                                      AppTheme.medicalGreen.withOpacity(0.15),
-                                )
-                              : IconButton(
-                                  icon: const Icon(
-                                    Icons.manage_accounts_outlined,
-                                  ),
-                                  tooltip: l10n.changeAccountStatus,
-                                  onPressed: () => _pickStatus(context, user),
-                                ),
+                          trailing: IconButton(
+                            icon: const Icon(
+                              Icons.manage_accounts_outlined,
+                            ),
+                            tooltip: l10n.changeAccountStatus,
+                            onPressed: () => _pickStatus(context, user),
+                          ),
                           onTap: _onAccountTap(context, user),
                         ),
                       );

@@ -111,7 +111,7 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
         title: Text(ProviderLabels.dashboardTitle(l10n, doctor)),
         backgroundColor: AppTheme.doctorColor,
         actions: [
-          if (auth.isSystemOwner)
+          if (auth.canAccessAdminPanel)
             IconButton(
               icon: const Icon(Icons.admin_panel_settings_outlined),
               tooltip: l10n.adminControlPanel,
@@ -177,7 +177,7 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (auth.isSystemOwner) ...[
+                  if (auth.canAccessAdminPanel) ...[
                     Card(
                       color: AppTheme.primaryDark.withOpacity(0.08),
                       shape: RoundedRectangleBorder(

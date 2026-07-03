@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/auth/admin_permissions.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../presentation/widgets/admin_guard.dart';
@@ -37,78 +38,102 @@ class OwnerPlatformScreen extends StatelessWidget {
                       color: AppTheme.primaryDark),
                 ),
                 title: Text(auth.currentUser?.name.localized(context) ?? ''),
-                subtitle: Text(l10n.systemOwner),
+                subtitle: Text(l10n.adminControlPanelHint),
               ),
             ),
             const SizedBox(height: 8),
-            _PlatformTile(
-              title: l10n.systemStatistics,
-              subtitle: l10n.systemStatisticsHint,
-              icon: Icons.analytics_outlined,
-              onTap: () => context.push('/doctor/platform/stats'),
-            ),
-            _SectionHeader(label: l10n.createAccounts),
-            _PlatformTile(
-              title: l10n.createBusinessAccount,
-              subtitle: l10n.createBusinessAccountHint,
-              icon: Icons.storefront_outlined,
-              onTap: () => context.push('/doctor/platform/create-doctor'),
-            ),
-            _PlatformTile(
-              title: l10n.createDoctorAccount,
-              subtitle: l10n.createDoctorAccountHint,
-              icon: Icons.person_add_outlined,
-              onTap: () => context.push('/doctor/platform/create-doctor'),
-            ),
-            _PlatformTile(
-              title: l10n.createSecretaryAccount,
-              subtitle: l10n.createSecretaryAccountHint,
-              icon: Icons.support_agent_outlined,
-              onTap: () => context.push('/doctor/platform/create-secretary'),
-            ),
-            _PlatformTile(
-              title: l10n.addClinic,
-              subtitle: l10n.manageClinics,
-              icon: Icons.add_business_outlined,
-              onTap: () => context.push('/doctor/platform/clinics'),
-            ),
-            _SectionHeader(label: l10n.viewAndManage),
-            _PlatformTile(
-              title: l10n.doctorManagement,
-              subtitle: l10n.doctorManagementHint,
-              icon: Icons.medical_services_outlined,
-              onTap: () => context.push('/doctor/platform/doctors'),
-            ),
-            _PlatformTile(
-              title: l10n.viewAllSecretaries,
-              subtitle: l10n.viewAllSecretariesHint,
-              icon: Icons.people_outline,
-              onTap: () => context.push('/doctor/platform/secretaries'),
-            ),
-            _PlatformTile(
-              title: l10n.viewAllClinics,
-              subtitle: l10n.viewAllClinicsHint,
-              icon: Icons.local_hospital_outlined,
-              onTap: () => context.push('/doctor/platform/clinics'),
-            ),
-            _PlatformTile(
-              title: l10n.manageStaff,
-              subtitle: l10n.activateDeactivateAccounts,
-              icon: Icons.manage_accounts_outlined,
-              onTap: () => context.push('/doctor/platform/users'),
-            ),
-            _PlatformTile(
-              title: l10n.managePatients,
-              subtitle: l10n.managePatientsHint,
-              icon: Icons.people_alt_outlined,
-              onTap: () => context.push('/doctor/platform/patients'),
-            ),
-            _PlatformTile(
-              title: l10n.manageSubscriptions,
-              subtitle: l10n.manageSubscriptionsHint,
-              icon: Icons.card_membership_outlined,
-              onTap: () => context.push('/doctor/platform/subscriptions'),
-            ),
+            if (AdminPermissions.canManageAdmins(auth))
+              _PlatformTile(
+                title: l10n.manageAdmins,
+                subtitle: l10n.manageAdminsHint,
+                icon: Icons.security_outlined,
+                onTap: () => context.push('/doctor/platform/admins'),
+              ),
+            if (AdminPermissions.canViewStatistics(auth))
+              _PlatformTile(
+                title: l10n.systemStatistics,
+                subtitle: l10n.systemStatisticsHint,
+                icon: Icons.analytics_outlined,
+                onTap: () => context.push('/doctor/platform/stats'),
+              ),
+            if (AdminPermissions.canCreateDoctors(auth) ||
+                AdminPermissions.canCreateBusinesses(auth) ||
+                AdminPermissions.canCreateSecretaries(auth) ||
+                AdminPermissions.canCreateClinics(auth))
+              _SectionHeader(label: l10n.createAccounts),
+            if (AdminPermissions.canCreateBusinesses(auth))
+              _PlatformTile(
+                title: l10n.createBusinessAccount,
+                subtitle: l10n.createBusinessAccountHint,
+                icon: Icons.storefront_outlined,
+                onTap: () => context.push('/doctor/platform/create-doctor'),
+              ),
+            if (AdminPermissions.canCreateDoctors(auth))
+              _PlatformTile(
+                title: l10n.createDoctorAccount,
+                subtitle: l10n.createDoctorAccountHint,
+                icon: Icons.person_add_outlined,
+                onTap: () => context.push('/doctor/platform/create-doctor'),
+              ),
+            if (AdminPermissions.canCreateSecretaries(auth))
+              _PlatformTile(
+                title: l10n.createSecretaryAccount,
+                subtitle: l10n.createSecretaryAccountHint,
+                icon: Icons.support_agent_outlined,
+                onTap: () => context.push('/doctor/platform/create-secretary'),
+              ),
+            if (AdminPermissions.canCreateClinics(auth))
+              _PlatformTile(
+                title: l10n.addClinic,
+                subtitle: l10n.manageClinics,
+                icon: Icons.add_business_outlined,
+                onTap: () => context.push('/doctor/platform/clinics'),
+              ),
+            if (AdminPermissions.canViewAllStaff(auth) ||
+                AdminPermissions.canManageSubscriptions(auth))
+              _SectionHeader(label: l10n.viewAndManage),
+            if (AdminPermissions.canViewAllStaff(auth))
+              _PlatformTile(
+                title: l10n.doctorManagement,
+                subtitle: l10n.doctorManagementHint,
+                icon: Icons.medical_services_outlined,
+                onTap: () => context.push('/doctor/platform/doctors'),
+              ),
+            if (AdminPermissions.canViewAllStaff(auth))
+              _PlatformTile(
+                title: l10n.viewAllSecretaries,
+                subtitle: l10n.viewAllSecretariesHint,
+                icon: Icons.people_outline,
+                onTap: () => context.push('/doctor/platform/secretaries'),
+              ),
+            if (AdminPermissions.canCreateClinics(auth))
+              _PlatformTile(
+                title: l10n.viewAllClinics,
+                subtitle: l10n.viewAllClinicsHint,
+                icon: Icons.local_hospital_outlined,
+                onTap: () => context.push('/doctor/platform/clinics'),
+              ),
+            if (AdminPermissions.canViewAllStaff(auth))
+              _PlatformTile(
+                title: l10n.manageStaff,
+                subtitle: l10n.activateDeactivateAccounts,
+                icon: Icons.manage_accounts_outlined,
+                onTap: () => context.push('/doctor/platform/users'),
+              ),
+            if (AdminPermissions.canManagePatients(auth))
+              _PlatformTile(
+                title: l10n.managePatients,
+                subtitle: l10n.managePatientsHint,
+                icon: Icons.people_alt_outlined,
+                onTap: () => context.push('/doctor/platform/patients'),
+              ),
+            if (AdminPermissions.canManageSubscriptions(auth))
+              _PlatformTile(
+                title: l10n.manageSubscriptions,
+                subtitle: l10n.manageSubscriptionsHint,
+                icon: Icons.card_membership_outlined,
+                onTap: () => context.push('/doctor/platform/subscriptions'),
+              ),
           ],
         ),
       ),

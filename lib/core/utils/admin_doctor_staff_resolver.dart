@@ -1,3 +1,4 @@
+import '../../core/privacy/system_owner_privacy.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/doctor.dart';
 import '../../models/user_account.dart';
@@ -11,13 +12,7 @@ class AdminDoctorStaffResolver {
     Doctor doctor,
     List<UserAccount> staff,
   ) {
-    return staff
-        .where(
-          (s) =>
-              s.doctorId == doctor.id &&
-              (s.role == UserRole.doctor || s.role == UserRole.admin),
-        )
-        .firstOrNull;
+    return SystemOwnerPrivacy.visibleStaffForDoctor(doctor.id, staff);
   }
 
   static String? emailFor(Doctor doctor, List<UserAccount> staff) {
@@ -40,7 +35,7 @@ class AdminDoctorStaffResolver {
     String doctorId,
     List<UserAccount> staff,
   ) {
-    return staff
+    return SystemOwnerPrivacy.filterPublic(staff)
         .where(
           (s) =>
               s.role == UserRole.secretary && s.linkedDoctorId == doctorId,
@@ -93,13 +88,5 @@ class AdminDoctorStaffResolver {
         secretary.phone ?? '',
       ]);
     }
-  }
-}
-
-extension _FirstOrNull<T> on Iterable<T> {
-  T? get firstOrNull {
-    final it = iterator;
-    if (it.moveNext()) return it.current;
-    return null;
   }
 }

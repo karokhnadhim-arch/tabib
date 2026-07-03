@@ -1,15 +1,19 @@
+import '../../models/admin_capability.dart';
 import '../../models/user_account.dart';
+import 'permission_policy.dart';
 
 /// Client-side data access rules — mirror [firestore.rules] for UI gating.
 abstract final class DataAccessPolicy {
   static bool isSystemOwner(UserAccount? user) =>
-      user?.isSystemOwner == true;
+      PermissionPolicy.isSystemOwner(user);
 
-  static bool canAccessAdminPanel(UserAccount? user) => isSystemOwner(user);
+  static bool canAccessAdminPanel(UserAccount? user) =>
+      PermissionPolicy.canAccessAdminPanel(user);
 
   static bool canAccessDoctorData(UserAccount? user, String doctorId) {
     if (user == null || doctorId.isEmpty) return false;
     if (isSystemOwner(user)) return true;
+    if (user.role == UserRole.admin) return false;
     if (user.role == UserRole.doctor && user.doctorId == doctorId) {
       return true;
     }
@@ -23,6 +27,7 @@ abstract final class DataAccessPolicy {
   static bool canAccessClinicData(UserAccount? user, String clinicId) {
     if (user == null || clinicId.isEmpty) return false;
     if (isSystemOwner(user)) return true;
+    if (user.role == UserRole.admin) return false;
     if (user.clinicId == clinicId) return true;
     return false;
   }
@@ -34,6 +39,7 @@ abstract final class DataAccessPolicy {
   ) {
     if (user == null) return false;
     if (isSystemOwner(user)) return true;
+    if (user.role == UserRole.admin) return false;
     if (user.role == UserRole.patient && user.id == patientId) return true;
     return canAccessDoctorData(user, doctorId);
   }
@@ -42,7 +48,11 @@ abstract final class DataAccessPolicy {
     UserAccount? user,
     String doctorId,
   ) =>
-      isSystemOwner(user);
+      isSystemOwner(user) ||
+      PermissionPolicy.hasCapability(
+        user,
+        AdminCapability.manageSecretaries,
+      );
 
   static String? doctorScopeFor(UserAccount? user) {
     if (user == null) return null;

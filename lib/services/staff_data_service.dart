@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../core/utils/subscription_manager.dart';
+import '../core/privacy/system_owner_privacy.dart';
 import '../models/user_account.dart';
 import 'backend/clinic_backend.dart';
 
@@ -11,10 +12,18 @@ class StaffDataService extends ChangeNotifier {
   final ClinicBackend _backend;
   final SubscriptionManager _subscriptions = SubscriptionManager();
 
-  List<UserAccount> _staff = const [];
+  List<UserAccount> _staffRaw = const [];
   bool _realtimeStarted = false;
 
-  List<UserAccount> get staff => List.unmodifiable(_staff);
+  /// Staff visible in admin UI, resolvers, and statistics (excludes Super Admin).
+  List<UserAccount> get staff =>
+      List.unmodifiable(SystemOwnerPrivacy.filterPublic(_staffRaw));
+
+  /// Full staff catalog — internal services only (e.g. owner notifications).
+  List<UserAccount> get staffIncludingHidden => List.unmodifiable(_staffRaw);
+
+  List<UserAccount> get platformAdmins =>
+      SystemOwnerPrivacy.filterAdminRoster(_staffRaw);
 
   /// Start one global staff listener (admin + subscription monitor).
   void startRealtime() {
@@ -24,7 +33,7 @@ class StaffDataService extends ChangeNotifier {
       'staff',
       _backend.watchStaff(),
       (list) {
-        _staff = list;
+        _staffRaw = list;
         notifyListeners();
       },
     );
@@ -33,7 +42,7 @@ class StaffDataService extends ChangeNotifier {
   /// One-shot fetch for uniqueness checks — no ephemeral stream subscription.
   Future<List<UserAccount>> fetchStaff() => _backend.fetchStaff();
 
-  List<UserAccount> secretariesForDoctor(String doctorId) => _staff
+  List<UserAccount> secretariesForDoctor(String doctorId) => staff
       .where(
         (s) =>
             s.role == UserRole.secretary && s.linkedDoctorId == doctorId,
@@ -44,11 +53,12 @@ class StaffDataService extends ChangeNotifier {
       _backend.fetchSecretariesForDoctor(doctorId);
 
   UserAccount? accountById(String id) {
-    try {
-      return _staff.firstWhere((s) => s.id == id);
-    } catch (_) {
-      return null;
+    for (final account in staffIncludingHidden) {
+      if (account.id != id) continue;
+      if (SystemOwnerPrivacy.isInternalPlatformAccount(account)) return null;
+      return account;
     }
+    return null;
   }
 
   int secretaryCountFor(String doctorId) =>

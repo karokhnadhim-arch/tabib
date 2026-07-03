@@ -1,4 +1,5 @@
 import 'account_status.dart';
+import 'admin_capability.dart';
 import 'localized_text.dart';
 
 enum UserRole { patient, doctor, secretary, admin }
@@ -16,6 +17,7 @@ class UserAccount {
     this.isSystemOwner = false,
     this.isActive = true,
     this.accountStatus = AccountStatus.active,
+    this.adminPermissions = AdminPermissionSet.empty,
   });
 
   final String id;
@@ -26,10 +28,12 @@ class UserAccount {
   final String? doctorId;
   final String? clinicId;
   final String? linkedDoctorId;
+  /// Super Admin flag — must never appear in shared UI; see [SystemOwnerPrivacy].
   final bool isSystemOwner;
   /// Legacy flag — kept in sync with [accountStatus] for older clients.
   final bool isActive;
   final AccountStatus accountStatus;
+  final AdminPermissionSet adminPermissions;
 
   UserAccount copyWith({
     String? id,
@@ -43,6 +47,7 @@ class UserAccount {
     bool? isSystemOwner,
     bool? isActive,
     AccountStatus? accountStatus,
+    AdminPermissionSet? adminPermissions,
   }) {
     final nextStatus = accountStatus ??
         (isActive != null
@@ -60,6 +65,7 @@ class UserAccount {
       isSystemOwner: isSystemOwner ?? this.isSystemOwner,
       accountStatus: nextStatus,
       isActive: nextStatus.isActive,
+      adminPermissions: adminPermissions ?? this.adminPermissions,
     );
   }
 
@@ -74,6 +80,8 @@ class UserAccount {
         if (isSystemOwner) 'isSystemOwner': true,
         'isActive': accountStatus.isActive,
         'accountStatus': accountStatus.storageKey,
+        if (role == UserRole.admin)
+          'adminPermissions': adminPermissions.toStorageList(),
       };
 
   factory UserAccount.fromFirestore(String id, Map<String, dynamic> data) {
@@ -95,10 +103,12 @@ class UserAccount {
       doctorId: data['doctorId'] as String?,
       clinicId: data['clinicId'] as String?,
       linkedDoctorId: data['linkedDoctorId'] as String?,
-      isSystemOwner:
-          data['isSystemOwner'] == true || role == UserRole.admin,
+      isSystemOwner: data['isSystemOwner'] == true,
       accountStatus: status,
       isActive: status.isActive,
+      adminPermissions: AdminPermissionSet.fromStorage(
+        data['adminPermissions'],
+      ),
     );
   }
 }

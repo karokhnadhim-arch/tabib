@@ -1531,4 +1531,73 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get managePatientsHint => 'عرض حسابات المرضى وإدارة حالتها';
+
+  @override
+  String get manageAdmins => 'إدارة المسؤولين';
+
+  @override
+  String get manageAdminsHint => 'إنشاء مسؤولين وتعيين الصلاحيات';
+
+  @override
+  String get createAdminAccount => 'إنشاء حساب مسؤول';
+
+  @override
+  String get editAdminAccount => 'تعديل حساب المسؤول';
+
+  @override
+  String get deleteAdminAccount => 'حذف حساب المسؤول';
+
+  @override
+  String get deleteAdminAccountConfirm => 'إزالة حساب المسؤول؟ لا يمكن التراجع.';
+
+  @override
+  String get noAdminAccounts => 'لا يوجد مسؤولون بعد';
+
+  @override
+  String get adminPermissionsTitle => 'الصلاحيات';
+
+  @override
+  String get adminPermissionsRequired => 'اختر صلاحية واحدة على الأقل';
+
+  @override
+  String get permManageDoctors => 'إدارة الأطباء';
+
+  @override
+  String get permManageBusinesses => 'إدارة الأعمال';
+
+  @override
+  String get permManageSecretaries => 'إدارة السكرتارية';
+
+  @override
+  String get permManagePatients => 'إدارة المرضى';
+
+  @override
+  String get permManageSubscriptions => 'إدارة الاشتراكات';
+
+  @override
+  String get permViewReports => 'عرض التقارير';
+
+  @override
+  String get permSendNotifications => 'إرسال الإشعارات';
+
+  @override
+  String get permResetPasswords => 'إعادة تعيين كلمات المرور';
+
+  @override
+  String get permSuspendAccounts => 'تعليق الحسابات';
+
+  @override
+  String get permDeleteAccounts => 'حذف الحسابات';
+
+  @override
+  String get permManageCategories => 'إدارة الفئات';
+
+  @override
+  String get permViewAnalytics => 'عرض التحليلات';
+
+  @override
+  String get permCreateAdmins => 'إنشاء مسؤولين';
+
+  @override
+  String get permManageAdmins => 'إدارة المسؤولين';
 }

@@ -1531,4 +1531,73 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get managePatientsHint => 'View patient accounts and manage their status';
+
+  @override
+  String get manageAdmins => 'Manage admins';
+
+  @override
+  String get manageAdminsHint => 'Create admins and assign individual permissions';
+
+  @override
+  String get createAdminAccount => 'Create admin account';
+
+  @override
+  String get editAdminAccount => 'Edit admin account';
+
+  @override
+  String get deleteAdminAccount => 'Delete admin account';
+
+  @override
+  String get deleteAdminAccountConfirm => 'Remove this admin account? This cannot be undone.';
+
+  @override
+  String get noAdminAccounts => 'No admin accounts yet';
+
+  @override
+  String get adminPermissionsTitle => 'Permissions';
+
+  @override
+  String get adminPermissionsRequired => 'Select at least one permission';
+
+  @override
+  String get permManageDoctors => 'Manage doctors';
+
+  @override
+  String get permManageBusinesses => 'Manage businesses';
+
+  @override
+  String get permManageSecretaries => 'Manage secretaries';
+
+  @override
+  String get permManagePatients => 'Manage patients';
+
+  @override
+  String get permManageSubscriptions => 'Manage subscriptions';
+
+  @override
+  String get permViewReports => 'View reports';
+
+  @override
+  String get permSendNotifications => 'Send notifications';
+
+  @override
+  String get permResetPasswords => 'Reset passwords';
+
+  @override
+  String get permSuspendAccounts => 'Suspend accounts';
+
+  @override
+  String get permDeleteAccounts => 'Delete accounts';
+
+  @override
+  String get permManageCategories => 'Manage categories';
+
+  @override
+  String get permViewAnalytics => 'View analytics';
+
+  @override
+  String get permCreateAdmins => 'Create admins';
+
+  @override
+  String get permManageAdmins => 'Manage admins';
 }

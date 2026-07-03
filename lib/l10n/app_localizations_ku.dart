@@ -1531,4 +1531,73 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get managePatientsHint => 'بینینی هەژماری نەخۆش و بەڕێوەبردنی دۆخیان';
+
+  @override
+  String get manageAdmins => 'بەڕێوەبردنی بەڕێوەبەران';
+
+  @override
+  String get manageAdminsHint => 'دروستکردنی بەڕێوەبەر و دیاریکردنی مۆڵەتەکان';
+
+  @override
+  String get createAdminAccount => 'دروستکردنی هەژماری بەڕێوەبەر';
+
+  @override
+  String get editAdminAccount => 'دەستکاری هەژماری بەڕێوەبەر';
+
+  @override
+  String get deleteAdminAccount => 'سڕینەوەی هەژماری بەڕێوەبەر';
+
+  @override
+  String get deleteAdminAccountConfirm => 'ئەم هەژمارەی بەڕێوەبەرە بسڕیتەوە؟ ناگەڕێتەوە.';
+
+  @override
+  String get noAdminAccounts => 'هێشتا هیچ بەڕێوەبەرێک نییە';
+
+  @override
+  String get adminPermissionsTitle => 'مۆڵەتەکان';
+
+  @override
+  String get adminPermissionsRequired => 'لانیکەم یەک مۆڵەت هەڵبژێرە';
+
+  @override
+  String get permManageDoctors => 'بەڕێوەبردنی دکتۆرەکان';
+
+  @override
+  String get permManageBusinesses => 'بەڕێوەبردنی بازرگانییەکان';
+
+  @override
+  String get permManageSecretaries => 'بەڕێوەبردنی سکرتێرەکان';
+
+  @override
+  String get permManagePatients => 'بەڕێوەبردنی نەخۆشەکان';
+
+  @override
+  String get permManageSubscriptions => 'بەڕێوەبردنی بەشداریکردنەکان';
+
+  @override
+  String get permViewReports => 'بینینی ڕاپۆرتەکان';
+
+  @override
+  String get permSendNotifications => 'ناردنی ئاگاداریەکان';
+
+  @override
+  String get permResetPasswords => 'ڕێکخستنەوەی وشەی نهێنی';
+
+  @override
+  String get permSuspendAccounts => 'هەڵواسینی هەژمارەکان';
+
+  @override
+  String get permDeleteAccounts => 'سڕینەوەی هەژمارەکان';
+
+  @override
+  String get permManageCategories => 'بەڕێوەبردنی پۆلەکان';
+
+  @override
+  String get permViewAnalytics => 'بینینی شیکاریەکان';
+
+  @override
+  String get permCreateAdmins => 'دروستکردنی بەڕێوەبەر';
+
+  @override
+  String get permManageAdmins => 'بەڕێوەبردنی بەڕێوەبەران';
 }

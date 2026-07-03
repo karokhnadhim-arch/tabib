@@ -1,7 +1,8 @@
 /// Hidden system owner accounts — full admin access via the doctor login UI.
 ///
 /// Add your email here to receive automatic admin privileges on staff login.
-/// These accounts are never shown as a separate "Admin" role in the UI.
+/// These accounts are never shown as a separate "Admin" role in the UI and are
+/// filtered out of all shared lists, search, and reports via [SystemOwnerPrivacy].
 ///
 /// Owner detection also checks Firebase Auth email and Firestore `isSystemOwner`.
 class SystemOwnerConfig {

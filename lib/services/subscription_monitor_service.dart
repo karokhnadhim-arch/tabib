@@ -116,7 +116,7 @@ class SubscriptionMonitorService extends ChangeNotifier {
   }
 
   Set<String> _recipientsForClinic(Clinic clinic) {
-    final staff = _staffData.staff;
+    final staff = _staffData.staffIncludingHidden;
     final ids = <String>{};
     for (final account in staff) {
       if (account.isSystemOwner) {

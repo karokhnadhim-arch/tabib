@@ -5,12 +5,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
 import '../models/account_status.dart';
+import '../models/admin_capability.dart';
 import '../models/localized_text.dart';
 import '../models/doctor.dart';
 import '../models/service_provider_type.dart';
 import '../models/clinic.dart';
 import '../models/user_account.dart';
 import '../core/config/system_owner_config.dart';
+import '../core/auth/permission_policy.dart';
 import '../core/utils/clinic_subscription.dart';
 import '../core/utils/staff_auth_identifiers.dart';
 import '../utils/account_access.dart';
@@ -47,15 +49,29 @@ class AuthService extends ChangeNotifier {
   static const demoPassword = 'demo123';
   bool get isPatient => _currentUser?.role == UserRole.patient;
   bool get isSecretary => _currentUser?.role == UserRole.secretary;
-  /// System owner — hidden admin with full platform permissions.
-  bool get isSystemOwner =>
-      _currentUser?.isSystemOwner == true ||
-      _currentUser?.role == UserRole.admin;
+  /// System owner — unrestricted platform access; hidden from all other users.
+  bool get isSystemOwner => _currentUser?.isSystemOwner == true;
+
+  /// Delegated Admin or System Owner with panel access.
+  bool get canAccessAdminPanel =>
+      PermissionPolicy.canAccessAdminPanel(_currentUser);
+
+  bool get isDelegatedAdmin =>
+      PermissionPolicy.isDelegatedAdmin(_currentUser);
+
+  bool hasCapability(AdminCapability capability) =>
+      PermissionPolicy.hasCapability(_currentUser, capability);
+
   bool get isDoctor =>
       _currentUser?.role == UserRole.doctor ||
       (isSystemOwner && (_currentUser?.doctorId?.isNotEmpty ?? false));
-  bool get isStaff => isDoctor || isSecretary;
-  /// Backend-only admin check — never expose a separate admin login or UI role.
+
+  bool get isStaff => isDoctor || isSecretary || isDelegatedAdmin;
+
+  /// Platform operator (System Owner or delegated Admin).
+  bool get isPlatformAdmin => canAccessAdminPanel;
+
+  /// Legacy alias — use [isSystemOwner] or [canAccessAdminPanel].
   bool get isAdmin => isSystemOwner;
 
   /// Demo auth when explicitly in demo mode, Firebase is unavailable, or options
@@ -385,7 +401,7 @@ class AuthService extends ChangeNotifier {
   }) async {
     final err = await loginStaff(identifier: email, password: password);
     if (err != null) return err;
-    if (!isSystemOwner) {
+    if (!canAccessAdminPanel) {
       await logout();
       return 'invalid_credentials';
     }
@@ -412,7 +428,10 @@ class AuthService extends ChangeNotifier {
     ServiceProviderAccountType accountType = ServiceProviderAccountType.doctor,
     BusinessCategory? businessCategory,
   }) async {
-    if (!isSystemOwner) return 'unauthorized';
+    final cap = accountType.isBusiness
+        ? AdminCapability.manageBusinesses
+        : AdminCapability.manageDoctors;
+    if (!hasCapability(cap)) return 'unauthorized';
     if (password.length < 6) return 'weak_password';
     if (accountType.isBusiness && businessCategory == null) {
       return 'business_category_required';
@@ -570,7 +589,7 @@ class AuthService extends ChangeNotifier {
     required String linkedDoctorId,
     String? clinicId,
   }) async {
-    if (!isSystemOwner) return 'unauthorized';
+    if (!hasCapability(AdminCapability.manageSecretaries)) return 'unauthorized';
     if (password.length < 6) return 'weak_password';
     if (linkedDoctorId.isEmpty) return 'linked_doctor_required';
 
@@ -748,7 +767,10 @@ class AuthService extends ChangeNotifier {
 
   /// Admin-only: create or update a clinic.
   Future<String?> saveClinic(Clinic clinic) async {
-    if (!isSystemOwner) return 'unauthorized';
+    if (!hasCapability(AdminCapability.manageCategories) &&
+        !hasCapability(AdminCapability.manageDoctors)) {
+      return 'unauthorized';
+    }
     await _backend.upsertClinic(clinic);
     return null;
   }
@@ -758,12 +780,14 @@ class AuthService extends ChangeNotifier {
     String accountId,
     AccountStatus status,
   ) async {
-    if (!isSystemOwner) return 'unauthorized';
+    if (!hasCapability(AdminCapability.suspendAccounts)) return 'unauthorized';
 
     final accounts = await _backend.fetchAllAccounts();
     final account = accounts.where((s) => s.id == accountId).firstOrNull;
     if (account == null) return 'error';
-    if (account.isSystemOwner) return 'unauthorized';
+    if (!PermissionPolicy.canModifyAccount(_currentUser, account)) {
+      return 'unauthorized';
+    }
 
     await _backend.upsertStaff(account.copyWith(accountStatus: status));
     return null;
@@ -785,7 +809,9 @@ class AuthService extends ChangeNotifier {
     DateTime? startedAt,
     DateTime? expiresAt,
   }) async {
-    if (!isSystemOwner) return 'unauthorized';
+    if (!hasCapability(AdminCapability.manageSubscriptions)) {
+      return 'unauthorized';
+    }
 
     final clinic = await _backend.getClinic(clinicId);
     if (clinic == null) return 'error';
@@ -809,7 +835,9 @@ class AuthService extends ChangeNotifier {
     required SubscriptionPlan plan,
     DateTime? startDate,
   }) async {
-    if (!isSystemOwner) return 'unauthorized';
+    if (!hasCapability(AdminCapability.manageSubscriptions)) {
+      return 'unauthorized';
+    }
 
     final clinic = await _backend.getClinic(clinicId);
     if (clinic == null) return 'error';
@@ -833,12 +861,14 @@ class AuthService extends ChangeNotifier {
     bool? isActive,
     AccountStatus? accountStatus,
   }) async {
-    if (!isSystemOwner) return 'unauthorized';
+    if (!hasCapability(AdminCapability.manageSecretaries)) return 'unauthorized';
 
     final staff = await _backend.fetchStaff();
     final account = staff.where((s) => s.id == secretaryId).firstOrNull;
     if (account == null || account.role != UserRole.secretary) return 'error';
-    if (account.isSystemOwner) return 'unauthorized';
+    if (!PermissionPolicy.canModifyAccount(_currentUser, account)) {
+      return 'unauthorized';
+    }
 
     final trimmedEmail = email?.trim();
     final trimmedPhone = phone?.trim();
@@ -879,12 +909,14 @@ class AuthService extends ChangeNotifier {
 
   /// Admin-only: delete a secretary account.
   Future<String?> deleteSecretaryAccount(String secretaryId) async {
-    if (!isSystemOwner) return 'unauthorized';
+    if (!hasCapability(AdminCapability.deleteAccounts)) return 'unauthorized';
 
     final staff = await _backend.fetchStaff();
     final account = staff.where((s) => s.id == secretaryId).firstOrNull;
     if (account == null || account.role != UserRole.secretary) return 'error';
-    if (account.isSystemOwner) return 'unauthorized';
+    if (!PermissionPolicy.canModifyAccount(_currentUser, account)) {
+      return 'unauthorized';
+    }
 
     await _backend.deleteStaff(secretaryId);
     return null;
@@ -895,13 +927,15 @@ class AuthService extends ChangeNotifier {
     required String secretaryId,
     required String newLinkedDoctorId,
   }) async {
-    if (!isSystemOwner) return 'unauthorized';
+    if (!hasCapability(AdminCapability.manageSecretaries)) return 'unauthorized';
     if (newLinkedDoctorId.isEmpty) return 'linked_doctor_required';
 
     final staff = await _backend.fetchStaff();
     final account = staff.where((s) => s.id == secretaryId).firstOrNull;
     if (account == null || account.role != UserRole.secretary) return 'error';
-    if (account.isSystemOwner) return 'unauthorized';
+    if (!PermissionPolicy.canModifyAccount(_currentUser, account)) {
+      return 'unauthorized';
+    }
     if (account.linkedDoctorId == newLinkedDoctorId) return null;
 
     final doctor = await _backend.getDoctor(newLinkedDoctorId);
@@ -914,6 +948,173 @@ class AuthService extends ChangeNotifier {
       ),
     );
     return null;
+  }
+
+  /// System Owner only: create a delegated Admin account.
+  Future<String?> createAdminAccount({
+    required String name,
+    required StaffLoginMethod loginMethod,
+    String? email,
+    String? phone,
+    required String password,
+    required AdminPermissionSet permissions,
+  }) async {
+    if (!PermissionPolicy.canManageAdminAccounts(_currentUser)) {
+      return 'unauthorized';
+    }
+    if (password.length < 6) return 'weak_password';
+
+    final trimmedEmail = email?.trim();
+    final trimmedPhone = phone?.trim();
+    final authEmail = StaffAuthIdentifiers.resolveAuthEmailForAccount(
+      loginMethod: loginMethod,
+      email: trimmedEmail,
+      phone: trimmedPhone,
+    );
+    if (authEmail == null) {
+      return loginMethod == StaffLoginMethod.phone
+          ? 'invalid_phone'
+          : 'invalid_email';
+    }
+
+    final safePermissions = PermissionPolicy.sanitizeGrantedPermissions(
+      _currentUser,
+      permissions,
+    );
+    if (safePermissions.isEmpty) return 'error';
+
+    final nameText = LocalizedText(ku: name, ar: name, en: name);
+    final staff = await _backend.fetchStaff();
+    if (_emailInUse(staff, trimmedEmail)) return 'email_in_use';
+    if (_phoneInUse(staff, trimmedPhone)) return 'phone_in_use';
+
+    if (_demoMode) {
+      await _backend.upsertStaff(
+        UserAccount(
+          id: 'admin_${DateTime.now().millisecondsSinceEpoch}',
+          name: nameText,
+          role: UserRole.admin,
+          email: trimmedEmail?.isNotEmpty == true ? trimmedEmail : null,
+          phone: trimmedPhone?.isNotEmpty == true ? trimmedPhone : null,
+          adminPermissions: safePermissions,
+        ),
+        password: password,
+        authEmail: authEmail,
+      );
+      return null;
+    }
+
+    try {
+      final cred = await _firebaseAuth!.createStaffUserWithoutSessionSwitch(
+        email: authEmail,
+        password: password,
+      );
+      await _backend.upsertStaff(
+        UserAccount(
+          id: cred.user!.uid,
+          name: nameText,
+          role: UserRole.admin,
+          email: trimmedEmail?.isNotEmpty == true ? trimmedEmail : null,
+          phone: trimmedPhone?.isNotEmpty == true ? trimmedPhone : null,
+          adminPermissions: safePermissions,
+        ),
+      );
+      return null;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') return 'email_in_use';
+      if (e.code == 'weak-password') return 'weak_password';
+      return e.message ?? e.code;
+    }
+  }
+
+  /// System Owner only: update delegated Admin profile and permissions.
+  Future<String?> updateAdminAccount({
+    required String adminId,
+    required String name,
+    String? email,
+    String? phone,
+    AdminPermissionSet? permissions,
+    AccountStatus? accountStatus,
+  }) async {
+    if (!PermissionPolicy.canManageAdminAccounts(_currentUser)) {
+      return 'unauthorized';
+    }
+
+    final staff = await _backend.fetchStaff();
+    final account = staff.where((s) => s.id == adminId).firstOrNull;
+    if (account == null ||
+        account.role != UserRole.admin ||
+        account.isSystemOwner) {
+      return 'error';
+    }
+
+    final trimmedEmail = email?.trim();
+    final trimmedPhone = phone?.trim();
+    if (_emailInUse(staff, trimmedEmail, exceptId: adminId) ||
+        _phoneInUse(staff, trimmedPhone, exceptId: adminId)) {
+      return 'email_in_use';
+    }
+
+    final nameText = LocalizedText(ku: name, ar: name, en: name);
+    final nextPermissions = permissions == null
+        ? account.adminPermissions
+        : PermissionPolicy.sanitizeGrantedPermissions(_currentUser, permissions);
+
+    await _backend.upsertStaff(
+      account.copyWith(
+        name: nameText,
+        email: trimmedEmail?.isNotEmpty == true ? trimmedEmail : null,
+        phone: trimmedPhone?.isNotEmpty == true ? trimmedPhone : null,
+        adminPermissions: nextPermissions,
+        accountStatus: accountStatus ?? account.accountStatus,
+      ),
+    );
+    return null;
+  }
+
+  /// System Owner only: delete a delegated Admin account.
+  Future<String?> deleteAdminAccount(String adminId) async {
+    if (!PermissionPolicy.canManageAdminAccounts(_currentUser)) {
+      return 'unauthorized';
+    }
+
+    final staff = await _backend.fetchStaff();
+    final account = staff.where((s) => s.id == adminId).firstOrNull;
+    if (account == null ||
+        account.role != UserRole.admin ||
+        account.isSystemOwner) {
+      return 'error';
+    }
+
+    await _backend.deleteStaff(adminId);
+    return null;
+  }
+
+  bool _emailInUse(
+    List<UserAccount> staff,
+    String? email, {
+    String? exceptId,
+  }) {
+    final trimmed = email?.trim();
+    if (trimmed == null || trimmed.isEmpty) return false;
+    return staff.any((s) =>
+        s.id != exceptId &&
+        s.email != null &&
+        s.email!.toLowerCase() == trimmed.toLowerCase());
+  }
+
+  bool _phoneInUse(
+    List<UserAccount> staff,
+    String? phone, {
+    String? exceptId,
+  }) {
+    final trimmed = phone?.trim();
+    if (trimmed == null || trimmed.isEmpty) return false;
+    final normalized = StaffAuthIdentifiers.normalizePhone(trimmed);
+    return staff.any((s) =>
+        s.id != exceptId &&
+        s.phone != null &&
+        StaffAuthIdentifiers.normalizePhone(s.phone!) == normalized);
   }
 
   /// Whether the signed-in user can change their own password (email auth only).

@@ -10,6 +10,7 @@ abstract final class AccountAccess {
     Clinic? clinic,
   }) {
     if (user.isSystemOwner) return null;
+    if (user.role == UserRole.admin) return null;
 
     switch (user.accountStatus) {
       case AccountStatus.suspended:

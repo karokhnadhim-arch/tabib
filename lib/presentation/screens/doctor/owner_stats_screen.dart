@@ -25,7 +25,7 @@ class OwnerStatsScreen extends StatelessWidget {
     final data = context.watch<ClinicDataService>();
     final staff = context.watch<StaffDataService>().staff;
     final doctors = staff
-        .where((s) => s.role == UserRole.doctor || s.role == UserRole.admin)
+        .where((s) => s.role == UserRole.doctor)
         .length;
     final secretaries =
         staff.where((s) => s.role == UserRole.secretary).length;

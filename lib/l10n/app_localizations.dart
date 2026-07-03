@@ -3070,6 +3070,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View patient accounts and manage their status'**
   String get managePatientsHint;
+
+  /// No description provided for @manageAdmins.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage admins'**
+  String get manageAdmins;
+
+  /// No description provided for @manageAdminsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Create admins and assign individual permissions'**
+  String get manageAdminsHint;
+
+  /// No description provided for @createAdminAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create admin account'**
+  String get createAdminAccount;
+
+  /// No description provided for @editAdminAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit admin account'**
+  String get editAdminAccount;
+
+  /// No description provided for @deleteAdminAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete admin account'**
+  String get deleteAdminAccount;
+
+  /// No description provided for @deleteAdminAccountConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this admin account? This cannot be undone.'**
+  String get deleteAdminAccountConfirm;
+
+  /// No description provided for @noAdminAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'No admin accounts yet'**
+  String get noAdminAccounts;
+
+  /// No description provided for @adminPermissionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Permissions'**
+  String get adminPermissionsTitle;
+
+  /// No description provided for @adminPermissionsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select at least one permission'**
+  String get adminPermissionsRequired;
+
+  /// No description provided for @permManageDoctors.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage doctors'**
+  String get permManageDoctors;
+
+  /// No description provided for @permManageBusinesses.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage businesses'**
+  String get permManageBusinesses;
+
+  /// No description provided for @permManageSecretaries.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage secretaries'**
+  String get permManageSecretaries;
+
+  /// No description provided for @permManagePatients.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage patients'**
+  String get permManagePatients;
+
+  /// No description provided for @permManageSubscriptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage subscriptions'**
+  String get permManageSubscriptions;
+
+  /// No description provided for @permViewReports.
+  ///
+  /// In en, this message translates to:
+  /// **'View reports'**
+  String get permViewReports;
+
+  /// No description provided for @permSendNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Send notifications'**
+  String get permSendNotifications;
+
+  /// No description provided for @permResetPasswords.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset passwords'**
+  String get permResetPasswords;
+
+  /// No description provided for @permSuspendAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspend accounts'**
+  String get permSuspendAccounts;
+
+  /// No description provided for @permDeleteAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete accounts'**
+  String get permDeleteAccounts;
+
+  /// No description provided for @permManageCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage categories'**
+  String get permManageCategories;
+
+  /// No description provided for @permViewAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'View analytics'**
+  String get permViewAnalytics;
+
+  /// No description provided for @permCreateAdmins.
+  ///
+  /// In en, this message translates to:
+  /// **'Create admins'**
+  String get permCreateAdmins;
+
+  /// No description provided for @permManageAdmins.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage admins'**
+  String get permManageAdmins;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
