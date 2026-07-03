@@ -13,6 +13,7 @@ import '../../models/user_account.dart';
 import '../../core/constants/firestore_limits.dart';
 import '../../core/utils/account_code.dart';
 import '../../models/doctor_page.dart';
+import '../../models/platform_dashboard_summary.dart';
 import 'firestore_reference_cache.dart';
 import 'clinic_backend.dart';
 
@@ -348,6 +349,46 @@ class FirestoreClinicBackend implements ClinicBackend {
     return snap.docs
         .map((d) => UserAccount.fromFirestore(d.id, d.data()))
         .toList();
+  }
+
+  @override
+  Future<PlatformDashboardSummary?> fetchPlatformDashboardSummary() async {
+    try {
+      final doc = await _db
+          .collection('platformMetrics')
+          .doc('dashboardSummary')
+          .get(const GetOptions(source: Source.serverAndCache));
+      if (!doc.exists || doc.data() == null) return null;
+      return PlatformDashboardSummary.fromFirestore(doc.data()!);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  Future<DashboardChartsBundle?> fetchPlatformDashboardCharts(
+    String rangeKey,
+  ) async {
+    try {
+      final doc = await _db
+          .collection('platformMetrics')
+          .doc('dashboardCharts')
+          .get(const GetOptions(source: Source.serverAndCache));
+      if (!doc.exists || doc.data() == null) return null;
+      final data = Map<String, dynamic>.from(doc.data!);
+      final ranges = data['ranges'];
+      if (ranges is Map && ranges[rangeKey] is Map) {
+        return DashboardChartsBundle.fromJson(
+          Map<String, dynamic>.from(ranges[rangeKey] as Map),
+        );
+      }
+      if (data.containsKey('registrations')) {
+        return DashboardChartsBundle.fromJson(data);
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
   }
 
   @override

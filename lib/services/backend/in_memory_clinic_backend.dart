@@ -13,6 +13,7 @@ import '../../core/constants/firestore_limits.dart';
 import '../../core/utils/account_code.dart';
 import '../../core/utils/staff_auth_identifiers.dart';
 import '../../models/doctor_page.dart';
+import '../../models/platform_dashboard_summary.dart';
 import 'clinic_backend.dart';
 
 /// Local demo backend — works without Firebase.
@@ -184,6 +185,14 @@ class InMemoryClinicBackend implements ClinicBackend {
   @override
   Future<List<UserAccount>> fetchAllAccounts() async =>
       List.unmodifiable(_staff);
+
+  @override
+  Future<PlatformDashboardSummary?> fetchPlatformDashboardSummary() async =>
+      null;
+
+  @override
+  Future<DashboardChartsBundle?> fetchPlatformDashboardCharts(String rangeKey) async =>
+      null;
 
   @override
   Stream<List<UserAccount>> watchAllAccounts() async* {

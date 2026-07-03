@@ -2532,4 +2532,318 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noCommunicationLogs => 'No staff communication attempts recorded yet.';
+
+  @override
+  String get monitoringCenterTitle => 'System Health & Monitoring Center';
+
+  @override
+  String get monitoringCenterHint => 'Live platform status, analytics, security, and infrastructure monitoring';
+
+  @override
+  String get liveStatistics => 'Live statistics';
+
+  @override
+  String get usersSection => 'Users';
+
+  @override
+  String get totalUsers => 'Total users';
+
+  @override
+  String get onlineUsers => 'Online users';
+
+  @override
+  String get activeDoctors => 'Active doctors';
+
+  @override
+  String get suspendedDoctors => 'Suspended doctors';
+
+  @override
+  String get onlineDoctors => 'Online doctors';
+
+  @override
+  String get secretariesSection => 'Secretaries';
+
+  @override
+  String get onlineSecretaries => 'Online secretaries';
+
+  @override
+  String get recentSecretaries => 'Recently added secretaries';
+
+  @override
+  String get businessesSection => 'Businesses';
+
+  @override
+  String get beautyCenters => 'Beauty centers';
+
+  @override
+  String get laboratories => 'Laboratories';
+
+  @override
+  String get pharmacies => 'Pharmacies';
+
+  @override
+  String get otherHealthcare => 'Other healthcare centers';
+
+  @override
+  String get patientsSection => 'Patients';
+
+  @override
+  String get onlinePatients => 'Online patients';
+
+  @override
+  String get newPatientsToday => 'New patients today';
+
+  @override
+  String get completedQueuesToday => 'Completed queues today';
+
+  @override
+  String get cancelledQueues => 'Cancelled queues';
+
+  @override
+  String get avgWaitingTime => 'Average waiting time';
+
+  @override
+  String get todaysAppointments => 'Today\'s appointments';
+
+  @override
+  String get missedAppointments => 'Missed appointments';
+
+  @override
+  String get cancelledAppointments => 'Cancelled appointments';
+
+  @override
+  String get firebaseMonitoring => 'Firebase monitoring';
+
+  @override
+  String get firestoreReads => 'Firestore read operations';
+
+  @override
+  String get firestoreWrites => 'Firestore write operations';
+
+  @override
+  String get imageStorageUsage => 'Image storage usage';
+
+  @override
+  String get responseTime => 'Response time';
+
+  @override
+  String get cacheStatus => 'Cache status';
+
+  @override
+  String get lastSynchronization => 'Last synchronization';
+
+  @override
+  String get storageUsagePercent => 'Storage usage';
+
+  @override
+  String get cpuUsage => 'CPU usage';
+
+  @override
+  String get memoryUsage => 'Memory usage';
+
+  @override
+  String get avgApiResponse => 'Average API response time';
+
+  @override
+  String get slowQueries => 'Slow queries';
+
+  @override
+  String get backgroundTasks => 'Background tasks';
+
+  @override
+  String get cachePerformance => 'Cache performance';
+
+  @override
+  String get notificationMonitoring => 'Notification monitoring';
+
+  @override
+  String get pushSent => 'Push notifications sent';
+
+  @override
+  String get whatsappSent => 'WhatsApp messages sent';
+
+  @override
+  String get smsSent => 'SMS messages sent';
+
+  @override
+  String get failedNotifications => 'Failed notifications';
+
+  @override
+  String get pendingNotifications => 'Pending notifications';
+
+  @override
+  String get advertisementMonitoring => 'Advertisement monitoring';
+
+  @override
+  String get activeAdvertisements => 'Active advertisements';
+
+  @override
+  String get scheduledAdvertisements => 'Scheduled advertisements';
+
+  @override
+  String get expiredAdvertisements => 'Expired advertisements';
+
+  @override
+  String get adViews => 'Advertisement views';
+
+  @override
+  String get adClicks => 'Advertisement clicks';
+
+  @override
+  String get clickRate => 'Click rate';
+
+  @override
+  String get revenueDashboard => 'Revenue dashboard';
+
+  @override
+  String get monthlyRevenue => 'Monthly revenue';
+
+  @override
+  String get annualRevenue => 'Annual revenue';
+
+  @override
+  String get activePackages => 'Active packages';
+
+  @override
+  String get packagesExpiringSoon => 'Packages expiring soon';
+
+  @override
+  String get renewalsToday => 'Renewals today';
+
+  @override
+  String get lockedAccounts => 'Locked accounts';
+
+  @override
+  String get suspiciousLogins => 'Suspicious login activity';
+
+  @override
+  String get terminateSession => 'Terminate session';
+
+  @override
+  String get errorMonitoring => 'Error monitoring';
+
+  @override
+  String get logsExported => 'Logs exported to clipboard';
+
+  @override
+  String get exportLogs => 'Export logs';
+
+  @override
+  String get markFixed => 'Mark as fixed';
+
+  @override
+  String get ignoreError => 'Ignore';
+
+  @override
+  String get lastBackup => 'Last backup';
+
+  @override
+  String get backupSize => 'Backup size';
+
+  @override
+  String get backupStatus => 'Backup status';
+
+  @override
+  String get nextScheduledBackup => 'Next scheduled backup';
+
+  @override
+  String get backupCompleted => 'Backup completed successfully';
+
+  @override
+  String get restoreBackupHint => 'Restore from backup is available in production deployments';
+
+  @override
+  String get restoreBackup => 'Restore backup';
+
+  @override
+  String get backupReportDownloaded => 'Backup report downloaded';
+
+  @override
+  String get downloadBackupReport => 'Download backup report';
+
+  @override
+  String get liveActivityFeed => 'Live activity feed';
+
+  @override
+  String get dailyRegistrations => 'Daily registrations';
+
+  @override
+  String get dailyQueues => 'Daily queues';
+
+  @override
+  String get dailyAppointments => 'Daily appointments';
+
+  @override
+  String get adPerformance => 'Advertisement performance';
+
+  @override
+  String get activeUsersChart => 'Active users';
+
+  @override
+  String get businessGrowth => 'Business growth';
+
+  @override
+  String get reportExportedCsv => 'Report exported as CSV';
+
+  @override
+  String get enableMaintenanceMode => 'Enable maintenance mode';
+
+  @override
+  String get maintenanceMessage => 'Maintenance message';
+
+  @override
+  String get systemHealthy => 'Healthy';
+
+  @override
+  String get systemWarning => 'Warning';
+
+  @override
+  String get systemCritical => 'Critical';
+
+  @override
+  String get filterToday => 'Today';
+
+  @override
+  String get filterThisWeek => 'This week';
+
+  @override
+  String get filterThisMonth => 'This month';
+
+  @override
+  String get filterThisYear => 'This year';
+
+  @override
+  String get filterCustomRange => 'Custom range';
+
+  @override
+  String reportExported(String format) {
+    return 'Report exported as $format';
+  }
+
+  @override
+  String get dashboardCachedData => 'Showing cached dashboard data';
+
+  @override
+  String get dashboardLiveDataUnavailable => 'Live data is temporarily unavailable';
+
+  @override
+  String get dashboardLastSync => 'Last synchronized';
+
+  @override
+  String get dashboardRefreshNow => 'Refresh now';
+
+  @override
+  String get dashboardRefreshing => 'Refreshing…';
+
+  @override
+  String get dashboardChartsLoading => 'Loading charts…';
+
+  @override
+  String get showActivityFeed => 'Show activity feed';
+
+  @override
+  String get showReports => 'Show reports';
+
+  @override
+  String get showAuditLog => 'Show audit log';
 }

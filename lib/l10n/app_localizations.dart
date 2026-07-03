@@ -5056,6 +5056,630 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No staff communication attempts recorded yet.'**
   String get noCommunicationLogs;
+
+  /// No description provided for @monitoringCenterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'System Health & Monitoring Center'**
+  String get monitoringCenterTitle;
+
+  /// No description provided for @monitoringCenterHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Live platform status, analytics, security, and infrastructure monitoring'**
+  String get monitoringCenterHint;
+
+  /// No description provided for @liveStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Live statistics'**
+  String get liveStatistics;
+
+  /// No description provided for @usersSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Users'**
+  String get usersSection;
+
+  /// No description provided for @totalUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Total users'**
+  String get totalUsers;
+
+  /// No description provided for @onlineUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Online users'**
+  String get onlineUsers;
+
+  /// No description provided for @activeDoctors.
+  ///
+  /// In en, this message translates to:
+  /// **'Active doctors'**
+  String get activeDoctors;
+
+  /// No description provided for @suspendedDoctors.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspended doctors'**
+  String get suspendedDoctors;
+
+  /// No description provided for @onlineDoctors.
+  ///
+  /// In en, this message translates to:
+  /// **'Online doctors'**
+  String get onlineDoctors;
+
+  /// No description provided for @secretariesSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Secretaries'**
+  String get secretariesSection;
+
+  /// No description provided for @onlineSecretaries.
+  ///
+  /// In en, this message translates to:
+  /// **'Online secretaries'**
+  String get onlineSecretaries;
+
+  /// No description provided for @recentSecretaries.
+  ///
+  /// In en, this message translates to:
+  /// **'Recently added secretaries'**
+  String get recentSecretaries;
+
+  /// No description provided for @businessesSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Businesses'**
+  String get businessesSection;
+
+  /// No description provided for @beautyCenters.
+  ///
+  /// In en, this message translates to:
+  /// **'Beauty centers'**
+  String get beautyCenters;
+
+  /// No description provided for @laboratories.
+  ///
+  /// In en, this message translates to:
+  /// **'Laboratories'**
+  String get laboratories;
+
+  /// No description provided for @pharmacies.
+  ///
+  /// In en, this message translates to:
+  /// **'Pharmacies'**
+  String get pharmacies;
+
+  /// No description provided for @otherHealthcare.
+  ///
+  /// In en, this message translates to:
+  /// **'Other healthcare centers'**
+  String get otherHealthcare;
+
+  /// No description provided for @patientsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Patients'**
+  String get patientsSection;
+
+  /// No description provided for @onlinePatients.
+  ///
+  /// In en, this message translates to:
+  /// **'Online patients'**
+  String get onlinePatients;
+
+  /// No description provided for @newPatientsToday.
+  ///
+  /// In en, this message translates to:
+  /// **'New patients today'**
+  String get newPatientsToday;
+
+  /// No description provided for @completedQueuesToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed queues today'**
+  String get completedQueuesToday;
+
+  /// No description provided for @cancelledQueues.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled queues'**
+  String get cancelledQueues;
+
+  /// No description provided for @avgWaitingTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Average waiting time'**
+  String get avgWaitingTime;
+
+  /// No description provided for @todaysAppointments.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s appointments'**
+  String get todaysAppointments;
+
+  /// No description provided for @missedAppointments.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed appointments'**
+  String get missedAppointments;
+
+  /// No description provided for @cancelledAppointments.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled appointments'**
+  String get cancelledAppointments;
+
+  /// No description provided for @firebaseMonitoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Firebase monitoring'**
+  String get firebaseMonitoring;
+
+  /// No description provided for @firestoreReads.
+  ///
+  /// In en, this message translates to:
+  /// **'Firestore read operations'**
+  String get firestoreReads;
+
+  /// No description provided for @firestoreWrites.
+  ///
+  /// In en, this message translates to:
+  /// **'Firestore write operations'**
+  String get firestoreWrites;
+
+  /// No description provided for @imageStorageUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'Image storage usage'**
+  String get imageStorageUsage;
+
+  /// No description provided for @responseTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Response time'**
+  String get responseTime;
+
+  /// No description provided for @cacheStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache status'**
+  String get cacheStatus;
+
+  /// No description provided for @lastSynchronization.
+  ///
+  /// In en, this message translates to:
+  /// **'Last synchronization'**
+  String get lastSynchronization;
+
+  /// No description provided for @storageUsagePercent.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage usage'**
+  String get storageUsagePercent;
+
+  /// No description provided for @cpuUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'CPU usage'**
+  String get cpuUsage;
+
+  /// No description provided for @memoryUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'Memory usage'**
+  String get memoryUsage;
+
+  /// No description provided for @avgApiResponse.
+  ///
+  /// In en, this message translates to:
+  /// **'Average API response time'**
+  String get avgApiResponse;
+
+  /// No description provided for @slowQueries.
+  ///
+  /// In en, this message translates to:
+  /// **'Slow queries'**
+  String get slowQueries;
+
+  /// No description provided for @backgroundTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Background tasks'**
+  String get backgroundTasks;
+
+  /// No description provided for @cachePerformance.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache performance'**
+  String get cachePerformance;
+
+  /// No description provided for @notificationMonitoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification monitoring'**
+  String get notificationMonitoring;
+
+  /// No description provided for @pushSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Push notifications sent'**
+  String get pushSent;
+
+  /// No description provided for @whatsappSent.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp messages sent'**
+  String get whatsappSent;
+
+  /// No description provided for @smsSent.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS messages sent'**
+  String get smsSent;
+
+  /// No description provided for @failedNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed notifications'**
+  String get failedNotifications;
+
+  /// No description provided for @pendingNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending notifications'**
+  String get pendingNotifications;
+
+  /// No description provided for @advertisementMonitoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Advertisement monitoring'**
+  String get advertisementMonitoring;
+
+  /// No description provided for @activeAdvertisements.
+  ///
+  /// In en, this message translates to:
+  /// **'Active advertisements'**
+  String get activeAdvertisements;
+
+  /// No description provided for @scheduledAdvertisements.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled advertisements'**
+  String get scheduledAdvertisements;
+
+  /// No description provided for @expiredAdvertisements.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired advertisements'**
+  String get expiredAdvertisements;
+
+  /// No description provided for @adViews.
+  ///
+  /// In en, this message translates to:
+  /// **'Advertisement views'**
+  String get adViews;
+
+  /// No description provided for @adClicks.
+  ///
+  /// In en, this message translates to:
+  /// **'Advertisement clicks'**
+  String get adClicks;
+
+  /// No description provided for @clickRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Click rate'**
+  String get clickRate;
+
+  /// No description provided for @revenueDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue dashboard'**
+  String get revenueDashboard;
+
+  /// No description provided for @monthlyRevenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly revenue'**
+  String get monthlyRevenue;
+
+  /// No description provided for @annualRevenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Annual revenue'**
+  String get annualRevenue;
+
+  /// No description provided for @activePackages.
+  ///
+  /// In en, this message translates to:
+  /// **'Active packages'**
+  String get activePackages;
+
+  /// No description provided for @packagesExpiringSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Packages expiring soon'**
+  String get packagesExpiringSoon;
+
+  /// No description provided for @renewalsToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Renewals today'**
+  String get renewalsToday;
+
+  /// No description provided for @lockedAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Locked accounts'**
+  String get lockedAccounts;
+
+  /// No description provided for @suspiciousLogins.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspicious login activity'**
+  String get suspiciousLogins;
+
+  /// No description provided for @terminateSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Terminate session'**
+  String get terminateSession;
+
+  /// No description provided for @errorMonitoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Error monitoring'**
+  String get errorMonitoring;
+
+  /// No description provided for @logsExported.
+  ///
+  /// In en, this message translates to:
+  /// **'Logs exported to clipboard'**
+  String get logsExported;
+
+  /// No description provided for @exportLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Export logs'**
+  String get exportLogs;
+
+  /// No description provided for @markFixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as fixed'**
+  String get markFixed;
+
+  /// No description provided for @ignoreError.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignore'**
+  String get ignoreError;
+
+  /// No description provided for @lastBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Last backup'**
+  String get lastBackup;
+
+  /// No description provided for @backupSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup size'**
+  String get backupSize;
+
+  /// No description provided for @backupStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup status'**
+  String get backupStatus;
+
+  /// No description provided for @nextScheduledBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Next scheduled backup'**
+  String get nextScheduledBackup;
+
+  /// No description provided for @backupCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup completed successfully'**
+  String get backupCompleted;
+
+  /// No description provided for @restoreBackupHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore from backup is available in production deployments'**
+  String get restoreBackupHint;
+
+  /// No description provided for @restoreBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore backup'**
+  String get restoreBackup;
+
+  /// No description provided for @backupReportDownloaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup report downloaded'**
+  String get backupReportDownloaded;
+
+  /// No description provided for @downloadBackupReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Download backup report'**
+  String get downloadBackupReport;
+
+  /// No description provided for @liveActivityFeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Live activity feed'**
+  String get liveActivityFeed;
+
+  /// No description provided for @dailyRegistrations.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily registrations'**
+  String get dailyRegistrations;
+
+  /// No description provided for @dailyQueues.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily queues'**
+  String get dailyQueues;
+
+  /// No description provided for @dailyAppointments.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily appointments'**
+  String get dailyAppointments;
+
+  /// No description provided for @adPerformance.
+  ///
+  /// In en, this message translates to:
+  /// **'Advertisement performance'**
+  String get adPerformance;
+
+  /// No description provided for @activeUsersChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Active users'**
+  String get activeUsersChart;
+
+  /// No description provided for @businessGrowth.
+  ///
+  /// In en, this message translates to:
+  /// **'Business growth'**
+  String get businessGrowth;
+
+  /// No description provided for @reportExportedCsv.
+  ///
+  /// In en, this message translates to:
+  /// **'Report exported as CSV'**
+  String get reportExportedCsv;
+
+  /// No description provided for @enableMaintenanceMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable maintenance mode'**
+  String get enableMaintenanceMode;
+
+  /// No description provided for @maintenanceMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance message'**
+  String get maintenanceMessage;
+
+  /// No description provided for @systemHealthy.
+  ///
+  /// In en, this message translates to:
+  /// **'Healthy'**
+  String get systemHealthy;
+
+  /// No description provided for @systemWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Warning'**
+  String get systemWarning;
+
+  /// No description provided for @systemCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get systemCritical;
+
+  /// No description provided for @filterToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get filterToday;
+
+  /// No description provided for @filterThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get filterThisWeek;
+
+  /// No description provided for @filterThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get filterThisMonth;
+
+  /// No description provided for @filterThisYear.
+  ///
+  /// In en, this message translates to:
+  /// **'This year'**
+  String get filterThisYear;
+
+  /// No description provided for @filterCustomRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom range'**
+  String get filterCustomRange;
+
+  /// No description provided for @reportExported.
+  ///
+  /// In en, this message translates to:
+  /// **'Report exported as {format}'**
+  String reportExported(String format);
+
+  /// No description provided for @dashboardCachedData.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing cached dashboard data'**
+  String get dashboardCachedData;
+
+  /// No description provided for @dashboardLiveDataUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Live data is temporarily unavailable'**
+  String get dashboardLiveDataUnavailable;
+
+  /// No description provided for @dashboardLastSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Last synchronized'**
+  String get dashboardLastSync;
+
+  /// No description provided for @dashboardRefreshNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh now'**
+  String get dashboardRefreshNow;
+
+  /// No description provided for @dashboardRefreshing.
+  ///
+  /// In en, this message translates to:
+  /// **'Refreshing…'**
+  String get dashboardRefreshing;
+
+  /// No description provided for @dashboardChartsLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading charts…'**
+  String get dashboardChartsLoading;
+
+  /// No description provided for @showActivityFeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Show activity feed'**
+  String get showActivityFeed;
+
+  /// No description provided for @showReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Show reports'**
+  String get showReports;
+
+  /// No description provided for @showAuditLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Show audit log'**
+  String get showAuditLog;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

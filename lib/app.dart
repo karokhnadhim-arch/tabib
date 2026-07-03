@@ -39,6 +39,11 @@ import 'services/platform_notification_config_service.dart';
 import 'services/smart_notification_service.dart';
 import 'services/queue_notification_monitor.dart';
 import 'services/user_preferences_service.dart';
+import 'services/system_monitoring_service.dart';
+import 'services/system_error_log_service.dart';
+import 'services/system_activity_feed_service.dart';
+import 'services/system_maintenance_service.dart';
+import 'core/widgets/maintenance_mode_gate.dart';
 
 /// Root widget for Tabib — medical appointment platform.
 class TabibApp extends StatefulWidget {
@@ -90,6 +95,10 @@ class _TabibAppState extends State<TabibApp> {
   late final SmartNotificationService _smartNotificationService;
   late final StaffCommunicationLogService _staffCommunicationLog;
   late final PatientContactService _patientContactService;
+  late final SystemMonitoringService _systemMonitoringService;
+  late final SystemErrorLogService _systemErrorLogService;
+  late final SystemActivityFeedService _systemActivityFeedService;
+  late final SystemMaintenanceService _systemMaintenanceService;
   QueueNotificationMonitor? _queueNotificationMonitor;
   late final GoRouter _router;
 
@@ -153,6 +162,17 @@ class _TabibAppState extends State<TabibApp> {
     _notificationProvider = NotificationProvider(repository: _notificationRepository);
     _chatProvider = ChatProvider(repository: _chatRepository);
     _ownerAuditService = OwnerAuditService();
+    _systemErrorLogService = SystemErrorLogService();
+    _systemActivityFeedService = SystemActivityFeedService();
+    _systemMaintenanceService = SystemMaintenanceService()..load();
+    _systemMonitoringService = SystemMonitoringService(
+      backend: _backend,
+      clinicData: _dataService,
+      staffData: _staffDataService,
+      communicationLog: _staffCommunicationLog,
+      errorLog: _systemErrorLogService,
+      advertisementService: _advertisementService,
+    );
     _subscriptionMonitor = SubscriptionMonitorService(
       backend: _backend,
       catalog: _dataService,
@@ -184,6 +204,7 @@ class _TabibAppState extends State<TabibApp> {
   void dispose() {
     _authService.removeListener(_onAuthChanged);
     _subscriptionMonitor.dispose();
+    _systemMonitoringService.dispose();
     _queueNotificationMonitor?.dispose();
     super.dispose();
   }
@@ -216,6 +237,10 @@ class _TabibAppState extends State<TabibApp> {
         ChangeNotifierProvider.value(value: _chatProvider),
         ChangeNotifierProvider.value(value: _ownerAuditService),
         ChangeNotifierProvider.value(value: _subscriptionMonitor),
+        ChangeNotifierProvider.value(value: _systemMonitoringService),
+        ChangeNotifierProvider.value(value: _systemErrorLogService),
+        ChangeNotifierProvider.value(value: _systemActivityFeedService),
+        ChangeNotifierProvider.value(value: _systemMaintenanceService),
       ],
       child: Consumer2<LocaleService, ThemeService>(
         builder: (context, localeService, themeService, _) {
@@ -244,15 +269,17 @@ class _TabibAppState extends State<TabibApp> {
                   children: [
                     if (_demoMode) const DemoModeBanner(),
                     Expanded(
-                      child: child ??
-                          const ColoredBox(
-                            color: AppTheme.medicalWhite,
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: AppTheme.medicalBlue,
+                      child: MaintenanceModeGate(
+                        child: child ??
+                            const ColoredBox(
+                              color: AppTheme.medicalWhite,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: AppTheme.medicalBlue,
+                                ),
                               ),
                             ),
-                          ),
+                      ),
                     ),
                   ],
                 ),

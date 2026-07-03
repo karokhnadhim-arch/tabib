@@ -2532,4 +2532,318 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get noCommunicationLogs => 'هێشتا هیچ پەیوەندییەک تۆمار نەکراوە.';
+
+  @override
+  String get monitoringCenterTitle => 'ناوەندی تەندروستی سیستەم و چاودێری';
+
+  @override
+  String get monitoringCenterHint => 'دۆخی ڕاستەوخۆی پلاتفۆرم، شیکاری، ئاسایش و چاودێری ژێرخان';
+
+  @override
+  String get liveStatistics => 'ئامارە ڕاستەوخۆکان';
+
+  @override
+  String get usersSection => 'بەکارهێنەران';
+
+  @override
+  String get totalUsers => 'کۆی بەکارهێنەران';
+
+  @override
+  String get onlineUsers => 'بەکارهێنەرانی سەرهێڵ';
+
+  @override
+  String get activeDoctors => 'دکتۆرە چالاکەکان';
+
+  @override
+  String get suspendedDoctors => 'دکتۆرە ڕاگیراوەکان';
+
+  @override
+  String get onlineDoctors => 'دکتۆرانی سەرهێڵ';
+
+  @override
+  String get secretariesSection => 'سکرتێرەکان';
+
+  @override
+  String get onlineSecretaries => 'سکرتێرانی سەرهێڵ';
+
+  @override
+  String get recentSecretaries => 'سکرتێرە نوێ زیادکراوەکان';
+
+  @override
+  String get businessesSection => 'بازرگانییەکان';
+
+  @override
+  String get beautyCenters => 'ناوەندەکانی جوانکاری';
+
+  @override
+  String get laboratories => 'تاقیگەکان';
+
+  @override
+  String get pharmacies => 'دەرمانخانەکان';
+
+  @override
+  String get otherHealthcare => 'ناوەندەکانی تری تەندروستی';
+
+  @override
+  String get patientsSection => 'نەخۆشەکان';
+
+  @override
+  String get onlinePatients => 'نەخۆشانی سەرهێڵ';
+
+  @override
+  String get newPatientsToday => 'نەخۆشی نوێی ئەمڕۆ';
+
+  @override
+  String get completedQueuesToday => 'دورەکانی تەواوکراوی ئەمڕۆ';
+
+  @override
+  String get cancelledQueues => 'دورە هەڵوەشاوەکان';
+
+  @override
+  String get avgWaitingTime => 'ناوەندی کاتی چاوەڕوانی';
+
+  @override
+  String get todaysAppointments => 'چاوپێکەوتنەکانی ئەمڕۆ';
+
+  @override
+  String get missedAppointments => 'چاوپێکەوتنە لەدەستچووەکان';
+
+  @override
+  String get cancelledAppointments => 'چاوپێکەوتنە هەڵوەشاوەکان';
+
+  @override
+  String get firebaseMonitoring => 'چاودێری Firebase';
+
+  @override
+  String get firestoreReads => 'کردارەکانی خوێندنەوەی Firestore';
+
+  @override
+  String get firestoreWrites => 'کردارەکانی نووسینی Firestore';
+
+  @override
+  String get imageStorageUsage => 'بەکارهێنانی هەڵگرتنی وێنە';
+
+  @override
+  String get responseTime => 'کاتی وەڵامدانەوە';
+
+  @override
+  String get cacheStatus => 'دۆخی کاش';
+
+  @override
+  String get lastSynchronization => 'دوایین هاوکاتکردن';
+
+  @override
+  String get storageUsagePercent => 'بەکارهێنانی هەڵگرتن';
+
+  @override
+  String get cpuUsage => 'بەکارهێنانی CPU';
+
+  @override
+  String get memoryUsage => 'بەکارهێنانی بیرگە';
+
+  @override
+  String get avgApiResponse => 'ناوەندی کاتی وەڵامی API';
+
+  @override
+  String get slowQueries => 'پرسیارە هێواشەکان';
+
+  @override
+  String get backgroundTasks => 'ئەرکەکانی پاشخان';
+
+  @override
+  String get cachePerformance => 'کارایی کاش';
+
+  @override
+  String get notificationMonitoring => 'چاودێری ئاگادارکردنەوە';
+
+  @override
+  String get pushSent => 'ئاگادارکردنەوەی پوش نێردراو';
+
+  @override
+  String get whatsappSent => 'پەیامی واتساپ نێردراو';
+
+  @override
+  String get smsSent => 'پەیامی SMS نێردراو';
+
+  @override
+  String get failedNotifications => 'ئاگادارکردنەوەی شکستخواردوو';
+
+  @override
+  String get pendingNotifications => 'ئاگادارکردنەوەی چاوەڕوان';
+
+  @override
+  String get advertisementMonitoring => 'چاودێری ڕێکلام';
+
+  @override
+  String get activeAdvertisements => 'ڕێکلامە چالاکەکان';
+
+  @override
+  String get scheduledAdvertisements => 'ڕێکلامە خشتەبەندکراوەکان';
+
+  @override
+  String get expiredAdvertisements => 'ڕێکلامە بەسەرچووەکان';
+
+  @override
+  String get adViews => 'بینینی ڕێکلام';
+
+  @override
+  String get adClicks => 'کلیکی ڕێکلام';
+
+  @override
+  String get clickRate => 'ڕێژەی کلیک';
+
+  @override
+  String get revenueDashboard => 'داشبۆردی داهات';
+
+  @override
+  String get monthlyRevenue => 'داهاتی مانگانە';
+
+  @override
+  String get annualRevenue => 'داهاتی ساڵانە';
+
+  @override
+  String get activePackages => 'پاکێجە چالاکەکان';
+
+  @override
+  String get packagesExpiringSoon => 'پاکێجە بەمزوانە بەسەردەچن';
+
+  @override
+  String get renewalsToday => 'نوێکردنەوەکانی ئەمڕۆ';
+
+  @override
+  String get lockedAccounts => 'هەژمارە داخراوەکان';
+
+  @override
+  String get suspiciousLogins => 'چالاکی چوونەژوورەوەی گوماناوی';
+
+  @override
+  String get terminateSession => 'کۆتایی هێنان بە دانیشتن';
+
+  @override
+  String get errorMonitoring => 'چاودێری هەڵە';
+
+  @override
+  String get logsExported => 'لۆگەکان بۆ کلیپبۆرد هەناردە کران';
+
+  @override
+  String get exportLogs => 'هەناردەی لۆگ';
+
+  @override
+  String get markFixed => 'نیشانکردن وەک چارەسەرکراو';
+
+  @override
+  String get ignoreError => 'پشتگوێخستن';
+
+  @override
+  String get lastBackup => 'دوایین پاشەکەوت';
+
+  @override
+  String get backupSize => 'قەبارەی پاشەکەوت';
+
+  @override
+  String get backupStatus => 'دۆخی پاشەکەوت';
+
+  @override
+  String get nextScheduledBackup => 'پاشەکەوتی خشتەبەندکراوی داهاتوو';
+
+  @override
+  String get backupCompleted => 'پاشەکەوت بە سەرکەوتوویی تەواو بوو';
+
+  @override
+  String get restoreBackupHint => 'گەڕاندنەوەی پاشەکەوت لە بەرهەمهێناندا بەردەستە';
+
+  @override
+  String get restoreBackup => 'گەڕاندنەوەی پاشەکەوت';
+
+  @override
+  String get backupReportDownloaded => 'ڕاپۆرتی پاشەکەوت داونلۆد کرا';
+
+  @override
+  String get downloadBackupReport => 'داونلۆدی ڕاپۆرتی پاشەکەوت';
+
+  @override
+  String get liveActivityFeed => 'تۆمارکردنی چالاکی ڕاستەوخۆ';
+
+  @override
+  String get dailyRegistrations => 'تۆمارکردنی ڕۆژانە';
+
+  @override
+  String get dailyQueues => 'دورەی ڕۆژانە';
+
+  @override
+  String get dailyAppointments => 'چاوپێکەوتنی ڕۆژانە';
+
+  @override
+  String get adPerformance => 'کارایی ڕێکلام';
+
+  @override
+  String get activeUsersChart => 'بەکارهێنەرانی چالاک';
+
+  @override
+  String get businessGrowth => 'گەشەی بازرگانی';
+
+  @override
+  String get reportExportedCsv => 'ڕاپۆرت وەک CSV هەناردە کرا';
+
+  @override
+  String get enableMaintenanceMode => 'چالاککردنی دۆخی چاکسازی';
+
+  @override
+  String get maintenanceMessage => 'پەیامی چاکسازی';
+
+  @override
+  String get systemHealthy => 'تەندروست';
+
+  @override
+  String get systemWarning => 'ئاگاداری';
+
+  @override
+  String get systemCritical => 'گرنگ';
+
+  @override
+  String get filterToday => 'ئەمڕۆ';
+
+  @override
+  String get filterThisWeek => 'ئەم هەفتەیە';
+
+  @override
+  String get filterThisMonth => 'ئەم مانگە';
+
+  @override
+  String get filterThisYear => 'ئەم ساڵە';
+
+  @override
+  String get filterCustomRange => 'مەودای تایبەت';
+
+  @override
+  String reportExported(String format) {
+    return 'ڕاپۆرت وەک $format هەناردە کرا';
+  }
+
+  @override
+  String get dashboardCachedData => 'نیشاندانی داتای کاشکراوی داشبۆرد';
+
+  @override
+  String get dashboardLiveDataUnavailable => 'داتای ڕاستەوخۆ بۆ ماوەیەک بەردەست نییە';
+
+  @override
+  String get dashboardLastSync => 'دوایین هاوکاتکردن';
+
+  @override
+  String get dashboardRefreshNow => 'نوێکردنەوەی ئێستا';
+
+  @override
+  String get dashboardRefreshing => 'نوێدەکرێتەوە…';
+
+  @override
+  String get dashboardChartsLoading => 'چارتەکان بار دەکرێن…';
+
+  @override
+  String get showActivityFeed => 'نیشاندانی تۆماری چالاکی';
+
+  @override
+  String get showReports => 'نیشاندانی ڕاپۆرتەکان';
+
+  @override
+  String get showAuditLog => 'نیشاندانی تۆماری پشکنین';
 }

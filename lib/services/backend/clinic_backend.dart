@@ -2,6 +2,7 @@ import '../../models/advertisement.dart';
 import '../../models/clinic.dart';
 import '../../models/doctor.dart';
 import '../../models/doctor_page.dart';
+import '../../models/platform_dashboard_summary.dart';
 import '../../models/queue_entry.dart';
 import '../../models/service_provider_type.dart';
 import '../../models/specialty.dart';
@@ -37,6 +38,12 @@ abstract class ClinicBackend {
 
   /// All platform accounts (admin account management).
   Future<List<UserAccount>> fetchAllAccounts();
+
+  /// Single aggregated metrics document for the owner dashboard (1 read).
+  Future<PlatformDashboardSummary?> fetchPlatformDashboardSummary();
+
+  /// Optional chart bundle — loaded lazily when analytics are viewed (1 read).
+  Future<DashboardChartsBundle?> fetchPlatformDashboardCharts(String rangeKey);
 
   Stream<List<UserAccount>> watchAllAccounts();
 

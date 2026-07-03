@@ -2532,4 +2532,318 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noCommunicationLogs => 'لا توجد محاولات تواصل مسجلة بعد.';
+
+  @override
+  String get monitoringCenterTitle => 'مركز صحة النظام والمراقبة';
+
+  @override
+  String get monitoringCenterHint => 'حالة المنصة المباشرة والتحليلات والأمان ومراقبة البنية التحتية';
+
+  @override
+  String get liveStatistics => 'إحصائيات مباشرة';
+
+  @override
+  String get usersSection => 'المستخدمون';
+
+  @override
+  String get totalUsers => 'إجمالي المستخدمين';
+
+  @override
+  String get onlineUsers => 'المستخدمون المتصلون';
+
+  @override
+  String get activeDoctors => 'الأطباء النشطون';
+
+  @override
+  String get suspendedDoctors => 'الأطباء الموقوفون';
+
+  @override
+  String get onlineDoctors => 'الأطباء المتصلون';
+
+  @override
+  String get secretariesSection => 'السكرتارية';
+
+  @override
+  String get onlineSecretaries => 'السكرتارية المتصلون';
+
+  @override
+  String get recentSecretaries => 'سكرتارية مضافة حديثاً';
+
+  @override
+  String get businessesSection => 'المنشآت';
+
+  @override
+  String get beautyCenters => 'مراكز التجميل';
+
+  @override
+  String get laboratories => 'المختبرات';
+
+  @override
+  String get pharmacies => 'الصيدليات';
+
+  @override
+  String get otherHealthcare => 'مراكز رعاية صحية أخرى';
+
+  @override
+  String get patientsSection => 'المرضى';
+
+  @override
+  String get onlinePatients => 'المرضى المتصلون';
+
+  @override
+  String get newPatientsToday => 'مرضى جدد اليوم';
+
+  @override
+  String get completedQueuesToday => 'طوابير مكتملة اليوم';
+
+  @override
+  String get cancelledQueues => 'طوابير ملغاة';
+
+  @override
+  String get avgWaitingTime => 'متوسط وقت الانتظار';
+
+  @override
+  String get todaysAppointments => 'مواعيد اليوم';
+
+  @override
+  String get missedAppointments => 'مواعيد فائتة';
+
+  @override
+  String get cancelledAppointments => 'مواعيد ملغاة';
+
+  @override
+  String get firebaseMonitoring => 'مراقبة Firebase';
+
+  @override
+  String get firestoreReads => 'عمليات قراءة Firestore';
+
+  @override
+  String get firestoreWrites => 'عمليات كتابة Firestore';
+
+  @override
+  String get imageStorageUsage => 'استخدام تخزين الصور';
+
+  @override
+  String get responseTime => 'زمن الاستجابة';
+
+  @override
+  String get cacheStatus => 'حالة الذاكرة المؤقتة';
+
+  @override
+  String get lastSynchronization => 'آخر مزامنة';
+
+  @override
+  String get storageUsagePercent => 'استخدام التخزين';
+
+  @override
+  String get cpuUsage => 'استخدام المعالج';
+
+  @override
+  String get memoryUsage => 'استخدام الذاكرة';
+
+  @override
+  String get avgApiResponse => 'متوسط زمن استجابة API';
+
+  @override
+  String get slowQueries => 'استعلامات بطيئة';
+
+  @override
+  String get backgroundTasks => 'مهام الخلفية';
+
+  @override
+  String get cachePerformance => 'أداء الذاكرة المؤقتة';
+
+  @override
+  String get notificationMonitoring => 'مراقبة الإشعارات';
+
+  @override
+  String get pushSent => 'إشعارات دفع مرسلة';
+
+  @override
+  String get whatsappSent => 'رسائل واتساب مرسلة';
+
+  @override
+  String get smsSent => 'رسائل SMS مرسلة';
+
+  @override
+  String get failedNotifications => 'إشعارات فاشلة';
+
+  @override
+  String get pendingNotifications => 'إشعارات معلقة';
+
+  @override
+  String get advertisementMonitoring => 'مراقبة الإعلانات';
+
+  @override
+  String get activeAdvertisements => 'إعلانات نشطة';
+
+  @override
+  String get scheduledAdvertisements => 'إعلانات مجدولة';
+
+  @override
+  String get expiredAdvertisements => 'إعلانات منتهية';
+
+  @override
+  String get adViews => 'مشاهدات الإعلان';
+
+  @override
+  String get adClicks => 'نقرات الإعلان';
+
+  @override
+  String get clickRate => 'معدل النقر';
+
+  @override
+  String get revenueDashboard => 'لوحة الإيرادات';
+
+  @override
+  String get monthlyRevenue => 'الإيرادات الشهرية';
+
+  @override
+  String get annualRevenue => 'الإيرادات السنوية';
+
+  @override
+  String get activePackages => 'الباقات النشطة';
+
+  @override
+  String get packagesExpiringSoon => 'باقات تنتهي قريباً';
+
+  @override
+  String get renewalsToday => 'تجديدات اليوم';
+
+  @override
+  String get lockedAccounts => 'حسابات مقفلة';
+
+  @override
+  String get suspiciousLogins => 'نشاط تسجيل دخول مشبوه';
+
+  @override
+  String get terminateSession => 'إنهاء الجلسة';
+
+  @override
+  String get errorMonitoring => 'مراقبة الأخطاء';
+
+  @override
+  String get logsExported => 'تم تصدير السجلات إلى الحافظة';
+
+  @override
+  String get exportLogs => 'تصدير السجلات';
+
+  @override
+  String get markFixed => 'تحديد كمصلح';
+
+  @override
+  String get ignoreError => 'تجاهل';
+
+  @override
+  String get lastBackup => 'آخر نسخة احتياطية';
+
+  @override
+  String get backupSize => 'حجم النسخة الاحتياطية';
+
+  @override
+  String get backupStatus => 'حالة النسخة الاحتياطية';
+
+  @override
+  String get nextScheduledBackup => 'النسخة الاحتياطية المجدولة التالية';
+
+  @override
+  String get backupCompleted => 'اكتملت النسخة الاحتياطية بنجاح';
+
+  @override
+  String get restoreBackupHint => 'استعادة النسخة الاحتياطية متاحة في بيئات الإنتاج';
+
+  @override
+  String get restoreBackup => 'استعادة النسخة الاحتياطية';
+
+  @override
+  String get backupReportDownloaded => 'تم تنزيل تقرير النسخة الاحتياطية';
+
+  @override
+  String get downloadBackupReport => 'تنزيل تقرير النسخة الاحتياطية';
+
+  @override
+  String get liveActivityFeed => 'سجل النشاط المباشر';
+
+  @override
+  String get dailyRegistrations => 'التسجيلات اليومية';
+
+  @override
+  String get dailyQueues => 'الطوابير اليومية';
+
+  @override
+  String get dailyAppointments => 'المواعيد اليومية';
+
+  @override
+  String get adPerformance => 'أداء الإعلانات';
+
+  @override
+  String get activeUsersChart => 'المستخدمون النشطون';
+
+  @override
+  String get businessGrowth => 'نمو المنشآت';
+
+  @override
+  String get reportExportedCsv => 'تم تصدير التقرير بصيغة CSV';
+
+  @override
+  String get enableMaintenanceMode => 'تفعيل وضع الصيانة';
+
+  @override
+  String get maintenanceMessage => 'رسالة الصيانة';
+
+  @override
+  String get systemHealthy => 'سليم';
+
+  @override
+  String get systemWarning => 'تحذير';
+
+  @override
+  String get systemCritical => 'حرج';
+
+  @override
+  String get filterToday => 'اليوم';
+
+  @override
+  String get filterThisWeek => 'هذا الأسبوع';
+
+  @override
+  String get filterThisMonth => 'هذا الشهر';
+
+  @override
+  String get filterThisYear => 'هذا العام';
+
+  @override
+  String get filterCustomRange => 'نطاق مخصص';
+
+  @override
+  String reportExported(String format) {
+    return 'تم تصدير التقرير بصيغة $format';
+  }
+
+  @override
+  String get dashboardCachedData => 'عرض بيانات لوحة التحكم المخزنة مؤقتاً';
+
+  @override
+  String get dashboardLiveDataUnavailable => 'البيانات المباشرة غير متاحة مؤقتاً';
+
+  @override
+  String get dashboardLastSync => 'آخر مزامنة';
+
+  @override
+  String get dashboardRefreshNow => 'تحديث الآن';
+
+  @override
+  String get dashboardRefreshing => 'جاري التحديث…';
+
+  @override
+  String get dashboardChartsLoading => 'جاري تحميل الرسوم…';
+
+  @override
+  String get showActivityFeed => 'عرض سجل النشاط';
+
+  @override
+  String get showReports => 'عرض التقارير';
+
+  @override
+  String get showAuditLog => 'عرض سجل التدقيق';
 }
