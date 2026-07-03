@@ -377,7 +377,24 @@
   "noExpiry": "بدون تاريخ انتهاء",
   "doctorManagement": "إدارة الأطباء",
   "doctorManagementHint": "بحث الأطباء وعرض الملفات وإدارة السكرتaries المعينين",
-  "adminDoctorSearchHint": "الاسم، التخصص، العيادة، الجوال، أو البريد...",
+  "adminDoctorSearchHint": "الاسم، التخصص، العيادة، الجوال، البريد، أو رمز الحساب (مثل DR-10025)...",
+  "accountCode": "رمز الحساب",
+  "doctorAccountCode": "رمز حساب الطبيب",
+  "doctorAccountCodeLabel": "رمز حساب الطبيب: {code}",
+  "@doctorAccountCodeLabel": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "linkedToAccountCode": "مرتبط بـ: {code}",
+  "@linkedToAccountCode": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "supportHistory": "سجل الدعم",
+  "supportHistoryHint": "تجديد الاشتراك وطلبات الدعم وملاحظات استكشاف الأخطاء المرتبطة برمز الحساب.",
+  "noSupportHistory": "لا يوجد نشاط دعم مسجل بعد.",
   "doctorInformation": "معلومات الطبيب",
   "assignedSecretaries": "السكرتaries المعينون",
   "secretariesCount": "{count} سكرتaries",

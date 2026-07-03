@@ -9,7 +9,9 @@ import '../../core/utils/doctor_subscription_resolver.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/clinic.dart';
 import '../../models/doctor.dart';
+import '../../core/utils/account_code_resolver.dart';
 import '../../services/auth_service.dart';
+import '../../services/owner_audit_service.dart';
 import '../../services/clinic_data_service.dart';
 import '../../utils/localization_utils.dart';
 import 'subscription_status_badge.dart';
@@ -76,7 +78,16 @@ class AdminDoctorSubscriptionCard extends StatelessWidget {
         ),
       ),
     );
-    if (err == null) onRenewed?.call();
+    if (err == null) {
+      final code = AccountCodeResolver.forDoctor(doctor);
+      context.read<OwnerAuditService>().record(
+            userId: auth.currentUser?.id ?? 'admin',
+            userName: auth.currentUser?.name.en ?? 'Admin',
+            action: 'Renewed subscription (${subscriptionPlanLabel(l10n, plan)})',
+            details: '${doctor.id}${code != null ? ' · $code' : ''}',
+          );
+      onRenewed?.call();
+    }
   }
 
   @override

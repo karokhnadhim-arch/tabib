@@ -377,7 +377,24 @@
   "noExpiry": "بەبێ بەرواری بەسەرچوون",
   "doctorManagement": "بەڕێوەبردنی دکتۆرەکان",
   "doctorManagementHint": "گەڕان، بینینی پڕۆفایل و بەڕێوەبردنی سکرتێرە دیاریکراوەکان",
-  "adminDoctorSearchHint": "ناو، بوار، نۆرینگە، مۆبایل یان ئیمەیڵ...",
+  "adminDoctorSearchHint": "ناو، بوار، نۆرینگە، مۆبایل، ئیمەیڵ، یان کۆدی هەژمار (وەک DR-10025)...",
+  "accountCode": "کۆدی هەژمار",
+  "doctorAccountCode": "کۆدی هەژماری دکتۆر",
+  "doctorAccountCodeLabel": "کۆدی هەژماری دکتۆر: {code}",
+  "@doctorAccountCodeLabel": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "linkedToAccountCode": "بەستراو بە: {code}",
+  "@linkedToAccountCode": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "supportHistory": "مێژووی پشتگیری",
+  "supportHistoryHint": "نوێکردنەوەی بەشداریکردن، داواکاری پشتگیری، و تێبینی چارەسەرکردن بەپێی کۆدی هەژمار.",
+  "noSupportHistory": "هێشتا چالاکی پشتگیری تۆمار نەکراوە.",
   "doctorInformation": "زانیاری دکتۆر",
   "assignedSecretaries": "سکرتێرە دیاریکراوەکان",
   "secretariesCount": "{count} سکرتێر",

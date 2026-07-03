@@ -73,6 +73,16 @@ abstract class ClinicBackend {
   Future<void> deleteClinic(String id);
   Future<void> upsertDoctor(Doctor doctor);
   Future<void> deleteDoctor(String id);
+
+  /// Allocates a new permanent account code for a doctor or business provider.
+  Future<String> allocateAccountCode(ServiceProviderAccountType accountType);
+
+  /// Lookup provider by permanent account code (DR-xxxxx / BZ-xxxxx).
+  Future<Doctor?> findDoctorByAccountCode(String accountCode);
+
+  /// Backfill missing codes for existing doctor/business catalog entries.
+  Future<void> ensureProviderAccountCodes();
+
   Future<void> upsertStaff(UserAccount account, {String? password, String? authEmail});
   Future<void> deleteStaff(String id);
   Stream<List<UserAccount>> watchStaff();

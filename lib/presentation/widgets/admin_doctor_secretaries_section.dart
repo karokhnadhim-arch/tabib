@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/utils/account_code_resolver.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/admin_doctor_staff_resolver.dart';
 import '../../core/widgets/responsive_scaffold.dart';
@@ -123,6 +124,7 @@ class AdminDoctorSecretariesSection extends StatelessWidget {
     final secretaries = _secretaries;
     final provider =
         context.watch<ClinicDataService>().doctorById(doctorId);
+    final linkedCode = AccountCodeResolver.forDoctor(provider);
     final width = MediaQuery.sizeOf(context).width;
     final isWide = width >= 720;
 
@@ -188,6 +190,7 @@ class AdminDoctorSecretariesSection extends StatelessWidget {
               ...secretaries.map(
                 (s) => _SecretaryCard(
                   secretary: s,
+                  linkedAccountCode: linkedCode,
                   onEdit: () => AdminSecretaryFormDialog.show(
                     context,
                     doctorId: doctorId,
@@ -208,6 +211,7 @@ class AdminDoctorSecretariesSection extends StatelessWidget {
 class _SecretaryCard extends StatelessWidget {
   const _SecretaryCard({
     required this.secretary,
+    this.linkedAccountCode,
     required this.onEdit,
     required this.onDelete,
     required this.onChangeStatus,
@@ -215,6 +219,7 @@ class _SecretaryCard extends StatelessWidget {
   });
 
   final UserAccount secretary;
+  final String? linkedAccountCode;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
   final VoidCallback onChangeStatus;
@@ -252,6 +257,15 @@ class _SecretaryCard extends StatelessWidget {
                         Text(
                           secretary.email!,
                           style: const TextStyle(fontSize: 13),
+                        ),
+                      if (linkedAccountCode != null)
+                        Text(
+                          l10n.linkedToAccountCode(linkedAccountCode!),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.shade600,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                     ],
                   ),

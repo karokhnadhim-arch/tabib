@@ -11,6 +11,8 @@ import '../../../core/utils/clinic_subscription.dart';
 import '../../../presentation/screens/subscription/subscription_expired_screen.dart';
 import '../../../presentation/widgets/subscription_status_badge.dart';
 import '../../../services/queue_service.dart';
+import '../../../core/utils/account_code_resolver.dart';
+import '../../../presentation/widgets/account_code_badge.dart';
 import '../../../utils/localization_utils.dart';
 import '../../../utils/provider_labels.dart';
 import '../../providers/app_providers.dart';
@@ -190,6 +192,38 @@ class _SecretaryDashboardScreenState extends State<SecretaryDashboardScreen> {
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
+                              if (doctor != null) ...[
+                                const SizedBox(height: 8),
+                                Builder(
+                                  builder: (context) {
+                                    final code = AccountCodeResolver.forDoctor(
+                                      doctor,
+                                    );
+                                    if (code == null) {
+                                      return const SizedBox.shrink();
+                                    }
+                                    return Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            l10n.doctorAccountCodeLabel(code),
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              color: Colors.grey.shade700,
+                                            ),
+                                          ),
+                                        ),
+                                        AccountCodeBadge(
+                                          code: code,
+                                          compact: true,
+                                          onCopy: () => AccountCodeBadge
+                                              .copyToClipboard(context, code),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ),
+                              ],
                             ],
                           ),
                         ),

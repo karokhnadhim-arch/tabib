@@ -68,6 +68,7 @@ class AdminDoctorStaffResolver {
       localize(doctor.clinic.name.en),
       emailFor(doctor, staff) ?? '',
       phoneFor(doctor, staff) ?? '',
+      doctor.accountCode ?? '',
     ];
     appendSecretarySearchFields(fields, doctor.id, staff, localize);
     return fields.any((f) => f.toLowerCase().contains(q));

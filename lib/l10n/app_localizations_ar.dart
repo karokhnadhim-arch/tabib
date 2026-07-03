@@ -1095,7 +1095,32 @@ class AppLocalizationsAr extends AppLocalizations {
   String get doctorManagementHint => 'بحث الأطباء وعرض الملفات وإدارة السكرتaries المعينين';
 
   @override
-  String get adminDoctorSearchHint => 'الاسم، التخصص، العيادة، الجوال، أو البريد...';
+  String get adminDoctorSearchHint => 'الاسم، التخصص، العيادة، الجوال، البريد، أو رمز الحساب (مثل DR-10025)...';
+
+  @override
+  String get accountCode => 'رمز الحساب';
+
+  @override
+  String get doctorAccountCode => 'رمز حساب الطبيب';
+
+  @override
+  String doctorAccountCodeLabel(String code) {
+    return 'رمز حساب الطبيب: $code';
+  }
+
+  @override
+  String linkedToAccountCode(String code) {
+    return 'مرتبط بـ: $code';
+  }
+
+  @override
+  String get supportHistory => 'سجل الدعم';
+
+  @override
+  String get supportHistoryHint => 'تجديد الاشتراك وطلبات الدعم وملاحظات استكشاف الأخطاء المرتبطة برمز الحساب.';
+
+  @override
+  String get noSupportHistory => 'لا يوجد نشاط دعم مسجل بعد.';
 
   @override
   String get doctorInformation => 'معلومات الطبيب';

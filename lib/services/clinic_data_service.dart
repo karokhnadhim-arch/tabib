@@ -59,6 +59,7 @@ class ClinicDataService extends ChangeNotifier {
       ]);
       _specialties = results[0] as List<Specialty>;
       _clinics = results[1] as List<Clinic>;
+      await _backend.ensureProviderAccountCodes();
       _catalogLoaded = true;
       notifyListeners();
     } finally {

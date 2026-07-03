@@ -41,6 +41,7 @@ class Doctor {
     this.profileVisibility = const DoctorProfileVisibility(),
     this.accountType = ServiceProviderAccountType.doctor,
     this.businessCategory,
+    this.accountCode,
   });
 
   final String id;
@@ -74,6 +75,8 @@ class Doctor {
   final DoctorProfileVisibility profileVisibility;
   final ServiceProviderAccountType accountType;
   final BusinessCategory? businessCategory;
+  /// Permanent code (DR-xxxxx / BZ-xxxxx) — doctors and businesses only.
+  final String? accountCode;
 
   bool get isBusiness => accountType.isBusiness;
   bool get isDoctorAccount => accountType.isDoctor;
@@ -264,6 +267,7 @@ class Doctor {
       businessCategory: BusinessCategory.fromStorage(
         data['businessCategory'] as String?,
       ),
+      accountCode: data['accountCode'] as String?,
     );
   }
 
@@ -302,6 +306,8 @@ class Doctor {
         'accountType': accountType.storageKey,
         if (businessCategory != null)
           'businessCategory': businessCategory!.storageKey,
+        if (accountCode != null && accountCode!.isNotEmpty)
+          'accountCode': accountCode,
       };
 
   Doctor copyWith({
@@ -335,6 +341,7 @@ class Doctor {
     DoctorProfileVisibility? profileVisibility,
     ServiceProviderAccountType? accountType,
     BusinessCategory? businessCategory,
+    String? accountCode,
   }) {
     return Doctor(
       id: id,
@@ -369,6 +376,7 @@ class Doctor {
       profileVisibility: profileVisibility ?? this.profileVisibility,
       accountType: accountType ?? this.accountType,
       businessCategory: businessCategory ?? this.businessCategory,
+      accountCode: accountCode ?? this.accountCode,
     );
   }
 

@@ -1095,7 +1095,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get doctorManagementHint => 'Search doctors, view profiles, and manage assigned secretaries';
 
   @override
-  String get adminDoctorSearchHint => 'Name, specialty, clinic, mobile, or email...';
+  String get adminDoctorSearchHint => 'Name, specialty, clinic, mobile, email, or account code (e.g. DR-10025)...';
+
+  @override
+  String get accountCode => 'Account code';
+
+  @override
+  String get doctorAccountCode => 'Doctor account code';
+
+  @override
+  String doctorAccountCodeLabel(String code) {
+    return 'Doctor Account Code: $code';
+  }
+
+  @override
+  String linkedToAccountCode(String code) {
+    return 'Linked to: $code';
+  }
+
+  @override
+  String get supportHistory => 'Support history';
+
+  @override
+  String get supportHistoryHint => 'Subscription renewals, support requests, and troubleshooting notes tied to this account code.';
+
+  @override
+  String get noSupportHistory => 'No support activity recorded yet.';
 
   @override
   String get doctorInformation => 'Doctor information';

@@ -21,6 +21,9 @@ import '../../../presentation/widgets/subscription_status_badge.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../services/staff_data_service.dart';
+import '../../../core/utils/account_code.dart';
+import '../../../core/utils/account_code_resolver.dart';
+import '../../../presentation/widgets/account_code_badge.dart';
 import '../../../utils/localization_utils.dart';
 import '../../../utils/provider_labels.dart';
 
@@ -153,6 +156,10 @@ class _OwnerDoctorsScreenState extends State<OwnerDoctorsScreen> {
                 decoration: InputDecoration(
                   hintText: l10n.adminDoctorSearchHint,
                   prefixIcon: const Icon(Icons.search),
+                  suffixIcon: AccountCode.looksLikeAccountCode(
+                          _searchController.text)
+                      ? const Icon(Icons.badge_outlined)
+                      : null,
                 ),
               ),
             ),
@@ -320,6 +327,13 @@ class _DoctorListCard extends StatelessWidget {
                           doctorId: doctor.id,
                           staff: staff,
                         ),
+                        if (AccountCodeResolver.forDoctor(doctor) != null) ...[
+                          const SizedBox(height: 4),
+                          AccountCodeBadge(
+                            code: AccountCodeResolver.forDoctor(doctor)!,
+                            compact: true,
+                          ),
+                        ],
                         Text(
                           ProviderLabels.displayCategory(
                             context,

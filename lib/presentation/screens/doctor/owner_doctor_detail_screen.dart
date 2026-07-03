@@ -18,7 +18,10 @@ import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../services/staff_data_service.dart';
 import '../../../utils/localization_utils.dart';
+import '../../../core/utils/account_code_resolver.dart';
+import '../../../presentation/widgets/account_code_badge.dart';
 import '../../../utils/provider_labels.dart';
+import '../../../services/owner_audit_service.dart';
 
 class OwnerDoctorDetailScreen extends StatefulWidget {
   const OwnerDoctorDetailScreen({
@@ -144,6 +147,10 @@ class _OwnerDoctorDetailScreenState extends State<OwnerDoctorDetailScreen> {
                           staff: staff,
                         ),
                       ),
+                      const SizedBox(height: 16),
+                      _SupportHistorySection(
+                        doctor: doctor,
+                      ),
                     ],
                   );
                 },
@@ -198,14 +205,24 @@ class _DoctorInfoCard extends StatelessWidget {
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        doctor.name.localized(context),
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
+                      children: [
+                        Text(
+                          doctor.name.localized(context),
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                        if (AccountCodeResolver.forDoctor(doctor) != null) ...[
+                          const SizedBox(height: 8),
+                          AccountCodeBadge(
+                            code: AccountCodeResolver.forDoctor(doctor)!,
+                            onCopy: () => AccountCodeBadge.copyToClipboard(
+                              context,
+                              AccountCodeResolver.forDoctor(doctor)!,
                             ),
-                      ),
-                      DoctorSecretariesSummary(
+                          ),
+                        ],
+                        DoctorSecretariesSummary(
                         doctorId: doctor.id,
                         staff: staff,
                         onTap: onSecretariesTap,
@@ -224,6 +241,12 @@ class _DoctorInfoCard extends StatelessWidget {
                             color: Colors.grey.shade600,
                           ),
                         ),
+                      ),
+                      _InfoRow(
+                        icon: Icons.badge_outlined,
+                        label: l10n.accountCode,
+                        value: AccountCodeResolver.forDoctor(doctor) ??
+                            l10n.notAvailable,
                       ),
                       _InfoRow(
                         icon: Icons.medical_services_outlined,
@@ -250,6 +273,60 @@ class _DoctorInfoCard extends StatelessWidget {
                 ),
               ],
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SupportHistorySection extends StatelessWidget {
+  const _SupportHistorySection({required this.doctor});
+
+  final Doctor doctor;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final code = AccountCodeResolver.forDoctor(doctor);
+    final entries = context.watch<OwnerAuditService>().entries.where((e) {
+      final details = e.details ?? '';
+      return details.contains(doctor.id) ||
+          (code != null && details.contains(code));
+    }).toList();
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.supportHistory,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.supportHistoryHint,
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+            ),
+            const SizedBox(height: 12),
+            if (entries.isEmpty)
+              Text(l10n.noSupportHistory)
+            else
+              ...entries.take(8).map(
+                    (e) => ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(Icons.support_agent_outlined),
+                      title: Text(e.action),
+                      subtitle: Text(
+                        '${e.userName} · ${e.timestamp}',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ),
+                  ),
           ],
         ),
       ),

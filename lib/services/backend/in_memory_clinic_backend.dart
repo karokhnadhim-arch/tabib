@@ -9,6 +9,7 @@ import '../../models/queue_entry.dart';
 import '../../models/specialty.dart';
 import '../../models/user_account.dart';
 import '../../core/constants/firestore_limits.dart';
+import '../../core/utils/account_code.dart';
 import '../../core/utils/staff_auth_identifiers.dart';
 import '../../models/doctor_page.dart';
 import 'clinic_backend.dart';
@@ -26,6 +27,8 @@ class InMemoryClinicBackend implements ClinicBackend {
   final List<QueueEntry> _queues = [];
   final List<UserAccount> _staff = [];
   final Map<String, String> _staffPasswords = {};
+  int _nextDoctorSequence = 10025;
+  int _nextBusinessSequence = 10001;
 
   void _notify() => _change.add(null);
 
@@ -454,6 +457,41 @@ class InMemoryClinicBackend implements ClinicBackend {
     _notify();
   }
 
+  @override
+  Future<String> allocateAccountCode(ServiceProviderAccountType accountType) async {
+    if (accountType.isBusiness) {
+      _nextBusinessSequence++;
+      return AccountCode.format(accountType, _nextBusinessSequence);
+    }
+    _nextDoctorSequence++;
+    return AccountCode.format(accountType, _nextDoctorSequence);
+  }
+
+  @override
+  Future<Doctor?> findDoctorByAccountCode(String accountCode) async {
+    final normalized = AccountCode.normalize(accountCode);
+    if (normalized == null) return null;
+    for (final doctor in _doctors) {
+      if (AccountCode.normalize(doctor.accountCode) == normalized) {
+        return doctor;
+      }
+    }
+    return null;
+  }
+
+  @override
+  Future<void> ensureProviderAccountCodes() async {
+    var changed = false;
+    for (var i = 0; i < _doctors.length; i++) {
+      final doctor = _doctors[i];
+      if (AccountCode.isAssigned(doctor.accountCode)) continue;
+      final code = await allocateAccountCode(doctor.accountType);
+      _doctors[i] = doctor.copyWith(accountCode: code);
+      changed = true;
+    }
+    if (changed) _notify();
+  }
+
   void _upsertStaffSync(UserAccount account, {String? password, String? authEmail}) {
     _staff.removeWhere((s) => s.id == account.id);
     _staff.add(account);
@@ -647,6 +685,7 @@ class InMemoryClinicBackend implements ClinicBackend {
         languagesSpoken: const ['Kurdish', 'Arabic', 'English'],
         latitude: seededClinic.latitude,
         longitude: seededClinic.longitude,
+        accountCode: 'DR-10025',
       ),
     );
 
@@ -774,6 +813,7 @@ class InMemoryClinicBackend implements ClinicBackend {
         languagesSpoken: const ['Kurdish', 'Arabic'],
         latitude: 36.1920,
         longitude: 44.0100,
+        accountCode: 'DR-10026',
       ),
     );
 
@@ -834,6 +874,7 @@ class InMemoryClinicBackend implements ClinicBackend {
         languagesSpoken: const ['Kurdish', 'Arabic', 'English', 'German'],
         latitude: 36.1905,
         longitude: 44.0085,
+        accountCode: 'DR-10027',
       ),
     );
 
@@ -875,9 +916,12 @@ class InMemoryClinicBackend implements ClinicBackend {
         longitude: seededClinic.longitude,
         accountType: ServiceProviderAccountType.business,
         businessCategory: BusinessCategory.beautyCenter,
+        accountCode: 'BZ-10001',
       ),
     );
 
+    _nextDoctorSequence = 10027;
+    _nextBusinessSequence = 10001;
     _notify();
   }
 }

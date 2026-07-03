@@ -10,6 +10,7 @@ import '../../models/service_provider_type.dart';
 import '../../models/specialty.dart';
 import '../../models/user_account.dart';
 import '../../core/constants/firestore_limits.dart';
+import '../../core/utils/account_code.dart';
 import '../../models/doctor_page.dart';
 import 'firestore_reference_cache.dart';
 import 'clinic_backend.dart';
@@ -622,6 +623,60 @@ class FirestoreClinicBackend implements ClinicBackend {
   @override
   Future<void> deleteDoctor(String id) async {
     await _doctors.doc(id).delete();
+  }
+
+  DocumentReference<Map<String, dynamic>> get _accountCodeMeta =>
+      _db.collection('platform_meta').doc('account_codes');
+
+  @override
+  Future<String> allocateAccountCode(ServiceProviderAccountType accountType) {
+    return _db.runTransaction((tx) async {
+      final snap = await tx.get(_accountCodeMeta);
+      final data = snap.data() ?? {};
+      const doctorKey = 'nextDoctor';
+      const businessKey = 'nextBusiness';
+      final nextDoctor = (data[doctorKey] as num?)?.toInt() ?? 10025;
+      final nextBusiness = (data[businessKey] as num?)?.toInt() ?? 10001;
+      late final String code;
+      late final Map<String, dynamic> update;
+      if (accountType.isBusiness) {
+        final seq = nextBusiness + 1;
+        code = AccountCode.format(accountType, seq);
+        update = {businessKey: seq, doctorKey: nextDoctor};
+      } else {
+        final seq = nextDoctor + 1;
+        code = AccountCode.format(accountType, seq);
+        update = {doctorKey: seq, businessKey: nextBusiness};
+      }
+      tx.set(_accountCodeMeta, update, SetOptions(merge: true));
+      return code;
+    });
+  }
+
+  @override
+  Future<Doctor?> findDoctorByAccountCode(String accountCode) async {
+    final normalized = AccountCode.normalize(accountCode);
+    if (normalized == null) return null;
+    final snap = await _doctors
+        .where('accountCode', isEqualTo: normalized)
+        .limit(1)
+        .get();
+    if (snap.docs.isEmpty) return null;
+    return getDoctor(snap.docs.first.id);
+  }
+
+  @override
+  Future<void> ensureProviderAccountCodes() async {
+    final snap = await _doctors.limit(FirestoreLimits.staffFetchMax).get();
+    for (final doc in snap.docs) {
+      final raw = doc.data()['accountCode'] as String?;
+      if (AccountCode.isAssigned(raw)) continue;
+      final type = ServiceProviderAccountType.fromStorage(
+        doc.data()['accountType'] as String?,
+      );
+      final code = await allocateAccountCode(type);
+      await doc.reference.update({'accountCode': code});
+    }
   }
 
   @override

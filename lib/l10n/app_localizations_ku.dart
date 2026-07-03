@@ -1095,7 +1095,32 @@ class AppLocalizationsKu extends AppLocalizations {
   String get doctorManagementHint => 'گەڕان، بینینی پڕۆفایل و بەڕێوەبردنی سکرتێرە دیاریکراوەکان';
 
   @override
-  String get adminDoctorSearchHint => 'ناو، بوار، نۆرینگە، مۆبایل یان ئیمەیڵ...';
+  String get adminDoctorSearchHint => 'ناو، بوار، نۆرینگە، مۆبایل، ئیمەیڵ، یان کۆدی هەژمار (وەک DR-10025)...';
+
+  @override
+  String get accountCode => 'کۆدی هەژمار';
+
+  @override
+  String get doctorAccountCode => 'کۆدی هەژماری دکتۆر';
+
+  @override
+  String doctorAccountCodeLabel(String code) {
+    return 'کۆدی هەژماری دکتۆر: $code';
+  }
+
+  @override
+  String linkedToAccountCode(String code) {
+    return 'بەستراو بە: $code';
+  }
+
+  @override
+  String get supportHistory => 'مێژووی پشتگیری';
+
+  @override
+  String get supportHistoryHint => 'نوێکردنەوەی بەشداریکردن، داواکاری پشتگیری، و تێبینی چارەسەرکردن بەپێی کۆدی هەژمار.';
+
+  @override
+  String get noSupportHistory => 'هێشتا چالاکی پشتگیری تۆمار نەکراوە.';
 
   @override
   String get doctorInformation => 'زانیاری دکتۆر';

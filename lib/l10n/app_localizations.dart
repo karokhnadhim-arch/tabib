@@ -2234,8 +2234,50 @@ abstract class AppLocalizations {
   /// No description provided for @adminDoctorSearchHint.
   ///
   /// In en, this message translates to:
-  /// **'Name, specialty, clinic, mobile, or email...'**
+  /// **'Name, specialty, clinic, mobile, email, or account code (e.g. DR-10025)...'**
   String get adminDoctorSearchHint;
+
+  /// No description provided for @accountCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Account code'**
+  String get accountCode;
+
+  /// No description provided for @doctorAccountCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor account code'**
+  String get doctorAccountCode;
+
+  /// No description provided for @doctorAccountCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor Account Code: {code}'**
+  String doctorAccountCodeLabel(String code);
+
+  /// No description provided for @linkedToAccountCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked to: {code}'**
+  String linkedToAccountCode(String code);
+
+  /// No description provided for @supportHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Support history'**
+  String get supportHistory;
+
+  /// No description provided for @supportHistoryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription renewals, support requests, and troubleshooting notes tied to this account code.'**
+  String get supportHistoryHint;
+
+  /// No description provided for @noSupportHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'No support activity recorded yet.'**
+  String get noSupportHistory;
 
   /// No description provided for @doctorInformation.
   ///

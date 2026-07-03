@@ -65,7 +65,7 @@ class OwnerAuditService extends ChangeNotifier {
         action: 'Updated clinic subscription',
         timestamp: now.subtract(const Duration(hours: 5)),
         device: 'windows',
-        details: 'clinic_erbil_1',
+        details: 'doc_1 · DR-10025',
       ),
     ]);
   }

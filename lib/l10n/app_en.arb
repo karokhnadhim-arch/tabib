@@ -412,7 +412,28 @@
   "noExpiry": "No expiry date",
   "doctorManagement": "Doctor management",
   "doctorManagementHint": "Search doctors, view profiles, and manage assigned secretaries",
-  "adminDoctorSearchHint": "Name, specialty, clinic, mobile, or email...",
+  "adminDoctorSearchHint": "Name, specialty, clinic, mobile, email, or account code (e.g. DR-10025)...",
+  "accountCode": "Account code",
+  "doctorAccountCode": "Doctor account code",
+  "doctorAccountCodeLabel": "Doctor Account Code: {code}",
+  "@doctorAccountCodeLabel": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "linkedToAccountCode": "Linked to: {code}",
+  "@linkedToAccountCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "supportHistory": "Support history",
+  "supportHistoryHint": "Subscription renewals, support requests, and troubleshooting notes tied to this account code.",
+  "noSupportHistory": "No support activity recorded yet.",
   "doctorInformation": "Doctor information",
   "assignedSecretaries": "Assigned secretaries",
   "secretariesCount": "{count} secretaries",

@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
 import '../models/account_status.dart';
+import '../core/utils/account_code.dart';
 import '../models/admin_capability.dart';
 import '../models/localized_text.dart';
 import '../models/doctor.dart';
@@ -490,6 +491,8 @@ class AuthService extends ChangeNotifier {
           specialties.where((s) => s.id == specialtyId).firstOrNull;
       if (clinic == null || specialty == null) return 'error';
 
+      final accountCode =
+          await _backend.allocateAccountCode(accountType);
       await _backend.upsertDoctor(
         Doctor(
           id: doctorId,
@@ -504,6 +507,7 @@ class AuthService extends ChangeNotifier {
           isAvailableToday: true,
           accountType: accountType,
           businessCategory: businessCategory,
+          accountCode: accountCode,
         ),
       );
       await _backend.upsertStaff(
@@ -552,6 +556,8 @@ class AuthService extends ChangeNotifier {
         password: password,
       );
       final uid = cred.user!.uid;
+      final accountCode =
+          await _backend.allocateAccountCode(accountType);
       await _backend.upsertDoctor(
         Doctor(
           id: doctorId,
@@ -566,6 +572,7 @@ class AuthService extends ChangeNotifier {
           isAvailableToday: true,
           accountType: accountType,
           businessCategory: businessCategory,
+          accountCode: accountCode,
         ),
       );
       await _backend.upsertStaff(

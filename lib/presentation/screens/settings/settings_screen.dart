@@ -17,6 +17,9 @@ import '../../../services/locale_service.dart';
 import '../../../services/theme_service.dart';
 import '../../../services/user_preferences_service.dart';
 import '../../../utils/localization_utils.dart';
+import '../../../core/utils/account_code_resolver.dart';
+import '../../../presentation/widgets/account_code_badge.dart';
+import '../../../utils/localization_utils.dart';
 import '../../../utils/provider_labels.dart';
 import '../../widgets/doctor_avatar.dart';
 import '../../widgets/settings/settings_widgets.dart';
@@ -184,6 +187,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     isBusiness ? l10n.businessSettings : l10n.doctorSettings,
                 icon: Icons.medical_services_outlined,
                 children: [
+                  if (doctor != null &&
+                      AccountCodeResolver.forDoctor(doctor) != null) ...[
+                    SettingsTile(
+                      icon: Icons.badge_outlined,
+                      title: l10n.accountCode,
+                      subtitle: AccountCodeResolver.forDoctor(doctor)!,
+                      showChevron: false,
+                      trailing: AccountCodeBadge(
+                        code: AccountCodeResolver.forDoctor(doctor)!,
+                        compact: true,
+                        onCopy: () => AccountCodeBadge.copyToClipboard(
+                          context,
+                          AccountCodeResolver.forDoctor(doctor)!,
+                        ),
+                      ),
+                    ),
+                    const SettingsDivider(),
+                  ],
                   SettingsTile(
                     icon: Icons.edit_outlined,
                     title: ProviderLabels.editProfileTitle(l10n, doctor),
@@ -232,6 +253,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 title: l10n.secretarySettings,
                 icon: Icons.support_agent_outlined,
                 children: [
+                  Builder(
+                    builder: (context) {
+                      final code = AccountCodeResolver.forSecretary(
+                        auth.currentUser!,
+                        data,
+                      );
+                      if (code == null) return const SizedBox.shrink();
+                      return SettingsTile(
+                        icon: Icons.badge_outlined,
+                        title: l10n.doctorAccountCode,
+                        subtitle: l10n.doctorAccountCodeLabel(code),
+                        showChevron: false,
+                        trailing: AccountCodeBadge(
+                          code: code,
+                          compact: true,
+                          onCopy: () =>
+                              AccountCodeBadge.copyToClipboard(context, code),
+                        ),
+                      );
+                    },
+                  ),
+                  const SettingsDivider(),
                   SettingsSwitchTile(
                     icon: Icons.notifications_active_outlined,
                     title: l10n.queueNotifications,
