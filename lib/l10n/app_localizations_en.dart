@@ -2304,4 +2304,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notNow => 'Not now';
+
+  @override
+  String get memberSince => 'Member since';
+
+  @override
+  String get completedVisits => 'Completed visits';
+
+  @override
+  String get upcomingAppointments => 'Upcoming appointments';
+
+  @override
+  String get birthDate => 'Birth date';
+
+  @override
+  String get bloodType => 'Blood type';
+
+  @override
+  String get emergencyContact => 'Emergency contact';
+
+  @override
+  String get mobile => 'Mobile';
+
+  @override
+  String get profileStatistics => 'Statistics';
+
+  @override
+  String get accountDetails => 'Account details';
+
+  @override
+  String get appearanceAndPrivacy => 'Appearance & privacy';
+
+  @override
+  String get noActiveQueuesOnProfile => 'You have no active queues. Browse doctors to join a queue.';
+
+  @override
+  String get noFavoriteDoctorsYet => 'No favorite doctors yet. Tap the heart on a doctor profile.';
 }

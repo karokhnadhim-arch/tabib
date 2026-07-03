@@ -882,5 +882,17 @@
   "addToFavorites": "Add to favorites",
   "removeFromFavorites": "Remove from favorites",
   "cancelQueueConfirm": "Are you sure you want to cancel this queue?",
-  "notNow": "Not now"
+  "notNow": "Not now",
+  "memberSince": "Member since",
+  "completedVisits": "Completed visits",
+  "upcomingAppointments": "Upcoming appointments",
+  "birthDate": "Birth date",
+  "bloodType": "Blood type",
+  "emergencyContact": "Emergency contact",
+  "mobile": "Mobile",
+  "profileStatistics": "Statistics",
+  "accountDetails": "Account details",
+  "appearanceAndPrivacy": "Appearance & privacy",
+  "noActiveQueuesOnProfile": "You have no active queues. Browse doctors to join a queue.",
+  "noFavoriteDoctorsYet": "No favorite doctors yet. Tap the heart on a doctor profile."
 }

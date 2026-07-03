@@ -823,5 +823,17 @@
   "addToFavorites": "إضافة إلى المفضلة",
   "removeFromFavorites": "إزالة من المفضلة",
   "cancelQueueConfirm": "هل أنت متأكد من إلغاء هذا الطابور؟",
-  "notNow": "ليس الآن"
+  "notNow": "ليس الآن",
+  "memberSince": "عضو منذ",
+  "completedVisits": "الزيارات المكتملة",
+  "upcomingAppointments": "المواعيد القادمة",
+  "birthDate": "تاريخ الميلاد",
+  "bloodType": "فصيلة الدم",
+  "emergencyContact": "جهة اتصال للطوارئ",
+  "mobile": "الجوال",
+  "profileStatistics": "الإحصائيات",
+  "accountDetails": "تفاصيل الحساب",
+  "appearanceAndPrivacy": "المظهر والخصوصية",
+  "noActiveQueuesOnProfile": "لا توجد طوابير نشطة. تصفح الأطباء للانضمام إلى طابور.",
+  "noFavoriteDoctorsYet": "لا يوجد أطباء مفضلون بعد. اضغط على القلب في ملف الطبيب."
 }

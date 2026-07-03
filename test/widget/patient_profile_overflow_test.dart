@@ -4,13 +4,19 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tabib/core/l10n/kurdish_material_localizations.dart';
+import 'package:tabib/data/repositories/in_memory_repositories.dart';
 import 'package:tabib/l10n/app_localizations.dart';
+import 'package:tabib/presentation/providers/app_providers.dart';
 import 'package:tabib/presentation/screens/patient/patient_profile_screen.dart';
 import 'package:tabib/services/advertisement_service.dart';
 import 'package:tabib/services/auth_service.dart';
 import 'package:tabib/services/backend/in_memory_clinic_backend.dart';
+import 'package:tabib/services/clinic_data_service.dart';
+import 'package:tabib/services/favorites_service.dart';
 import 'package:tabib/services/locale_service.dart';
 import 'package:tabib/services/patient_profile_service.dart';
+import 'package:tabib/services/queue_service.dart';
+import 'package:tabib/services/recently_visited_service.dart';
 import 'package:tabib/services/theme_service.dart';
 
 void main() {
@@ -19,6 +25,11 @@ void main() {
   late ThemeService themeService;
   late LocaleService localeService;
   late AdvertisementService adService;
+  late QueueService queueService;
+  late ClinicDataService clinicDataService;
+  late FavoritesService favoritesService;
+  late RecentlyVisitedService recentlyVisitedService;
+  late AppointmentProvider appointmentProvider;
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
@@ -33,6 +44,16 @@ void main() {
     themeService = ThemeService();
     localeService = LocaleService();
     adService = AdvertisementService(backend: backend);
+    queueService = QueueService(backend: backend);
+    clinicDataService = ClinicDataService(backend: backend);
+    await clinicDataService.ensureCatalogLoaded();
+    favoritesService = FavoritesService();
+    await favoritesService.bindUser(auth.patientId);
+    recentlyVisitedService = RecentlyVisitedService();
+    await recentlyVisitedService.bindUser(auth.patientId);
+    appointmentProvider = AppointmentProvider(
+      repository: InMemoryAppointmentRepository(),
+    );
   });
 
   Widget wrap(Widget child, {Locale? locale}) {
@@ -45,14 +66,27 @@ void main() {
         ChangeNotifierProvider<ThemeService>.value(value: themeService),
         ChangeNotifierProvider<LocaleService>.value(value: localeService),
         ChangeNotifierProvider<AdvertisementService>.value(value: adService),
+        ChangeNotifierProvider<QueueService>.value(value: queueService),
+        ChangeNotifierProvider<ClinicDataService>.value(
+          value: clinicDataService,
+        ),
+        ChangeNotifierProvider<FavoritesService>.value(
+          value: favoritesService,
+        ),
+        ChangeNotifierProvider<RecentlyVisitedService>.value(
+          value: recentlyVisitedService,
+        ),
+        ChangeNotifierProvider<AppointmentProvider>.value(
+          value: appointmentProvider,
+        ),
       ],
       child: MaterialApp(
         locale: locale,
-        localizationsDelegates: const [
+        localizationsDelegates: [
           AppLocalizations.delegate,
-          KurdishMaterialLocalizationsDelegate(),
-          KurdishWidgetsLocalizationsDelegate(),
-          KurdishCupertinoLocalizationsDelegate(),
+          const KurdishMaterialLocalizationsDelegate(),
+          const KurdishWidgetsLocalizationsDelegate(),
+          const KurdishCupertinoLocalizationsDelegate(),
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,

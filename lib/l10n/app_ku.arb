@@ -823,5 +823,17 @@
   "addToFavorites": "زیادکردن بۆ دڵخواز",
   "removeFromFavorites": "لابردن لە دڵخواز",
   "cancelQueueConfirm": "دڵنیایت دەتەوێت ئەم نۆرەیە هەڵبوەشێنیتەوە؟",
-  "notNow": "ئێستا نا"
+  "notNow": "ئێستا نا",
+  "memberSince": "ئەندام لە",
+  "completedVisits": "سەردانە تەواوکراوەکان",
+  "upcomingAppointments": "چاوپێکەوتنە داهاتووەکان",
+  "birthDate": "ڕۆژی لەدایکبوون",
+  "bloodType": "جۆری خوێن",
+  "emergencyContact": "پەیوەندی فریاکەوتن",
+  "mobile": "مۆبایل",
+  "profileStatistics": "ئامارەکان",
+  "accountDetails": "وردەکاری هەژمار",
+  "appearanceAndPrivacy": "ڕووکار و تایبەتمەندی",
+  "noActiveQueuesOnProfile": "هیچ نۆرەیەکی چالاکت نییە. پزیشک بگەڕێ بۆ بەشداریکردن لە نۆرە.",
+  "noFavoriteDoctorsYet": "هێشتا هیچ پزیشکی دڵخوازت نییە. لەسەر دڵ لە پڕۆفایلی پزیشک دابگرە."
 }

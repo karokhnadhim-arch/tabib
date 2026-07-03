@@ -2304,4 +2304,40 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get notNow => 'ئێستا نا';
+
+  @override
+  String get memberSince => 'ئەندام لە';
+
+  @override
+  String get completedVisits => 'سەردانە تەواوکراوەکان';
+
+  @override
+  String get upcomingAppointments => 'چاوپێکەوتنە داهاتووەکان';
+
+  @override
+  String get birthDate => 'ڕۆژی لەدایکبوون';
+
+  @override
+  String get bloodType => 'جۆری خوێن';
+
+  @override
+  String get emergencyContact => 'پەیوەندی فریاکەوتن';
+
+  @override
+  String get mobile => 'مۆبایل';
+
+  @override
+  String get profileStatistics => 'ئامارەکان';
+
+  @override
+  String get accountDetails => 'وردەکاری هەژمار';
+
+  @override
+  String get appearanceAndPrivacy => 'ڕووکار و تایبەتمەندی';
+
+  @override
+  String get noActiveQueuesOnProfile => 'هیچ نۆرەیەکی چالاکت نییە. پزیشک بگەڕێ بۆ بەشداریکردن لە نۆرە.';
+
+  @override
+  String get noFavoriteDoctorsYet => 'هێشتا هیچ پزیشکی دڵخوازت نییە. لەسەر دڵ لە پڕۆفایلی پزیشک دابگرە.';
 }

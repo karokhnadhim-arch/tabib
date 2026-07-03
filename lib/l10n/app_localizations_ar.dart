@@ -2304,4 +2304,40 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get notNow => 'ليس الآن';
+
+  @override
+  String get memberSince => 'عضو منذ';
+
+  @override
+  String get completedVisits => 'الزيارات المكتملة';
+
+  @override
+  String get upcomingAppointments => 'المواعيد القادمة';
+
+  @override
+  String get birthDate => 'تاريخ الميلاد';
+
+  @override
+  String get bloodType => 'فصيلة الدم';
+
+  @override
+  String get emergencyContact => 'جهة اتصال للطوارئ';
+
+  @override
+  String get mobile => 'الجوال';
+
+  @override
+  String get profileStatistics => 'الإحصائيات';
+
+  @override
+  String get accountDetails => 'تفاصيل الحساب';
+
+  @override
+  String get appearanceAndPrivacy => 'المظهر والخصوصية';
+
+  @override
+  String get noActiveQueuesOnProfile => 'لا توجد طوابير نشطة. تصفح الأطباء للانضمام إلى طابور.';
+
+  @override
+  String get noFavoriteDoctorsYet => 'لا يوجد أطباء مفضلون بعد. اضغط على القلب في ملف الطبيب.';
 }

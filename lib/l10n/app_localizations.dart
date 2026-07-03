@@ -4600,6 +4600,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not now'**
   String get notNow;
+
+  /// No description provided for @memberSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Member since'**
+  String get memberSince;
+
+  /// No description provided for @completedVisits.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed visits'**
+  String get completedVisits;
+
+  /// No description provided for @upcomingAppointments.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming appointments'**
+  String get upcomingAppointments;
+
+  /// No description provided for @birthDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth date'**
+  String get birthDate;
+
+  /// No description provided for @bloodType.
+  ///
+  /// In en, this message translates to:
+  /// **'Blood type'**
+  String get bloodType;
+
+  /// No description provided for @emergencyContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency contact'**
+  String get emergencyContact;
+
+  /// No description provided for @mobile.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile'**
+  String get mobile;
+
+  /// No description provided for @profileStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get profileStatistics;
+
+  /// No description provided for @accountDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Account details'**
+  String get accountDetails;
+
+  /// No description provided for @appearanceAndPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance & privacy'**
+  String get appearanceAndPrivacy;
+
+  /// No description provided for @noActiveQueuesOnProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no active queues. Browse doctors to join a queue.'**
+  String get noActiveQueuesOnProfile;
+
+  /// No description provided for @noFavoriteDoctorsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No favorite doctors yet. Tap the heart on a doctor profile.'**
+  String get noFavoriteDoctorsYet;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
