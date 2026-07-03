@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -259,7 +260,7 @@ class _PatientProfileScreenState extends State<PatientProfileScreen> {
     final photoProvider = tabibImageProvider(
       profile.photoUrl,
       thumbnailUrl: profile.photoThumbnailUrl,
-      preferThumbnail: false,
+      preferThumbnail: kIsWeb,
     );
 
     final displayName =
@@ -647,6 +648,74 @@ class _PatientProfileScreenState extends State<PatientProfileScreen> {
 }
 
 // ---------------------------------------------------------------------------
+// Web-safe bounded images (prevents intrinsic-size overflow on Chrome)
+// ---------------------------------------------------------------------------
+
+class _BoundedFillImage extends StatelessWidget {
+  const _BoundedFillImage({required this.provider});
+
+  final ImageProvider provider;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRect(
+      child: SizedBox.expand(
+        child: Image(
+          image: provider,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+          gaplessPlayback: true,
+          filterQuality: FilterQuality.medium,
+          errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+        ),
+      ),
+    );
+  }
+}
+
+class _BoundedCircleImage extends StatelessWidget {
+  const _BoundedCircleImage({
+    required this.provider,
+    required this.size,
+    this.fallbackIconSize,
+  });
+
+  final ImageProvider provider;
+  final double size;
+  final double? fallbackIconSize;
+
+  @override
+  Widget build(BuildContext context) {
+    final dpr = MediaQuery.devicePixelRatioOf(context);
+    final cache = (size * dpr).round().clamp(48, 512);
+
+    return ClipOval(
+      child: SizedBox(
+        width: size,
+        height: size,
+        child: Image(
+          image: ResizeImage(provider, width: cache, height: cache),
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          gaplessPlayback: true,
+          filterQuality: FilterQuality.medium,
+          errorBuilder: (_, __, ___) => ColoredBox(
+            color: AppTheme.medicalBlue.withOpacity(0.12),
+            child: Icon(
+              Icons.person,
+              size: fallbackIconSize ?? size * 0.46,
+              color: AppTheme.medicalBlue.withOpacity(0.55),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Cover header (Facebook-style overlapping avatar)
 // ---------------------------------------------------------------------------
 
@@ -686,8 +755,10 @@ class _ProfileCoverHeader extends StatelessWidget {
             (maxWidth * 0.13).clamp(44.0, screenSizeOf(context) == ScreenSize.mobile ? 54.0 : 60.0);
         final coverHeight = (avatarRadius * 2.35).clamp(120.0, 176.0);
         final cameraSize = (avatarRadius * 0.36).clamp(30.0, 38.0);
-        // Reserve space for avatar overlap + camera badge (no negative Stack offsets).
-        final headerBlockHeight = coverHeight + avatarRadius + cameraSize * 0.35;
+        final avatarDiameter = avatarRadius * 2;
+        final frameSize = avatarDiameter + cameraSize * 0.22;
+        final avatarTop = coverHeight - avatarRadius;
+        final headerBlockHeight = avatarTop + frameSize + 8;
         final ring = Border.all(color: theme.colorScheme.surface, width: 4);
 
         return Column(
@@ -708,7 +779,7 @@ class _ProfileCoverHeader extends StatelessWidget {
                     child: _CoverBackground(photoProvider: photoProvider),
                   ),
                   Positioned(
-                    top: coverHeight - avatarRadius,
+                    top: avatarTop,
                     left: 0,
                     right: 0,
                     child: Center(
@@ -819,7 +890,7 @@ class _CoverBackground extends StatelessWidget {
           if (photoProvider != null)
             Opacity(
               opacity: 0.22,
-              child: Image(image: photoProvider!, fit: BoxFit.cover),
+              child: _BoundedFillImage(provider: photoProvider!),
             ),
           DecoratedBox(
             decoration: BoxDecoration(
@@ -859,45 +930,39 @@ class _OverlappingAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = radius * 2;
-    final frameSize = size + cameraSize * 0.25;
+    final frameSide = size + cameraSize * 0.22;
 
     return SizedBox(
-      width: frameSize,
-      height: frameSize,
+      width: frameSide,
+      height: frameSide,
       child: Stack(
+        clipBehavior: Clip.hardEdge,
         alignment: Alignment.center,
-        clipBehavior: Clip.none,
         children: [
           Container(
             width: size,
             height: size,
             decoration: BoxDecoration(shape: BoxShape.circle, border: ring),
-            child: ClipOval(
-              child: SizedBox(
-                width: size,
-                height: size,
-                child: photoProvider != null
-                    ? Image(
-                        image: photoProvider!,
-                        fit: BoxFit.cover,
-                        width: size,
-                        height: size,
-                        gaplessPlayback: true,
-                      )
-                    : ColoredBox(
-                        color: AppTheme.medicalBlue.withOpacity(0.12),
-                        child: Icon(
-                          Icons.person,
-                          size: radius * 0.92,
-                          color: AppTheme.medicalBlue.withOpacity(0.55),
-                        ),
+            child: photoProvider != null
+                ? _BoundedCircleImage(
+                    provider: photoProvider!,
+                    size: size,
+                    fallbackIconSize: radius * 0.92,
+                  )
+                : ClipOval(
+                    child: ColoredBox(
+                      color: AppTheme.medicalBlue.withOpacity(0.12),
+                      child: Icon(
+                        Icons.person,
+                        size: radius * 0.92,
+                        color: AppTheme.medicalBlue.withOpacity(0.55),
                       ),
-              ),
-            ),
+                    ),
+                  ),
           ),
           Positioned(
-            right: frameSize * 0.02,
-            bottom: frameSize * 0.02,
+            right: 2,
+            bottom: 2,
             child: Material(
               elevation: 2,
               color: AppTheme.patientColor,

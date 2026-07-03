@@ -35,8 +35,17 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen> {
   }
 
   double _cropSize(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
-    return math.min(width - 48, 320);
+    final media = MediaQuery.sizeOf(context);
+    return _cropSizeForHeight(media.width, media.height);
+  }
+
+  /// Fits crop circle on web/desktop viewports without vertical overflow.
+  double _cropSizeForHeight(double viewportWidth, double viewportHeight) {
+    final maxByWidth = viewportWidth - 48;
+  // AppBar + hint + zoom + bottom preview panel + safe margins
+    const verticalReserved = 56 + 72 + 88 + 220;
+    final maxByHeight = viewportHeight - verticalReserved;
+    return math.min(maxByWidth, maxByHeight).clamp(140.0, 320.0);
   }
 
   double _baseScale(BuildContext context) {
@@ -98,11 +107,6 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen> {
   Widget build(BuildContext context) {
     _ensureInitialized(context);
     final l10n = AppLocalizations.of(context);
-    final cropSize = _cropSize(context);
-    final baseScale = _baseScale(context);
-    final totalScale = baseScale * _userScale;
-    final displayWidth = widget.image.width * totalScale;
-    final displayHeight = widget.image.height * totalScale;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -124,84 +128,110 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen> {
         ],
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      l10n.cropProfilePhotoHint,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.78),
-                        fontSize: 14,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final media = MediaQuery.sizeOf(context);
+            final cropSize = _cropSizeForHeight(media.width, media.height);
+            final baseScale = profilePhotoBaseScale(
+              image: widget.image,
+              cropSize: cropSize,
+            );
+            final totalScale = baseScale * _userScale;
+            final displayWidth = widget.image.width * totalScale;
+            final displayHeight = widget.image.height * totalScale;
+
+            return Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            l10n.cropProfilePhotoHint,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.78),
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          _CropCanvas(
+                            cropSize: cropSize,
+                            previewBytes: _previewBytes,
+                            displayWidth: displayWidth,
+                            displayHeight: displayHeight,
+                            offset: _offset,
+                            onPan: (delta) => _pan(context, delta),
+                            onScale: (scaleDelta) {
+                              _setUserScale(context, _userScale * scaleDelta);
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          _ZoomControls(
+                            userScale: _userScale,
+                            minScale: _minUserScale,
+                            maxScale: _maxUserScale,
+                            onZoomOut: () =>
+                                _setUserScale(context, _userScale / 1.2),
+                            onZoomIn: () =>
+                                _setUserScale(context, _userScale * 1.2),
+                            onSliderChanged: (value) =>
+                                _setUserScale(context, value),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    _CropCanvas(
-                      cropSize: cropSize,
-                      previewBytes: _previewBytes,
-                      displayWidth: displayWidth,
-                      displayHeight: displayHeight,
-                      offset: _offset,
-                      onPan: (delta) => _pan(context, delta),
-                      onScale: (scaleDelta) {
-                        _setUserScale(context, _userScale * scaleDelta);
-                      },
-                    ),
-                    const SizedBox(height: 24),
-                    _ZoomControls(
-                      userScale: _userScale,
-                      minScale: _minUserScale,
-                      maxScale: _maxUserScale,
-                      onZoomOut: () => _setUserScale(context, _userScale / 1.2),
-                      onZoomIn: () => _setUserScale(context, _userScale * 1.2),
-                      onSliderChanged: (value) => _setUserScale(context, value),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade900,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    l10n.photoPreview,
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.72),
-                      fontWeight: FontWeight.w600,
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade900,
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(24),
                     ),
                   ),
-                  const SizedBox(height: 14),
-                  _CropPreview(
-                    cropSize: cropSize,
-                    previewSize: _previewSize,
-                    previewBytes: _previewBytes,
-                    displayWidth: displayWidth,
-                    displayHeight: displayHeight,
-                    offset: _offset,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        l10n.photoPreview,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.72),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      _CropPreview(
+                        cropSize: cropSize,
+                        previewSize: _previewSize,
+                        previewBytes: _previewBytes,
+                        displayWidth: displayWidth,
+                        displayHeight: displayHeight,
+                        offset: _offset,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        l10n.photoPreviewHint,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.55),
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.photoPreviewHint,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.55),
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -242,7 +272,7 @@ class _CropCanvas extends StatelessWidget {
           }
         },
         child: Stack(
-          clipBehavior: Clip.none,
+          clipBehavior: Clip.hardEdge,
           alignment: Alignment.center,
           children: [
             ClipOval(
