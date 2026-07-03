@@ -2074,7 +2074,13 @@ class AppLocalizationsKu extends AppLocalizations {
   String get addBusinessType => 'زیادکردنی جۆری بازرگانی';
 
   @override
-  String get localizedTypeHint => 'ناوەکە بە کوردی، عەرەبی و ئینگلیزی بنووسە. نەخۆشەکان بەپێی زمانەکەیان دەبینن.';
+  String get localizedTypeHint => 'ناوەکانی کوردی، عەرەبی و ئینگلیزی بنووسە (هەر سێکیان پێویستن). بەکارهێنەران ناوەکە بە زمانە هەڵبژێردراوەکەیان دەبینن.';
+
+  @override
+  String get translationRequired => 'ئەم وەرگێڕانە پێویستە';
+
+  @override
+  String get translationsIncomplete => 'وەرگێڕان کەمە — دەستکاری بکە بۆ زیادکردنی کوردی، عەرەبی و ئینگلیزی';
 
   @override
   String get typeToSearchOrCreate => 'بنووسە بۆ گەڕان یان دروستکردن';

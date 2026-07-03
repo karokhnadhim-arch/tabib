@@ -4,6 +4,7 @@ import '../l10n/app_localizations.dart';
 import '../models/doctor.dart';
 import '../models/provider_catalog_mode.dart';
 import '../models/service_provider_type.dart';
+import '../models/specialty.dart';
 import 'localization_utils.dart';
 
 /// Adaptive UI labels for doctor vs business service providers.
@@ -90,15 +91,16 @@ abstract final class ProviderLabels {
   static String displayCategory(
     BuildContext context,
     AppLocalizations l10n,
-    Doctor provider,
-  ) {
-    if (provider.specialty.name.localized(context).trim().isNotEmpty) {
-      return provider.specialty.name.localized(context);
-    }
+    Doctor provider, {
+    Specialty? catalogSpecialty,
+  }) {
+    final specialty = catalogSpecialty ?? provider.specialty;
+    final localized = specialty.name.localized(context).trim();
+    if (localized.isNotEmpty) return localized;
     if (provider.accountType.isBusiness && provider.businessCategory != null) {
       return businessCategoryLabel(l10n, provider.businessCategory!);
     }
-    return provider.specialty.name.localized(context);
+    return localized;
   }
 
   static String businessCategoryLabel(

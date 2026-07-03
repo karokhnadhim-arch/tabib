@@ -4148,8 +4148,20 @@ abstract class AppLocalizations {
   /// No description provided for @localizedTypeHint.
   ///
   /// In en, this message translates to:
-  /// **'Enter the name in Kurdish, Arabic, and English. Patients see the label in their language.'**
+  /// **'Enter Kurdish, Arabic, and English names (all three required). Users see the label in their selected language.'**
   String get localizedTypeHint;
+
+  /// No description provided for @translationRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'This translation is required'**
+  String get translationRequired;
+
+  /// No description provided for @translationsIncomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing translations — edit to add Kurdish, Arabic, and English'**
+  String get translationsIncomplete;
 
   /// No description provided for @typeToSearchOrCreate.
   ///

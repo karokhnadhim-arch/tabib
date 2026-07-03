@@ -4,6 +4,7 @@ import '../core/constants/firestore_limits.dart';
 import '../core/utils/async_request_cache.dart';
 import '../core/utils/business_type_catalog.dart';
 import '../core/utils/clinic_subscription.dart';
+import '../core/utils/localized_name_utils.dart';
 import '../core/utils/specialty_catalog_utils.dart';
 import '../core/utils/subscription_manager.dart';
 import '../models/account_status.dart';
@@ -73,6 +74,34 @@ class ClinicDataService extends ChangeNotifier {
   Specialty? specialtyById(String id) =>
       BusinessTypeCatalog.byId(_specialties, id);
 
+  /// Resolves the latest catalog specialty/clinic onto a provider snapshot.
+  Doctor hydrateProvider(Doctor doctor) {
+    final specialty = specialtyById(doctor.specialtyId) ?? doctor.specialty;
+    final clinic = clinicById(doctor.clinicId) ?? doctor.clinic;
+    if (specialty == doctor.specialty && clinic == doctor.clinic) {
+      return doctor;
+    }
+    return doctor.copyWith(specialty: specialty, clinic: clinic);
+  }
+
+  void _rehydrateProvidersForSpecialty(String specialtyId) {
+    _doctors = _doctors
+        .map(
+          (d) => d.specialtyId == specialtyId ? hydrateProvider(d) : d,
+        )
+        .toList();
+    for (final entry in _doctorCache.entries.toList()) {
+      if (entry.value.specialtyId == specialtyId) {
+        _doctorCache[entry.key] = hydrateProvider(entry.value);
+      }
+    }
+  }
+
+  void _rehydrateAllProviders() {
+    _doctors = _doctors.map(hydrateProvider).toList();
+    _doctorCache.updateAll((_, doctor) => hydrateProvider(doctor));
+  }
+
   ClinicBackend get backend => _backend;
 
   /// Load specialties + clinics once (cached in backend for Firestore).
@@ -93,6 +122,9 @@ class ClinicDataService extends ChangeNotifier {
       _clinics = results[1] as List<Clinic>;
       await _backend.ensureProviderAccountCodes();
       await refreshProviderLoginIndex();
+      if (_doctors.isNotEmpty) {
+        _rehydrateAllProviders();
+      }
       _catalogLoaded = true;
       notifyListeners();
     } finally {
@@ -145,9 +177,9 @@ class ClinicDataService extends ChangeNotifier {
         loaded = loaded.where((d) => d.isBusiness).toList();
       }
       for (final d in loaded) {
-        _doctorCache[d.id] = d;
+        _doctorCache[d.id] = hydrateProvider(d);
       }
-      _doctors = [..._doctors, ...loaded];
+      _doctors = [..._doctors, ...loaded.map(hydrateProvider)];
       _doctorsCursor = page.nextCursor;
       _hasMoreDoctors = page.hasMore;
     } finally {
@@ -172,14 +204,17 @@ class ClinicDataService extends ChangeNotifier {
       _backend.watchDoctor(doctorId),
       (doctor) {
         if (doctor != null) {
-          _doctorCache[doctor.id] = doctor;
-          final index = _doctors.indexWhere((d) => d.id == doctor.id);
+          final hydrated = hydrateProvider(doctor);
+          _doctorCache[hydrated.id] = hydrated;
+          final index = _doctors.indexWhere((d) => d.id == hydrated.id);
           if (index >= 0) {
-            _doctors[index] = doctor;
+            _doctors[index] = hydrated;
           }
-          _doctorFetchCache.invalidate(doctor.id);
+          _doctorFetchCache.invalidate(hydrated.id);
+          onUpdate(hydrated);
+        } else {
+          onUpdate(null);
         }
-        onUpdate(doctor);
         notifyListeners();
       },
     );
@@ -193,21 +228,27 @@ class ClinicDataService extends ChangeNotifier {
       _doctors.where((d) => d.specialtyId == specialtyId).toList();
 
   Doctor? doctorById(String id) {
-    if (_doctorCache.containsKey(id)) return _doctorCache[id];
-    try {
-      return _doctors.firstWhere((d) => d.id == id);
-    } catch (_) {
-      return null;
+    Doctor? doctor;
+    if (_doctorCache.containsKey(id)) {
+      doctor = _doctorCache[id];
+    } else {
+      try {
+        doctor = _doctors.firstWhere((d) => d.id == id);
+      } catch (_) {
+        return null;
+      }
     }
+    return doctor == null ? null : hydrateProvider(doctor);
   }
 
   void putDoctorInCache(Doctor doctor) {
-    _doctorCache[doctor.id] = doctor;
-    final index = _doctors.indexWhere((d) => d.id == doctor.id);
+    final hydrated = hydrateProvider(doctor);
+    _doctorCache[hydrated.id] = hydrated;
+    final index = _doctors.indexWhere((d) => d.id == hydrated.id);
     if (index >= 0) {
-      _doctors[index] = doctor;
+      _doctors[index] = hydrated;
     }
-    _doctorFetchCache.invalidate(doctor.id);
+    _doctorFetchCache.invalidate(hydrated.id);
     notifyListeners();
   }
 
@@ -270,6 +311,7 @@ class ClinicDataService extends ChangeNotifier {
       (list) {
         _specialties = list;
         _catalogLoaded = true;
+        _rehydrateAllProviders();
         notifyListeners();
       },
     );
@@ -287,6 +329,7 @@ class ClinicDataService extends ChangeNotifier {
   /// Reload specialty catalog after admin creates or edits a business type.
   Future<void> reloadSpecialties() async {
     _specialties = await _backend.fetchSpecialties();
+    _rehydrateAllProviders();
     notifyListeners();
   }
 
@@ -340,6 +383,7 @@ class ClinicDataService extends ChangeNotifier {
     } else {
       _specialties = [..._specialties, specialty];
     }
+    _rehydrateProvidersForSpecialty(specialty.id);
     notifyListeners();
   }
 
@@ -356,6 +400,10 @@ class ClinicDataService extends ChangeNotifier {
     bool isActive = true,
   }) async {
     await ensureCatalogLoaded();
+
+    if (forBusiness && !LocalizedNameUtils.isComplete(name)) {
+      throw ArgumentError('Business types require Kurdish, Arabic, and English names');
+    }
 
     final duplicate = SpecialtyCatalogUtils.findDuplicate(
       _specialties,

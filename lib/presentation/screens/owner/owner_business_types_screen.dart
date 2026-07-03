@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/localized_name_utils.dart';
 import '../../../core/utils/specialty_catalog_utils.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../models/localized_text.dart';
 import '../../../models/specialty.dart';
 import '../../../presentation/widgets/admin_guard.dart';
+import '../../../presentation/widgets/localized_name_form_fields.dart';
 import '../../../presentation/widgets/owner_module_app_bar.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
@@ -41,6 +42,7 @@ class _OwnerBusinessTypesScreenState extends State<OwnerBusinessTypesScreen> {
     final iconController =
         TextEditingController(text: existing?.iconName ?? 'storefront');
     var isActive = existing?.isActive ?? false;
+    final formKey = GlobalKey<FormState>();
 
     final saved = await showDialog<bool>(
       context: context,
@@ -48,36 +50,33 @@ class _OwnerBusinessTypesScreenState extends State<OwnerBusinessTypesScreen> {
         builder: (ctx, setDialogState) => AlertDialog(
           title: Text(isEdit ? l10n.editBusinessType : l10n.addBusinessType),
           content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(l10n.localizedTypeHint),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: ku,
-                  decoration: InputDecoration(labelText: l10n.nameKu),
-                ),
-                TextField(
-                  controller: ar,
-                  decoration: InputDecoration(labelText: l10n.nameAr),
-                ),
-                TextField(
-                  controller: en,
-                  decoration: InputDecoration(labelText: l10n.nameEn),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: iconController,
-                  decoration: InputDecoration(labelText: l10n.iconName),
-                ),
-                SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(l10n.businessTypeActive),
-                  subtitle: Text(l10n.businessTypeActiveHint),
-                  value: isActive,
-                  onChanged: (value) => setDialogState(() => isActive = value),
-                ),
-              ],
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  LocalizedNameFormFields(
+                    kuController: ku,
+                    arController: ar,
+                    enController: en,
+                    requireAll: true,
+                    hint: l10n.localizedTypeHint,
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: iconController,
+                    decoration: InputDecoration(labelText: l10n.iconName),
+                  ),
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(l10n.businessTypeActive),
+                    subtitle: Text(l10n.businessTypeActiveHint),
+                    value: isActive,
+                    onChanged: (value) =>
+                        setDialogState(() => isActive = value),
+                  ),
+                ],
+              ),
             ),
           ),
           actions: [
@@ -86,7 +85,10 @@ class _OwnerBusinessTypesScreenState extends State<OwnerBusinessTypesScreen> {
               child: Text(l10n.cancelQueue),
             ),
             FilledButton(
-              onPressed: () => Navigator.pop(ctx, true),
+              onPressed: () {
+                if (formKey.currentState?.validate() != true) return;
+                Navigator.pop(ctx, true);
+              },
               child: Text(l10n.save),
             ),
           ],
@@ -94,23 +96,36 @@ class _OwnerBusinessTypesScreenState extends State<OwnerBusinessTypesScreen> {
       ),
     );
 
-    if (saved != true || !mounted) return;
+    if (saved != true || !mounted) {
+      ku.dispose();
+      ar.dispose();
+      en.dispose();
+      iconController.dispose();
+      return;
+    }
 
-    final name = LocalizedText(
-      ku: ku.text.trim(),
-      ar: ar.text.trim(),
-      en: en.text.trim(),
+    final iconName = iconController.text.trim().isEmpty
+        ? 'storefront'
+        : iconController.text.trim();
+    final name = LocalizedNameUtils.parseRequired(
+      ku: ku.text,
+      ar: ar.text,
+      en: en.text,
     );
-    if (name.ku.isEmpty && name.ar.isEmpty && name.en.isEmpty) return;
+
+    ku.dispose();
+    ar.dispose();
+    en.dispose();
+    iconController.dispose();
+
+    if (name == null) return;
 
     final data = context.read<ClinicDataService>();
     if (isEdit) {
       await data.saveSpecialty(
         existing.copyWith(
           name: name,
-          iconName: iconController.text.trim().isEmpty
-              ? 'storefront'
-              : iconController.text.trim(),
+          iconName: iconName,
           isActive: isActive,
           isBusinessType: true,
         ),
@@ -136,9 +151,7 @@ class _OwnerBusinessTypesScreenState extends State<OwnerBusinessTypesScreen> {
             forBusiness: true,
           ),
           name: name,
-          iconName: iconController.text.trim().isEmpty
-              ? 'storefront'
-              : iconController.text.trim(),
+          iconName: iconName,
           isBusinessType: true,
           isActive: isActive,
         ),
@@ -184,6 +197,7 @@ class _OwnerBusinessTypesScreenState extends State<OwnerBusinessTypesScreen> {
                   final assigned = data.doctors
                       .where((d) => d.isBusiness && d.specialtyId == type.id)
                       .length;
+                  final incomplete = !type.name.hasAllTranslations;
                   return Card(
                     child: Padding(
                       padding: const EdgeInsets.all(12),
@@ -217,15 +231,35 @@ class _OwnerBusinessTypesScreenState extends State<OwnerBusinessTypesScreen> {
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      '${type.name.en.isNotEmpty ? type.name.en : type.name.ku} • '
-                                      '${l10n.businessTypeAssignedCount(assigned)}',
-                                      maxLines: 2,
+                                      LocalizedNameUtils.catalogSubtitle(
+                                        type.name,
+                                      ),
+                                      maxLines: 3,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         color: Colors.grey.shade600,
                                         fontSize: 13,
                                       ),
                                     ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      l10n.businessTypeAssignedCount(assigned),
+                                      style: TextStyle(
+                                        color: Colors.grey.shade600,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    if (incomplete) ...[
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        l10n.translationsIncomplete,
+                                        style: TextStyle(
+                                          color: Colors.orange.shade800,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
                                   ],
                                 ),
                               ),
@@ -253,6 +287,7 @@ class _OwnerBusinessTypesScreenState extends State<OwnerBusinessTypesScreen> {
                               ),
                               IconButton(
                                 icon: const Icon(Icons.edit_outlined),
+                                tooltip: l10n.editBusinessType,
                                 onPressed: () => _openEditor(existing: type),
                               ),
                             ],

@@ -2074,7 +2074,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get addBusinessType => 'إضافة نوع منشأة';
 
   @override
-  String get localizedTypeHint => 'أدخل الاسم بالكردية والعربية والإنجليزية. يرى المرضى التسمية بلغتهم.';
+  String get localizedTypeHint => 'أدخل الأسماء بالكردية والعربية والإنجليزية (الثلاثة مطلوبة). يرى المستخدمون التسمية بلغتهم المختارة.';
+
+  @override
+  String get translationRequired => 'هذا الترجمة مطلوبة';
+
+  @override
+  String get translationsIncomplete => 'ترجمات ناقصة — عدّل لإضافة الكردية والعربية والإنجليزية';
 
   @override
   String get typeToSearchOrCreate => 'اكتب للبحث أو الإنشاء';

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/utils/localized_name_utils.dart';
 import '../../core/utils/specialty_catalog_utils.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/localized_text.dart';
 import '../../models/service_provider_type.dart';
 import '../../models/specialty.dart';
+import '../../presentation/widgets/localized_name_form_fields.dart';
 import '../../services/clinic_data_service.dart';
 import '../../utils/localization_utils.dart';
 
@@ -85,30 +87,23 @@ class _LocalizedSpecialtyAutocompleteFieldState
     final ku = TextEditingController(text: typed);
     final ar = TextEditingController(text: typed);
     final en = TextEditingController(text: typed);
+    final formKey = GlobalKey<FormState>();
+    final requireAll = _forBusiness;
 
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(_forBusiness ? l10n.addBusinessType : l10n.addSpecialty),
         content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(l10n.localizedTypeHint),
-              const SizedBox(height: 12),
-              TextField(
-                controller: ku,
-                decoration: InputDecoration(labelText: l10n.nameKu),
-              ),
-              TextField(
-                controller: ar,
-                decoration: InputDecoration(labelText: l10n.nameAr),
-              ),
-              TextField(
-                controller: en,
-                decoration: InputDecoration(labelText: l10n.nameEn),
-              ),
-            ],
+          child: Form(
+            key: formKey,
+            child: LocalizedNameFormFields(
+              kuController: ku,
+              arController: ar,
+              enController: en,
+              requireAll: requireAll,
+              hint: l10n.localizedTypeHint,
+            ),
           ),
         ),
         actions: [
@@ -117,21 +112,28 @@ class _LocalizedSpecialtyAutocompleteFieldState
             child: Text(l10n.cancelQueue),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
+            onPressed: () {
+              if (formKey.currentState?.validate() != true) return;
+              Navigator.pop(ctx, true);
+            },
             child: Text(l10n.save),
           ),
         ],
       ),
     );
 
-    if (ok != true || !mounted) return null;
-
-    final name = LocalizedText(
-      ku: ku.text.trim(),
-      ar: ar.text.trim(),
-      en: en.text.trim(),
+    final name = LocalizedNameFormFields.parse(
+      l10n,
+      ku: ku,
+      ar: ar,
+      en: en,
+      requireAll: requireAll,
     );
-    if (name.ku.isEmpty && name.ar.isEmpty && name.en.isEmpty) return null;
+    ku.dispose();
+    ar.dispose();
+    en.dispose();
+
+    if (ok != true || !mounted || name == null) return null;
 
     return context.read<ClinicDataService>().findOrCreateSpecialty(
           name: name,
@@ -239,7 +241,7 @@ class _LocalizedSpecialtyAutocompleteFieldState
                         (s) => ListTile(
                           title: Text(s.name.localized(context)),
                           subtitle: Text(
-                            s.name.en.isNotEmpty ? s.name.en : s.name.ku,
+                            LocalizedNameUtils.catalogSubtitle(s.name),
                             style: const TextStyle(fontSize: 12),
                           ),
                           onTap: () => onSelected(s),

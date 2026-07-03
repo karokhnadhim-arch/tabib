@@ -2074,7 +2074,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addBusinessType => 'Add business type';
 
   @override
-  String get localizedTypeHint => 'Enter the name in Kurdish, Arabic, and English. Patients see the label in their language.';
+  String get localizedTypeHint => 'Enter Kurdish, Arabic, and English names (all three required). Users see the label in their selected language.';
+
+  @override
+  String get translationRequired => 'This translation is required';
+
+  @override
+  String get translationsIncomplete => 'Missing translations — edit to add Kurdish, Arabic, and English';
 
   @override
   String get typeToSearchOrCreate => 'Type to search or create';
