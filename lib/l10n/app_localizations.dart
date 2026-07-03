@@ -3287,6 +3287,60 @@ abstract class AppLocalizations {
   /// **'Secretary management'**
   String get secretaryManagement;
 
+  /// No description provided for @addNewSecretary.
+  ///
+  /// In en, this message translates to:
+  /// **'Add new secretary'**
+  String get addNewSecretary;
+
+  /// No description provided for @resetPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset password'**
+  String get resetPassword;
+
+  /// No description provided for @secretaryPasswordResetSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Secretary password updated successfully'**
+  String get secretaryPasswordResetSuccess;
+
+  /// No description provided for @secretaryPasswordResetEmailSent.
+  ///
+  /// In en, this message translates to:
+  /// **'A password reset link was sent to the secretary'**
+  String get secretaryPasswordResetEmailSent;
+
+  /// No description provided for @resetSecretaryPasswordFirebaseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A password reset email will be sent to the secretary\'s login address.'**
+  String get resetSecretaryPasswordFirebaseHint;
+
+  /// No description provided for @enableAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable account'**
+  String get enableAccount;
+
+  /// No description provided for @disableAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable account'**
+  String get disableAccount;
+
+  /// No description provided for @unassignedSecretaries.
+  ///
+  /// In en, this message translates to:
+  /// **'Unassigned secretaries'**
+  String get unassignedSecretaries;
+
+  /// No description provided for @noSecretariesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No secretaries yet'**
+  String get noSecretariesYet;
+
   /// No description provided for @patientManagement.
   ///
   /// In en, this message translates to:

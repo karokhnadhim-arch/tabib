@@ -1645,6 +1645,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get secretaryManagement => 'Secretary management';
 
   @override
+  String get addNewSecretary => 'Add new secretary';
+
+  @override
+  String get resetPassword => 'Reset password';
+
+  @override
+  String get secretaryPasswordResetSuccess => 'Secretary password updated successfully';
+
+  @override
+  String get secretaryPasswordResetEmailSent => 'A password reset link was sent to the secretary';
+
+  @override
+  String get resetSecretaryPasswordFirebaseHint => 'A password reset email will be sent to the secretary\'s login address.';
+
+  @override
+  String get enableAccount => 'Enable account';
+
+  @override
+  String get disableAccount => 'Disable account';
+
+  @override
+  String get unassignedSecretaries => 'Unassigned secretaries';
+
+  @override
+  String get noSecretariesYet => 'No secretaries yet';
+
+  @override
   String get patientManagement => 'Patient management';
 
   @override

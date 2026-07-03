@@ -64,6 +64,9 @@ class FirebaseAuthService {
   Future<void> updatePassword(String newPassword) =>
       _auth.currentUser!.updatePassword(newPassword);
 
+  Future<void> sendPasswordResetEmail({required String email}) =>
+      _auth.sendPasswordResetEmail(email: email);
+
   Future<void> reauthenticateWithPassword({
     required String email,
     required String password,

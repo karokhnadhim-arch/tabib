@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/auth/admin_permissions.dart';
 import '../../core/utils/account_code_resolver.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/admin_doctor_staff_resolver.dart';
@@ -15,6 +16,7 @@ import '../../utils/account_status_labels.dart';
 import '../../utils/localization_utils.dart';
 import 'admin_secretary_form_dialog.dart';
 import 'admin_transfer_secretary_dialog.dart';
+import 'owner_secretary_actions.dart';
 
 /// Secretaries assigned to one doctor — minimal internal staff records only.
 class AdminDoctorSecretariesSection extends StatelessWidget {
@@ -177,6 +179,7 @@ class AdminDoctorSecretariesSection extends StatelessWidget {
             else if (isWide)
               _SecretaryTable(
                 secretaries: secretaries,
+                doctorId: doctorId,
                 onEdit: (s) => AdminSecretaryFormDialog.show(
                   context,
                   doctorId: doctorId,
@@ -185,6 +188,8 @@ class AdminDoctorSecretariesSection extends StatelessWidget {
                 onDelete: (s) => _confirmDelete(context, s),
                 onChangeStatus: (s) => _pickStatus(context, s),
                 onTransfer: (s) => _transfer(context, s),
+                onResetPassword: (s) =>
+                    OwnerSecretaryActions.resetPassword(context, s),
               )
             else
               ...secretaries.map(
@@ -199,6 +204,8 @@ class AdminDoctorSecretariesSection extends StatelessWidget {
                   onDelete: () => _confirmDelete(context, s),
                   onChangeStatus: () => _pickStatus(context, s),
                   onTransfer: () => _transfer(context, s),
+                  onResetPassword: () =>
+                      OwnerSecretaryActions.resetPassword(context, s),
                 ),
               ),
           ],
@@ -216,6 +223,7 @@ class _SecretaryCard extends StatelessWidget {
     required this.onDelete,
     required this.onChangeStatus,
     required this.onTransfer,
+    required this.onResetPassword,
   });
 
   final UserAccount secretary;
@@ -224,10 +232,13 @@ class _SecretaryCard extends StatelessWidget {
   final VoidCallback onDelete;
   final VoidCallback onChangeStatus;
   final VoidCallback onTransfer;
+  final VoidCallback onResetPassword;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final auth = context.watch<AuthService>();
+    final canReset = AdminPermissions.canResetPasswords(auth);
     final name = secretary.name.localized(context);
 
     return Card(
@@ -310,6 +321,12 @@ class _SecretaryCard extends StatelessWidget {
                   icon: const Icon(Icons.tune_outlined, size: 18),
                   label: Text(l10n.changeAccountStatus),
                 ),
+                if (canReset)
+                  TextButton.icon(
+                    onPressed: onResetPassword,
+                    icon: const Icon(Icons.lock_reset_outlined, size: 18),
+                    label: Text(l10n.resetPassword),
+                  ),
               ],
             ),
           ],
@@ -322,21 +339,27 @@ class _SecretaryCard extends StatelessWidget {
 class _SecretaryTable extends StatelessWidget {
   const _SecretaryTable({
     required this.secretaries,
+    required this.doctorId,
     required this.onEdit,
     required this.onDelete,
     required this.onChangeStatus,
     required this.onTransfer,
+    required this.onResetPassword,
   });
 
   final List<UserAccount> secretaries;
+  final String doctorId;
   final Future<void> Function(UserAccount) onEdit;
   final Future<void> Function(UserAccount) onDelete;
   final Future<void> Function(UserAccount) onChangeStatus;
   final Future<void> Function(UserAccount) onTransfer;
+  final Future<void> Function(UserAccount) onResetPassword;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final auth = context.watch<AuthService>();
+    final canReset = AdminPermissions.canResetPasswords(auth);
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -392,6 +415,12 @@ class _SecretaryTable extends StatelessWidget {
                       icon: const Icon(Icons.tune_outlined),
                       onPressed: () => onChangeStatus(s),
                     ),
+                    if (canReset)
+                      IconButton(
+                        tooltip: l10n.resetPassword,
+                        icon: const Icon(Icons.lock_reset_outlined),
+                        onPressed: () => onResetPassword(s),
+                      ),
                   ],
                 ),
               ),

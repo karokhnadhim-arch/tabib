@@ -1645,6 +1645,33 @@ class AppLocalizationsAr extends AppLocalizations {
   String get secretaryManagement => 'إدارة السكرتارية';
 
   @override
+  String get addNewSecretary => 'إضافة سكرتير جديد';
+
+  @override
+  String get resetPassword => 'إعادة تعيين كلمة المرور';
+
+  @override
+  String get secretaryPasswordResetSuccess => 'تم تحديث كلمة مرور السكرتير بنجاح';
+
+  @override
+  String get secretaryPasswordResetEmailSent => 'تم إرسال رابط إعادة تعيين كلمة المرور إلى السكرتير';
+
+  @override
+  String get resetSecretaryPasswordFirebaseHint => 'سيتم إرسال بريد إلكتروني لإعادة تعيين كلمة المرور إلى عنوان تسجيل دخول السكرتير.';
+
+  @override
+  String get enableAccount => 'تفعيل الحساب';
+
+  @override
+  String get disableAccount => 'تعطيل الحساب';
+
+  @override
+  String get unassignedSecretaries => 'سكرتارية غير معيّنة';
+
+  @override
+  String get noSecretariesYet => 'لا يوجد سكرتارية بعد';
+
+  @override
   String get patientManagement => 'إدارة المرضى';
 
   @override

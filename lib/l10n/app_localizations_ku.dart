@@ -1645,6 +1645,33 @@ class AppLocalizationsKu extends AppLocalizations {
   String get secretaryManagement => 'بەڕێوەبردنی سکرتێرەکان';
 
   @override
+  String get addNewSecretary => 'سکرتێری نوێ زیاد بکە';
+
+  @override
+  String get resetPassword => 'ڕێکخستنەوەی وشەی نهێنی';
+
+  @override
+  String get secretaryPasswordResetSuccess => 'وشەی نهێنی سکرتێر بە سەرکەوتوویی نوێکرایەوە';
+
+  @override
+  String get secretaryPasswordResetEmailSent => 'بەستەری ڕێکخستنەوەی وشەی نهێنی نێردرا بۆ سکرتێر';
+
+  @override
+  String get resetSecretaryPasswordFirebaseHint => 'ئیمەیڵێکی ڕێکخستنەوەی وشەی نهێنی دەنێردرێت بۆ ناونیشانی چوونەژوورەوەی سکرتێر.';
+
+  @override
+  String get enableAccount => 'چالاککردنی هەژمار';
+
+  @override
+  String get disableAccount => 'ناچالاککردنی هەژمار';
+
+  @override
+  String get unassignedSecretaries => 'سکرتێرە دیارینەکراوەکان';
+
+  @override
+  String get noSecretariesYet => 'هێشتا سکرتێر نییە';
+
+  @override
   String get patientManagement => 'بەڕێوەبردنی نەخۆشەکان';
 
   @override

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/privacy/system_owner_privacy.dart';
 import '../../../core/auth/admin_permissions.dart';
+import '../../../core/auth/admin_routes.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/account_status.dart';
@@ -12,6 +13,7 @@ import '../../../presentation/widgets/account_status_badge.dart';
 import '../../../presentation/widgets/admin_guard.dart';
 import '../../../presentation/widgets/owner_module_app_bar.dart';
 import '../../../presentation/widgets/doctor_secretaries_summary.dart';
+import '../../../presentation/widgets/owner_secretaries_grouped_view.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/backend/clinic_backend.dart';
 import '../../../services/clinic_data_service.dart';
@@ -38,6 +40,9 @@ class _OwnerStaffListScreenState extends State<OwnerStaffListScreen> {
       final data = context.read<ClinicDataService>();
       await data.ensureCatalogLoaded();
       data.startRealtimeCatalog();
+      if (widget.filter == OwnerStaffFilter.secretaries) {
+        await data.loadDoctors(refresh: true);
+      }
     });
   }
 
@@ -46,7 +51,7 @@ class _OwnerStaffListScreenState extends State<OwnerStaffListScreen> {
       case OwnerStaffFilter.doctors:
         return l10n.viewAllDoctors;
       case OwnerStaffFilter.secretaries:
-        return l10n.viewAllSecretaries;
+        return l10n.secretaryManagement;
       case OwnerStaffFilter.patients:
         return l10n.managePatients;
       case OwnerStaffFilter.all:
@@ -145,10 +150,23 @@ class _OwnerStaffListScreenState extends State<OwnerStaffListScreen> {
 
     final backend = context.read<ClinicBackend>();
     final clinicData = context.watch<ClinicDataService>();
+    final isSecretariesView = widget.filter == OwnerStaffFilter.secretaries;
+    final canAddSecretary =
+        isSecretariesView && AdminPermissions.canCreateSecretaries(auth);
 
     return AdminGuard(
       child: Scaffold(
         appBar: ownerModuleAppBar(context, title: _title(l10n)),
+        floatingActionButton: canAddSecretary
+            ? FloatingActionButton.extended(
+                onPressed: () => context.push(
+                  '${AdminRoutes.platformPrefix}/create-secretary',
+                ),
+                icon: const Icon(Icons.person_add_alt_1_outlined),
+                label: Text(l10n.addNewSecretary),
+                backgroundColor: AppTheme.primaryDark,
+              )
+            : null,
         body: Column(
           children: [
             SizedBox(
@@ -189,7 +207,19 @@ class _OwnerStaffListScreenState extends State<OwnerStaffListScreen> {
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (accounts.isEmpty) {
-                    return Center(child: Text(l10n.noStaffAccounts));
+                    return Center(
+                      child: Text(
+                        isSecretariesView
+                            ? l10n.noSecretariesYet
+                            : l10n.noStaffAccounts,
+                      ),
+                    );
+                  }
+                  if (isSecretariesView) {
+                    return OwnerSecretariesGroupedView(
+                      secretaries: accounts,
+                      statusFilter: _statusFilter,
+                    );
                   }
                   return ListView.builder(
                     padding: const EdgeInsets.all(16),

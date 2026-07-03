@@ -928,6 +928,50 @@ class AuthService extends ChangeNotifier {
     return null;
   }
 
+  /// Demo mode sets [newPassword] directly. Firebase mode sends a reset email
+  /// to the secretary's auth address (client SDK cannot set another user's password).
+  Future<String?> resetSecretaryPassword({
+    required String secretaryId,
+    String? newPassword,
+  }) async {
+    if (!hasCapability(AdminCapability.resetPasswords)) return 'unauthorized';
+
+    final staff = await _backend.fetchStaff();
+    final account = staff.where((s) => s.id == secretaryId).firstOrNull;
+    if (account == null || account.role != UserRole.secretary) return 'error';
+    if (!PermissionPolicy.canModifyAccount(_currentUser, account)) {
+      return 'unauthorized';
+    }
+
+    final loginMethod = account.email != null && account.email!.trim().isNotEmpty
+        ? StaffLoginMethod.email
+        : StaffLoginMethod.phone;
+    final authEmail = StaffAuthIdentifiers.resolveAuthEmailForAccount(
+      loginMethod: loginMethod,
+      email: account.email,
+      phone: account.phone,
+    );
+    if (authEmail == null) return 'invalid_credentials';
+
+    if (_demoMode) {
+      if (newPassword == null || newPassword.length < 6) return 'weak_password';
+      await _backend.upsertStaff(
+        account,
+        password: newPassword,
+        authEmail: authEmail,
+      );
+      return null;
+    }
+
+    try {
+      await _firebaseAuth!.sendPasswordResetEmail(email: authEmail);
+      return 'password_reset_email_sent';
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') return 'invalid_credentials';
+      return e.message ?? e.code;
+    }
+  }
+
   /// Admin-only: delete a secretary account.
   Future<String?> deleteSecretaryAccount(String secretaryId) async {
     if (!hasCapability(AdminCapability.deleteAccounts)) return 'unauthorized';
