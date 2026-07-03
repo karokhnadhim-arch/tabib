@@ -84,6 +84,16 @@ class ClinicDataService extends ChangeNotifier {
     return doctor.copyWith(specialty: specialty, clinic: clinic);
   }
 
+  /// Lookup a doctor or business provider by permanent account code (DR-/BZ-).
+  Future<Doctor?> findProviderByAccountCode(String accountCode) async {
+    await ensureCatalogLoaded();
+    final doctor = await _backend.findDoctorByAccountCode(accountCode);
+    if (doctor == null) return null;
+    final hydrated = hydrateProvider(doctor);
+    putDoctorInCache(hydrated);
+    return hydrated;
+  }
+
   void _rehydrateProvidersForSpecialty(String specialtyId) {
     _doctors = _doctors
         .map(

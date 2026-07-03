@@ -1104,6 +1104,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get doctorAccountCode => 'رمز حساب الطبيب';
 
   @override
+  String get doctorAccountCodeRequired => 'أدخل رمز حساب صالحاً وتحقق منه';
+
+  @override
+  String get invalidDoctorAccountCode => 'لم يتم العثور على مقدم خدمة بهذا الرمز.';
+
+  @override
+  String get accountCodeFormatInvalid => 'أدخل رمزاً صالحاً (مثل DR-10025 أو BZ-10001).';
+
+  @override
+  String get verifyAccountCode => 'تحقق';
+
+  @override
+  String get secretaryLinkProviderPreview => 'تأكيد مقدم الخدمة المرتبط';
+
+  @override
   String doctorAccountCodeLabel(String code) {
     return 'رمز حساب الطبيب: $code';
   }

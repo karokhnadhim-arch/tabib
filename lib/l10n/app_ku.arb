@@ -380,6 +380,11 @@
   "adminDoctorSearchHint": "ناو، بوار، نۆرینگە، مۆبایل، ئیمەیڵ، یان کۆدی هەژمار (وەک DR-10025)...",
   "accountCode": "کۆدی هەژمار",
   "doctorAccountCode": "کۆدی هەژماری دکتۆر",
+  "doctorAccountCodeRequired": "کۆدی هەژمارێکی دروست بنووسە و پشتڕاستی بکەرەوە",
+  "invalidDoctorAccountCode": "هیچ دابینکەرێک بەم کۆدە نەدۆزرایەوە.",
+  "accountCodeFormatInvalid": "کۆدێکی دروست بنووسە (وەک DR-10025 یان BZ-10001).",
+  "verifyAccountCode": "پشتڕاستکردنەوە",
+  "secretaryLinkProviderPreview": "دڵنیابوونەوە لە دابینکەری بەستراو",
   "doctorAccountCodeLabel": "کۆدی هەژماری دکتۆر: {code}",
   "@doctorAccountCodeLabel": {
     "placeholders": {

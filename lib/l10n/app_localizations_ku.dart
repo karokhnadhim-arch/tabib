@@ -1104,6 +1104,21 @@ class AppLocalizationsKu extends AppLocalizations {
   String get doctorAccountCode => 'کۆدی هەژماری دکتۆر';
 
   @override
+  String get doctorAccountCodeRequired => 'کۆدی هەژمارێکی دروست بنووسە و پشتڕاستی بکەرەوە';
+
+  @override
+  String get invalidDoctorAccountCode => 'هیچ دابینکەرێک بەم کۆدە نەدۆزرایەوە.';
+
+  @override
+  String get accountCodeFormatInvalid => 'کۆدێکی دروست بنووسە (وەک DR-10025 یان BZ-10001).';
+
+  @override
+  String get verifyAccountCode => 'پشتڕاستکردنەوە';
+
+  @override
+  String get secretaryLinkProviderPreview => 'دڵنیابوونەوە لە دابینکەری بەستراو';
+
+  @override
   String doctorAccountCodeLabel(String code) {
     return 'کۆدی هەژماری دکتۆر: $code';
   }

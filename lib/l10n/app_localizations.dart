@@ -2249,6 +2249,36 @@ abstract class AppLocalizations {
   /// **'Doctor account code'**
   String get doctorAccountCode;
 
+  /// No description provided for @doctorAccountCodeRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter and verify a valid provider account code'**
+  String get doctorAccountCodeRequired;
+
+  /// No description provided for @invalidDoctorAccountCode.
+  ///
+  /// In en, this message translates to:
+  /// **'No provider found with this account code.'**
+  String get invalidDoctorAccountCode;
+
+  /// No description provided for @accountCodeFormatInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid account code (e.g. DR-10025 or BZ-10001).'**
+  String get accountCodeFormatInvalid;
+
+  /// No description provided for @verifyAccountCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get verifyAccountCode;
+
+  /// No description provided for @secretaryLinkProviderPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm linked provider'**
+  String get secretaryLinkProviderPreview;
+
   /// No description provided for @doctorAccountCodeLabel.
   ///
   /// In en, this message translates to:

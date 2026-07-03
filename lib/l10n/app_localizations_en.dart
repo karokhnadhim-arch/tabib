@@ -1104,6 +1104,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get doctorAccountCode => 'Doctor account code';
 
   @override
+  String get doctorAccountCodeRequired => 'Enter and verify a valid provider account code';
+
+  @override
+  String get invalidDoctorAccountCode => 'No provider found with this account code.';
+
+  @override
+  String get accountCodeFormatInvalid => 'Enter a valid account code (e.g. DR-10025 or BZ-10001).';
+
+  @override
+  String get verifyAccountCode => 'Verify';
+
+  @override
+  String get secretaryLinkProviderPreview => 'Confirm linked provider';
+
+  @override
   String doctorAccountCodeLabel(String code) {
     return 'Doctor Account Code: $code';
   }

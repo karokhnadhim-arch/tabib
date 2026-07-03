@@ -6,12 +6,13 @@ import '../../../core/auth/admin_permissions.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/staff_auth_identifiers.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../models/doctor.dart';
 import '../../../presentation/widgets/admin_guard.dart';
 import '../../../presentation/widgets/owner_module_app_bar.dart';
+import '../../../presentation/widgets/secretary_doctor_account_code_linker.dart';
 import '../../../presentation/widgets/staff_account_login_fields.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
-import '../../../utils/localization_utils.dart';
 import '../../../widgets/auth/auth_text_field.dart';
 
 class CreateSecretaryScreen extends StatefulWidget {
@@ -29,17 +30,16 @@ class _CreateSecretaryScreenState extends State<CreateSecretaryScreen> {
   final _passwordController = TextEditingController();
 
   StaffLoginMethod _loginMethod = StaffLoginMethod.phone;
-  String? _linkedDoctorId;
+  Doctor? _linkedDoctor;
   bool _loading = false;
   String? _error;
+  String? _linkValidationError;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final data = context.read<ClinicDataService>();
-      await data.ensureCatalogLoaded();
-      await data.loadDoctors(refresh: true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ClinicDataService>().ensureCatalogLoaded();
     });
   }
 
@@ -54,14 +54,19 @@ class _CreateSecretaryScreenState extends State<CreateSecretaryScreen> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    if (_linkedDoctorId == null) {
-      setState(() => _error = AppLocalizations.of(context).linkedDoctorRequired);
+
+    if (_linkedDoctor == null) {
+      setState(() {
+        _linkValidationError =
+            AppLocalizations.of(context).doctorAccountCodeRequired;
+      });
       return;
     }
 
     setState(() {
       _loading = true;
       _error = null;
+      _linkValidationError = null;
     });
 
     final auth = context.read<AuthService>();
@@ -72,7 +77,7 @@ class _CreateSecretaryScreenState extends State<CreateSecretaryScreen> {
       email: _emailController.text.trim(),
       phone: _phoneController.text.trim(),
       password: _passwordController.text,
-      linkedDoctorId: _linkedDoctorId!,
+      linkedDoctorId: _linkedDoctor!.id,
     );
 
     if (!mounted) return;
@@ -107,9 +112,6 @@ class _CreateSecretaryScreenState extends State<CreateSecretaryScreen> {
     if (!AdminPermissions.canCreateSecretaries(auth)) {
       return const SizedBox.shrink();
     }
-    final data = context.watch<ClinicDataService>();
-
-    _linkedDoctorId ??= data.doctors.isNotEmpty ? data.doctors.first.id : null;
 
     return AdminGuard(
       child: Scaffold(
@@ -121,6 +123,17 @@ class _CreateSecretaryScreenState extends State<CreateSecretaryScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                SecretaryDoctorAccountCodeLinker(
+                  doctor: _linkedDoctor,
+                  errorText: _linkValidationError,
+                  onDoctorChanged: (doctor) {
+                    setState(() {
+                      _linkedDoctor = doctor;
+                      if (doctor != null) _linkValidationError = null;
+                    });
+                  },
+                ),
+                const SizedBox(height: 20),
                 AuthTextField(
                   controller: _nameController,
                   label: l10n.fullName,
@@ -138,25 +151,6 @@ class _CreateSecretaryScreenState extends State<CreateSecretaryScreen> {
                   phoneController: _phoneController,
                   passwordController: _passwordController,
                 ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  value: _linkedDoctorId,
-                  decoration: InputDecoration(
-                    labelText: l10n.linkedDoctor,
-                    prefixIcon: const Icon(Icons.link),
-                  ),
-                  items: data.doctors
-                      .map(
-                        (d) => DropdownMenuItem(
-                          value: d.id,
-                          child: Text(d.name.localized(context)),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (v) => setState(() => _linkedDoctorId = v),
-                  validator: (v) =>
-                      v == null ? l10n.linkedDoctorRequired : null,
-                ),
                 if (_error != null) ...[
                   const SizedBox(height: 12),
                   Text(
@@ -167,7 +161,7 @@ class _CreateSecretaryScreenState extends State<CreateSecretaryScreen> {
                 ],
                 const SizedBox(height: 24),
                 FilledButton(
-                  onPressed: _loading ? null : _submit,
+                  onPressed: _loading || _linkedDoctor == null ? null : _submit,
                   style: FilledButton.styleFrom(
                     backgroundColor: AppTheme.primaryDark,
                     minimumSize: const Size.fromHeight(52),

@@ -415,6 +415,11 @@
   "adminDoctorSearchHint": "Name, specialty, clinic, mobile, email, or account code (e.g. DR-10025)...",
   "accountCode": "Account code",
   "doctorAccountCode": "Doctor account code",
+  "doctorAccountCodeRequired": "Enter and verify a valid provider account code",
+  "invalidDoctorAccountCode": "No provider found with this account code.",
+  "accountCodeFormatInvalid": "Enter a valid account code (e.g. DR-10025 or BZ-10001).",
+  "verifyAccountCode": "Verify",
+  "secretaryLinkProviderPreview": "Confirm linked provider",
   "doctorAccountCodeLabel": "Doctor Account Code: {code}",
   "@doctorAccountCodeLabel": {
     "placeholders": {

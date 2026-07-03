@@ -380,6 +380,11 @@
   "adminDoctorSearchHint": "الاسم، التخصص، العيادة، الجوال، البريد، أو رمز الحساب (مثل DR-10025)...",
   "accountCode": "رمز الحساب",
   "doctorAccountCode": "رمز حساب الطبيب",
+  "doctorAccountCodeRequired": "أدخل رمز حساب صالحاً وتحقق منه",
+  "invalidDoctorAccountCode": "لم يتم العثور على مقدم خدمة بهذا الرمز.",
+  "accountCodeFormatInvalid": "أدخل رمزاً صالحاً (مثل DR-10025 أو BZ-10001).",
+  "verifyAccountCode": "تحقق",
+  "secretaryLinkProviderPreview": "تأكيد مقدم الخدمة المرتبط",
   "doctorAccountCodeLabel": "رمز حساب الطبيب: {code}",
   "@doctorAccountCodeLabel": {
     "placeholders": {
