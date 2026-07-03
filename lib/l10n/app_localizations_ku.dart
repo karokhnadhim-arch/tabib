@@ -2086,6 +2086,24 @@ class AppLocalizationsKu extends AppLocalizations {
   String get typeToSearchOrCreate => 'بنووسە بۆ گەڕان یان دروستکردن';
 
   @override
+  String get businessTypeSearchHint => 'لانیکەم ٢ پیت بنووسە بۆ گەڕان، یان جۆرێکی دواتر بەکارهاتوو هەڵبژێرە.';
+
+  @override
+  String get specialtySearchHint => 'لانیکەم ٢ پیت بنووسە بۆ گەڕان لە پسپۆڕییەکان.';
+
+  @override
+  String get noBusinessTypeFound => 'هیچ جۆرێکی بازرگانی نەدۆزرایەوە.';
+
+  @override
+  String get noSpecialtyFound => 'هیچ پسپۆڕییەک نەدۆزرایەوە.';
+
+  @override
+  String get createNewBusinessType => '+ جۆری بازرگانی نوێ دروست بکە';
+
+  @override
+  String get recentlyUsedBusinessTypes => 'دواتر بەکارهاتوو';
+
+  @override
   String createNewType(String name) {
     return 'دروستکردنی \"$name\"';
   }

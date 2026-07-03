@@ -801,6 +801,12 @@
   "translationRequired": "This translation is required",
   "translationsIncomplete": "Missing translations — edit to add Kurdish, Arabic, and English",
   "typeToSearchOrCreate": "Type to search or create",
+  "businessTypeSearchHint": "Type at least 2 characters to search, or pick a recently used type below.",
+  "specialtySearchHint": "Type at least 2 characters to search specialties.",
+  "noBusinessTypeFound": "No Business Type found.",
+  "noSpecialtyFound": "No specialty found.",
+  "createNewBusinessType": "+ Create New Business Type",
+  "recentlyUsedBusinessTypes": "Recently used",
   "createNewType": "Create \"{name}\"",
   "@createNewType": {
     "placeholders": {

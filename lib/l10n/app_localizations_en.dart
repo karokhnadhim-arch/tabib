@@ -2086,6 +2086,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get typeToSearchOrCreate => 'Type to search or create';
 
   @override
+  String get businessTypeSearchHint => 'Type at least 2 characters to search, or pick a recently used type below.';
+
+  @override
+  String get specialtySearchHint => 'Type at least 2 characters to search specialties.';
+
+  @override
+  String get noBusinessTypeFound => 'No Business Type found.';
+
+  @override
+  String get noSpecialtyFound => 'No specialty found.';
+
+  @override
+  String get createNewBusinessType => '+ Create New Business Type';
+
+  @override
+  String get recentlyUsedBusinessTypes => 'Recently used';
+
+  @override
   String createNewType(String name) {
     return 'Create \"$name\"';
   }

@@ -71,15 +71,29 @@ abstract final class SpecialtyCatalogUtils {
 
   static List<Specialty> filterQuery(
     List<Specialty> catalog,
-    String query,
-  ) {
+    String query, {
+    int? limit,
+  }) {
     final q = normalizeToken(query);
-    if (q.isEmpty) return catalog;
-    return catalog.where((s) {
-      final n = s.name;
-      return normalizeToken(n.ku).contains(q) ||
+    if (q.isEmpty) return limit == null ? catalog : catalog.take(limit).toList();
+
+    final results = <Specialty>[];
+    for (final specialty in catalog) {
+      final n = specialty.name;
+      final matches = normalizeToken(n.ku).contains(q) ||
           normalizeToken(n.ar).contains(q) ||
           normalizeToken(n.en).contains(q);
-    }).toList();
+      if (!matches) continue;
+      results.add(specialty);
+      if (limit != null && results.length >= limit) break;
+    }
+    return results;
   }
+
+  /// Active catalog entries for an account type (cached-friendly single pass).
+  static List<Specialty> activeForAccountType(
+    List<Specialty> catalog,
+    bool forBusiness,
+  ) =>
+      forAccountType(catalog, forBusiness).where((s) => s.isActive).toList();
 }

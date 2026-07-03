@@ -4169,6 +4169,42 @@ abstract class AppLocalizations {
   /// **'Type to search or create'**
   String get typeToSearchOrCreate;
 
+  /// No description provided for @businessTypeSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type at least 2 characters to search, or pick a recently used type below.'**
+  String get businessTypeSearchHint;
+
+  /// No description provided for @specialtySearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type at least 2 characters to search specialties.'**
+  String get specialtySearchHint;
+
+  /// No description provided for @noBusinessTypeFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Business Type found.'**
+  String get noBusinessTypeFound;
+
+  /// No description provided for @noSpecialtyFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No specialty found.'**
+  String get noSpecialtyFound;
+
+  /// No description provided for @createNewBusinessType.
+  ///
+  /// In en, this message translates to:
+  /// **'+ Create New Business Type'**
+  String get createNewBusinessType;
+
+  /// No description provided for @recentlyUsedBusinessTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Recently used'**
+  String get recentlyUsedBusinessTypes;
+
   /// No description provided for @createNewType.
   ///
   /// In en, this message translates to:

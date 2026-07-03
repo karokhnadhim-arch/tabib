@@ -21,6 +21,7 @@ import 'services/backend/clinic_backend.dart';
 import 'services/backend/firestore_clinic_backend.dart';
 import 'services/backend/in_memory_clinic_backend.dart';
 import 'services/clinic_data_service.dart';
+import 'services/business_type_usage_service.dart';
 import 'services/favorites_service.dart';
 import 'services/firebase_bootstrap.dart';
 import 'services/locale_service.dart';
@@ -63,6 +64,7 @@ class _TabibAppState extends State<TabibApp> {
   late final ThemeService _themeService;
   late final UserPreferencesService _userPreferencesService;
   late final FavoritesService _favoritesService;
+  late final BusinessTypeUsageService _businessTypeUsageService;
   late final AppointmentRepository _appointmentRepository;
   late final PrescriptionRepository _prescriptionRepository;
   late final NotificationRepository _notificationRepository;
@@ -110,6 +112,7 @@ class _TabibAppState extends State<TabibApp> {
     _themeService = ThemeService();
     _userPreferencesService = UserPreferencesService();
     _favoritesService = FavoritesService();
+    _businessTypeUsageService = BusinessTypeUsageService()..load();
     _authService.addListener(_onAuthChanged);
     _appointmentProvider = AppointmentProvider(repository: _appointmentRepository);
     _prescriptionProvider = PrescriptionProvider(repository: _prescriptionRepository);
@@ -157,6 +160,7 @@ class _TabibAppState extends State<TabibApp> {
         ChangeNotifierProvider.value(value: _themeService),
         ChangeNotifierProvider.value(value: _userPreferencesService),
         ChangeNotifierProvider.value(value: _favoritesService),
+        ChangeNotifierProvider.value(value: _businessTypeUsageService),
         ChangeNotifierProvider.value(value: _appointmentProvider),
         ChangeNotifierProvider.value(value: _prescriptionProvider),
         ChangeNotifierProvider.value(value: _notificationProvider),

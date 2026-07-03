@@ -2086,6 +2086,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get typeToSearchOrCreate => 'اكتب للبحث أو الإنشاء';
 
   @override
+  String get businessTypeSearchHint => 'اكتب حرفين على الأقل للبحث، أو اختر نوعاً مستخدماً مؤخراً.';
+
+  @override
+  String get specialtySearchHint => 'اكتب حرفين على الأقل للبحث في التخصصات.';
+
+  @override
+  String get noBusinessTypeFound => 'لم يتم العثور على نوع منشأة.';
+
+  @override
+  String get noSpecialtyFound => 'لم يتم العثور على تخصص.';
+
+  @override
+  String get createNewBusinessType => '+ إنشاء نوع منشأة جديد';
+
+  @override
+  String get recentlyUsedBusinessTypes => 'المستخدمة مؤخراً';
+
+  @override
   String createNewType(String name) {
     return 'إنشاء \"$name\"';
   }
