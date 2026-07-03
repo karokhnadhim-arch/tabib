@@ -1239,7 +1239,11 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
 
                     contentPadding: EdgeInsets.zero,
 
-                    title: Text(l10n.availableTodayToggle),
+                    title: Text(
+                      l10n.availableTodayToggle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
 
                     subtitle: Text(
 
@@ -1248,6 +1252,8 @@ class _DoctorProfileEditScreenState extends State<DoctorProfileEditScreen> {
                           ? l10n.availableToday
 
                           : l10n.unavailable,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
 
                     ),
 

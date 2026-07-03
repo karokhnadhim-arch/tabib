@@ -6,6 +6,7 @@ import '../../core/auth/admin_permissions.dart';
 import '../../core/auth/admin_routes.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/account_code_resolver.dart';
+import '../../core/widgets/responsive_scaffold.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/account_status.dart';
 import '../../models/doctor.dart';
@@ -102,31 +103,30 @@ class _DoctorSecretaryGroup extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        doctorName,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        l10n.secretariesCount(secretaries.length),
-                        style: TextStyle(color: Colors.grey.shade600),
-                      ),
-                      if (accountCode != null) ...[
-                        const SizedBox(height: 8),
-                        AccountCodeBadge(code: accountCode, compact: true),
-                      ],
-                    ],
+            ResponsiveHeaderRow(
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    doctorName,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
+                  const SizedBox(height: 4),
+                  Text(
+                    l10n.secretariesCount(secretaries.length),
+                    style: TextStyle(color: Colors.grey.shade600),
+                  ),
+                  if (accountCode != null) ...[
+                    const SizedBox(height: 8),
+                    AccountCodeBadge(code: accountCode, compact: true),
+                  ],
+                ],
+              ),
+              trailing: [
                 if (doctorId.isNotEmpty)
                   TextButton.icon(
                     onPressed: () => context.push(

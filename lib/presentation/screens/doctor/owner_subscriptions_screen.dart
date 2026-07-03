@@ -80,7 +80,11 @@ class _OwnerSubscriptionsScreenState extends State<OwnerSubscriptionsScreen> {
                 const SizedBox(height: 8),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: Text(l10n.subscriptionActive),
+                  title: Text(
+                    l10n.subscriptionActive,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   value: active,
                   onChanged: (v) => setState(() => active = v),
                 ),
@@ -253,6 +257,8 @@ class _ClinicSubscriptionCard extends StatelessWidget {
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -262,10 +268,12 @@ class _ClinicSubscriptionCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                SubscriptionStatusBadge(
-                  status: status,
-                  remainingDays: days,
-                  compact: true,
+                Flexible(
+                  child: SubscriptionStatusBadge(
+                    status: status,
+                    remainingDays: days,
+                    compact: true,
+                  ),
                 ),
               ],
             ),

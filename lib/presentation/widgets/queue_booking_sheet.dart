@@ -83,62 +83,62 @@ class _QueueBookingSheetState extends State<_QueueBookingSheet> {
               ),
             )
           else
-            Flexible(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.sizeOf(context).height * 0.45,
-                ),
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  itemCount: _slots.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 8),
-                  itemBuilder: (context, index) {
-                    final slot = _slots[index];
-                    final selected = _selected == slot;
-                    return Material(
-                      color: selected
-                          ? AppTheme.medicalGreen.withOpacity(0.1)
-                          : Colors.grey.shade50,
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.sizeOf(context).height * 0.45,
+              ),
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: _slots.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                itemBuilder: (context, index) {
+                  final slot = _slots[index];
+                  final selected = _selected == slot;
+                  return Material(
+                    color: selected
+                        ? AppTheme.medicalGreen.withOpacity(0.1)
+                        : Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                    child: InkWell(
+                      onTap: () => setState(() => _selected = slot),
                       borderRadius: BorderRadius.circular(12),
-                      child: InkWell(
-                        onTap: () => setState(() => _selected = slot),
-                        borderRadius: BorderRadius.circular(12),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 14,
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.schedule,
-                                color: selected
-                                    ? AppTheme.medicalGreen
-                                    : Colors.grey.shade600,
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  QueueSlotUtils.formatSlot(context, slot),
-                                  style: TextStyle(
-                                    fontWeight: selected
-                                        ? FontWeight.w600
-                                        : FontWeight.normal,
-                                  ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.schedule,
+                              color: selected
+                                  ? AppTheme.medicalGreen
+                                  : Colors.grey.shade600,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                QueueSlotUtils.formatSlot(context, slot),
+                                style: TextStyle(
+                                  fontWeight: selected
+                                      ? FontWeight.w600
+                                      : FontWeight.normal,
                                 ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              if (selected)
-                                const Icon(
-                                  Icons.check_circle,
-                                  color: AppTheme.medicalGreen,
-                                ),
-                            ],
-                          ),
+                            ),
+                            if (selected)
+                              const Icon(
+                                Icons.check_circle,
+                                color: AppTheme.medicalGreen,
+                              ),
+                          ],
                         ),
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
             ),
           const SizedBox(height: 16),

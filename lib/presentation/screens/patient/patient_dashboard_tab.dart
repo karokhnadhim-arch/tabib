@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/medical_ui.dart';
+import '../../../core/widgets/responsive_scaffold.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/doctor.dart';
 import '../../../models/provider_catalog_mode.dart';
@@ -375,25 +376,12 @@ class _CityHintCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppTheme.medicalBlue.withOpacity(0.06),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: AppTheme.medicalBlue.withOpacity(0.15)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Row(
-          children: [
-            const Icon(Icons.campaign_outlined, color: AppTheme.medicalBlue),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(message, style: const TextStyle(fontSize: 13)),
-            ),
-            TextButton(onPressed: onAction, child: Text(actionLabel)),
-          ],
-        ),
-      ),
+    return ResponsiveInfoBanner(
+      icon: const Icon(Icons.campaign_outlined, color: AppTheme.medicalBlue),
+      message: Text(message, style: const TextStyle(fontSize: 13)),
+      backgroundColor: AppTheme.medicalBlue.withOpacity(0.06),
+      borderColor: AppTheme.medicalBlue.withOpacity(0.15),
+      trailing: TextButton(onPressed: onAction, child: Text(actionLabel)),
     );
   }
 }

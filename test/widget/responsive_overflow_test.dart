@@ -76,6 +76,26 @@ void main() {
       );
     });
 
+    testWidgets('ResponsiveHeaderRow at ${size.width}x${size.height}', (
+      tester,
+    ) async {
+      await pumpSized(
+        tester,
+        size,
+        ResponsiveHeaderRow(
+          title: const Text(
+            'Very Long Section Title That Should Wrap On Narrow Screens',
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          trailing: [
+            TextButton(onPressed: () {}, child: const Text('Save changes')),
+            FilledButton(onPressed: () {}, child: const Text('Publish')),
+          ],
+        ),
+      );
+    });
+
     testWidgets('ResponsiveColumns at ${size.width}x${size.height}', (
       tester,
     ) async {

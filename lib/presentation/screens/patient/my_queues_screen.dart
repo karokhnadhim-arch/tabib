@@ -77,45 +77,64 @@ class _MyQueuesScreenState extends State<MyQueuesScreen> {
     );
     _syncDoctorWatches(entries);
 
+    final queueCards = [
+      for (final entry in entries)
+        PatientActiveQueueCard(
+          entry: entry,
+          doctor: data.doctorById(entry.doctorId),
+          queueService: queue,
+        ),
+    ];
+
+    if (widget.embedded) {
+      return ScrollableResponsiveBody(
+        child: entries.isEmpty
+            ? _EmptyQueues(l10n: l10n)
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ResponsiveHeaderRow(
+                    title: Text(
+                      l10n.myQueues,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style:
+                          Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  _SortBar(
+                    sort: _sort,
+                    onChanged: (s) => setState(() => _sort = s),
+                  ),
+                  const SizedBox(height: 8),
+                  ...queueCards,
+                ],
+              ),
+      );
+    }
+
     final body = ResponsiveBody(
       child: entries.isEmpty
           ? _EmptyQueues(l10n: l10n)
           : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (widget.embedded)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 8, 0, 4),
-                    child: Text(
-                      l10n.myQueues,
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                  ),
                 _SortBar(
                   sort: _sort,
                   onChanged: (s) => setState(() => _sort = s),
                 ),
                 const SizedBox(height: 8),
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: entries.length,
-                    itemBuilder: (context, index) {
-                      final entry = entries[index];
-                      return PatientActiveQueueCard(
-                        entry: entry,
-                        doctor: data.doctorById(entry.doctorId),
-                        queueService: queue,
-                      );
-                    },
+                  child: ListView(
+                    children: queueCards,
                   ),
                 ),
               ],
             ),
     );
-
-    if (widget.embedded) return body;
 
     return Scaffold(
       appBar: AppBar(
@@ -152,7 +171,11 @@ class _SortBar extends StatelessWidget {
 
   Widget _chip(String label, PatientQueueSort value) {
     return FilterChip(
-      label: Text(label),
+      label: Text(
+        label,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
       selected: sort == value,
       onSelected: (_) => onChanged(value),
     );

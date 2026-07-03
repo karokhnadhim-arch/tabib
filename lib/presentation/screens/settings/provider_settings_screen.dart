@@ -258,7 +258,11 @@ class _ProviderSettingsScreenState extends State<ProviderSettingsScreen> {
     ValueChanged<bool> onChanged,
   ) {
     return SwitchListTile(
-      title: Text('$prefix: $field'),
+      title: Text(
+        '$prefix: $field',
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
       value: value,
       activeColor: AppTheme.medicalGreen,
       onChanged: (v) => setState(() => onChanged(v)),

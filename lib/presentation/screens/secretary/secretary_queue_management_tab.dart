@@ -58,73 +58,69 @@ class SecretaryQueueManagementTab extends StatelessWidget {
     final queue = queueService.secretaryQueueForDoctor(doctorId);
 
     if (doctor == null) {
-      return SizedBox(
-        height: 200,
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 32),
         child: Center(child: Text(l10n.errorGeneric)),
       );
     }
 
     if (queue.isEmpty) {
-      return SizedBox(
-        height: 200,
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 32),
         child: Center(child: Text(l10n.noPatientsInQueue)),
       );
     }
 
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: queue.length + 1,
-      separatorBuilder: (_, index) =>
-          index == 0 ? const SizedBox(height: 12) : const SizedBox(height: 0),
-      itemBuilder: (context, index) {
-        if (index == 0) {
-          return _DoctorQueueHeader(doctorName: doctor.name.localized(context));
-        }
-
-        final entry = queue[index - 1];
-        return _SecretaryQueueRow(
-          entry: entry,
-          appointment: _appointmentFor(appointments.appointments, entry),
-          clinicId: clinicId,
-          doctorId: doctorId,
-          onMarkEntered: () async {
-            final queue = context.read<QueueService>();
-            final provider = context.read<AppointmentProvider>();
-            await queue.enterDoctorRoom(entry.id, doctorId);
-            if (!context.mounted) return;
-            await _syncVisitStatus(
-              provider,
-              entry,
-              provider.markArrived,
-            );
-          },
-          onMarkAbsent: () async {
-            final queue = context.read<QueueService>();
-            final provider = context.read<AppointmentProvider>();
-            await queue.updateEntryStatus(
-              entry.id,
-              doctorId,
-              QueueStatus.absent,
-            );
-            if (!context.mounted) return;
-            await _syncVisitStatus(
-              provider,
-              entry,
-              provider.markAbsent,
-            );
-          },
-          onReturnToReview: () => context
-              .read<QueueService>()
-              .returnToReview(entry.id, doctorId),
-          onMoveUp: entry.status == QueueStatus.waiting
-              ? () => context.read<QueueService>().moveUp(entry.id, doctorId)
-              : null,
-          onMoveDown: entry.status == QueueStatus.waiting
-              ? () => context.read<QueueService>().moveDown(entry.id, doctorId)
-              : null,
-        );
-      },
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _DoctorQueueHeader(doctorName: doctor.name.localized(context)),
+        for (final entry in queue) ...[
+          const SizedBox(height: 12),
+          _SecretaryQueueRow(
+            entry: entry,
+            appointment: _appointmentFor(appointments.appointments, entry),
+            clinicId: clinicId,
+            doctorId: doctorId,
+            onMarkEntered: () async {
+              final queue = context.read<QueueService>();
+              final provider = context.read<AppointmentProvider>();
+              await queue.enterDoctorRoom(entry.id, doctorId);
+              if (!context.mounted) return;
+              await _syncVisitStatus(
+                provider,
+                entry,
+                provider.markArrived,
+              );
+            },
+            onMarkAbsent: () async {
+              final queue = context.read<QueueService>();
+              final provider = context.read<AppointmentProvider>();
+              await queue.updateEntryStatus(
+                entry.id,
+                doctorId,
+                QueueStatus.absent,
+              );
+              if (!context.mounted) return;
+              await _syncVisitStatus(
+                provider,
+                entry,
+                provider.markAbsent,
+              );
+            },
+            onReturnToReview: () => context
+                .read<QueueService>()
+                .returnToReview(entry.id, doctorId),
+            onMoveUp: entry.status == QueueStatus.waiting
+                ? () => context.read<QueueService>().moveUp(entry.id, doctorId)
+                : null,
+            onMoveDown: entry.status == QueueStatus.waiting
+                ? () =>
+                    context.read<QueueService>().moveDown(entry.id, doctorId)
+                : null,
+          ),
+        ],
+      ],
     );
   }
 }
@@ -152,6 +148,8 @@ class _DoctorQueueHeader extends StatelessWidget {
             child: Text(
               doctorName,
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
           Flexible(
@@ -315,6 +313,8 @@ class _StatusBadge extends StatelessWidget {
           fontWeight: FontWeight.w600,
           fontSize: 12,
         ),
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }
@@ -440,11 +440,15 @@ class _QueueRowLayout extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 fontSize: 17,
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 4),
             Text(
               '${l10n.appointmentTime}: $timeLabel',
               style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         );

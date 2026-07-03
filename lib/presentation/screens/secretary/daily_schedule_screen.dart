@@ -13,10 +13,12 @@ class DailyScheduleScreen extends StatefulWidget {
     super.key,
     required this.clinicId,
     this.doctorId,
+    this.embedded = false,
   });
 
   final String clinicId;
   final String? doctorId;
+  final bool embedded;
 
   @override
   State<DailyScheduleScreen> createState() => _DailyScheduleScreenState();
@@ -81,35 +83,74 @@ class _DailyScheduleScreenState extends State<DailyScheduleScreen> {
           ],
         ),
         const SizedBox(height: 12),
-        Expanded(
-          child: appointments.isEmpty
-              ? Center(child: Text(l10n.noAppointmentsToday))
-              : ListView.separated(
-                  itemCount: appointments.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 8),
-                  itemBuilder: (context, index) {
-                    final a = appointments[index];
-                    return Card(
-                      child: ListTile(
-                        leading: Text(
-                          DateFormat.jm().format(a.dateTime),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.medicalBlue,
-                          ),
-                        ),
-                        title: Text('${a.doctorName} — ${a.patientName ?? ''}'),
-                        subtitle: Text(a.specialty),
-                        trailing: QueueStatusChip(
-                          label: a.isPending ? l10n.statusPending : l10n.statusAccepted,
-                          color: a.isPending ? Colors.orange : AppTheme.medicalGreen,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-        ),
+        if (widget.embedded)
+          ..._scheduleContent(context, l10n, appointments)
+        else
+          Expanded(
+            child: appointments.isEmpty
+                ? Center(child: Text(l10n.noAppointmentsToday))
+                : ListView.separated(
+                    itemCount: appointments.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (context, index) =>
+                        _appointmentTile(context, l10n, appointments[index]),
+                  ),
+          ),
       ],
+    );
+  }
+
+  List<Widget> _scheduleContent(
+    BuildContext context,
+    AppLocalizations l10n,
+    List<Appointment> appointments,
+  ) {
+    if (appointments.isEmpty) {
+      return [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 32),
+          child: Center(child: Text(l10n.noAppointmentsToday)),
+        ),
+      ];
+    }
+
+    return [
+      for (var i = 0; i < appointments.length; i++) ...[
+        if (i > 0) const SizedBox(height: 8),
+        _appointmentTile(context, l10n, appointments[i]),
+      ],
+    ];
+  }
+
+  Widget _appointmentTile(
+    BuildContext context,
+    AppLocalizations l10n,
+    Appointment a,
+  ) {
+    return Card(
+      child: ListTile(
+        leading: Text(
+          DateFormat.jm().format(a.dateTime),
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: AppTheme.medicalBlue,
+          ),
+        ),
+        title: Text(
+          '${a.doctorName} — ${a.patientName ?? ''}',
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: Text(
+          a.specialty,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        trailing: QueueStatusChip(
+          label: a.isPending ? l10n.statusPending : l10n.statusAccepted,
+          color: a.isPending ? Colors.orange : AppTheme.medicalGreen,
+        ),
+      ),
     );
   }
 }

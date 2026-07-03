@@ -117,33 +117,53 @@ class _AdminResetPasswordDialogState extends State<AdminResetPasswordDialog> {
 
     return AlertDialog(
       title: Text(l10n.resetPassword),
-      content: isDemo
-          ? Form(
-              key: _formKey,
-              child: Column(
+      content: SingleChildScrollView(
+        child: isDemo
+            ? Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    AuthTextField(
+                      controller: _passwordController,
+                      label: l10n.newPassword,
+                      prefixIcon: Icons.lock_outline,
+                      obscureText: true,
+                      validator: (v) =>
+                          v == null || v.length < 6 ? l10n.weakPassword : null,
+                    ),
+                    const SizedBox(height: 12),
+                    AuthTextField(
+                      controller: _confirmController,
+                      label: l10n.confirmPassword,
+                      prefixIcon: Icons.lock_outline,
+                      obscureText: true,
+                      validator: (v) {
+                        if (v != _passwordController.text) {
+                          return l10n.passwordsDoNotMatch;
+                        }
+                        return null;
+                      },
+                    ),
+                    if (_error != null) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        _error!,
+                        style: TextStyle(color: Colors.red.shade700),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ],
+                ),
+              )
+            : Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  AuthTextField(
-                    controller: _passwordController,
-                    label: l10n.newPassword,
-                    prefixIcon: Icons.lock_outline,
-                    obscureText: true,
-                    validator: (v) =>
-                        v == null || v.length < 6 ? l10n.weakPassword : null,
-                  ),
-                  const SizedBox(height: 12),
-                  AuthTextField(
-                    controller: _confirmController,
-                    label: l10n.confirmPassword,
-                    prefixIcon: Icons.lock_outline,
-                    obscureText: true,
-                    validator: (v) {
-                      if (v != _passwordController.text) {
-                        return l10n.passwordsDoNotMatch;
-                      }
-                      return null;
-                    },
+                  Text(
+                    l10n.resetSecretaryPasswordFirebaseHint,
+                    style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
                   ),
                   if (_error != null) ...[
                     const SizedBox(height: 8),
@@ -155,25 +175,7 @@ class _AdminResetPasswordDialogState extends State<AdminResetPasswordDialog> {
                   ],
                 ],
               ),
-            )
-          : Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  l10n.resetSecretaryPasswordFirebaseHint,
-                  style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
-                ),
-                if (_error != null) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    _error!,
-                    style: TextStyle(color: Colors.red.shade700),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ],
-            ),
+      ),
       actions: [
         TextButton(
           onPressed: _loading ? null : () => Navigator.pop(context),

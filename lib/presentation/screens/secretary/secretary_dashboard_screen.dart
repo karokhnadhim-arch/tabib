@@ -251,23 +251,21 @@ class _SecretaryDashboardScreenState extends State<SecretaryDashboardScreen> {
                           doctorId: linkedDoctorId,
                           clinicId: clinicId,
                         )
-                      : SizedBox(
-                          height: 200,
+                      : Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 32),
                           child: Center(child: Text(l10n.noAssignedDoctor)),
                         )
                 else if (_tab == 1)
                   RegisterPatientScreen(clinicId: clinicId)
                 else
                   linkedDoctorId != null && linkedDoctorId.isNotEmpty
-                      ? SizedBox(
-                          height: 500,
-                          child: DailyScheduleScreen(
-                            clinicId: clinicId,
-                            doctorId: linkedDoctorId,
-                          ),
+                      ? DailyScheduleScreen(
+                          clinicId: clinicId,
+                          doctorId: linkedDoctorId,
+                          embedded: true,
                         )
-                      : SizedBox(
-                          height: 200,
+                      : Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 32),
                           child: Center(child: Text(l10n.noAssignedDoctor)),
                         ),
               ]),

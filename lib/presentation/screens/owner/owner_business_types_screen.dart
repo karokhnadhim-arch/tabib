@@ -69,8 +69,16 @@ class _OwnerBusinessTypesScreenState extends State<OwnerBusinessTypesScreen> {
                   ),
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: Text(l10n.businessTypeActive),
-                    subtitle: Text(l10n.businessTypeActiveHint),
+                    title: Text(
+                      l10n.businessTypeActive,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    subtitle: Text(
+                      l10n.businessTypeActiveHint,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     value: isActive,
                     onChanged: (value) =>
                         setDialogState(() => isActive = value),
@@ -266,8 +274,11 @@ class _OwnerBusinessTypesScreenState extends State<OwnerBusinessTypesScreen> {
                             ],
                           ),
                           const SizedBox(height: 8),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                          Wrap(
+                            alignment: WrapAlignment.end,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 4,
+                            runSpacing: 4,
                             children: [
                               Text(
                                 type.isActive
@@ -279,6 +290,8 @@ class _OwnerBusinessTypesScreenState extends State<OwnerBusinessTypesScreen> {
                                       ? AppTheme.medicalGreen
                                       : Colors.grey.shade600,
                                 ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
                               Switch(
                                 value: type.isActive,

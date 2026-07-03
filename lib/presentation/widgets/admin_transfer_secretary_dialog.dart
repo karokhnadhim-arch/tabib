@@ -69,53 +69,59 @@ class _AdminTransferSecretaryDialogState
 
     return AlertDialog(
       title: Text(l10n.transferSecretaryTitle),
-      content: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.sizeOf(context).width * 0.9,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              l10n.transferSecretaryHint(
-                widget.secretary.name.localized(context),
-              ),
-            ),
-            const SizedBox(height: 16),
-            if (doctors.isEmpty)
+      content: SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.sizeOf(context).width * 0.9,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
               Text(
-                l10n.noDoctorsFound,
-                style: TextStyle(color: Colors.grey.shade700),
-              )
-            else
-              DropdownButtonFormField<String>(
-                value: _targetDoctorId,
-                decoration: InputDecoration(
-                  labelText: l10n.selectDoctor,
-                  border: const OutlineInputBorder(),
+                l10n.transferSecretaryHint(
+                  widget.secretary.name.localized(context),
                 ),
-                items: doctors
-                    .map(
-                      (d) => DropdownMenuItem(
-                        value: d.id,
-                        child: Text(_doctorLabel(context, d)),
-                      ),
-                    )
-                    .toList(),
-                onChanged: _loading
-                    ? null
-                    : (v) => setState(() => _targetDoctorId = v),
               ),
-            if (_error != null) ...[
-              const SizedBox(height: 12),
-              Text(
-                _error!,
-                style: TextStyle(color: Colors.red.shade700),
-                textAlign: TextAlign.center,
-              ),
+              const SizedBox(height: 16),
+              if (doctors.isEmpty)
+                Text(
+                  l10n.noDoctorsFound,
+                  style: TextStyle(color: Colors.grey.shade700),
+                )
+              else
+                DropdownButtonFormField<String>(
+                  isExpanded: true,
+                  value: _targetDoctorId,
+                  decoration: InputDecoration(
+                    labelText: l10n.selectDoctor,
+                    border: const OutlineInputBorder(),
+                  ),
+                  items: doctors
+                      .map(
+                        (d) => DropdownMenuItem(
+                          value: d.id,
+                          child: Text(
+                            _doctorLabel(context, d),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: _loading
+                      ? null
+                      : (v) => setState(() => _targetDoctorId = v),
+                ),
+              if (_error != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  _error!,
+                  style: TextStyle(color: Colors.red.shade700),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
       actions: [

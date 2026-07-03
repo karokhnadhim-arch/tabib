@@ -214,22 +214,18 @@ class PatientActiveQueueCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 14),
-                    Row(
+                    Wrap(
+                      spacing: 18,
+                      runSpacing: 8,
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
-                        Icon(Icons.calendar_today_outlined,
-                            size: 16, color: Colors.grey.shade600),
-                        const SizedBox(width: 6),
-                        Text(
-                          entry.effectiveQueueDate,
-                          style: const TextStyle(fontWeight: FontWeight.w500),
+                        _DateTimeChip(
+                          icon: Icons.calendar_today_outlined,
+                          label: entry.effectiveQueueDate,
                         ),
-                        const SizedBox(width: 18),
-                        Icon(Icons.schedule_outlined,
-                            size: 16, color: Colors.grey.shade600),
-                        const SizedBox(width: 6),
-                        Text(
-                          entry.effectiveSlotStart,
-                          style: const TextStyle(fontWeight: FontWeight.w500),
+                        _DateTimeChip(
+                          icon: Icons.schedule_outlined,
+                          label: entry.effectiveSlotStart,
                         ),
                       ],
                     ),
@@ -286,6 +282,32 @@ class _HomeStatus {
   final Color color;
 }
 
+class _DateTimeChip extends StatelessWidget {
+  const _DateTimeChip({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 16, color: Colors.grey.shade600),
+        const SizedBox(width: 6),
+        Flexible(
+          child: Text(
+            label,
+            style: const TextStyle(fontWeight: FontWeight.w500),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _StatusPill extends StatelessWidget {
   const _StatusPill({required this.label, required this.color});
 
@@ -307,6 +329,8 @@ class _StatusPill extends StatelessWidget {
           fontWeight: FontWeight.w600,
           fontSize: 12,
         ),
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }
