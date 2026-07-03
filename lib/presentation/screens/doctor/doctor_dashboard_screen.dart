@@ -111,11 +111,11 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
         title: Text(ProviderLabels.dashboardTitle(l10n, doctor)),
         backgroundColor: AppTheme.doctorColor,
         actions: [
-          if (auth.canAccessAdminPanel)
+          if (auth.canAccessAdminPanel && !auth.isSystemOwner)
             IconButton(
               icon: const Icon(Icons.admin_panel_settings_outlined),
               tooltip: l10n.adminControlPanel,
-              onPressed: () => context.push('/doctor/platform'),
+              onPressed: () => context.push('/owner/console'),
             ),
           IconButton(
             icon: const Icon(Icons.settings_outlined),
@@ -177,7 +177,7 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (auth.canAccessAdminPanel) ...[
+                  if (auth.canAccessAdminPanel && !auth.isSystemOwner) ...[
                     Card(
                       color: AppTheme.primaryDark.withOpacity(0.08),
                       shape: RoundedRectangleBorder(
@@ -188,7 +188,7 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
                       ),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(16),
-                        onTap: () => context.push('/doctor/platform'),
+                        onTap: () => context.push('/owner/console'),
                         child: Padding(
                           padding: const EdgeInsets.all(16),
                           child: Row(

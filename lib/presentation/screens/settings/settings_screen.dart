@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/auth/admin_routes.dart';
 import '../../../core/constants/app_info.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/responsive_scaffold.dart';
@@ -52,10 +53,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final prefs = context.watch<UserPreferencesService>().preferences;
     final data = context.watch<ClinicDataService>();
 
-    final doctor = auth.currentUser?.doctorId != null
+    final doctor = auth.isClinicalProvider &&
+            auth.currentUser?.doctorId != null
         ? data.doctorById(auth.currentUser!.doctorId!)
         : null;
-    final isProvider = auth.isDoctor && doctor != null;
+    final isProvider = auth.isClinicalProvider && doctor != null;
     final isBusiness = doctor?.isBusiness == true;
 
     return Scaffold(
@@ -314,7 +316,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ],
             ),
-            if (auth.canAccessAdminPanel)
+            if (auth.isSystemOwner)
+              SettingsSection(
+                title: l10n.systemOwnerDashboard,
+                icon: Icons.admin_panel_settings_outlined,
+                children: [
+                  SettingsTile(
+                    icon: Icons.dashboard_outlined,
+                    title: l10n.dashboardOverview,
+                    subtitle: l10n.systemOwnerDashboardHint,
+                    onTap: () => context.go(AdminRoutes.ownerHome),
+                  ),
+                ],
+              ),
+            if (auth.canAccessAdminPanel && !auth.isSystemOwner)
               SettingsSection(
                 title: l10n.adminControlPanel,
                 icon: Icons.admin_panel_settings_outlined,
@@ -323,7 +338,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     icon: Icons.admin_panel_settings,
                     title: l10n.adminControlPanel,
                     subtitle: l10n.adminControlPanelHint,
-                    onTap: () => context.push('/doctor/platform'),
+                    onTap: () => context.push('/owner/console'),
                   ),
                 ],
               ),
@@ -347,7 +362,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Color _accentForRole(AuthService auth) {
-    if (auth.isDoctor) return AppTheme.doctorColor;
+    if (auth.isSystemOwner) return AppTheme.primaryDark;
+    if (auth.isClinicalProvider) return AppTheme.doctorColor;
     if (auth.isSecretary) return AppTheme.secretaryColor;
     return AppTheme.patientColor;
   }
@@ -451,15 +467,11 @@ class _AccountHeader extends StatelessWidget {
     if (user == null) return const SizedBox.shrink();
 
     final roleLabel = user.isSystemOwner
-        ? (doctor?.isBusiness == true
-            ? l10n.accountTypeBusiness
-            : l10n.doctor)
-        : user.role == UserRole.admin
-            ? l10n.roleAdmin
-            : switch (user.role) {
+        ? l10n.systemOwner
+        : switch (user.role) {
             UserRole.patient => l10n.patient,
             UserRole.secretary => l10n.secretary,
-            UserRole.admin => l10n.doctor,
+            UserRole.admin => l10n.roleAdmin,
             UserRole.doctor => doctor?.isBusiness == true
                 ? l10n.accountTypeBusiness
                 : l10n.doctor,

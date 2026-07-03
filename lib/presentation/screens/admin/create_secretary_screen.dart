@@ -7,6 +7,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/staff_auth_identifiers.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../presentation/widgets/admin_guard.dart';
+import '../../../presentation/widgets/owner_module_app_bar.dart';
 import '../../../presentation/widgets/staff_account_login_fields.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
@@ -112,10 +113,7 @@ class _CreateSecretaryScreenState extends State<CreateSecretaryScreen> {
 
     return AdminGuard(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(l10n.createSecretaryAccount),
-          backgroundColor: AppTheme.primaryDark,
-        ),
+        appBar: ownerModuleAppBar(context, title: l10n.createSecretaryAccount),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Form(

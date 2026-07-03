@@ -1600,4 +1600,46 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get permManageAdmins => 'بەڕێوەبردنی بەڕێوەبەران';
+
+  @override
+  String get systemOwnerDashboard => 'داشبۆردی خاوەنی سیستەم';
+
+  @override
+  String get systemOwnerDashboardHint => 'بەڕێوەبردنی پلاتفۆرم، بەکارهێنەران، بەشداریکردن و ڕێکخستنەکانی سیستەم.';
+
+  @override
+  String get systemOwnerModules => 'یەکەکانی بەڕێوەبردن';
+
+  @override
+  String get dashboardOverview => 'پوختەی داشبۆرد';
+
+  @override
+  String get businessManagement => 'بەڕێوەبردنی بازرگانی';
+
+  @override
+  String get secretaryManagement => 'بەڕێوەبردنی سکرتێرەکان';
+
+  @override
+  String get patientManagement => 'بەڕێوەبردنی نەخۆشەکان';
+
+  @override
+  String get subscriptionManagement => 'بەڕێوەبردنی بەشداریکردن';
+
+  @override
+  String get packageManagement => 'بەڕێوەبردنی پاکێجەکان';
+
+  @override
+  String get payments => 'پارەدانەکان';
+
+  @override
+  String get reports => 'ڕاپۆرتەکان';
+
+  @override
+  String get analytics => 'شیکاریەکان';
+
+  @override
+  String get systemSettings => 'ڕێکخستنەکانی سیستەم';
+
+  @override
+  String get moduleComingSoon => 'ئەم یەکەیە لە نوێکردنەوەی داهاتوو بەردەست دەبێت.';
 }

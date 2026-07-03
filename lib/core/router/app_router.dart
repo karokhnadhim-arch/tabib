@@ -14,6 +14,8 @@ import '../../presentation/screens/doctor/owner_doctors_screen.dart';
 import '../../presentation/screens/doctor/owner_doctor_detail_screen.dart';
 import '../../presentation/screens/doctor/owner_clinics_screen.dart';
 import '../../presentation/screens/doctor/owner_platform_screen.dart';
+import '../../presentation/screens/owner/system_owner_dashboard_screen.dart';
+import '../../presentation/screens/owner/system_owner_module_placeholder_screen.dart';
 import '../../presentation/screens/doctor/owner_staff_list_screen.dart';
 import '../../presentation/screens/doctor/owner_stats_screen.dart';
 import '../../presentation/screens/doctor/owner_subscriptions_screen.dart';
@@ -34,7 +36,9 @@ import '../../presentation/screens/settings/favorites_screen.dart';
 import '../../presentation/screens/settings/legal_content_screen.dart';
 import '../../presentation/screens/settings/provider_settings_screen.dart';
 import '../../presentation/screens/settings/settings_screen.dart';
+import '../../presentation/widgets/clinical_provider_guard.dart';
 import '../../presentation/screens/splash/splash_screen.dart';
+import '../../l10n/app_localizations.dart';
 import '../../services/favorites_service.dart';
 
 class AppRouter {
@@ -113,77 +117,121 @@ class AppRouter {
           ),
           GoRoute(
             path: '/doctor',
-            builder: (_, __) => const DoctorDashboardScreen(),
+            builder: (_, __) => const ClinicalProviderGuard(
+              child: DoctorDashboardScreen(),
+            ),
             routes: [
               GoRoute(
                 path: 'profile',
-                builder: (_, __) => const DoctorProfileEditScreen(),
-              ),
-              GoRoute(
-                path: 'prescription/:patientId',
-                builder: (_, state) => WritePrescriptionScreen(
-                  patientId: state.pathParameters['patientId']!,
-                  patientName: state.uri.queryParameters['name'],
+                builder: (_, __) => const ClinicalProviderGuard(
+                  child: DoctorProfileEditScreen(),
                 ),
               ),
               GoRoute(
-                path: 'platform',
+                path: 'prescription/:patientId',
+                builder: (_, state) => ClinicalProviderGuard(
+                  child: WritePrescriptionScreen(
+                    patientId: state.pathParameters['patientId']!,
+                    patientName: state.uri.queryParameters['name'],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: '/owner',
+            builder: (_, __) => const SystemOwnerDashboardScreen(),
+            routes: [
+              GoRoute(
+                path: 'console',
                 builder: (_, __) => const OwnerPlatformScreen(),
+              ),
+              GoRoute(
+                path: 'create-doctor',
+                builder: (_, __) => const CreateDoctorScreen(),
+              ),
+              GoRoute(
+                path: 'create-secretary',
+                builder: (_, __) => const CreateSecretaryScreen(),
+              ),
+              GoRoute(
+                path: 'clinics',
+                builder: (_, __) => const OwnerClinicsScreen(),
+              ),
+              GoRoute(
+                path: 'users',
+                builder: (_, __) => const OwnerUsersScreen(),
+              ),
+              GoRoute(
+                path: 'patients',
+                builder: (_, __) => const OwnerPatientsScreen(),
+              ),
+              GoRoute(
+                path: 'admins',
+                builder: (_, __) => const OwnerAdminsScreen(),
+              ),
+              GoRoute(
+                path: 'doctors',
+                builder: (_, __) => const OwnerDoctorsScreen(),
                 routes: [
                   GoRoute(
-                    path: 'create-doctor',
-                    builder: (_, __) => const CreateDoctorScreen(),
-                  ),
-                  GoRoute(
-                    path: 'create-secretary',
-                    builder: (_, __) => const CreateSecretaryScreen(),
-                  ),
-                  GoRoute(
-                    path: 'clinics',
-                    builder: (_, __) => const OwnerClinicsScreen(),
-                  ),
-                  GoRoute(
-                    path: 'users',
-                    builder: (_, __) => const OwnerUsersScreen(),
-                  ),
-                  GoRoute(
-                    path: 'patients',
-                    builder: (_, __) => const OwnerPatientsScreen(),
-                  ),
-                  GoRoute(
-                    path: 'admins',
-                    builder: (_, __) => const OwnerAdminsScreen(),
-                  ),
-                  GoRoute(
-                    path: 'doctors',
-                    builder: (_, __) => const OwnerDoctorsScreen(),
-                    routes: [
-                      GoRoute(
-                        path: ':doctorId',
-                        builder: (_, state) => OwnerDoctorDetailScreen(
-                          doctorId: state.pathParameters['doctorId']!,
-                          focusSecretaries:
-                              state.uri.queryParameters['section'] ==
-                                  'secretaries',
-                        ),
-                      ),
-                    ],
-                  ),
-                  GoRoute(
-                    path: 'secretaries',
-                    builder: (_, __) => const OwnerStaffListScreen(
-                      filter: OwnerStaffFilter.secretaries,
+                    path: ':doctorId',
+                    builder: (_, state) => OwnerDoctorDetailScreen(
+                      doctorId: state.pathParameters['doctorId']!,
+                      focusSecretaries:
+                          state.uri.queryParameters['section'] ==
+                              'secretaries',
                     ),
                   ),
-                  GoRoute(
-                    path: 'stats',
-                    builder: (_, __) => const OwnerStatsScreen(),
-                  ),
-                  GoRoute(
-                    path: 'subscriptions',
-                    builder: (_, __) => const OwnerSubscriptionsScreen(),
-                  ),
                 ],
+              ),
+              GoRoute(
+                path: 'businesses',
+                builder: (_, __) => const OwnerDoctorsScreen(),
+              ),
+              GoRoute(
+                path: 'secretaries',
+                builder: (_, __) => const OwnerStaffListScreen(
+                  filter: OwnerStaffFilter.secretaries,
+                ),
+              ),
+              GoRoute(
+                path: 'stats',
+                builder: (_, __) => const OwnerStatsScreen(),
+              ),
+              GoRoute(
+                path: 'reports',
+                builder: (_, __) => const OwnerStatsScreen(),
+              ),
+              GoRoute(
+                path: 'analytics',
+                builder: (_, __) => const OwnerStatsScreen(),
+              ),
+              GoRoute(
+                path: 'subscriptions',
+                builder: (_, __) => const OwnerSubscriptionsScreen(),
+              ),
+              GoRoute(
+                path: 'packages',
+                builder: (context, __) => SystemOwnerModulePlaceholderScreen(
+                  title: AppLocalizations.of(context).packageManagement,
+                ),
+              ),
+              GoRoute(
+                path: 'payments',
+                builder: (context, __) => SystemOwnerModulePlaceholderScreen(
+                  title: AppLocalizations.of(context).payments,
+                ),
+              ),
+              GoRoute(
+                path: 'notifications-admin',
+                builder: (context, __) => SystemOwnerModulePlaceholderScreen(
+                  title: AppLocalizations.of(context).notifications,
+                ),
+              ),
+              GoRoute(
+                path: 'system-settings',
+                builder: (_, __) => const OwnerClinicsScreen(),
               ),
             ],
           ),
@@ -221,8 +269,10 @@ class AppRouter {
               ),
               GoRoute(
                 path: 'provider',
-                builder: (_, state) => ProviderSettingsScreen(
-                  initialSection: state.uri.queryParameters['section'],
+                builder: (_, state) => ClinicalProviderGuard(
+                  child: ProviderSettingsScreen(
+                    initialSection: state.uri.queryParameters['section'],
+                  ),
                 ),
               ),
               GoRoute(
@@ -248,16 +298,37 @@ class AppRouter {
 
     if (loggedIn &&
         (path == '/login' || path == '/register' || path == '/splash')) {
-      if (_auth.canAccessAdminPanel && !_auth.isDoctor) {
-        return '/doctor/platform';
+      if (_auth.isSystemOwner) return AdminRoutes.ownerHome;
+      if (_auth.canAccessAdminPanel && !_auth.isClinicalProvider) {
+        return AdminRoutes.adminConsole;
       }
-      if (_auth.isDoctor) return '/doctor';
+      if (_auth.isClinicalProvider) return '/doctor';
       if (_auth.isSecretary) return '/secretary';
       return '/home';
     }
 
+    if (loggedIn && _auth.isSystemOwner) {
+      if (path == '/doctor' ||
+          path.startsWith('/doctor/') ||
+          path.startsWith('/settings/provider') ||
+          path.startsWith('/settings/favorites') ||
+          path == '/home' ||
+          path.startsWith('/home/') ||
+          path == '/secretary' ||
+          path.startsWith('/secretary/')) {
+        return AdminRoutes.ownerHome;
+      }
+    }
+
     if (loggedIn && AdminRoutes.isAdminRoute(path) && !_auth.canAccessAdminPanel) {
-      return '/doctor';
+      if (_auth.isClinicalProvider) return '/doctor';
+      if (_auth.isSecretary) return '/secretary';
+      return '/home';
+    }
+
+    // Legacy admin URLs → new owner routes.
+    if (loggedIn && path.startsWith('/doctor/platform')) {
+      return path.replaceFirst('/doctor/platform', AdminRoutes.platformPrefix);
     }
 
     if (loggedIn && _auth.isPatient && path == '/doctor') {
@@ -270,10 +341,11 @@ class AppRouter {
       return '/home';
     }
 
-    if (loggedIn && _auth.isDoctor) {
+    if (loggedIn && _auth.isClinicalProvider) {
       if (path.startsWith('/home') ||
           path.startsWith('/secretary') ||
-          path == '/register') {
+          path == '/register' ||
+          AdminRoutes.isAdminRoute(path)) {
         return '/doctor';
       }
     }

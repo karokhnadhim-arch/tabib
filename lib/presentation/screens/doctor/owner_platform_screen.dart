@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/auth/admin_permissions.dart';
+import '../../../core/auth/admin_routes.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../presentation/widgets/admin_guard.dart';
@@ -24,6 +25,12 @@ class OwnerPlatformScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text(l10n.adminControlPanel),
           backgroundColor: AppTheme.primaryDark,
+          leading: auth.isSystemOwner
+              ? IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => context.go(AdminRoutes.ownerHome),
+                )
+              : null,
           actions: const [LanguagePicker()],
         ),
         body: ListView(
@@ -47,14 +54,14 @@ class OwnerPlatformScreen extends StatelessWidget {
                 title: l10n.manageAdmins,
                 subtitle: l10n.manageAdminsHint,
                 icon: Icons.security_outlined,
-                onTap: () => context.push('/doctor/platform/admins'),
+                onTap: () => context.push('${AdminRoutes.platformPrefix}/admins'),
               ),
             if (AdminPermissions.canViewStatistics(auth))
               _PlatformTile(
                 title: l10n.systemStatistics,
                 subtitle: l10n.systemStatisticsHint,
                 icon: Icons.analytics_outlined,
-                onTap: () => context.push('/doctor/platform/stats'),
+                onTap: () => context.push('${AdminRoutes.platformPrefix}/stats'),
               ),
             if (AdminPermissions.canCreateDoctors(auth) ||
                 AdminPermissions.canCreateBusinesses(auth) ||
@@ -66,28 +73,28 @@ class OwnerPlatformScreen extends StatelessWidget {
                 title: l10n.createBusinessAccount,
                 subtitle: l10n.createBusinessAccountHint,
                 icon: Icons.storefront_outlined,
-                onTap: () => context.push('/doctor/platform/create-doctor'),
+                onTap: () => context.push('${AdminRoutes.platformPrefix}/create-doctor'),
               ),
             if (AdminPermissions.canCreateDoctors(auth))
               _PlatformTile(
                 title: l10n.createDoctorAccount,
                 subtitle: l10n.createDoctorAccountHint,
                 icon: Icons.person_add_outlined,
-                onTap: () => context.push('/doctor/platform/create-doctor'),
+                onTap: () => context.push('${AdminRoutes.platformPrefix}/create-doctor'),
               ),
             if (AdminPermissions.canCreateSecretaries(auth))
               _PlatformTile(
                 title: l10n.createSecretaryAccount,
                 subtitle: l10n.createSecretaryAccountHint,
                 icon: Icons.support_agent_outlined,
-                onTap: () => context.push('/doctor/platform/create-secretary'),
+                onTap: () => context.push('${AdminRoutes.platformPrefix}/create-secretary'),
               ),
             if (AdminPermissions.canCreateClinics(auth))
               _PlatformTile(
                 title: l10n.addClinic,
                 subtitle: l10n.manageClinics,
                 icon: Icons.add_business_outlined,
-                onTap: () => context.push('/doctor/platform/clinics'),
+                onTap: () => context.push('${AdminRoutes.platformPrefix}/clinics'),
               ),
             if (AdminPermissions.canViewAllStaff(auth) ||
                 AdminPermissions.canManageSubscriptions(auth))
@@ -97,42 +104,42 @@ class OwnerPlatformScreen extends StatelessWidget {
                 title: l10n.doctorManagement,
                 subtitle: l10n.doctorManagementHint,
                 icon: Icons.medical_services_outlined,
-                onTap: () => context.push('/doctor/platform/doctors'),
+                onTap: () => context.push('${AdminRoutes.platformPrefix}/doctors'),
               ),
             if (AdminPermissions.canViewAllStaff(auth))
               _PlatformTile(
                 title: l10n.viewAllSecretaries,
                 subtitle: l10n.viewAllSecretariesHint,
                 icon: Icons.people_outline,
-                onTap: () => context.push('/doctor/platform/secretaries'),
+                onTap: () => context.push('${AdminRoutes.platformPrefix}/secretaries'),
               ),
             if (AdminPermissions.canCreateClinics(auth))
               _PlatformTile(
                 title: l10n.viewAllClinics,
                 subtitle: l10n.viewAllClinicsHint,
                 icon: Icons.local_hospital_outlined,
-                onTap: () => context.push('/doctor/platform/clinics'),
+                onTap: () => context.push('${AdminRoutes.platformPrefix}/clinics'),
               ),
             if (AdminPermissions.canViewAllStaff(auth))
               _PlatformTile(
                 title: l10n.manageStaff,
                 subtitle: l10n.activateDeactivateAccounts,
                 icon: Icons.manage_accounts_outlined,
-                onTap: () => context.push('/doctor/platform/users'),
+                onTap: () => context.push('${AdminRoutes.platformPrefix}/users'),
               ),
             if (AdminPermissions.canManagePatients(auth))
               _PlatformTile(
                 title: l10n.managePatients,
                 subtitle: l10n.managePatientsHint,
                 icon: Icons.people_alt_outlined,
-                onTap: () => context.push('/doctor/platform/patients'),
+                onTap: () => context.push('${AdminRoutes.platformPrefix}/patients'),
               ),
             if (AdminPermissions.canManageSubscriptions(auth))
               _PlatformTile(
                 title: l10n.manageSubscriptions,
                 subtitle: l10n.manageSubscriptionsHint,
                 icon: Icons.card_membership_outlined,
-                onTap: () => context.push('/doctor/platform/subscriptions'),
+                onTap: () => context.push('${AdminRoutes.platformPrefix}/subscriptions'),
               ),
           ],
         ),

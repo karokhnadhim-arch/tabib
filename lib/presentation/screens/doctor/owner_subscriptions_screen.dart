@@ -10,6 +10,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../models/clinic.dart';
 import '../../../models/doctor.dart';
 import '../../../presentation/widgets/admin_guard.dart';
+import '../../../presentation/widgets/owner_module_app_bar.dart';
 import '../../../presentation/widgets/subscription_status_badge.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
@@ -190,10 +191,7 @@ class _OwnerSubscriptionsScreenState extends State<OwnerSubscriptionsScreen> {
 
     return AdminGuard(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(l10n.manageSubscriptions),
-          backgroundColor: AppTheme.primaryDark,
-        ),
+        appBar: ownerModuleAppBar(context, title: l10n.manageSubscriptions),
         body: clinics.isEmpty
             ? Center(child: Text(l10n.manageClinics))
             : ListView.builder(

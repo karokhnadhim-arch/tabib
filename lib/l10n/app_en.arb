@@ -623,5 +623,19 @@
   "permManageCategories": "Manage categories",
   "permViewAnalytics": "View analytics",
   "permCreateAdmins": "Create admins",
-  "permManageAdmins": "Manage admins"
+  "permManageAdmins": "Manage admins",
+  "systemOwnerDashboard": "System Owner Dashboard",
+  "systemOwnerDashboardHint": "Manage the platform, users, subscriptions, and system settings.",
+  "systemOwnerModules": "Administrative modules",
+  "dashboardOverview": "Dashboard overview",
+  "businessManagement": "Business management",
+  "secretaryManagement": "Secretary management",
+  "patientManagement": "Patient management",
+  "subscriptionManagement": "Subscription management",
+  "packageManagement": "Package management",
+  "payments": "Payments",
+  "reports": "Reports",
+  "analytics": "Analytics",
+  "systemSettings": "System settings",
+  "moduleComingSoon": "This module will be available in a future update."
 }

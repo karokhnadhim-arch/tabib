@@ -1,8 +1,20 @@
-/// Admin route helpers for go_router guards.
+/// Platform admin route helpers for go_router guards and navigation.
 class AdminRoutes {
   AdminRoutes._();
 
-  static const platformPrefix = '/doctor/platform';
+  /// System Owner home dashboard.
+  static const ownerHome = '/owner';
 
-  static bool isAdminRoute(String path) => path.startsWith(platformPrefix);
+  /// Delegated Admin console (permission-filtered modules).
+  static const adminConsole = '/owner/console';
+
+  /// Prefix for all platform management routes.
+  static const platformPrefix = '/owner';
+
+  static bool isAdminRoute(String path) =>
+      path == ownerHome ||
+      path.startsWith('$platformPrefix/');
+
+  static bool isOwnerHome(String path) =>
+      path == ownerHome || path == adminConsole;
 }

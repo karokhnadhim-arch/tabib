@@ -1600,4 +1600,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get permManageAdmins => 'Manage admins';
+
+  @override
+  String get systemOwnerDashboard => 'System Owner Dashboard';
+
+  @override
+  String get systemOwnerDashboardHint => 'Manage the platform, users, subscriptions, and system settings.';
+
+  @override
+  String get systemOwnerModules => 'Administrative modules';
+
+  @override
+  String get dashboardOverview => 'Dashboard overview';
+
+  @override
+  String get businessManagement => 'Business management';
+
+  @override
+  String get secretaryManagement => 'Secretary management';
+
+  @override
+  String get patientManagement => 'Patient management';
+
+  @override
+  String get subscriptionManagement => 'Subscription management';
+
+  @override
+  String get packageManagement => 'Package management';
+
+  @override
+  String get payments => 'Payments';
+
+  @override
+  String get reports => 'Reports';
+
+  @override
+  String get analytics => 'Analytics';
+
+  @override
+  String get systemSettings => 'System settings';
+
+  @override
+  String get moduleComingSoon => 'This module will be available in a future update.';
 }

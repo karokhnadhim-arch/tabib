@@ -1600,4 +1600,46 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get permManageAdmins => 'إدارة المسؤولين';
+
+  @override
+  String get systemOwnerDashboard => 'لوحة مالك النظام';
+
+  @override
+  String get systemOwnerDashboardHint => 'إدارة المنصة والمستخدمين والاشتراكات وإعدادات النظام.';
+
+  @override
+  String get systemOwnerModules => 'الوحدات الإدارية';
+
+  @override
+  String get dashboardOverview => 'نظرة عامة';
+
+  @override
+  String get businessManagement => 'إدارة الأعمال';
+
+  @override
+  String get secretaryManagement => 'إدارة السكرتارية';
+
+  @override
+  String get patientManagement => 'إدارة المرضى';
+
+  @override
+  String get subscriptionManagement => 'إدارة الاشتراكات';
+
+  @override
+  String get packageManagement => 'إدارة الباقات';
+
+  @override
+  String get payments => 'المدفوعات';
+
+  @override
+  String get reports => 'التقارير';
+
+  @override
+  String get analytics => 'التحليلات';
+
+  @override
+  String get systemSettings => 'إعدادات النظام';
+
+  @override
+  String get moduleComingSoon => 'ستتوفر هذه الوحدة في تحديث قادم.';
 }

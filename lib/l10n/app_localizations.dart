@@ -3208,6 +3208,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Manage admins'**
   String get permManageAdmins;
+
+  /// No description provided for @systemOwnerDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'System Owner Dashboard'**
+  String get systemOwnerDashboard;
+
+  /// No description provided for @systemOwnerDashboardHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage the platform, users, subscriptions, and system settings.'**
+  String get systemOwnerDashboardHint;
+
+  /// No description provided for @systemOwnerModules.
+  ///
+  /// In en, this message translates to:
+  /// **'Administrative modules'**
+  String get systemOwnerModules;
+
+  /// No description provided for @dashboardOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard overview'**
+  String get dashboardOverview;
+
+  /// No description provided for @businessManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Business management'**
+  String get businessManagement;
+
+  /// No description provided for @secretaryManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Secretary management'**
+  String get secretaryManagement;
+
+  /// No description provided for @patientManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient management'**
+  String get patientManagement;
+
+  /// No description provided for @subscriptionManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription management'**
+  String get subscriptionManagement;
+
+  /// No description provided for @packageManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Package management'**
+  String get packageManagement;
+
+  /// No description provided for @payments.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments'**
+  String get payments;
+
+  /// No description provided for @reports.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get reports;
+
+  /// No description provided for @analytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics'**
+  String get analytics;
+
+  /// No description provided for @systemSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'System settings'**
+  String get systemSettings;
+
+  /// No description provided for @moduleComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'This module will be available in a future update.'**
+  String get moduleComingSoon;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

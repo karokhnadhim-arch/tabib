@@ -10,6 +10,7 @@ import '../../../models/account_status.dart';
 import '../../../models/user_account.dart';
 import '../../../presentation/widgets/account_status_badge.dart';
 import '../../../presentation/widgets/admin_guard.dart';
+import '../../../presentation/widgets/owner_module_app_bar.dart';
 import '../../../presentation/widgets/doctor_secretaries_summary.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/backend/clinic_backend.dart';
@@ -147,10 +148,7 @@ class _OwnerStaffListScreenState extends State<OwnerStaffListScreen> {
 
     return AdminGuard(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(_title(l10n)),
-          backgroundColor: AppTheme.primaryDark,
-        ),
+        appBar: ownerModuleAppBar(context, title: _title(l10n)),
         body: Column(
           children: [
             SizedBox(

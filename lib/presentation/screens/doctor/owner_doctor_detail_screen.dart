@@ -11,6 +11,7 @@ import '../../../models/user_account.dart';
 import '../../../presentation/widgets/admin_doctor_secretaries_section.dart';
 import '../../../presentation/widgets/admin_doctor_subscription_card.dart';
 import '../../../presentation/widgets/admin_guard.dart';
+import '../../../presentation/widgets/owner_module_app_bar.dart';
 import '../../../presentation/widgets/doctor_secretaries_summary.dart';
 import '../../../presentation/widgets/doctor_avatar.dart';
 import '../../../services/auth_service.dart';
@@ -83,9 +84,9 @@ class _OwnerDoctorDetailScreenState extends State<OwnerDoctorDetailScreen> {
 
     return AdminGuard(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(ProviderLabels.profileTitle(l10n, doctor)),
-          backgroundColor: AppTheme.primaryDark,
+        appBar: ownerModuleAppBar(
+          context,
+          title: ProviderLabels.profileTitle(l10n, doctor),
         ),
         body: doctor == null
             ? const Center(child: CircularProgressIndicator())

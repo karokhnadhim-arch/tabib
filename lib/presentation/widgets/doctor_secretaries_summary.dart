@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/auth/admin_routes.dart';
 import '../../core/utils/admin_doctor_staff_resolver.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/user_account.dart';
@@ -22,7 +23,7 @@ class DoctorSecretariesSummary extends StatelessWidget {
   final VoidCallback? onTap;
 
   static String doctorDetailSecretariesRoute(String doctorId) =>
-      '/doctor/platform/doctors/$doctorId?section=secretaries';
+      '${AdminRoutes.platformPrefix}/doctors/$doctorId?section=secretaries';
 
   @override
   Widget build(BuildContext context) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/auth/admin_routes.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/staff_auth_identifiers.dart';
 import '../../../core/widgets/medical_logo.dart';
@@ -120,7 +121,10 @@ class _TabibLoginScreenState extends State<TabibLoginScreen> {
         );
         if (err != null) {
           err = AccountStatusLabels.loginBlockMessage(l10n, err);
-        } else if (_role == _LoginRole.doctor && !auth.isDoctor) {
+        } else if (_role == _LoginRole.doctor &&
+            !auth.isDoctor &&
+            !auth.isSystemOwner &&
+            !auth.canAccessAdminPanel) {
           await auth.logout();
           err = l10n.invalidCredentials;
         } else if (_role == _LoginRole.secretary && !auth.isSecretary) {
@@ -134,7 +138,11 @@ class _TabibLoginScreenState extends State<TabibLoginScreen> {
     setState(() => _loading = false);
 
     if (err == null) {
-      if (auth.isDoctor) {
+      if (auth.isSystemOwner) {
+        context.go(AdminRoutes.ownerHome);
+      } else if (auth.canAccessAdminPanel && !auth.isClinicalProvider) {
+        context.go(AdminRoutes.adminConsole);
+      } else if (auth.isDoctor) {
         context.go('/doctor');
       } else if (auth.isSecretary) {
         context.go('/secretary');

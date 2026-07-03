@@ -8,6 +8,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../models/user_account.dart';
 import '../../../presentation/widgets/admin_account_form_dialog.dart';
 import '../../../presentation/widgets/admin_guard.dart';
+import '../../../presentation/widgets/owner_module_app_bar.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/staff_data_service.dart';
 import '../../../utils/admin_capability_labels.dart';
@@ -65,10 +66,7 @@ class OwnerAdminsScreen extends StatelessWidget {
 
     return AdminGuard(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(l10n.manageAdmins),
-          backgroundColor: AppTheme.primaryDark,
-        ),
+        appBar: ownerModuleAppBar(context, title: l10n.manageAdmins),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () async => AdminAccountFormDialog.show(context),
           icon: const Icon(Icons.person_add_alt_1_outlined),

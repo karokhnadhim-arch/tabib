@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/clinic.dart';
 import '../../../models/localized_text.dart';
 import '../../../core/auth/admin_permissions.dart';
 import '../../../presentation/widgets/admin_guard.dart';
+import '../../../presentation/widgets/owner_module_app_bar.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../utils/localization_utils.dart';
@@ -119,10 +119,7 @@ class _OwnerClinicsScreenState extends State<OwnerClinicsScreen> {
 
     return AdminGuard(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(l10n.manageClinics),
-          backgroundColor: AppTheme.primaryDark,
-        ),
+        appBar: ownerModuleAppBar(context, title: l10n.manageClinics),
         floatingActionButton: FloatingActionButton(
           onPressed: () => _showForm(),
           child: const Icon(Icons.add),

@@ -20,6 +20,8 @@ import '../../../models/service_provider_type.dart';
 
 import '../../../presentation/widgets/admin_guard.dart';
 
+import '../../../presentation/widgets/owner_module_app_bar.dart';
+
 import '../../../presentation/widgets/staff_account_login_fields.dart';
 
 import '../../../services/auth_service.dart';
@@ -260,11 +262,11 @@ class _CreateDoctorScreenState extends State<CreateDoctorScreen> {
 
       child: Scaffold(
 
-        appBar: AppBar(
+        appBar: ownerModuleAppBar(
 
-          title: Text(ProviderLabels.createAccountTitle(l10n, _accountType)),
+          context,
 
-          backgroundColor: AppTheme.primaryDark,
+          title: ProviderLabels.createAccountTitle(l10n, _accountType),
 
         ),
 

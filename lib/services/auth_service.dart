@@ -63,8 +63,10 @@ class AuthService extends ChangeNotifier {
       PermissionPolicy.hasCapability(_currentUser, capability);
 
   bool get isDoctor =>
-      _currentUser?.role == UserRole.doctor ||
-      (isSystemOwner && (_currentUser?.doctorId?.isNotEmpty ?? false));
+      !isSystemOwner && _currentUser?.role == UserRole.doctor;
+
+  /// Doctor or business provider with clinical dashboard (never System Owner).
+  bool get isClinicalProvider => isDoctor;
 
   bool get isStaff => isDoctor || isSecretary || isDelegatedAdmin;
 
@@ -158,12 +160,18 @@ class AuthService extends ChangeNotifier {
     if (!shouldOwn) return;
 
     final needsUpdate = !user.isSystemOwner ||
+        user.role != UserRole.admin ||
+        user.doctorId != null ||
+        user.linkedDoctorId != null ||
         (user.email == null && authEmail != null && authEmail.isNotEmpty);
     if (!needsUpdate) return;
 
     _currentUser = user.copyWith(
       isSystemOwner: true,
+      role: UserRole.admin,
       email: user.email ?? authEmail,
+      doctorId: null,
+      linkedDoctorId: null,
     );
     if (persist && !_demoMode) {
       await _backend.upsertStaff(_currentUser!);
@@ -707,14 +715,12 @@ class AuthService extends ChangeNotifier {
         _currentUser = const UserAccount(
           id: 'demo_admin',
           name: LocalizedText(
-            ku: 'د. بەڕێوەبەر',
-            ar: 'د. المدير',
-            en: 'Dr. Owner',
+            ku: 'بەڕێوەبەری سیستەم',
+            ar: 'مدير النظام',
+            en: 'System Owner',
           ),
-          role: UserRole.doctor,
+          role: UserRole.admin,
           email: demoAdminEmail,
-          doctorId: 'doc_1',
-          clinicId: 'clinic_erbil_1',
           isSystemOwner: true,
         );
         return await _rejectBlockedAccount();
@@ -733,7 +739,6 @@ class AuthService extends ChangeNotifier {
           doctorId: 'doc_1',
           clinicId: 'clinic_erbil_1',
         );
-        await _applySystemOwnerPrivileges();
         return await _rejectBlockedAccount();
       }
 

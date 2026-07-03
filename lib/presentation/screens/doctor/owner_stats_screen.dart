@@ -7,6 +7,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/user_account.dart';
 import '../../../presentation/widgets/admin_guard.dart';
+import '../../../presentation/widgets/owner_module_app_bar.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../services/staff_data_service.dart';
@@ -41,10 +42,7 @@ class OwnerStatsScreen extends StatelessWidget {
 
     return AdminGuard(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(l10n.systemStatistics),
-          backgroundColor: AppTheme.primaryDark,
-        ),
+        appBar: ownerModuleAppBar(context, title: l10n.systemStatistics),
         body: ListView(
           padding: const EdgeInsets.all(16),
           children: [

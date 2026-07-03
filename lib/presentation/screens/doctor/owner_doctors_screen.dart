@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/auth/admin_permissions.dart';
+import '../../../core/auth/admin_routes.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/admin_doctor_staff_resolver.dart';
 import '../../../core/utils/doctor_subscription_resolver.dart';
@@ -10,6 +11,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../models/doctor.dart';
 import '../../../models/user_account.dart';
 import '../../../presentation/widgets/admin_guard.dart';
+import '../../../presentation/widgets/owner_module_app_bar.dart';
 import '../../../presentation/widgets/admin_pagination_bar.dart';
 import '../../../presentation/widgets/doctor_avatar.dart';
 import '../../../presentation/widgets/doctor_secretaries_summary.dart';
@@ -111,10 +113,7 @@ class _OwnerDoctorsScreenState extends State<OwnerDoctorsScreen> {
 
     return AdminGuard(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(l10n.doctorManagement),
-          backgroundColor: AppTheme.primaryDark,
-        ),
+        appBar: ownerModuleAppBar(context, title: l10n.doctorManagement),
         body: Column(
           children: [
             Padding(
@@ -186,7 +185,7 @@ class _OwnerDoctorsScreenState extends State<OwnerDoctorsScreen> {
                         staff: staff,
                         data: data,
                         onTap: (id) =>
-                            context.push('/doctor/platform/doctors/$id'),
+                            context.push('${AdminRoutes.platformPrefix}/doctors/$id'),
                       )
                     : ListView.separated(
                         padding: const EdgeInsets.all(16),
@@ -200,7 +199,7 @@ class _OwnerDoctorsScreenState extends State<OwnerDoctorsScreen> {
                             staff: staff,
                             data: data,
                             onTap: () => context.push(
-                              '/doctor/platform/doctors/${doctor.id}',
+                              '${AdminRoutes.platformPrefix}/doctors/${doctor.id}',
                             ),
                           );
                         },
