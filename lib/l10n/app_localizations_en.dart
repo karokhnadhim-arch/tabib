@@ -2160,4 +2160,94 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get iconName => 'Icon name';
+
+  @override
+  String get myQueues => 'My queues';
+
+  @override
+  String get sortClosestAppointment => 'Closest appointment';
+
+  @override
+  String get sortRecentlyJoined => 'Recently joined';
+
+  @override
+  String get sortDoctorName => 'Doctor name';
+
+  @override
+  String get refresh => 'Refresh';
+
+  @override
+  String get viewProfile => 'View profile';
+
+  @override
+  String get patientProfile => 'Profile';
+
+  @override
+  String get city => 'City';
+
+  @override
+  String get genderOptional => 'Gender (optional)';
+
+  @override
+  String get showProfilePhoto => 'Show profile photo';
+
+  @override
+  String get showPhoneNumber => 'Show phone number';
+
+  @override
+  String get profileVisibleToVisitedOnly => 'Profile visible only to visited providers';
+
+  @override
+  String get recentlyVisited => 'Recently visited';
+
+  @override
+  String get nearbyProviders => 'Nearby';
+
+  @override
+  String get recommendedDoctors => 'Recommended doctors';
+
+  @override
+  String get recommendedBusinesses => 'Recommended businesses';
+
+  @override
+  String get activeQueues => 'Active queues';
+
+  @override
+  String get advertisements => 'Advertisements';
+
+  @override
+  String get enableLocation => 'Enable location';
+
+  @override
+  String get locationRequiredForNearby => 'Allow location access to see nearby providers.';
+
+  @override
+  String get alreadyInSameQueue => 'You are already in this queue for the selected time.';
+
+  @override
+  String get profileSaved => 'Profile saved';
+
+  @override
+  String get saveFailed => 'Could not save changes';
+
+  @override
+  String get uploadFailed => 'Upload failed';
+
+  @override
+  String get notSpecified => 'Not specified';
+
+  @override
+  String get male => 'Male';
+
+  @override
+  String get female => 'Female';
+
+  @override
+  String get searchProvidersHint => 'Doctor, business, specialty, or city...';
+
+  @override
+  String get viewAll => 'View all';
+
+  @override
+  String get bookAgain => 'Book again';
 }

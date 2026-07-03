@@ -22,7 +22,10 @@ import 'services/backend/firestore_clinic_backend.dart';
 import 'services/backend/in_memory_clinic_backend.dart';
 import 'services/clinic_data_service.dart';
 import 'services/business_type_usage_service.dart';
+import 'services/advertisement_service.dart';
 import 'services/favorites_service.dart';
+import 'services/patient_profile_service.dart';
+import 'services/recently_visited_service.dart';
 import 'services/firebase_bootstrap.dart';
 import 'services/locale_service.dart';
 import 'services/queue_service.dart';
@@ -64,6 +67,9 @@ class _TabibAppState extends State<TabibApp> {
   late final ThemeService _themeService;
   late final UserPreferencesService _userPreferencesService;
   late final FavoritesService _favoritesService;
+  late final PatientProfileService _patientProfileService;
+  late final RecentlyVisitedService _recentlyVisitedService;
+  late final AdvertisementService _advertisementService;
   late final BusinessTypeUsageService _businessTypeUsageService;
   late final AppointmentRepository _appointmentRepository;
   late final PrescriptionRepository _prescriptionRepository;
@@ -112,6 +118,9 @@ class _TabibAppState extends State<TabibApp> {
     _themeService = ThemeService();
     _userPreferencesService = UserPreferencesService();
     _favoritesService = FavoritesService();
+    _patientProfileService = PatientProfileService();
+    _recentlyVisitedService = RecentlyVisitedService();
+    _advertisementService = AdvertisementService(backend: _backend);
     _businessTypeUsageService = BusinessTypeUsageService()..load();
     _authService.addListener(_onAuthChanged);
     _appointmentProvider = AppointmentProvider(repository: _appointmentRepository);
@@ -137,6 +146,8 @@ class _TabibAppState extends State<TabibApp> {
     final userId = _authService.currentUser?.id;
     _userPreferencesService.bindUser(userId);
     _favoritesService.bindUser(userId);
+    _patientProfileService.bindUser(userId);
+    _recentlyVisitedService.bindUser(userId);
   }
 
   @override
@@ -160,6 +171,9 @@ class _TabibAppState extends State<TabibApp> {
         ChangeNotifierProvider.value(value: _themeService),
         ChangeNotifierProvider.value(value: _userPreferencesService),
         ChangeNotifierProvider.value(value: _favoritesService),
+        ChangeNotifierProvider.value(value: _patientProfileService),
+        ChangeNotifierProvider.value(value: _recentlyVisitedService),
+        ChangeNotifierProvider.value(value: _advertisementService),
         ChangeNotifierProvider.value(value: _businessTypeUsageService),
         ChangeNotifierProvider.value(value: _appointmentProvider),
         ChangeNotifierProvider.value(value: _prescriptionProvider),

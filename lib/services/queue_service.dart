@@ -11,7 +11,11 @@ class QueueService extends ChangeNotifier {
   final SubscriptionManager _subscriptions = SubscriptionManager();
   final Map<String, List<QueueEntry>> _queuesByDoctor = {};
   final Map<String, List<QueueEntry>> _secretaryQueuesByDoctor = {};
+  List<QueueEntry> _patientQueues = [];
   QueueEntry? _patientQueue;
+
+  List<QueueEntry> activeQueuesForPatient(String patientId) =>
+      List.unmodifiable(_patientQueues);
 
   List<QueueEntry> queueForDoctor(String doctorId) {
     return List.unmodifiable(_queuesByDoctor[doctorId] ?? []);
@@ -21,7 +25,31 @@ class QueueService extends ChangeNotifier {
     return List.unmodifiable(_secretaryQueuesByDoctor[doctorId] ?? []);
   }
 
-  QueueEntry? activeEntryForPatient(String patientId) => _patientQueue;
+  QueueEntry? activeEntryForPatient(String patientId) =>
+      _patientQueues.isNotEmpty ? _patientQueues.first : null;
+
+  QueueEntry? queueEntryById(String patientId, String entryId) {
+    for (final e in _patientQueues) {
+      if (e.id == entryId && e.patientId == patientId) return e;
+    }
+    return null;
+  }
+
+  void watchPatientQueue(String patientId) => watchPatientQueues(patientId);
+
+  void watchPatientQueues(String patientId) {
+    _subscriptions.replace(
+      'patientQueues:$patientId',
+      _backend.watchPatientActiveQueues(patientId),
+      (List<QueueEntry> entries) {
+        _patientQueues = entries;
+        _patientQueue = entries.isNotEmpty ? entries.first : null;
+        notifyListeners();
+      },
+    );
+  }
+
+  void refreshPatientQueues(String patientId) => watchPatientQueues(patientId);
 
   void watchDoctorQueue(String doctorId) {
     _subscriptions.replace(
@@ -45,17 +73,6 @@ class QueueService extends ChangeNotifier {
     );
   }
 
-  void watchPatientQueue(String patientId) {
-    _subscriptions.replace(
-      'patientQueue:$patientId',
-      _backend.watchPatientActiveQueue(patientId),
-      (QueueEntry? entry) {
-        _patientQueue = entry;
-        notifyListeners();
-      },
-    );
-  }
-
   void stopWatchingDoctorQueue([String? doctorId]) {
     if (doctorId != null) {
       _subscriptions.cancel('doctorQueue:$doctorId');
@@ -71,7 +88,8 @@ class QueueService extends ChangeNotifier {
   }
 
   void stopWatchingPatientQueue(String patientId) {
-    _subscriptions.cancel('patientQueue:$patientId');
+    _subscriptions.cancel('patientQueues:$patientId');
+    _patientQueues = [];
     _patientQueue = null;
     notifyListeners();
   }
@@ -129,7 +147,10 @@ class QueueService extends ChangeNotifier {
     for (final e in queueForDoctor(doctorId)) {
       if (e.patientId == patientId) return e;
     }
-    return _patientQueue?.patientId == patientId ? _patientQueue : null;
+    for (final e in _patientQueues) {
+      if (e.patientId == patientId && e.doctorId == doctorId) return e;
+    }
+    return null;
   }
 
   Future<QueueEntry?> bookQueue({

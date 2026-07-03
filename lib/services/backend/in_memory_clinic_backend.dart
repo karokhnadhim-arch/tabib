@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import '../../models/advertisement.dart';
 import '../../models/clinic.dart';
 import '../../models/doctor.dart';
 import '../../models/doctor_working_schedule.dart';
@@ -25,6 +26,7 @@ class InMemoryClinicBackend implements ClinicBackend {
   final List<Clinic> _clinics = [];
   final List<Doctor> _doctors = [];
   final List<QueueEntry> _queues = [];
+  final List<Advertisement> _advertisements = [];
   final List<UserAccount> _staff = [];
   final Map<String, String> _staffPasswords = {};
   int _nextDoctorSequence = 10025;
@@ -137,18 +139,23 @@ class InMemoryClinicBackend implements ClinicBackend {
   }
 
   @override
-  Stream<QueueEntry?> watchPatientActiveQueue(String patientId) async* {
-    yield _queues
+  Stream<List<QueueEntry>> watchPatientActiveQueues(String patientId) async* {
+    List<QueueEntry> active() => _queues
         .where((q) =>
             q.patientId == patientId &&
             (q.isActive || q.isInExamination))
-        .firstOrNull;
+        .toList()
+      ..sort((a, b) => a.bookedAt.compareTo(b.bookedAt));
+    yield active();
     await for (final _ in _change.stream) {
-      yield _queues
-          .where((q) =>
-              q.patientId == patientId &&
-              (q.isActive || q.isInExamination))
-          .firstOrNull;
+      yield active();
+    }
+  }
+
+  @override
+  Stream<QueueEntry?> watchPatientActiveQueue(String patientId) async* {
+    await for (final list in watchPatientActiveQueues(patientId)) {
+      yield list.isEmpty ? null : list.first;
     }
   }
 
@@ -209,6 +216,9 @@ class InMemoryClinicBackend implements ClinicBackend {
     final existing = _queues.where(
       (q) =>
           q.patientId == patientId &&
+          q.doctorId == doctorId &&
+          q.effectiveQueueDate == queueDate &&
+          q.effectiveSlotStart == slotStart &&
           activeQueueStatuses.contains(q.status),
     );
     if (existing.isNotEmpty) return null;
@@ -1028,7 +1038,61 @@ class InMemoryClinicBackend implements ClinicBackend {
 
     _nextDoctorSequence = 10027;
     _nextBusinessSequence = 10001;
+
+    _advertisements.addAll([
+      Advertisement(
+        id: 'ad_erbil_1',
+        title: 'Erbil Health Week',
+        description: 'Free check-ups at participating clinics this month.',
+        imageUrl: 'https://picsum.photos/seed/erbil-health/800/400',
+        buttonLabel: 'Learn more',
+        linkUrl: 'https://tabib.app',
+        city: 'Erbil',
+        expiresAt: DateTime.now().add(const Duration(days: 30)),
+      ),
+      Advertisement(
+        id: 'ad_kirkuk_1',
+        title: 'Kirkuk Wellness Fair',
+        description: 'Discover local healthcare providers near you.',
+        imageUrl: 'https://picsum.photos/seed/kirkuk-wellness/800/400',
+        buttonLabel: 'View fair',
+        linkUrl: 'https://tabib.app',
+        city: 'Kirkuk',
+        expiresAt: DateTime.now().add(const Duration(days: 30)),
+      ),
+      const Advertisement(
+        id: 'ad_national_1',
+        title: 'Tabib — Your health companion',
+        description: 'Book queues and appointments from your phone.',
+        imageUrl: 'https://picsum.photos/seed/tabib-national/800/400',
+        buttonLabel: 'Get started',
+        linkUrl: 'https://tabib.app',
+        isNational: true,
+      ),
+    ]);
+
     _notify();
+  }
+
+  @override
+  Stream<List<Advertisement>> watchAdvertisements({String? city}) async* {
+    List<Advertisement> resolve() {
+      final ads =
+          _advertisements.where((a) => a.isActive).toList(growable: false);
+      final cityNorm = city?.trim().toLowerCase();
+      if (cityNorm != null && cityNorm.isNotEmpty) {
+        final cityAds =
+            ads.where((a) => a.city?.toLowerCase() == cityNorm).toList();
+        if (cityAds.isNotEmpty) return cityAds;
+      }
+      final national = ads.where((a) => a.isNational).toList();
+      return national.isNotEmpty ? national : ads;
+    }
+
+    yield resolve();
+    await for (final _ in _change.stream) {
+      yield resolve();
+    }
   }
 }
 

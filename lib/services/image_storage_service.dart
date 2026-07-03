@@ -10,6 +10,7 @@ import 'firebase_bootstrap.dart';
 /// Where optimized images are stored in Firebase Storage.
 enum ImageStorageCategory {
   doctorProfile('doctors/profile'),
+  patientProfile('patients/profile'),
   clinicPhoto('clinics/photos'),
   general('general');
 

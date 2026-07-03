@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../models/advertisement.dart';
 import '../../models/clinic.dart';
 import '../../models/doctor.dart';
 import '../../models/doctor_working_schedule.dart';
@@ -38,6 +39,8 @@ class FirestoreClinicBackend implements ClinicBackend {
       _db.collection('queue_entries');
   CollectionReference<Map<String, dynamic>> get _users =>
       _db.collection('users');
+  CollectionReference<Map<String, dynamic>> get _advertisements =>
+      _db.collection('advertisements');
 
   @override
   Stream<List<Specialty>> watchSpecialties() {
@@ -225,17 +228,56 @@ class FirestoreClinicBackend implements ClinicBackend {
   }
 
   @override
-  Stream<QueueEntry?> watchPatientActiveQueue(String patientId) {
+  Stream<List<QueueEntry>> watchPatientActiveQueues(String patientId) {
     return _queues
         .where('patientId', isEqualTo: patientId)
         .where('status', whereIn: patientVisibleQueueStatusNames)
-        .limit(1)
         .snapshots()
         .map((snap) {
-      if (snap.docs.isEmpty) return null;
-      final d = snap.docs.first;
-      return QueueEntry.fromFirestore(d.id, d.data());
+      final entries = snap.docs
+          .map((d) => QueueEntry.fromFirestore(d.id, d.data()))
+          .toList()
+        ..sort((a, b) => a.bookedAt.compareTo(b.bookedAt));
+      return entries;
     });
+  }
+
+  @override
+  Stream<QueueEntry?> watchPatientActiveQueue(String patientId) {
+    return watchPatientActiveQueues(patientId).map(
+      (entries) => entries.isEmpty ? null : entries.first,
+    );
+  }
+
+  @override
+  Stream<List<Advertisement>> watchAdvertisements({String? city}) {
+    return _advertisements.limit(50).snapshots().map((snap) {
+      final ads = _mapActiveAds(snap);
+      final cityNorm = city?.trim().toLowerCase();
+      if (cityNorm != null && cityNorm.isNotEmpty) {
+        final cityAds =
+            ads.where((a) => a.city?.toLowerCase() == cityNorm).toList();
+        if (cityAds.isNotEmpty) return cityAds;
+      }
+      final national = ads.where((a) => a.isNational).toList();
+      return national.isNotEmpty ? national : ads;
+    });
+  }
+
+  List<Advertisement> _mapActiveAds(
+    QuerySnapshot<Map<String, dynamic>> snap,
+  ) {
+    final now = DateTime.now();
+    return snap.docs
+        .map((d) => Advertisement.fromFirestore(d.id, d.data()))
+        .where((ad) {
+          if (!ad.isActive) return false;
+          if (ad.expiresAt != null && now.isAfter(ad.expiresAt!)) {
+            return false;
+          }
+          return true;
+        })
+        .toList();
   }
 
   @override
@@ -355,6 +397,9 @@ class FirestoreClinicBackend implements ClinicBackend {
   }) async {
     final existing = await _queues
         .where('patientId', isEqualTo: patientId)
+        .where('doctorId', isEqualTo: doctorId)
+        .where('queueDate', isEqualTo: queueDate)
+        .where('slotStart', isEqualTo: slotStart)
         .where('status', whereIn: activeQueueStatusNames)
         .limit(1)
         .get();

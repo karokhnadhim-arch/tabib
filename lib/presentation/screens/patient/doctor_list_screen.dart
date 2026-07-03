@@ -140,12 +140,21 @@ class _TabibDoctorListScreenState extends State<TabibDoctorListScreen> {
       if (widget.isBusinessCatalog) {
         return name.contains(query) ||
             businessName.contains(query) ||
-            typeLabel.contains(query);
+            typeLabel.contains(query) ||
+            _matchesCity(d, query);
       }
       return name.contains(query) ||
           typeLabel.contains(query) ||
-          businessName.contains(query);
+          businessName.contains(query) ||
+          _matchesCity(d, query);
     }).toList();
+  }
+
+  bool _matchesCity(Doctor doctor, String query) {
+    final address = (doctor.clinicAddress ?? doctor.clinic.address)
+        .localized(context)
+        .toLowerCase();
+    return address.contains(query);
   }
 
   @override

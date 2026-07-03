@@ -15,9 +15,14 @@ import '../../widgets/premium_queue_dashboard.dart';
 
 
 class QueueTrackingScreen extends StatefulWidget {
-  const QueueTrackingScreen({super.key, this.embedded = false});
+  const QueueTrackingScreen({
+    super.key,
+    this.embedded = false,
+    this.entryId,
+  });
 
   final bool embedded;
+  final String? entryId;
 
   @override
   State<QueueTrackingScreen> createState() => _QueueTrackingScreenState();
@@ -56,8 +61,11 @@ class _QueueTrackingScreenState extends State<QueueTrackingScreen>
   void _startWatching() {
     final auth = context.read<AuthService>();
     final queue = context.read<QueueService>();
-    queue.watchPatientQueue(auth.patientId);
-    _syncDoctorQueueWatch(queue.activeEntryForPatient(auth.patientId));
+    queue.watchPatientQueues(auth.patientId);
+    final entry = widget.entryId != null
+        ? queue.queueEntryById(auth.patientId, widget.entryId!)
+        : queue.activeEntryForPatient(auth.patientId);
+    _syncDoctorQueueWatch(entry);
   }
 
   void _syncDoctorQueueWatch(QueueEntry? entry) {
@@ -115,7 +123,9 @@ class _QueueTrackingScreenState extends State<QueueTrackingScreen>
     final auth = context.watch<AuthService>();
     final queue = context.watch<QueueService>();
     final data = context.watch<ClinicDataService>();
-    final entry = queue.activeEntryForPatient(auth.patientId);
+    final entry = widget.entryId != null
+        ? queue.queueEntryById(auth.patientId, widget.entryId!)
+        : queue.activeEntryForPatient(auth.patientId);
     _syncDoctorQueueWatch(entry);
 
     if (entry != null) {

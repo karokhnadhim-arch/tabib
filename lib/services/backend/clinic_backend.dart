@@ -1,3 +1,4 @@
+import '../../models/advertisement.dart';
 import '../../models/clinic.dart';
 import '../../models/doctor.dart';
 import '../../models/doctor_page.dart';
@@ -25,6 +26,8 @@ abstract class ClinicBackend {
   Stream<List<QueueEntry>> watchQueue(String doctorId);
   Stream<List<QueueEntry>> watchSecretaryQueue(String doctorId);
   Stream<QueueEntry?> watchPatientActiveQueue(String patientId);
+  Stream<List<QueueEntry>> watchPatientActiveQueues(String patientId);
+  Stream<List<Advertisement>> watchAdvertisements({String? city});
 
   Future<Doctor?> getDoctor(String doctorId);
   Future<Clinic?> getClinic(String clinicId);

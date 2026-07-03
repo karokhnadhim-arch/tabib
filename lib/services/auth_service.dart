@@ -1182,6 +1182,49 @@ class AuthService extends ChangeNotifier {
         StaffAuthIdentifiers.normalizePhone(s.phone!) == normalized);
   }
 
+  /// Updates the signed-in patient's name, email, and phone.
+  Future<String?> updatePatientAccount({
+    required String name,
+    String? email,
+    String? phone,
+  }) async {
+    final user = _currentUser;
+    if (user == null || user.role != UserRole.patient) {
+      return 'unauthorized';
+    }
+    if (name.trim().length < 2) return 'invalid_name';
+    if (phone != null && phone.length < 10) return 'invalid_phone';
+
+    final localized = LocalizedText(ku: name, ar: name, en: name);
+    final updated = user.copyWith(
+      name: localized,
+      email: email?.trim().isEmpty == true ? null : email?.trim(),
+      phone: phone,
+    );
+
+    if (_useDemoAuth) {
+      _currentUser = updated;
+      notifyListeners();
+      return null;
+    }
+
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(user.id).set(
+        {
+          'name': localized.toMap(),
+          'email': updated.email,
+          'phone': updated.phone,
+        },
+        SetOptions(merge: true),
+      );
+      _currentUser = updated;
+      notifyListeners();
+      return null;
+    } on FirebaseException catch (e) {
+      return e.message ?? e.code;
+    }
+  }
+
   /// Whether the signed-in user can change their own password (email auth only).
   bool get canChangePassword {
     final user = _currentUser;

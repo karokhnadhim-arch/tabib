@@ -4312,6 +4312,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Icon name'**
   String get iconName;
+
+  /// No description provided for @myQueues.
+  ///
+  /// In en, this message translates to:
+  /// **'My queues'**
+  String get myQueues;
+
+  /// No description provided for @sortClosestAppointment.
+  ///
+  /// In en, this message translates to:
+  /// **'Closest appointment'**
+  String get sortClosestAppointment;
+
+  /// No description provided for @sortRecentlyJoined.
+  ///
+  /// In en, this message translates to:
+  /// **'Recently joined'**
+  String get sortRecentlyJoined;
+
+  /// No description provided for @sortDoctorName.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor name'**
+  String get sortDoctorName;
+
+  /// No description provided for @refresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get refresh;
+
+  /// No description provided for @viewProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'View profile'**
+  String get viewProfile;
+
+  /// No description provided for @patientProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get patientProfile;
+
+  /// No description provided for @city.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get city;
+
+  /// No description provided for @genderOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender (optional)'**
+  String get genderOptional;
+
+  /// No description provided for @showProfilePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Show profile photo'**
+  String get showProfilePhoto;
+
+  /// No description provided for @showPhoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Show phone number'**
+  String get showPhoneNumber;
+
+  /// No description provided for @profileVisibleToVisitedOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile visible only to visited providers'**
+  String get profileVisibleToVisitedOnly;
+
+  /// No description provided for @recentlyVisited.
+  ///
+  /// In en, this message translates to:
+  /// **'Recently visited'**
+  String get recentlyVisited;
+
+  /// No description provided for @nearbyProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearby'**
+  String get nearbyProviders;
+
+  /// No description provided for @recommendedDoctors.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended doctors'**
+  String get recommendedDoctors;
+
+  /// No description provided for @recommendedBusinesses.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended businesses'**
+  String get recommendedBusinesses;
+
+  /// No description provided for @activeQueues.
+  ///
+  /// In en, this message translates to:
+  /// **'Active queues'**
+  String get activeQueues;
+
+  /// No description provided for @advertisements.
+  ///
+  /// In en, this message translates to:
+  /// **'Advertisements'**
+  String get advertisements;
+
+  /// No description provided for @enableLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable location'**
+  String get enableLocation;
+
+  /// No description provided for @locationRequiredForNearby.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow location access to see nearby providers.'**
+  String get locationRequiredForNearby;
+
+  /// No description provided for @alreadyInSameQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'You are already in this queue for the selected time.'**
+  String get alreadyInSameQueue;
+
+  /// No description provided for @profileSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile saved'**
+  String get profileSaved;
+
+  /// No description provided for @saveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save changes'**
+  String get saveFailed;
+
+  /// No description provided for @uploadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload failed'**
+  String get uploadFailed;
+
+  /// No description provided for @notSpecified.
+  ///
+  /// In en, this message translates to:
+  /// **'Not specified'**
+  String get notSpecified;
+
+  /// No description provided for @male.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get male;
+
+  /// No description provided for @female.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get female;
+
+  /// No description provided for @searchProvidersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor, business, specialty, or city...'**
+  String get searchProvidersHint;
+
+  /// No description provided for @viewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View all'**
+  String get viewAll;
+
+  /// No description provided for @bookAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Book again'**
+  String get bookAgain;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

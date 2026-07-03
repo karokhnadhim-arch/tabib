@@ -2160,4 +2160,94 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get iconName => 'اسم الأيقونة';
+
+  @override
+  String get myQueues => 'طوابيري';
+
+  @override
+  String get sortClosestAppointment => 'أقرب موعد';
+
+  @override
+  String get sortRecentlyJoined => 'انضممت مؤخراً';
+
+  @override
+  String get sortDoctorName => 'اسم الطبيب';
+
+  @override
+  String get refresh => 'تحديث';
+
+  @override
+  String get viewProfile => 'عرض الملف';
+
+  @override
+  String get patientProfile => 'الملف الشخصي';
+
+  @override
+  String get city => 'المدينة';
+
+  @override
+  String get genderOptional => 'الجنس (اختياري)';
+
+  @override
+  String get showProfilePhoto => 'إظهار صورة الملف';
+
+  @override
+  String get showPhoneNumber => 'إظهار رقم الهاتف';
+
+  @override
+  String get profileVisibleToVisitedOnly => 'الملف مرئي فقط للمنشآت التي زرتها';
+
+  @override
+  String get recentlyVisited => 'زرت مؤخراً';
+
+  @override
+  String get nearbyProviders => 'بالقرب منك';
+
+  @override
+  String get recommendedDoctors => 'أطباء موصى بهم';
+
+  @override
+  String get recommendedBusinesses => 'منشآت موصى بها';
+
+  @override
+  String get activeQueues => 'طوابير نشطة';
+
+  @override
+  String get advertisements => 'إعلانات';
+
+  @override
+  String get enableLocation => 'تفعيل الموقع';
+
+  @override
+  String get locationRequiredForNearby => 'اسمح بالوصول إلى الموقع لرؤية المنشآت القريبة.';
+
+  @override
+  String get alreadyInSameQueue => 'أنت مسجل بالفعل في هذا الطابور لنفس الوقت.';
+
+  @override
+  String get profileSaved => 'تم حفظ الملف';
+
+  @override
+  String get saveFailed => 'تعذر حفظ التغييرات';
+
+  @override
+  String get uploadFailed => 'فشل الرفع';
+
+  @override
+  String get notSpecified => 'غير محدد';
+
+  @override
+  String get male => 'ذكر';
+
+  @override
+  String get female => 'أنثى';
+
+  @override
+  String get searchProvidersHint => 'طبيب، منشأة، تخصص، أو مدينة...';
+
+  @override
+  String get viewAll => 'عرض الكل';
+
+  @override
+  String get bookAgain => 'احجز مرة أخرى';
 }

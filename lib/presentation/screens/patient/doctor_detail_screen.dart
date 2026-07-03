@@ -7,9 +7,11 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/medical_ui.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/doctor.dart';
+import '../../../models/provider_catalog_mode.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../services/favorites_service.dart';
+import '../../../services/recently_visited_service.dart';
 import '../../../services/queue_service.dart';
 import '../../../utils/localization_utils.dart';
 import '../../../utils/provider_labels.dart';
@@ -60,6 +62,15 @@ class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
     final data = context.read<ClinicDataService>();
     setState(() => _loadingDoctor = true);
     await data.fetchDoctorById(widget.doctorId, forceRefresh: true);
+    final doctor = data.doctorById(widget.doctorId);
+    if (doctor != null) {
+      await context.read<RecentlyVisitedService>().recordVisit(
+            doctor.id,
+            doctor.isBusiness
+                ? ProviderCatalogMode.businesses
+                : ProviderCatalogMode.doctors,
+          );
+    }
     if (mounted) setState(() => _loadingDoctor = false);
   }
 
@@ -601,13 +612,19 @@ class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
         );
     if (!context.mounted) return;
     if (entry != null) {
+      await context.read<RecentlyVisitedService>().recordVisit(
+            doctor.id,
+            doctor.isBusiness
+                ? ProviderCatalogMode.businesses
+                : ProviderCatalogMode.doctors,
+          );
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.bookSuccess(entry.position))),
       );
-      context.push('/queue');
+      context.push('/queue?entryId=${entry.id}');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.alreadyHasQueue)),
+        SnackBar(content: Text(l10n.alreadyInSameQueue)),
       );
     }
   }

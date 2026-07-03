@@ -2160,4 +2160,94 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get iconName => 'ناوی ئایکۆن';
+
+  @override
+  String get myQueues => 'نۆرەکانم';
+
+  @override
+  String get sortClosestAppointment => 'نزیکترین کات';
+
+  @override
+  String get sortRecentlyJoined => 'دواتر بەشداربوو';
+
+  @override
+  String get sortDoctorName => 'ناوی دکتۆر';
+
+  @override
+  String get refresh => 'نوێکردنەوە';
+
+  @override
+  String get viewProfile => 'بینینی پرۆفایل';
+
+  @override
+  String get patientProfile => 'پرۆفایل';
+
+  @override
+  String get city => 'شار';
+
+  @override
+  String get genderOptional => 'ڕەگەز (ئارەزوومەندانە)';
+
+  @override
+  String get showProfilePhoto => 'وێنەی پرۆفایل پیشان بدە';
+
+  @override
+  String get showPhoneNumber => 'ژمارەی مۆبایل پیشان بدە';
+
+  @override
+  String get profileVisibleToVisitedOnly => 'پرۆفایل تەنها بۆ دامەزراوە سەردانکراوەکان';
+
+  @override
+  String get recentlyVisited => 'سەردانی دواتر';
+
+  @override
+  String get nearbyProviders => 'نزیک';
+
+  @override
+  String get recommendedDoctors => 'دکتۆرە پێشنیارکراوەکان';
+
+  @override
+  String get recommendedBusinesses => 'دامەزراوە پێشنیارکراوەکان';
+
+  @override
+  String get activeQueues => 'نۆرە چالاکەکان';
+
+  @override
+  String get advertisements => 'ڕیکلامەکان';
+
+  @override
+  String get enableLocation => 'شوێن چالاک بکە';
+
+  @override
+  String get locationRequiredForNearby => 'دەستڕاگەیشتن بە شوێن ڕێگە بدە بۆ بینینی دامەزراوە نزیکەکان.';
+
+  @override
+  String get alreadyInSameQueue => 'پێشتر لەم نۆرەیەدا بۆ ئەم کاتە تۆمارکراویت.';
+
+  @override
+  String get profileSaved => 'پرۆفایل پاشەکەوت کرا';
+
+  @override
+  String get saveFailed => 'پاشەکەوتکردن سەرکەوتوو نەبوو';
+
+  @override
+  String get uploadFailed => 'بارکردن سەرکەوتوو نەبوو';
+
+  @override
+  String get notSpecified => 'دیاری نەکراو';
+
+  @override
+  String get male => 'نێر';
+
+  @override
+  String get female => 'مێ';
+
+  @override
+  String get searchProvidersHint => 'دکتۆر، دامەزراوە، پسپۆڕی یان شار...';
+
+  @override
+  String get viewAll => 'هەمووی ببینە';
+
+  @override
+  String get bookAgain => 'دووبارە نۆرە بگرە';
 }
