@@ -16,6 +16,8 @@ import '../../../services/favorites_service.dart';
 import '../../../services/locale_service.dart';
 import '../../../services/theme_service.dart';
 import '../../../services/user_preferences_service.dart';
+import '../../../models/notification_channel.dart';
+import '../../../models/user_app_preferences.dart';
 import '../../../utils/localization_utils.dart';
 import '../../../core/utils/account_code_resolver.dart';
 import '../../../presentation/widgets/account_code_badge.dart';
@@ -158,6 +160,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       .read<UserPreferencesService>()
                       .updateField((p) => p.copyWith(vibrationEnabled: v)),
                 ),
+                if (auth.isPatient) ...[
+                  const SettingsDivider(),
+                  SettingsSwitchTile(
+                    icon: Icons.alarm,
+                    title: l10n.reminderNotifications,
+                    subtitle: l10n.reminderNotificationsHint,
+                    value: prefs.reminderNotifications,
+                    onChanged: (v) => context
+                        .read<UserPreferencesService>()
+                        .updateField(
+                          (p) => p.copyWith(reminderNotifications: v),
+                        ),
+                  ),
+                  const SettingsDivider(),
+                  SettingsTile(
+                    icon: Icons.translate,
+                    title: l10n.preferredNotificationLanguage,
+                    subtitle: _notificationLanguageLabel(l10n, prefs),
+                    onTap: () => _showNotificationLanguagePicker(
+                      context,
+                      prefs,
+                      l10n,
+                    ),
+                  ),
+                  const SettingsDivider(),
+                  SettingsTile(
+                    icon: Icons.send_outlined,
+                    title: l10n.preferredNotificationMethod,
+                    subtitle: _notificationMethodLabel(l10n, prefs),
+                    onTap: () => _showNotificationMethodPicker(
+                      context,
+                      prefs,
+                      l10n,
+                    ),
+                  ),
+                ],
               ],
             ),
             if (auth.isPatient) ...[
@@ -420,6 +458,98 @@ class _SettingsScreenState extends State<SettingsScreen> {
         'en' => l10n.langEnglish,
         _ => l10n.langKurdish,
       };
+
+  String _notificationLanguageLabel(
+    AppLocalizations l10n,
+    UserAppPreferences prefs,
+  ) {
+    if (prefs.preferredLanguageCode.isEmpty) {
+      return l10n.followAppLanguage;
+    }
+    return _languageLabel(l10n, Locale(prefs.preferredLanguageCode));
+  }
+
+  String _notificationMethodLabel(
+    AppLocalizations l10n,
+    UserAppPreferences prefs,
+  ) {
+    return switch (prefs.preferredNotificationMethod) {
+      PatientNotificationMethod.automatic => l10n.notificationMethodAutomatic,
+      PatientNotificationMethod.push => l10n.pushNotifications,
+      PatientNotificationMethod.whatsapp => l10n.whatsappNotifications,
+      PatientNotificationMethod.sms => l10n.smsNotifications,
+      PatientNotificationMethod.inApp => l10n.inAppNotifications,
+    };
+  }
+
+  Future<void> _showNotificationLanguagePicker(
+    BuildContext context,
+    UserAppPreferences prefs,
+    AppLocalizations l10n,
+  ) async {
+    final selected = await showModalBottomSheet<String>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text(l10n.followAppLanguage),
+              onTap: () => Navigator.pop(context, ''),
+            ),
+            ListTile(
+              title: Text(l10n.langKurdish),
+              onTap: () => Navigator.pop(context, 'ku'),
+            ),
+            ListTile(
+              title: Text(l10n.langArabic),
+              onTap: () => Navigator.pop(context, 'ar'),
+            ),
+            ListTile(
+              title: Text(l10n.langEnglish),
+              onTap: () => Navigator.pop(context, 'en'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (selected == null) return;
+    await context.read<UserPreferencesService>().updateField(
+          (p) => p.copyWith(preferredLanguageCode: selected),
+        );
+  }
+
+  Future<void> _showNotificationMethodPicker(
+    BuildContext context,
+    UserAppPreferences prefs,
+    AppLocalizations l10n,
+  ) async {
+    final selected = await showModalBottomSheet<PatientNotificationMethod>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: PatientNotificationMethod.values
+              .map(
+                (method) => ListTile(
+                  title: Text(_notificationMethodLabel(
+                    l10n,
+                    prefs.copyWith(preferredNotificationMethod: method),
+                  )),
+                  onTap: () => Navigator.pop(context, method),
+                ),
+              )
+              .toList(),
+        ),
+      ),
+    );
+    if (selected == null) return;
+    await context.read<UserPreferencesService>().updateField(
+          (p) => p.copyWith(preferredNotificationMethod: selected),
+        );
+  }
 
   Future<void> _showThemePicker(
     BuildContext context,

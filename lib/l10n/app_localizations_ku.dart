@@ -193,7 +193,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get currentQueue => 'سەرەی ئێستا';
 
   @override
-  String get yourTurn => 'ئێستا نۆرەی تۆیە!';
+  String get yourTurn => 'کاتەکەت';
 
   @override
   String get waiting => 'چاوەڕوانی';
@@ -859,6 +859,24 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get queueNotifyTwoRemainingBody => 'تەنها ٢ نەخۆش لە پێش تۆ ماوە.';
+
+  @override
+  String get queueNotifyTenRemaining => 'نۆرەکەت نزیکە';
+
+  @override
+  String get queueNotifyTenRemainingBody => 'تەنها 10 نەخۆش ماوە پێش کاتەکەت. تکایە ئامادەبە.';
+
+  @override
+  String get queueNotifyFiveRemaining => 'بەرەو نۆرینگە بڕۆ';
+
+  @override
+  String get queueNotifyFiveRemainingBody => 'تەنها 5 نەخۆش ماوە پێش کاتەکەت. تکایە بەرەو نۆرینگە بڕۆ.';
+
+  @override
+  String get queueNotifyThreeRemaining => 'ئێستا بگە';
+
+  @override
+  String get queueNotifyThreeRemainingBody => 'کاتەکەت زۆر نزیکە. تکایە ئێستا بگەیتە نۆرینگە.';
 
   @override
   String get queueNotifyYourTurn => 'ئێستا نۆرەکەتە';
@@ -2340,4 +2358,142 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get noFavoriteDoctorsYet => 'هێشتا هیچ پزیشکی دڵخوازت نییە. لەسەر دڵ لە پڕۆفایلی پزیشک دابگرە.';
+
+  @override
+  String get notificationSystemSettings => 'سیستەمی ئاگادariی زیرەک';
+
+  @override
+  String get notificationSystemSettingsHint => 'کەناڵەکان، ئاستی ئاگادari و قالبە فرەزمانەکان';
+
+  @override
+  String get notificationChannels => 'کەناڵەکانی ئاگادari';
+
+  @override
+  String get pushNotificationsOwnerHint => 'push بنێرە کاتێک نەخۆش ئەپەکەی هەیە';
+
+  @override
+  String get whatsappNotifications => 'واتساپ';
+
+  @override
+  String get smsNotifications => 'SMS';
+
+  @override
+  String get smsNotificationsHint => 'پێویستی بە دابینکەری SMS هەیە (لە demo دا خەیاڵی)';
+
+  @override
+  String get inAppNotifications => 'ناو ئەپ';
+
+  @override
+  String get queueAlertThresholds => 'ئاستی ئاگادariی نۆر';
+
+  @override
+  String get queueAlertThresholdsHint => 'ئاگادari بنێرە کاتێک ئەم ژمارەیە ماوە پێش کاتەکەیان';
+
+  @override
+  String get notificationTemplates => 'قالبەکانی ئaگادari';
+
+  @override
+  String get notificationTemplatesHint => 'PatientName و DoctorName و DelayMinutes و AppointmentTime وەک جێگیر بەکاربهێنە';
+
+  @override
+  String get notificationType => 'جۆری ئaگادari';
+
+  @override
+  String get templateVariablesHint => 'دەقی قالب لەگەڵ جێگیرەکان';
+
+  @override
+  String get saveTemplate => 'پاشەکەوتکردنی قالب';
+
+  @override
+  String get templateSaved => 'قالب پاشەکەوت کرا';
+
+  @override
+  String get reminderNotifications => 'ئaگادariی بیرخستنەوە';
+
+  @override
+  String get reminderNotificationsHint => 'بیرخستنەوەی نۆر و چاوپێکەوتن';
+
+  @override
+  String get preferredNotificationLanguage => 'زمانی ئaگادari';
+
+  @override
+  String get followAppLanguage => 'شوێن زمانی ئەپ بکەوە';
+
+  @override
+  String get preferredNotificationMethod => 'ڕێگای پەسندکراوی گەیاندن';
+
+  @override
+  String get notificationMethodAutomatic => 'خۆکار (باشترین بەردەست)';
+
+  @override
+  String get sentBy => 'نێردراوە لەلایەن';
+
+  @override
+  String get notificationOpened => 'کراوەتەوە';
+
+  @override
+  String get deliveryPending => 'چاوەڕوان';
+
+  @override
+  String get deliverySent => 'نێردرا';
+
+  @override
+  String get deliveryDelivered => 'گەیشت';
+
+  @override
+  String get deliveryFailed => 'سەرکەوتوو نەبوو';
+
+  @override
+  String get deliverySkipped => 'پەڕێندراو';
+
+  @override
+  String get missedTurnNotification => 'کات لەدەستچوو';
+
+  @override
+  String get doctorDelayNotification => 'دواکەوتنی پزیشک';
+
+  @override
+  String get appointmentConfirmed => 'چاوپێکەوتن پشتڕاستکرایەوە';
+
+  @override
+  String get appointmentRescheduled => 'چاوپێکەوتن گۆڕدرا';
+
+  @override
+  String get appointmentCancelled => 'چاوپێکەوتن هەڵوەشێندرایەوە';
+
+  @override
+  String get doctorUnavailable => 'پزیشک بەردەست نییە';
+
+  @override
+  String get clinicClosedUnexpectedly => 'داخستنی چاوەڕواننەکراو';
+
+  @override
+  String get recallPatient => 'بانگهێشتکردنەوەی نەخۆش';
+
+  @override
+  String get moveToEndOfQueue => 'گواستنەوە بۆ کۆتایی';
+
+  @override
+  String get cancelAppointment => 'هەڵوەشاندنەوەی چاوپێکەوتن';
+
+  @override
+  String get patientRecalled => 'نەخۆش گەڕێندرایەوە بۆ نۆر';
+
+  @override
+  String get patientMovedToEnd => 'نەخۆش گواسترایەوە بۆ کۆتایی نۆر';
+
+  @override
+  String get notifyDoctorDelay => 'ئaگادariی دواکەوتن بۆ چاوەڕوانەکان';
+
+  @override
+  String get notifyDelayShort => 'ئaگادari دواکەوتن';
+
+  @override
+  String get delayMinutes => 'دواکەوتن (خولەک)';
+
+  @override
+  String get sendNotification => 'ناردن';
+
+  @override
+  String get delayNotificationSent => 'ئaگادari دواکەوتن نێردرا بۆ چاوەڕوانەکان';
 }

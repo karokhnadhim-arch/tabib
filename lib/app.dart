@@ -33,6 +33,9 @@ import 'services/staff_data_service.dart';
 import 'services/owner_audit_service.dart';
 import 'services/subscription_monitor_service.dart';
 import 'services/theme_service.dart';
+import 'services/platform_notification_config_service.dart';
+import 'services/smart_notification_service.dart';
+import 'services/queue_notification_monitor.dart';
 import 'services/user_preferences_service.dart';
 
 /// Root widget for Tabib — medical appointment platform.
@@ -81,6 +84,9 @@ class _TabibAppState extends State<TabibApp> {
   late final ChatProvider _chatProvider;
   late final OwnerAuditService _ownerAuditService;
   late final SubscriptionMonitorService _subscriptionMonitor;
+  late final PlatformNotificationConfigService _platformNotificationConfig;
+  late final SmartNotificationService _smartNotificationService;
+  QueueNotificationMonitor? _queueNotificationMonitor;
   late final GoRouter _router;
 
   @override
@@ -117,13 +123,23 @@ class _TabibAppState extends State<TabibApp> {
     _localeService = LocaleService();
     _themeService = ThemeService();
     _userPreferencesService = UserPreferencesService();
+    _platformNotificationConfig = PlatformNotificationConfigService()..load();
+    _smartNotificationService = SmartNotificationService(
+      notifications: _notificationRepository,
+      configService: _platformNotificationConfig,
+      userPreferences: _userPreferencesService,
+      authService: _authService,
+    );
     _favoritesService = FavoritesService();
     _patientProfileService = PatientProfileService();
     _recentlyVisitedService = RecentlyVisitedService();
     _advertisementService = AdvertisementService(backend: _backend);
     _businessTypeUsageService = BusinessTypeUsageService()..load();
     _authService.addListener(_onAuthChanged);
-    _appointmentProvider = AppointmentProvider(repository: _appointmentRepository);
+    _appointmentProvider = AppointmentProvider(
+      repository: _appointmentRepository,
+      smartNotifications: _smartNotificationService,
+    );
     _prescriptionProvider = PrescriptionProvider(repository: _prescriptionRepository);
     _notificationProvider = NotificationProvider(repository: _notificationRepository);
     _chatProvider = ChatProvider(repository: _chatRepository);
@@ -134,6 +150,11 @@ class _TabibAppState extends State<TabibApp> {
       staffData: _staffDataService,
       notifications: _notificationRepository,
     )..start();
+    _queueNotificationMonitor = QueueNotificationMonitor(
+      queueService: _queueService,
+      notifications: _smartNotificationService,
+      clinicData: _dataService,
+    );
     _dataService.startRealtimeCatalog();
     _staffDataService.startRealtime();
     _router = AppRouter(
@@ -154,6 +175,7 @@ class _TabibAppState extends State<TabibApp> {
   void dispose() {
     _authService.removeListener(_onAuthChanged);
     _subscriptionMonitor.dispose();
+    _queueNotificationMonitor?.dispose();
     super.dispose();
   }
 
@@ -170,6 +192,8 @@ class _TabibAppState extends State<TabibApp> {
         ChangeNotifierProvider.value(value: _localeService),
         ChangeNotifierProvider.value(value: _themeService),
         ChangeNotifierProvider.value(value: _userPreferencesService),
+        ChangeNotifierProvider.value(value: _platformNotificationConfig),
+        ChangeNotifierProvider.value(value: _smartNotificationService),
         ChangeNotifierProvider.value(value: _favoritesService),
         ChangeNotifierProvider.value(value: _patientProfileService),
         ChangeNotifierProvider.value(value: _recentlyVisitedService),

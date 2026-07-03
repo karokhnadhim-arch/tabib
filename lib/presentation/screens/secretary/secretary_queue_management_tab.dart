@@ -10,6 +10,7 @@ import '../../../models/appointment.dart';
 import '../../../models/queue_entry.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../services/queue_service.dart';
+import '../../../services/smart_notification_service.dart';
 import '../../../utils/localization_utils.dart';
 import '../../../utils/queue_status_utils.dart';
 import '../../providers/app_providers.dart';
@@ -74,7 +75,11 @@ class SecretaryQueueManagementTab extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _DoctorQueueHeader(doctorName: doctor.name.localized(context)),
+        _DoctorQueueHeader(
+          doctorName: doctor.name.localized(context),
+          doctorId: doctorId,
+          queue: queueService.queueForDoctor(doctorId),
+        ),
         for (final entry in queue) ...[
           const SizedBox(height: 12),
           _SecretaryQueueRow(
@@ -82,6 +87,7 @@ class SecretaryQueueManagementTab extends StatelessWidget {
             appointment: _appointmentFor(appointments.appointments, entry),
             clinicId: clinicId,
             doctorId: doctorId,
+            doctorName: doctor.name.localized(context),
             onMarkEntered: () async {
               final queue = context.read<QueueService>();
               final provider = context.read<AppointmentProvider>();
@@ -96,10 +102,19 @@ class SecretaryQueueManagementTab extends StatelessWidget {
             onMarkAbsent: () async {
               final queue = context.read<QueueService>();
               final provider = context.read<AppointmentProvider>();
+              final notifications = context.read<SmartNotificationService>();
               await queue.updateEntryStatus(
                 entry.id,
                 doctorId,
                 QueueStatus.absent,
+              );
+              await notifications.notifyMissedTurn(
+                patientUserId: entry.patientId,
+                patientName: entry.patientName,
+                patientPhone: entry.patientPhone,
+                doctorId: doctorId,
+                doctorName: doctor.name.localized(context),
+                queueEntryId: entry.id,
               );
               if (!context.mounted) return;
               await _syncVisitStatus(
@@ -108,6 +123,46 @@ class SecretaryQueueManagementTab extends StatelessWidget {
                 provider.markAbsent,
               );
             },
+            onRecall: entry.status == QueueStatus.absent
+                ? () async {
+                    final queue = context.read<QueueService>();
+                    final notifications =
+                        context.read<SmartNotificationService>();
+                    await queue.recallPatient(entry.id, doctorId);
+                    notifications.clearDedupeForEntry(entry.id);
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(l10n.patientRecalled)),
+                    );
+                  }
+                : null,
+            onMoveToEnd: entry.status == QueueStatus.absent
+                ? () async {
+                    await context
+                        .read<QueueService>()
+                        .moveToEnd(entry.id, doctorId);
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(l10n.patientMovedToEnd)),
+                    );
+                  }
+                : null,
+            onCancelAppointment: entry.status == QueueStatus.absent
+                ? () async {
+                    final provider = context.read<AppointmentProvider>();
+                    final queue = context.read<QueueService>();
+                    await queue.cancelEntry(entry.id, doctorId);
+                    final appt =
+                        _appointmentFor(appointments.appointments, entry);
+                    if (appt != null) {
+                      await provider.cancel(appt.id);
+                    }
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(l10n.appointmentCancelled)),
+                    );
+                  }
+                : null,
             onReturnToReview: () => context
                 .read<QueueService>()
                 .returnToReview(entry.id, doctorId),
@@ -126,9 +181,68 @@ class SecretaryQueueManagementTab extends StatelessWidget {
 }
 
 class _DoctorQueueHeader extends StatelessWidget {
-  const _DoctorQueueHeader({required this.doctorName});
+  const _DoctorQueueHeader({
+    required this.doctorName,
+    required this.doctorId,
+    required this.queue,
+  });
 
   final String doctorName;
+  final String doctorId;
+  final List<QueueEntry> queue;
+
+  Future<void> _notifyDelay(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    final minutesController = TextEditingController(text: '15');
+    final minutes = await showDialog<int>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.notifyDoctorDelay),
+        content: TextField(
+          controller: minutesController,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+            labelText: l10n.delayMinutes,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.notNow),
+          ),
+          FilledButton(
+            onPressed: () {
+              final value = int.tryParse(minutesController.text.trim());
+              Navigator.pop(context, value ?? 15);
+            },
+            child: Text(l10n.sendNotification),
+          ),
+        ],
+      ),
+    );
+    if (minutes == null || !context.mounted) return;
+
+    final waiting = queue
+        .where((e) => e.isWaitingInLine)
+        .map(
+          (e) => (
+            patientUserId: e.patientId,
+            patientName: e.patientName,
+            patientPhone: e.patientPhone,
+            queueEntryId: e.id,
+          ),
+        );
+    await context.read<SmartNotificationService>().broadcastDoctorDelay(
+          doctorId: doctorId,
+          doctorName: doctorName,
+          delayMinutes: minutes,
+          waitingPatients: waiting,
+        );
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.delayNotificationSent)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -152,6 +266,12 @@ class _DoctorQueueHeader extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ),
+          TextButton.icon(
+            onPressed: () => _notifyDelay(context),
+            icon: const Icon(Icons.schedule_send_outlined, size: 18),
+            label: Text(l10n.notifyDelayShort),
+          ),
+          const SizedBox(width: 4),
           Flexible(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -197,22 +317,30 @@ class _SecretaryQueueRow extends StatelessWidget {
     required this.appointment,
     required this.clinicId,
     required this.doctorId,
+    required this.doctorName,
     required this.onMarkEntered,
     required this.onMarkAbsent,
     required this.onReturnToReview,
     this.onMoveUp,
     this.onMoveDown,
+    this.onRecall,
+    this.onMoveToEnd,
+    this.onCancelAppointment,
   });
 
   final QueueEntry entry;
   final Appointment? appointment;
   final String clinicId;
   final String doctorId;
+  final String doctorName;
   final VoidCallback onMarkEntered;
   final VoidCallback onMarkAbsent;
   final VoidCallback onReturnToReview;
   final VoidCallback? onMoveUp;
   final VoidCallback? onMoveDown;
+  final VoidCallback? onRecall;
+  final VoidCallback? onMoveToEnd;
+  final VoidCallback? onCancelAppointment;
 
   @override
   Widget build(BuildContext context) {
@@ -239,6 +367,9 @@ class _SecretaryQueueRow extends StatelessWidget {
           onReturnToReview: onReturnToReview,
           onMoveUp: onMoveUp,
           onMoveDown: onMoveDown,
+          onRecall: onRecall,
+          onMoveToEnd: onMoveToEnd,
+          onCancelAppointment: onCancelAppointment,
           clinicId: clinicId,
         ),
       ),
@@ -329,6 +460,9 @@ class _RowActions extends StatelessWidget {
     required this.onReturnToReview,
     this.onMoveUp,
     this.onMoveDown,
+    this.onRecall,
+    this.onMoveToEnd,
+    this.onCancelAppointment,
     required this.clinicId,
   });
 
@@ -339,6 +473,9 @@ class _RowActions extends StatelessWidget {
   final VoidCallback onReturnToReview;
   final VoidCallback? onMoveUp;
   final VoidCallback? onMoveDown;
+  final VoidCallback? onRecall;
+  final VoidCallback? onMoveToEnd;
+  final VoidCallback? onCancelAppointment;
   final String clinicId;
 
   @override
@@ -385,6 +522,29 @@ class _RowActions extends StatelessWidget {
               onTap: onMoveDown!,
             ),
         ],
+        if (entry.status == QueueStatus.absent) ...[
+          if (onRecall != null)
+            MedicalActionChip(
+              icon: Icons.notifications_active_outlined,
+              label: l10n.recallPatient,
+              color: AppTheme.medicalGreen,
+              onTap: onRecall!,
+            ),
+          if (onMoveToEnd != null)
+            MedicalActionChip(
+              icon: Icons.low_priority,
+              label: l10n.moveToEndOfQueue,
+              color: AppTheme.secretaryColor,
+              onTap: onMoveToEnd!,
+            ),
+          if (onCancelAppointment != null)
+            MedicalActionChip(
+              icon: Icons.cancel_outlined,
+              label: l10n.cancelAppointment,
+              color: Colors.red,
+              onTap: onCancelAppointment!,
+            ),
+        ],
         MedicalActionChip(
           icon: Icons.chat_bubble_outline,
           label: l10n.chatWithPatient,
@@ -411,6 +571,9 @@ class _QueueRowLayout extends StatelessWidget {
     required this.onReturnToReview,
     this.onMoveUp,
     this.onMoveDown,
+    this.onRecall,
+    this.onMoveToEnd,
+    this.onCancelAppointment,
     required this.clinicId,
   });
 
@@ -423,6 +586,9 @@ class _QueueRowLayout extends StatelessWidget {
   final VoidCallback onReturnToReview;
   final VoidCallback? onMoveUp;
   final VoidCallback? onMoveDown;
+  final VoidCallback? onRecall;
+  final VoidCallback? onMoveToEnd;
+  final VoidCallback? onCancelAppointment;
   final String clinicId;
 
   @override
@@ -461,6 +627,9 @@ class _QueueRowLayout extends StatelessWidget {
           onReturnToReview: onReturnToReview,
           onMoveUp: onMoveUp,
           onMoveDown: onMoveDown,
+          onRecall: onRecall,
+          onMoveToEnd: onMoveToEnd,
+          onCancelAppointment: onCancelAppointment,
           clinicId: clinicId,
         );
 

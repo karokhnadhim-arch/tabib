@@ -25,6 +25,9 @@ class QueueService extends ChangeNotifier {
     return List.unmodifiable(_secretaryQueuesByDoctor[doctorId] ?? []);
   }
 
+  /// Doctor queue streams currently subscribed (for notification monitoring).
+  Iterable<String> get watchedDoctorIds => _queuesByDoctor.keys;
+
   QueueEntry? activeEntryForPatient(String patientId) =>
       _patientQueues.isNotEmpty ? _patientQueues.first : null;
 
@@ -44,6 +47,11 @@ class QueueService extends ChangeNotifier {
       (List<QueueEntry> entries) {
         _patientQueues = entries;
         _patientQueue = entries.isNotEmpty ? entries.first : null;
+        for (final entry in entries) {
+          if (!_queuesByDoctor.containsKey(entry.doctorId)) {
+            watchDoctorQueue(entry.doctorId);
+          }
+        }
         notifyListeners();
       },
     );
@@ -181,6 +189,12 @@ class QueueService extends ChangeNotifier {
 
   Future<void> moveDown(String entryId, String doctorId) =>
       _backend.moveDown(entryId, doctorId);
+
+  Future<void> moveToEnd(String entryId, String doctorId) =>
+      _backend.moveToEnd(entryId, doctorId);
+
+  Future<void> recallPatient(String entryId, String doctorId) =>
+      _backend.recallPatient(entryId, doctorId);
 
   Future<void> callNext(String doctorId) => _backend.callNext(doctorId);
 

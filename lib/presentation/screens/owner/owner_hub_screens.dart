@@ -94,6 +94,12 @@ class OwnerNotificationsCenterScreen extends StatelessWidget {
         header: l10n.notificationsCenterHint,
         items: [
           OwnerHubItem(
+            icon: Icons.tune_outlined,
+            title: l10n.notificationSystemSettings,
+            subtitle: l10n.notificationSystemSettingsHint,
+            route: '${AdminRoutes.adminConsole}/notifications-config',
+          ),
+          OwnerHubItem(
             icon: Icons.campaign_outlined,
             title: l10n.broadcastNotifications,
             subtitle: l10n.broadcastNotificationsHint,

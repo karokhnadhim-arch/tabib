@@ -1,16 +1,25 @@
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 
 import '../../core/utils/subscription_manager.dart';
 import '../../models/chat_message.dart';
 import '../../domain/entities/entities.dart';
 import '../../domain/repositories/repositories.dart';
 import '../../models/visit_status.dart';
+import '../../models/notification.dart';
+import '../../models/notification_channel.dart';
+import '../../models/appointment.dart';
+import '../../services/smart_notification_service.dart';
 
 class AppointmentProvider extends ChangeNotifier {
-  AppointmentProvider({required AppointmentRepository repository})
-      : _repository = repository;
+  AppointmentProvider({
+    required AppointmentRepository repository,
+    SmartNotificationService? smartNotifications,
+  })  : _repository = repository,
+        _smartNotifications = smartNotifications;
 
   final AppointmentRepository _repository;
+  SmartNotificationService? _smartNotifications;
   final SubscriptionManager _subscriptions = SubscriptionManager();
 
   List<Appointment> _appointments = [];
@@ -95,16 +104,32 @@ class AppointmentProvider extends ChangeNotifier {
         notes: notes,
       );
 
-  Future<void> accept(String id) =>
-      _repository.updateAppointmentStatus(id, AppointmentStatus.accepted);
+  Future<void> accept(String id) async {
+    final appt = _appointmentById(id);
+    await _repository.updateAppointmentStatus(id, AppointmentStatus.accepted);
+    if (appt != null) {
+      await _notifyPatient(appt, NotificationEventType.appointmentConfirmed);
+    }
+  }
 
-  Future<void> reject(String id) =>
-      _repository.updateAppointmentStatus(id, AppointmentStatus.rejected);
+  Future<void> reject(String id) async {
+    final appt = _appointmentById(id);
+    await _repository.updateAppointmentStatus(id, AppointmentStatus.rejected);
+    if (appt != null) {
+      await _notifyPatient(appt, NotificationEventType.appointmentCancelled);
+    }
+  }
 
   Future<void> complete(String id) =>
       _repository.updateAppointmentStatus(id, AppointmentStatus.completed);
 
-  Future<void> cancel(String id) => _repository.cancelAppointment(id);
+  Future<void> cancel(String id) async {
+    final appt = _appointmentById(id);
+    await _repository.cancelAppointment(id);
+    if (appt != null) {
+      await _notifyPatient(appt, NotificationEventType.appointmentCancelled);
+    }
+  }
 
   Future<void> markArrived(String id) =>
       _repository.updateVisitStatus(id, VisitStatus.arrived);
@@ -118,8 +143,20 @@ class AppointmentProvider extends ChangeNotifier {
   Future<void> addFollowUp(String id) =>
       _repository.updateVisitStatus(id, VisitStatus.followUp);
 
-  Future<void> reschedule(String id, DateTime dateTime) =>
-      _repository.rescheduleAppointment(id, dateTime);
+  Future<void> reschedule(String id, DateTime dateTime) async {
+    final appt = _appointmentById(id);
+    await _repository.rescheduleAppointment(id, dateTime);
+    if (appt != null) {
+      await _notifyPatient(
+        appt,
+        NotificationEventType.appointmentRescheduled,
+        variables: {
+          'AppointmentTime':
+              DateFormat.yMMMd().add_jm().format(dateTime),
+        },
+      );
+    }
+  }
 
   Future<void> moveAppointment(String id, int direction) =>
       _repository.moveAppointment(id, direction);
@@ -129,6 +166,34 @@ class AppointmentProvider extends ChangeNotifier {
 
   List<Appointment> acceptedForDoctor(String doctorId) =>
       _appointments.where((a) => a.doctorId == doctorId && a.isAccepted).toList();
+
+  void attachSmartNotifications(SmartNotificationService service) {
+    _smartNotifications = service;
+  }
+
+  Appointment? _appointmentById(String id) {
+    try {
+      return _appointments.firstWhere((a) => a.id == id);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _notifyPatient(
+    Appointment appointment,
+    NotificationEventType event, {
+    Map<String, String> variables = const {},
+  }) async {
+    await _smartNotifications?.notifyAppointmentEvent(
+      event: event,
+      patientUserId: appointment.patientId ?? '',
+      patientName: appointment.patientName ?? '',
+      patientPhone: appointment.patientPhone ?? '',
+      doctorId: appointment.doctorId ?? '',
+      doctorName: appointment.doctorName,
+      variables: variables,
+    );
+  }
 }
 
 class NotificationProvider extends ChangeNotifier {

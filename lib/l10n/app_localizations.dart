@@ -458,7 +458,7 @@ abstract class AppLocalizations {
   /// No description provided for @yourTurn.
   ///
   /// In en, this message translates to:
-  /// **'It\'s your turn!'**
+  /// **'Your turn'**
   String get yourTurn;
 
   /// No description provided for @waiting.
@@ -1775,6 +1775,42 @@ abstract class AppLocalizations {
   /// **'Only 2 patients remain before you.'**
   String get queueNotifyTwoRemainingBody;
 
+  /// No description provided for @queueNotifyTenRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost your turn'**
+  String get queueNotifyTenRemaining;
+
+  /// No description provided for @queueNotifyTenRemainingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Only 10 patients remain before your turn. Please prepare to come.'**
+  String get queueNotifyTenRemainingBody;
+
+  /// No description provided for @queueNotifyFiveRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Head to the clinic'**
+  String get queueNotifyFiveRemaining;
+
+  /// No description provided for @queueNotifyFiveRemainingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Only 5 patients remain before your turn. Please head toward the clinic.'**
+  String get queueNotifyFiveRemainingBody;
+
+  /// No description provided for @queueNotifyThreeRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrive now'**
+  String get queueNotifyThreeRemaining;
+
+  /// No description provided for @queueNotifyThreeRemainingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your turn is very close. Please arrive at the clinic now.'**
+  String get queueNotifyThreeRemainingBody;
+
   /// No description provided for @queueNotifyYourTurn.
   ///
   /// In en, this message translates to:
@@ -1784,7 +1820,7 @@ abstract class AppLocalizations {
   /// No description provided for @queueNotifyYourTurnBody.
   ///
   /// In en, this message translates to:
-  /// **'Please proceed to the doctor room.'**
+  /// **'It is now your turn. Please proceed to the doctor\'s room.'**
   String get queueNotifyYourTurnBody;
 
   /// No description provided for @dayClosed.
@@ -4672,6 +4708,282 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No favorite doctors yet. Tap the heart on a doctor profile.'**
   String get noFavoriteDoctorsYet;
+
+  /// No description provided for @notificationSystemSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart notification system'**
+  String get notificationSystemSettings;
+
+  /// No description provided for @notificationSystemSettingsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Channels, queue thresholds, and multilingual templates'**
+  String get notificationSystemSettingsHint;
+
+  /// No description provided for @notificationChannels.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification channels'**
+  String get notificationChannels;
+
+  /// No description provided for @pushNotificationsOwnerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Send push when the patient has the app installed'**
+  String get pushNotificationsOwnerHint;
+
+  /// No description provided for @whatsappNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp'**
+  String get whatsappNotifications;
+
+  /// No description provided for @smsNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS'**
+  String get smsNotifications;
+
+  /// No description provided for @smsNotificationsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Requires clinic SMS provider (simulated in demo)'**
+  String get smsNotificationsHint;
+
+  /// No description provided for @inAppNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'In-app'**
+  String get inAppNotifications;
+
+  /// No description provided for @queueAlertThresholds.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue alert thresholds'**
+  String get queueAlertThresholds;
+
+  /// No description provided for @queueAlertThresholdsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Notify patients when this many people remain before their turn'**
+  String get queueAlertThresholdsHint;
+
+  /// No description provided for @notificationTemplates.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification templates'**
+  String get notificationTemplates;
+
+  /// No description provided for @notificationTemplatesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Use PatientName, DoctorName, DelayMinutes, and AppointmentTime as placeholders in curly braces'**
+  String get notificationTemplatesHint;
+
+  /// No description provided for @notificationType.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification type'**
+  String get notificationType;
+
+  /// No description provided for @templateVariablesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Template body with placeholders'**
+  String get templateVariablesHint;
+
+  /// No description provided for @saveTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Save template'**
+  String get saveTemplate;
+
+  /// No description provided for @templateSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Template saved'**
+  String get templateSaved;
+
+  /// No description provided for @reminderNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder notifications'**
+  String get reminderNotifications;
+
+  /// No description provided for @reminderNotificationsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue and appointment reminders'**
+  String get reminderNotificationsHint;
+
+  /// No description provided for @preferredNotificationLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification language'**
+  String get preferredNotificationLanguage;
+
+  /// No description provided for @followAppLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow app language'**
+  String get followAppLanguage;
+
+  /// No description provided for @preferredNotificationMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferred delivery method'**
+  String get preferredNotificationMethod;
+
+  /// No description provided for @notificationMethodAutomatic.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic (best available)'**
+  String get notificationMethodAutomatic;
+
+  /// No description provided for @sentBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent by'**
+  String get sentBy;
+
+  /// No description provided for @notificationOpened.
+  ///
+  /// In en, this message translates to:
+  /// **'Opened'**
+  String get notificationOpened;
+
+  /// No description provided for @deliveryPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get deliveryPending;
+
+  /// No description provided for @deliverySent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent'**
+  String get deliverySent;
+
+  /// No description provided for @deliveryDelivered.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered'**
+  String get deliveryDelivered;
+
+  /// No description provided for @deliveryFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get deliveryFailed;
+
+  /// No description provided for @deliverySkipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipped'**
+  String get deliverySkipped;
+
+  /// No description provided for @missedTurnNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed turn'**
+  String get missedTurnNotification;
+
+  /// No description provided for @doctorDelayNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor delay'**
+  String get doctorDelayNotification;
+
+  /// No description provided for @appointmentConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment confirmed'**
+  String get appointmentConfirmed;
+
+  /// No description provided for @appointmentRescheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment rescheduled'**
+  String get appointmentRescheduled;
+
+  /// No description provided for @appointmentCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment cancelled'**
+  String get appointmentCancelled;
+
+  /// No description provided for @doctorUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor unavailable'**
+  String get doctorUnavailable;
+
+  /// No description provided for @clinicClosedUnexpectedly.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic closed unexpectedly'**
+  String get clinicClosedUnexpectedly;
+
+  /// No description provided for @recallPatient.
+  ///
+  /// In en, this message translates to:
+  /// **'Recall patient'**
+  String get recallPatient;
+
+  /// No description provided for @moveToEndOfQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to end'**
+  String get moveToEndOfQueue;
+
+  /// No description provided for @cancelAppointment.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel appointment'**
+  String get cancelAppointment;
+
+  /// No description provided for @patientRecalled.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient recalled to queue'**
+  String get patientRecalled;
+
+  /// No description provided for @patientMovedToEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient moved to end of queue'**
+  String get patientMovedToEnd;
+
+  /// No description provided for @notifyDoctorDelay.
+  ///
+  /// In en, this message translates to:
+  /// **'Notify waiting patients of delay'**
+  String get notifyDoctorDelay;
+
+  /// No description provided for @notifyDelayShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Delay alert'**
+  String get notifyDelayShort;
+
+  /// No description provided for @delayMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Delay (minutes)'**
+  String get delayMinutes;
+
+  /// No description provided for @sendNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get sendNotification;
+
+  /// No description provided for @delayNotificationSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Delay notification sent to waiting patients'**
+  String get delayNotificationSent;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

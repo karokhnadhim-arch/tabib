@@ -271,6 +271,45 @@ class InMemoryClinicBackend implements ClinicBackend {
     await _swapEntry(entryId, doctorId, 1);
   }
 
+  @override
+  Future<void> moveToEnd(String entryId, String doctorId) async {
+    final entry = _queues.where((q) => q.id == entryId).firstOrNull;
+    if (entry == null || entry.doctorId != doctorId) return;
+    final entries = _activeQueue(
+      doctorId,
+      queueDate: entry.effectiveQueueDate,
+      slotStart: entry.effectiveSlotStart,
+    );
+    final waiting = entries
+        .where((e) => e.status == QueueStatus.waiting)
+        .toList()
+      ..sort((a, b) => a.position.compareTo(b.position));
+    final index = waiting.indexWhere((e) => e.id == entryId);
+    if (index == -1 || index == waiting.length - 1) return;
+    final lastPos = waiting.last.position;
+    entry.position = lastPos + 1;
+    _reindexDoctorQueue(
+      doctorId,
+      queueDate: entry.effectiveQueueDate,
+      slotStart: entry.effectiveSlotStart,
+    );
+    _notify();
+  }
+
+  @override
+  Future<void> recallPatient(String entryId, String doctorId) async {
+    final entry = _queues.where((q) => q.id == entryId).firstOrNull;
+    if (entry == null || entry.doctorId != doctorId) return;
+    if (entry.status != QueueStatus.absent) return;
+    entry.status = QueueStatus.waiting;
+    _reindexDoctorQueue(
+      doctorId,
+      queueDate: entry.effectiveQueueDate,
+      slotStart: entry.effectiveSlotStart,
+    );
+    _notify();
+  }
+
   Future<void> _swapEntry(String entryId, String doctorId, int direction) async {
     final entry = _queues.where((q) => q.id == entryId).firstOrNull;
     if (entry == null) return;

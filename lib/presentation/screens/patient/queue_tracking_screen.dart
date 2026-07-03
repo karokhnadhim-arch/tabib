@@ -10,6 +10,8 @@ import '../../../presentation/providers/app_providers.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../services/queue_alert_service.dart';
+import '../../../utils/localization_utils.dart';
+import '../../../services/smart_notification_service.dart';
 import '../../../services/queue_service.dart';
 import '../../widgets/premium_queue_dashboard.dart';
 
@@ -33,7 +35,7 @@ class _QueueTrackingScreenState extends State<QueueTrackingScreen>
   late final AnimationController _pulseController;
   late final AnimationController _numberController;
   late final Animation<double> _numberScale;
-  late final QueueAlertService _alertService;
+  late QueueAlertService _alertService;
   int? _lastPosition;
   String? _watchedDoctorId;
 
@@ -55,7 +57,12 @@ class _QueueTrackingScreenState extends State<QueueTrackingScreen>
     _numberController.forward();
     _alertService = QueueAlertService();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => _startWatching());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _alertService = QueueAlertService(
+        smartNotifications: context.read<SmartNotificationService>(),
+      );
+      _startWatching();
+    });
   }
 
   void _startWatching() {
@@ -101,12 +108,16 @@ class _QueueTrackingScreenState extends State<QueueTrackingScreen>
     required AuthService auth,
   }) {
     final l10n = AppLocalizations.of(context);
+    final data = context.read<ClinicDataService>();
+    final doctor = data.doctorById(entry.doctorId);
+    final doctorName = doctor?.name.localized(context) ?? entry.doctorId;
     _alertService.handleQueueUpdate(
       entry: entry,
       peopleAhead: ahead,
       l10n: l10n,
       notifications: context.read<NotificationProvider>(),
       patientUserId: auth.patientId,
+      doctorName: doctorName,
     );
 
     if (_lastPosition != null && _lastPosition != entry.position) {

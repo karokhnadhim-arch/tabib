@@ -193,7 +193,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get currentQueue => 'Current queue';
 
   @override
-  String get yourTurn => 'It\'s your turn!';
+  String get yourTurn => 'Your turn';
 
   @override
   String get waiting => 'Waiting';
@@ -861,10 +861,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get queueNotifyTwoRemainingBody => 'Only 2 patients remain before you.';
 
   @override
+  String get queueNotifyTenRemaining => 'Almost your turn';
+
+  @override
+  String get queueNotifyTenRemainingBody => 'Only 10 patients remain before your turn. Please prepare to come.';
+
+  @override
+  String get queueNotifyFiveRemaining => 'Head to the clinic';
+
+  @override
+  String get queueNotifyFiveRemainingBody => 'Only 5 patients remain before your turn. Please head toward the clinic.';
+
+  @override
+  String get queueNotifyThreeRemaining => 'Arrive now';
+
+  @override
+  String get queueNotifyThreeRemainingBody => 'Your turn is very close. Please arrive at the clinic now.';
+
+  @override
   String get queueNotifyYourTurn => 'Your turn now';
 
   @override
-  String get queueNotifyYourTurnBody => 'Please proceed to the doctor room.';
+  String get queueNotifyYourTurnBody => 'It is now your turn. Please proceed to the doctor\'s room.';
 
   @override
   String get dayClosed => 'Closed';
@@ -2340,4 +2358,142 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noFavoriteDoctorsYet => 'No favorite doctors yet. Tap the heart on a doctor profile.';
+
+  @override
+  String get notificationSystemSettings => 'Smart notification system';
+
+  @override
+  String get notificationSystemSettingsHint => 'Channels, queue thresholds, and multilingual templates';
+
+  @override
+  String get notificationChannels => 'Notification channels';
+
+  @override
+  String get pushNotificationsOwnerHint => 'Send push when the patient has the app installed';
+
+  @override
+  String get whatsappNotifications => 'WhatsApp';
+
+  @override
+  String get smsNotifications => 'SMS';
+
+  @override
+  String get smsNotificationsHint => 'Requires clinic SMS provider (simulated in demo)';
+
+  @override
+  String get inAppNotifications => 'In-app';
+
+  @override
+  String get queueAlertThresholds => 'Queue alert thresholds';
+
+  @override
+  String get queueAlertThresholdsHint => 'Notify patients when this many people remain before their turn';
+
+  @override
+  String get notificationTemplates => 'Notification templates';
+
+  @override
+  String get notificationTemplatesHint => 'Use PatientName, DoctorName, DelayMinutes, and AppointmentTime as placeholders in curly braces';
+
+  @override
+  String get notificationType => 'Notification type';
+
+  @override
+  String get templateVariablesHint => 'Template body with placeholders';
+
+  @override
+  String get saveTemplate => 'Save template';
+
+  @override
+  String get templateSaved => 'Template saved';
+
+  @override
+  String get reminderNotifications => 'Reminder notifications';
+
+  @override
+  String get reminderNotificationsHint => 'Queue and appointment reminders';
+
+  @override
+  String get preferredNotificationLanguage => 'Notification language';
+
+  @override
+  String get followAppLanguage => 'Follow app language';
+
+  @override
+  String get preferredNotificationMethod => 'Preferred delivery method';
+
+  @override
+  String get notificationMethodAutomatic => 'Automatic (best available)';
+
+  @override
+  String get sentBy => 'Sent by';
+
+  @override
+  String get notificationOpened => 'Opened';
+
+  @override
+  String get deliveryPending => 'Pending';
+
+  @override
+  String get deliverySent => 'Sent';
+
+  @override
+  String get deliveryDelivered => 'Delivered';
+
+  @override
+  String get deliveryFailed => 'Failed';
+
+  @override
+  String get deliverySkipped => 'Skipped';
+
+  @override
+  String get missedTurnNotification => 'Missed turn';
+
+  @override
+  String get doctorDelayNotification => 'Doctor delay';
+
+  @override
+  String get appointmentConfirmed => 'Appointment confirmed';
+
+  @override
+  String get appointmentRescheduled => 'Appointment rescheduled';
+
+  @override
+  String get appointmentCancelled => 'Appointment cancelled';
+
+  @override
+  String get doctorUnavailable => 'Doctor unavailable';
+
+  @override
+  String get clinicClosedUnexpectedly => 'Clinic closed unexpectedly';
+
+  @override
+  String get recallPatient => 'Recall patient';
+
+  @override
+  String get moveToEndOfQueue => 'Move to end';
+
+  @override
+  String get cancelAppointment => 'Cancel appointment';
+
+  @override
+  String get patientRecalled => 'Patient recalled to queue';
+
+  @override
+  String get patientMovedToEnd => 'Patient moved to end of queue';
+
+  @override
+  String get notifyDoctorDelay => 'Notify waiting patients of delay';
+
+  @override
+  String get notifyDelayShort => 'Delay alert';
+
+  @override
+  String get delayMinutes => 'Delay (minutes)';
+
+  @override
+  String get sendNotification => 'Send';
+
+  @override
+  String get delayNotificationSent => 'Delay notification sent to waiting patients';
 }

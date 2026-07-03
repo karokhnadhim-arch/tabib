@@ -59,6 +59,8 @@ abstract class ClinicBackend {
   Future<void> cancelEntry(String entryId, String doctorId);
   Future<void> moveUp(String entryId, String doctorId);
   Future<void> moveDown(String entryId, String doctorId);
+  Future<void> moveToEnd(String entryId, String doctorId);
+  Future<void> recallPatient(String entryId, String doctorId);
   Future<void> callNext(String doctorId);
   Future<void> completeCurrent(String doctorId);
   Future<void> updateEntryStatus(

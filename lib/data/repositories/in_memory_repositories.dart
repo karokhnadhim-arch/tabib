@@ -3,6 +3,7 @@ import 'dart:async';
 import '../../models/appointment.dart';
 import '../../models/chat_message.dart';
 import '../../models/notification.dart';
+import '../../models/notification_channel.dart';
 import '../../models/prescription.dart';
 import '../../models/visit_status.dart';
 import '../../domain/repositories/repositories.dart';
@@ -215,14 +216,9 @@ class InMemoryNotificationRepository implements NotificationRepository {
     final index = _notifications.indexWhere((n) => n.id == notificationId);
     if (index == -1) return;
     final old = _notifications[index];
-    _notifications[index] = AppNotification(
-      id: old.id,
-      userId: old.userId,
-      title: old.title,
-      body: old.body,
-      createdAt: old.createdAt,
+    _notifications[index] = old.copyWith(
       read: true,
-      type: old.type,
+      openedAt: DateTime.now(),
     );
     _notify();
   }
@@ -234,10 +230,35 @@ class InMemoryNotificationRepository implements NotificationRepository {
     required String body,
     String? type,
   }) async {
+    await sendSmartNotification(
+      userId: userId,
+      title: title,
+      body: body,
+      type: type,
+    );
+  }
+
+  @override
+  Future<void> sendSmartNotification({
+    required String userId,
+    required String title,
+    required String body,
+    String? type,
+    NotificationEventType? eventType,
+    NotificationChannel? deliveryChannel,
+    NotificationDeliveryStatus deliveryStatus =
+        NotificationDeliveryStatus.sent,
+    String? sentByUserId,
+    String? sentByName,
+    String? localeCode,
+    String? doctorId,
+    String? queueEntryId,
+    Map<String, String> metadata = const {},
+  }) async {
     _notifications.insert(
       0,
       AppNotification(
-        id: 'demo_notif_${_notifications.length}',
+        id: 'demo_notif_${_notifications.length}_${DateTime.now().millisecondsSinceEpoch}',
         userId: userId,
         title: title,
         body: body,
@@ -247,6 +268,15 @@ class InMemoryNotificationRepository implements NotificationRepository {
           (t) => t.name == type,
           orElse: () => AppNotificationType.general,
         ),
+        eventType: eventType,
+        deliveryChannel: deliveryChannel,
+        deliveryStatus: deliveryStatus,
+        sentByUserId: sentByUserId,
+        sentByName: sentByName,
+        localeCode: localeCode,
+        doctorId: doctorId,
+        queueEntryId: queueEntryId,
+        metadata: metadata,
       ),
     );
     _notify();

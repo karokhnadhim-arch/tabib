@@ -3,6 +3,7 @@ import '../../models/chat_message.dart';
 import '../../models/visit_status.dart';
 import '../../models/doctor.dart';
 import '../../models/notification.dart';
+import '../../models/notification_channel.dart';
 import '../../models/prescription.dart';
 import '../../models/queue_entry.dart';
 import '../../models/specialty.dart';
@@ -108,6 +109,22 @@ abstract class NotificationRepository {
     required String title,
     required String body,
     String? type,
+  });
+  Future<void> sendSmartNotification({
+    required String userId,
+    required String title,
+    required String body,
+    String? type,
+    NotificationEventType? eventType,
+    NotificationChannel? deliveryChannel,
+    NotificationDeliveryStatus deliveryStatus =
+        NotificationDeliveryStatus.sent,
+    String? sentByUserId,
+    String? sentByName,
+    String? localeCode,
+    String? doctorId,
+    String? queueEntryId,
+    Map<String, String> metadata = const {},
   });
 }
 

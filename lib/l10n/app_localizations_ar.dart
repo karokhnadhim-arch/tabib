@@ -193,7 +193,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get currentQueue => 'الدور الحالي';
 
   @override
-  String get yourTurn => 'دورك الآن!';
+  String get yourTurn => 'دورك';
 
   @override
   String get waiting => 'في الانتظار';
@@ -859,6 +859,24 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get queueNotifyTwoRemainingBody => 'بقي مريضان قبلك.';
+
+  @override
+  String get queueNotifyTenRemaining => 'اقترب دورك';
+
+  @override
+  String get queueNotifyTenRemainingBody => 'بقي 10 مرضى قبل دورك. يرجى الاستعداد للحضور.';
+
+  @override
+  String get queueNotifyFiveRemaining => 'توجه إلى العيادة';
+
+  @override
+  String get queueNotifyFiveRemainingBody => 'بقي 5 مرضى قبل دورك. يرجى التوجه إلى العيادة.';
+
+  @override
+  String get queueNotifyThreeRemaining => 'احضر الآن';
+
+  @override
+  String get queueNotifyThreeRemainingBody => 'دورك قريب جداً. يرجى الوصول إلى العيادة الآن.';
 
   @override
   String get queueNotifyYourTurn => 'دورك الآن';
@@ -2340,4 +2358,142 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noFavoriteDoctorsYet => 'لا يوجد أطباء مفضلون بعد. اضغط على القلب في ملف الطبيب.';
+
+  @override
+  String get notificationSystemSettings => 'نظام الإشعارات الذكي';
+
+  @override
+  String get notificationSystemSettingsHint => 'القنوات وعتبات الطابور والقوالب متعددة اللغات';
+
+  @override
+  String get notificationChannels => 'قنوات الإشعار';
+
+  @override
+  String get pushNotificationsOwnerHint => 'إرسال إشعار push عند تثبيت التطبيق';
+
+  @override
+  String get whatsappNotifications => 'واتساب';
+
+  @override
+  String get smsNotifications => 'رسائل SMS';
+
+  @override
+  String get smsNotificationsHint => 'يتطلب مزود SMS للعيادة (محاكاة في العرض)';
+
+  @override
+  String get inAppNotifications => 'داخل التطبيق';
+
+  @override
+  String get queueAlertThresholds => 'عتبات تنبيه الطابور';
+
+  @override
+  String get queueAlertThresholdsHint => 'إشعار المرضى عند بقاء هذا العدد قبل دورهم';
+
+  @override
+  String get notificationTemplates => 'قوالب الإشعارات';
+
+  @override
+  String get notificationTemplatesHint => 'استخدم PatientName و DoctorName و DelayMinutes و AppointmentTime كعناصر نائبة بين أقواس';
+
+  @override
+  String get notificationType => 'نوع الإشعار';
+
+  @override
+  String get templateVariablesHint => 'نص القالب مع العناصر النائبة';
+
+  @override
+  String get saveTemplate => 'حفظ القالب';
+
+  @override
+  String get templateSaved => 'تم حفظ القالب';
+
+  @override
+  String get reminderNotifications => 'تذكيرات المواعيد';
+
+  @override
+  String get reminderNotificationsHint => 'تذكيرات الطابور والمواعيد';
+
+  @override
+  String get preferredNotificationLanguage => 'لغة الإشعارات';
+
+  @override
+  String get followAppLanguage => 'اتباع لغة التطبيق';
+
+  @override
+  String get preferredNotificationMethod => 'طريقة الإرسال المفضلة';
+
+  @override
+  String get notificationMethodAutomatic => 'تلقائي (أفضل متاح)';
+
+  @override
+  String get sentBy => 'أرسل بواسطة';
+
+  @override
+  String get notificationOpened => 'تم الفتح';
+
+  @override
+  String get deliveryPending => 'قيد الانتظار';
+
+  @override
+  String get deliverySent => 'تم الإرسال';
+
+  @override
+  String get deliveryDelivered => 'تم التسليم';
+
+  @override
+  String get deliveryFailed => 'فشل';
+
+  @override
+  String get deliverySkipped => 'تم التخطي';
+
+  @override
+  String get missedTurnNotification => 'فات الدور';
+
+  @override
+  String get doctorDelayNotification => 'تأخر الطبيب';
+
+  @override
+  String get appointmentConfirmed => 'تم تأكيد الموعد';
+
+  @override
+  String get appointmentRescheduled => 'تم إعادة جدولة الموعد';
+
+  @override
+  String get appointmentCancelled => 'تم إلغاء الموعد';
+
+  @override
+  String get doctorUnavailable => 'الطبيب غير متاح';
+
+  @override
+  String get clinicClosedUnexpectedly => 'إغلاق مفاجئ للعيادة';
+
+  @override
+  String get recallPatient => 'استدعاء المريض';
+
+  @override
+  String get moveToEndOfQueue => 'نقل إلى النهاية';
+
+  @override
+  String get cancelAppointment => 'إلغاء الموعد';
+
+  @override
+  String get patientRecalled => 'تم استدعاء المريض إلى الطابور';
+
+  @override
+  String get patientMovedToEnd => 'تم نقل المريض إلى نهاية الطابور';
+
+  @override
+  String get notifyDoctorDelay => 'إشعار المرضى بتأخر الطبيب';
+
+  @override
+  String get notifyDelayShort => 'تنبيه تأخير';
+
+  @override
+  String get delayMinutes => 'التأخير (دقائق)';
+
+  @override
+  String get sendNotification => 'إرسال';
+
+  @override
+  String get delayNotificationSent => 'تم إرسال إشعار التأخير للمرضى المنتظرين';
 }

@@ -450,6 +450,66 @@ class FirestoreClinicBackend implements ClinicBackend {
     await _swapEntry(entryId, doctorId, 1);
   }
 
+  @override
+  Future<void> moveToEnd(String entryId, String doctorId) async {
+    final entryDoc = await _queues.doc(entryId).get();
+    if (!entryDoc.exists || entryDoc.data() == null) return;
+    final entry = QueueEntry.fromFirestore(entryId, entryDoc.data()!);
+
+    final snap = await _queues
+        .where('doctorId', isEqualTo: doctorId)
+        .where('queueDate', isEqualTo: entry.effectiveQueueDate)
+        .where('slotStart', isEqualTo: entry.effectiveSlotStart)
+        .where('status', isEqualTo: QueueStatus.waiting.name)
+        .orderBy('position')
+        .get();
+    final docs = snap.docs;
+    final index = docs.indexWhere((d) => d.id == entryId);
+    if (index == -1 || index == docs.length - 1) return;
+
+    final lastPos = docs.last.data()['position'] as int? ?? docs.length;
+    await _queues.doc(entryId).update({'position': lastPos + 1});
+
+    final allSnap = await _queues
+        .where('doctorId', isEqualTo: doctorId)
+        .where('queueDate', isEqualTo: entry.effectiveQueueDate)
+        .where('slotStart', isEqualTo: entry.effectiveSlotStart)
+        .where('status', whereIn: activeQueueStatusNames)
+        .orderBy('position')
+        .get();
+    final batch = _db.batch();
+    var pos = 1;
+    for (final doc in allSnap.docs) {
+      batch.update(doc.reference, {'position': pos});
+      pos++;
+    }
+    await batch.commit();
+  }
+
+  @override
+  Future<void> recallPatient(String entryId, String doctorId) async {
+    final entryDoc = await _queues.doc(entryId).get();
+    if (!entryDoc.exists || entryDoc.data() == null) return;
+    final data = entryDoc.data()!;
+    if (data['status'] != QueueStatus.absent.name) return;
+    await _queues.doc(entryId).update({'status': QueueStatus.waiting.name});
+    final entry = QueueEntry.fromFirestore(entryId, data);
+    final snap = await _queues
+        .where('doctorId', isEqualTo: doctorId)
+        .where('queueDate', isEqualTo: entry.effectiveQueueDate)
+        .where('slotStart', isEqualTo: entry.effectiveSlotStart)
+        .where('status', whereIn: activeQueueStatusNames)
+        .orderBy('position')
+        .get();
+    final batch = _db.batch();
+    var pos = 1;
+    for (final doc in snap.docs) {
+      batch.update(doc.reference, {'position': pos});
+      pos++;
+    }
+    await batch.commit();
+  }
+
   Future<void> _swapEntry(String entryId, String doctorId, int direction) async {
     final entryDoc = await _queues.doc(entryId).get();
     if (!entryDoc.exists || entryDoc.data() == null) return;
