@@ -37,13 +37,17 @@ class AccountCodeBadge extends StatelessWidget {
             color: AppTheme.primaryDark,
           ),
           const SizedBox(width: 6),
-          Text(
-            code,
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: compact ? 12 : 13,
-              color: AppTheme.primaryDark,
-              letterSpacing: 0.4,
+          Flexible(
+            child: Text(
+              code,
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: compact ? 12 : 13,
+                color: AppTheme.primaryDark,
+                letterSpacing: 0.4,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
           if (onCopy != null) ...[

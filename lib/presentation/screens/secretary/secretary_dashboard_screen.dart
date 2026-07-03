@@ -128,32 +128,21 @@ class _SecretaryDashboardScreenState extends State<SecretaryDashboardScreen> {
               delegate: SliverChildListDelegate([
                 if (subscriptionStatus == ClinicSubscriptionStatus.expiringSoon &&
                     clinic != null)
-                  Container(
+                  ResponsiveInfoBanner(
                     margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFF8E1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFFF9A825)),
+                    icon: const Icon(Icons.warning_amber_rounded,
+                        color: Color(0xFFF9A825)),
+                    message: Text(
+                      l10n.subscriptionExpiringBanner(remainingDays),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.warning_amber_rounded,
-                            color: Color(0xFFF9A825)),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            l10n.subscriptionExpiringBanner(remainingDays),
-                          ),
-                        ),
-                        Flexible(
-                          child: SubscriptionStatusBadge(
-                            status: subscriptionStatus!,
-                            remainingDays: remainingDays,
-                            compact: true,
-                          ),
-                        ),
-                      ],
+                    backgroundColor: const Color(0xFFFFF8E1),
+                    borderColor: const Color(0xFFF9A825),
+                    trailing: SubscriptionStatusBadge(
+                      status: subscriptionStatus!,
+                      remainingDays: remainingDays,
+                      compact: true,
                     ),
                   ),
                 Card(
@@ -191,6 +180,8 @@ class _SecretaryDashboardScreenState extends State<SecretaryDashboardScreen> {
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                 ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
                               if (doctor != null) ...[
                                 const SizedBox(height: 8),
@@ -202,17 +193,20 @@ class _SecretaryDashboardScreenState extends State<SecretaryDashboardScreen> {
                                     if (code == null) {
                                       return const SizedBox.shrink();
                                     }
-                                    return Row(
+                                    return Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Expanded(
-                                          child: Text(
-                                            l10n.doctorAccountCodeLabel(code),
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              color: Colors.grey.shade700,
-                                            ),
+                                        Text(
+                                          l10n.doctorAccountCodeLabel(code),
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.grey.shade700,
                                           ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
+                                        const SizedBox(height: 6),
                                         AccountCodeBadge(
                                           code: code,
                                           compact: true,

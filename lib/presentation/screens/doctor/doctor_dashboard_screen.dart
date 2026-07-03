@@ -144,55 +144,42 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
             if (subscriptionStatus == ClinicSubscriptionStatus.expiringSoon &&
                 clinic != null)
               SliverToBoxAdapter(
-                child: Container(
+                child: ResponsiveInfoBanner(
                   margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFF8E1),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: const Color(0xFFF9A825)),
+                  icon: const Icon(Icons.warning_amber_rounded,
+                      color: Color(0xFFF9A825)),
+                  message: Text(
+                    l10n.subscriptionExpiringBanner(remainingDays),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.warning_amber_rounded,
-                          color: Color(0xFFF9A825)),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          l10n.subscriptionExpiringBanner(remainingDays),
-                        ),
-                      ),
-                      Flexible(
-                        child: SubscriptionStatusBadge(
-                          status: subscriptionStatus!,
-                          remainingDays: remainingDays,
-                          compact: true,
-                        ),
-                      ),
-                    ],
+                  backgroundColor: const Color(0xFFFFF8E1),
+                  borderColor: const Color(0xFFF9A825),
+                  trailing: SubscriptionStatusBadge(
+                    status: subscriptionStatus!,
+                    remainingDays: remainingDays,
+                    compact: true,
                   ),
                 ),
               ),
             if (doctor != null && doctor.needsProfileCompletion)
               SliverToBoxAdapter(
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFE3F2FD),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppTheme.primaryDark.withOpacity(0.4)),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.info_outline, color: AppTheme.primaryDark),
-                      const SizedBox(width: 12),
-                      Expanded(child: Text(l10n.completeProfileBanner)),
-                      TextButton(
-                        onPressed: () => context.push('/doctor/profile'),
-                        child: Text(l10n.completeProfileAction),
-                      ),
-                    ],
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: ResponsiveInfoBanner(
+                    icon: const Icon(Icons.info_outline,
+                        color: AppTheme.primaryDark),
+                    message: Text(
+                      l10n.completeProfileBanner,
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    backgroundColor: const Color(0xFFE3F2FD),
+                    borderColor: AppTheme.primaryDark.withOpacity(0.4),
+                    trailing: TextButton(
+                      onPressed: () => context.push('/doctor/profile'),
+                      child: Text(l10n.completeProfileAction),
+                    ),
                   ),
                 ),
               ),

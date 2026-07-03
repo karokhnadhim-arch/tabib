@@ -282,6 +282,8 @@ class _CatalogSectionCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -290,6 +292,8 @@ class _CatalogSectionCard extends StatelessWidget {
                         color: Colors.grey.shade600,
                         fontSize: 13,
                       ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),

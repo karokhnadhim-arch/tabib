@@ -257,6 +257,8 @@ class _NavTile extends StatelessWidget {
                           selected ? FontWeight.w600 : FontWeight.normal,
                       fontSize: 13.5,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],

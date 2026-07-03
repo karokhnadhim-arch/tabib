@@ -100,7 +100,10 @@ class ResponsiveSegmentedButton<T> extends StatelessWidget {
       showSelectedIcon: false,
     );
 
-    if (screenSizeOf(context) != ScreenSize.mobile) {
+    final useHorizontalScroll = screenSizeOf(context) == ScreenSize.mobile ||
+        segments.length > 3;
+
+    if (!useHorizontalScroll) {
       return button;
     }
 
@@ -130,6 +133,128 @@ class ResponsiveActionButtons extends StatelessWidget {
       builder: (context, constraints) {
         if (constraints.maxWidth >= breakpoint) {
           return Row(
+            children: [
+              for (var i = 0; i < children.length; i++) ...[
+                if (i > 0) SizedBox(width: spacing),
+                Expanded(child: children[i]),
+              ],
+            ],
+          );
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (var i = 0; i < children.length; i++) ...[
+              if (i > 0) SizedBox(height: spacing),
+              children[i],
+            ],
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// Icon + message banner; stacks trailing controls on narrow widths.
+class ResponsiveInfoBanner extends StatelessWidget {
+  const ResponsiveInfoBanner({
+    super.key,
+    required this.icon,
+    required this.message,
+    this.iconColor,
+    this.trailing,
+    this.backgroundColor,
+    this.borderColor,
+    this.padding = const EdgeInsets.all(14),
+    this.margin,
+    this.breakpoint = 520,
+  });
+
+  final Widget icon;
+  final Widget message;
+  final Color? iconColor;
+  final Widget? trailing;
+  final Color? backgroundColor;
+  final Color? borderColor;
+  final EdgeInsetsGeometry padding;
+  final EdgeInsetsGeometry? margin;
+  final double breakpoint;
+
+  @override
+  Widget build(BuildContext context) {
+    final banner = Container(
+      padding: padding,
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(12),
+        border: borderColor != null ? Border.all(color: borderColor!) : null,
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final stackTrailing =
+              trailing != null && constraints.maxWidth < breakpoint;
+
+          if (!stackTrailing) {
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                icon,
+                const SizedBox(width: 12),
+                Expanded(child: message),
+                if (trailing != null) ...[
+                  const SizedBox(width: 8),
+                  Flexible(child: trailing!),
+                ],
+              ],
+            );
+          }
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  icon,
+                  const SizedBox(width: 12),
+                  Expanded(child: message),
+                ],
+              ),
+              if (trailing != null) ...[
+                const SizedBox(height: 10),
+                Align(alignment: Alignment.centerRight, child: trailing!),
+              ],
+            ],
+          );
+        },
+      ),
+    );
+    if (margin == null) return banner;
+    return Padding(padding: margin!, child: banner);
+  }
+}
+
+/// Two-or-more column layout that becomes a vertical stack on narrow widths.
+class ResponsiveColumns extends StatelessWidget {
+  const ResponsiveColumns({
+    super.key,
+    required this.children,
+    this.spacing = 12,
+    this.breakpoint = 560,
+  });
+
+  final List<Widget> children;
+  final double spacing;
+  final double breakpoint;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth >= breakpoint) {
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               for (var i = 0; i < children.length; i++) ...[
                 if (i > 0) SizedBox(width: spacing),
@@ -250,6 +375,8 @@ class ResponsiveLabelValueRow extends StatelessWidget {
           child: Text(
             value,
             style: const TextStyle(fontWeight: FontWeight.w500),
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],

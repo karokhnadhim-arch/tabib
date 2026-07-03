@@ -61,6 +61,8 @@ class SubscriptionStatusBadge extends StatelessWidget {
                 fontWeight: FontWeight.w600,
                 fontSize: compact ? 12 : 13,
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],

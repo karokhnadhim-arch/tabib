@@ -185,30 +185,77 @@ class _OwnerBusinessTypesScreenState extends State<OwnerBusinessTypesScreen> {
                       .where((d) => d.isBusiness && d.specialtyId == type.id)
                       .length;
                   return Card(
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor:
-                            AppTheme.primaryDark.withOpacity(0.12),
-                        child: Icon(
-                          Icons.storefront_outlined,
-                          color: AppTheme.primaryDark,
-                        ),
-                      ),
-                      title: Text(type.name.localized(context)),
-                      subtitle: Text(
-                        '${type.name.en.isNotEmpty ? type.name.en : type.name.ku} • '
-                        '${l10n.businessTypeAssignedCount(assigned)}',
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Switch(
-                            value: type.isActive,
-                            onChanged: (value) => _toggleActive(type, value),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CircleAvatar(
+                                backgroundColor:
+                                    AppTheme.primaryDark.withOpacity(0.12),
+                                child: Icon(
+                                  Icons.storefront_outlined,
+                                  color: AppTheme.primaryDark,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      type.name.localized(context),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      '${type.name.en.isNotEmpty ? type.name.en : type.name.ku} • '
+                                      '${l10n.businessTypeAssignedCount(assigned)}',
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: Colors.grey.shade600,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.edit_outlined),
-                            onPressed: () => _openEditor(existing: type),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                type.isActive
+                                    ? l10n.businessTypeActive
+                                    : l10n.subscriptionStatusExpired,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: type.isActive
+                                      ? AppTheme.medicalGreen
+                                      : Colors.grey.shade600,
+                                ),
+                              ),
+                              Switch(
+                                value: type.isActive,
+                                onChanged: (value) =>
+                                    _toggleActive(type, value),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.edit_outlined),
+                                onPressed: () => _openEditor(existing: type),
+                              ),
+                            ],
                           ),
                         ],
                       ),

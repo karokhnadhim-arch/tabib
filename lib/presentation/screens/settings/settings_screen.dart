@@ -19,7 +19,6 @@ import '../../../services/user_preferences_service.dart';
 import '../../../utils/localization_utils.dart';
 import '../../../core/utils/account_code_resolver.dart';
 import '../../../presentation/widgets/account_code_badge.dart';
-import '../../../utils/localization_utils.dart';
 import '../../../utils/provider_labels.dart';
 import '../../widgets/doctor_avatar.dart';
 import '../../widgets/settings/settings_widgets.dart';
@@ -189,18 +188,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   if (doctor != null &&
                       AccountCodeResolver.forDoctor(doctor) != null) ...[
-                    SettingsTile(
-                      icon: Icons.badge_outlined,
+                    SettingsAccountCodeTile(
                       title: l10n.accountCode,
-                      subtitle: AccountCodeResolver.forDoctor(doctor)!,
-                      showChevron: false,
-                      trailing: AccountCodeBadge(
-                        code: AccountCodeResolver.forDoctor(doctor)!,
-                        compact: true,
-                        onCopy: () => AccountCodeBadge.copyToClipboard(
-                          context,
-                          AccountCodeResolver.forDoctor(doctor)!,
-                        ),
+                      code: AccountCodeResolver.forDoctor(doctor)!,
+                      onCopy: () => AccountCodeBadge.copyToClipboard(
+                        context,
+                        AccountCodeResolver.forDoctor(doctor)!,
                       ),
                     ),
                     const SettingsDivider(),
@@ -260,21 +253,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         data,
                       );
                       if (code == null) return const SizedBox.shrink();
-                      return SettingsTile(
-                        icon: Icons.badge_outlined,
-                        title: l10n.doctorAccountCode,
-                        subtitle: l10n.doctorAccountCodeLabel(code),
-                        showChevron: false,
-                        trailing: AccountCodeBadge(
-                          code: code,
-                          compact: true,
-                          onCopy: () =>
-                              AccountCodeBadge.copyToClipboard(context, code),
-                        ),
+                      return Column(
+                        children: [
+                          SettingsAccountCodeTile(
+                            title: l10n.doctorAccountCode,
+                            code: code,
+                            onCopy: () =>
+                                AccountCodeBadge.copyToClipboard(context, code),
+                          ),
+                          const SettingsDivider(),
+                        ],
                       );
                     },
                   ),
-                  const SettingsDivider(),
                   SettingsSwitchTile(
                     icon: Icons.notifications_active_outlined,
                     title: l10n.queueNotifications,
@@ -549,12 +540,21 @@ class _AccountHeader extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       fontSize: 17,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
-                  Text(roleLabel, style: TextStyle(color: Colors.grey.shade600)),
+                  Text(
+                    roleLabel,
+                    style: TextStyle(color: Colors.grey.shade600),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   if (user.email != null && user.email!.isNotEmpty)
                     Text(
                       user.email!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: Colors.grey.shade600,
                         fontSize: 12,

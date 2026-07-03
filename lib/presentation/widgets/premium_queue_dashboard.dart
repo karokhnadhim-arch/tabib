@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/medical_ui.dart';
+import '../../core/widgets/responsive_scaffold.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/doctor.dart';
 import '../../models/queue_entry.dart';
@@ -138,24 +139,19 @@ class PremiumQueueDashboard extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        Row(
+        ResponsiveColumns(
           children: [
-            Expanded(
-              child: MedicalStatCard(
-                icon: Icons.confirmation_number_outlined,
-                label: l10n.currentQueueNumber,
-                value: '$currentNumber',
-                color: AppTheme.medicalGreen,
-              ),
+            MedicalStatCard(
+              icon: Icons.confirmation_number_outlined,
+              label: l10n.currentQueueNumber,
+              value: '$currentNumber',
+              color: AppTheme.medicalGreen,
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: MedicalStatCard(
-                icon: Icons.people_outline,
-                label: l10n.peopleAhead,
-                value: '$peopleAhead',
-                color: AppTheme.medicalBlue,
-              ),
+            MedicalStatCard(
+              icon: Icons.people_outline,
+              label: l10n.peopleAhead,
+              value: '$peopleAhead',
+              color: AppTheme.medicalBlue,
             ),
           ],
         ),

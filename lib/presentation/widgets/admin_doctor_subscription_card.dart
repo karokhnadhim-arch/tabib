@@ -125,15 +125,20 @@ class AdminDoctorSubscriptionCard extends StatelessWidget {
                         ),
                   ),
                 ),
-                SubscriptionStatusBadge(
-                  status: status,
-                  remainingDays: days,
-                  compact: true,
+                Flexible(
+                  child: SubscriptionStatusBadge(
+                    status: status,
+                    remainingDays: days,
+                    compact: true,
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            _Row(label: l10n.subscriptionPlan, value: subscriptionPlanLabel(l10n, clinic.subscriptionPlan)),
+            _Row(
+              label: l10n.subscriptionPlan,
+              value: subscriptionPlanLabel(l10n, clinic.subscriptionPlan),
+            ),
             _Row(
               label: l10n.subscriptionStarted,
               value: started != null
@@ -229,12 +234,16 @@ class DoctorSubscriptionListSubtitle extends StatelessWidget {
                       ? l10n.subscriptionExpiredDaysAgo(-days)
                       : l10n.subscriptionDaysRemaining(days),
                   style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-            SubscriptionStatusBadge(
-              status: status,
-              remainingDays: days,
-              compact: true,
+            Flexible(
+              child: SubscriptionStatusBadge(
+                status: status,
+                remainingDays: days,
+                compact: true,
+              ),
             ),
           ],
         ),

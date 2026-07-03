@@ -99,11 +99,17 @@ class _SystemOwnerOverviewScreenState extends State<SystemOwnerOverviewScreen> {
                       ],
                     ),
                   ),
-                  Text(
-                    auth.currentUser?.name.localized(context) ?? l10n.systemOwner,
-                    style: TextStyle(
-                      color: Colors.grey.shade700,
-                      fontWeight: FontWeight.w500,
+                  Flexible(
+                    child: Text(
+                      auth.currentUser?.name.localized(context) ??
+                          l10n.systemOwner,
+                      style: TextStyle(
+                        color: Colors.grey.shade700,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.end,
                     ),
                   ),
                 ],
@@ -364,7 +370,11 @@ class _QuickActionChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return ActionChip(
       avatar: Icon(icon, size: 18, color: AppTheme.primaryDark),
-      label: Text(label),
+      label: Text(
+        label,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
       onPressed: onTap,
     );
   }
