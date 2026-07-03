@@ -784,5 +784,18 @@
   "featureFlags": "Feature flags",
   "featureFlagsHint": "Enable or disable platform features",
   "maintenanceMode": "Maintenance mode",
-  "maintenanceModeHint": "Take the platform offline for maintenance"
+  "maintenanceModeHint": "Take the platform offline for maintenance",
+  "businessType": "Business type",
+  "addBusinessType": "Add business type",
+  "addSpecialty": "Add specialty",
+  "localizedTypeHint": "Enter the name in Kurdish, Arabic, and English. Patients see the label in their language.",
+  "typeToSearchOrCreate": "Type to search or create",
+  "createNewType": "Create \"{name}\"",
+  "@createNewType": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "completeProfileBanner": "Complete your profile — add clinic name, address, hours, photos, and contact details.",
+  "completeProfileAction": "Complete profile"
 }

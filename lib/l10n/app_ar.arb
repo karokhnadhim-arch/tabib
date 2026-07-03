@@ -735,5 +735,13 @@
   "featureFlagsHint": "تفعيل أو تعطيل ميزات المنصة",
   "maintenanceMode": "وضع الصيانة",
   "maintenanceModeHint": "إيقاف المنصة للصيانة",
+  "businessType": "نوع المنشأة",
+  "addBusinessType": "إضافة نوع منشأة",
+  "addSpecialty": "إضافة تخصص",
+  "localizedTypeHint": "أدخل الاسم بالكردية والعربية والإنجليزية. يرى المرضى التسمية بلغتهم.",
+  "typeToSearchOrCreate": "اكتب للبحث أو الإنشاء",
+  "createNewType": "إنشاء \"{name}\"",
+  "completeProfileBanner": "أكمل ملفك — أضف اسم العيادة والعنوان وساعات العمل والصور وبيانات الاتصال.",
+  "completeProfileAction": "إكمال الملف",
   "helpContent": "تحتاج مساعدة؟ راسلنا على {email} أو تواصل مع مسؤول عيادتك."
 }

@@ -3,9 +3,11 @@ import 'package:flutter/foundation.dart';
 import '../core/constants/firestore_limits.dart';
 import '../core/utils/async_request_cache.dart';
 import '../core/utils/clinic_subscription.dart';
+import '../core/utils/specialty_catalog_utils.dart';
 import '../core/utils/subscription_manager.dart';
 import '../models/clinic.dart';
 import '../models/doctor.dart';
+import '../models/localized_text.dart';
 import '../models/provider_catalog_mode.dart';
 import '../models/service_provider_type.dart';
 import '../models/specialty.dart';
@@ -228,6 +230,46 @@ class ClinicDataService extends ChangeNotifier {
 
   List<Doctor> doctorsForClinic(String clinicId) =>
       _doctors.where((d) => d.clinicId == clinicId).toList();
+
+  /// Default clinic for new provider accounts when none is chosen at signup.
+  String? get defaultClinicId =>
+      _clinics.isNotEmpty ? _clinics.first.id : null;
+
+  /// Reload specialty catalog after admin creates a new business type / specialty.
+  Future<void> reloadSpecialties() async {
+    _specialties = await _backend.fetchSpecialties();
+    notifyListeners();
+  }
+
+  /// Find an existing localized type or persist a new one (deduplicated).
+  Future<Specialty> findOrCreateSpecialty({
+    required LocalizedText name,
+    required bool forBusiness,
+  }) async {
+    await ensureCatalogLoaded();
+
+    final duplicate = SpecialtyCatalogUtils.findDuplicate(
+      _specialties,
+      name,
+      forBusiness: forBusiness,
+    );
+    if (duplicate != null) return duplicate;
+
+    final specialty = Specialty(
+      id: SpecialtyCatalogUtils.uniqueId(
+        _specialties,
+        name,
+        forBusiness: forBusiness,
+      ),
+      name: name,
+      iconName: forBusiness ? 'storefront' : 'medical',
+      isBusinessType: forBusiness,
+    );
+    await _backend.upsertSpecialty(specialty);
+    _specialties = [..._specialties, specialty];
+    notifyListeners();
+    return specialty;
+  }
 
   @override
   void dispose() {

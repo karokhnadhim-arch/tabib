@@ -173,6 +173,29 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
                   ),
                 ),
               ),
+            if (doctor != null && doctor.needsProfileCompletion)
+              SliverToBoxAdapter(
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE3F2FD),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppTheme.primaryDark.withOpacity(0.4)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.info_outline, color: AppTheme.primaryDark),
+                      const SizedBox(width: 12),
+                      Expanded(child: Text(l10n.completeProfileBanner)),
+                      TextButton(
+                        onPressed: () => context.push('/doctor/profile'),
+                        child: Text(l10n.completeProfileAction),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             SliverToBoxAdapter(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,

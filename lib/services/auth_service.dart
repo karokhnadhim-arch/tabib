@@ -433,7 +433,7 @@ class AuthService extends ChangeNotifier {
     String? phone,
     required String password,
     required String specialtyId,
-    required String clinicId,
+    String? clinicId,
     ServiceProviderAccountType accountType = ServiceProviderAccountType.doctor,
     BusinessCategory? businessCategory,
   }) async {
@@ -442,9 +442,6 @@ class AuthService extends ChangeNotifier {
         : AdminCapability.manageDoctors;
     if (!hasCapability(cap)) return 'unauthorized';
     if (password.length < 6) return 'weak_password';
-    if (accountType.isBusiness && businessCategory == null) {
-      return 'business_category_required';
-    }
 
     final trimmedEmail = email?.trim();
     final trimmedPhone = phone?.trim();
@@ -486,10 +483,16 @@ class AuthService extends ChangeNotifier {
       if (existingDoctor != null) return 'error';
       final clinics = await _backend.fetchClinics();
       final specialties = await _backend.fetchSpecialties();
-      final clinic = clinics.where((c) => c.id == clinicId).firstOrNull;
+      final resolvedClinicId =
+          clinicId ?? clinics.firstOrNull?.id;
+      if (resolvedClinicId == null) return 'error';
+      final clinic =
+          clinics.where((c) => c.id == resolvedClinicId).firstOrNull;
       final specialty =
           specialties.where((s) => s.id == specialtyId).firstOrNull;
       if (clinic == null || specialty == null) return 'error';
+      if (accountType.isBusiness && !specialty.isBusinessType) return 'error';
+      if (accountType.isDoctor && specialty.isBusinessType) return 'error';
 
       final accountCode =
           await _backend.allocateAccountCode(accountType);
@@ -499,7 +502,7 @@ class AuthService extends ChangeNotifier {
           name: nameText,
           specialtyId: specialtyId,
           specialty: specialty,
-          clinicId: clinicId,
+          clinicId: resolvedClinicId,
           clinic: clinic,
           rating: 0,
           experienceYears: 0,
@@ -518,7 +521,7 @@ class AuthService extends ChangeNotifier {
           email: contactEmail?.isNotEmpty == true ? contactEmail : null,
           phone: contactPhone?.isNotEmpty == true ? contactPhone : null,
           doctorId: doctorId,
-          clinicId: clinicId,
+          clinicId: resolvedClinicId,
         ),
         password: password,
         authEmail: authEmail,
@@ -546,10 +549,16 @@ class AuthService extends ChangeNotifier {
 
       final clinics = await _backend.fetchClinics();
       final specialties = await _backend.fetchSpecialties();
-      final clinic = clinics.where((c) => c.id == clinicId).firstOrNull;
+      final resolvedClinicId =
+          clinicId ?? clinics.firstOrNull?.id;
+      if (resolvedClinicId == null) return 'error';
+      final clinic =
+          clinics.where((c) => c.id == resolvedClinicId).firstOrNull;
       final specialty =
           specialties.where((s) => s.id == specialtyId).firstOrNull;
       if (clinic == null || specialty == null) return 'error';
+      if (accountType.isBusiness && !specialty.isBusinessType) return 'error';
+      if (accountType.isDoctor && specialty.isBusinessType) return 'error';
 
       final cred = await _firebaseAuth!.createStaffUserWithoutSessionSwitch(
         email: authEmail,
@@ -564,7 +573,7 @@ class AuthService extends ChangeNotifier {
           name: nameText,
           specialtyId: specialtyId,
           specialty: specialty,
-          clinicId: clinicId,
+          clinicId: resolvedClinicId,
           clinic: clinic,
           rating: 0,
           experienceYears: 0,
@@ -583,7 +592,7 @@ class AuthService extends ChangeNotifier {
           email: contactEmail?.isNotEmpty == true ? contactEmail : null,
           phone: contactPhone?.isNotEmpty == true ? contactPhone : null,
           doctorId: doctorId,
-          clinicId: clinicId,
+          clinicId: resolvedClinicId,
         ),
       );
       return null;

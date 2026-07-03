@@ -81,6 +81,9 @@ class Doctor {
   bool get isBusiness => accountType.isBusiness;
   bool get isDoctorAccount => accountType.isDoctor;
 
+  /// Clinic/business name and profile details can be added after signup.
+  bool get needsProfileCompletion => !localizedHasText(clinicName);
+
   LocalizedText get effectiveClinicName => clinicName ?? clinic.name;
   LocalizedText get effectiveAddress => clinicAddress ?? clinic.address;
   double get effectiveLatitude => latitude ?? clinic.latitude;

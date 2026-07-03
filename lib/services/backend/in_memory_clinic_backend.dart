@@ -581,7 +581,7 @@ class InMemoryClinicBackend implements ClinicBackend {
     _staff.clear();
     _staffPasswords.clear();
 
-    const specialties = [
+    const doctorSpecialties = [
       Specialty(
         id: 'general',
         name: LocalizedText(ku: 'پزیشکی گشتی', ar: 'طب عام', en: 'General'),
@@ -602,16 +602,122 @@ class InMemoryClinicBackend implements ClinicBackend {
         name: LocalizedText(ku: 'چاو', ar: 'عيون', en: 'Eye care'),
         iconName: 'eye',
       ),
+    ];
+    const businessTypes = [
       Specialty(
-        id: 'healthcare_services',
+        id: 'biz_clinic',
+        name: LocalizedText(ku: 'نۆرینگە', ar: 'عيادة', en: 'Clinic'),
+        iconName: 'clinic',
+        isBusinessType: true,
+      ),
+      Specialty(
+        id: 'biz_beauty_center',
         name: LocalizedText(
-          ku: 'خزمەتگوزاری تەندروستی',
-          ar: 'خدمات صحية',
-          en: 'Healthcare services',
+          ku: 'سەنتەری جوانکاری',
+          ar: 'مركز تجميل',
+          en: 'Beauty center',
+        ),
+        iconName: 'beauty',
+        isBusinessType: true,
+      ),
+      Specialty(
+        id: 'biz_medical_laboratory',
+        name: LocalizedText(
+          ku: 'تاقیگەی پزیشکی',
+          ar: 'مختبر طبي',
+          en: 'Medical laboratory',
+        ),
+        iconName: 'lab',
+        isBusinessType: true,
+      ),
+      Specialty(
+        id: 'biz_radiology_center',
+        name: LocalizedText(
+          ku: 'سەنتەری تیشک',
+          ar: 'مركز أشعة',
+          en: 'Radiology center',
+        ),
+        iconName: 'radiology',
+        isBusinessType: true,
+      ),
+      Specialty(
+        id: 'biz_physiotherapy_center',
+        name: LocalizedText(
+          ku: 'سەنتەری فیزیۆتێراپی',
+          ar: 'مركز علاج طبيعي',
+          en: 'Physiotherapy center',
+        ),
+        iconName: 'physio',
+        isBusinessType: true,
+      ),
+      Specialty(
+        id: 'biz_dental_center',
+        name: LocalizedText(
+          ku: 'سەنتەری ددان',
+          ar: 'مركز أسنان',
+          en: 'Dental center',
+        ),
+        iconName: 'dental',
+        isBusinessType: true,
+      ),
+      Specialty(
+        id: 'biz_eye_center',
+        name: LocalizedText(
+          ku: 'سەنتەری چاو',
+          ar: 'مركز عيون',
+          en: 'Eye center',
+        ),
+        iconName: 'eye',
+        isBusinessType: true,
+      ),
+      Specialty(
+        id: 'biz_hearing_center',
+        name: LocalizedText(
+          ku: 'سەنتەری بیستن',
+          ar: 'مركز سمع',
+          en: 'Hearing center',
+        ),
+        iconName: 'hearing',
+        isBusinessType: true,
+      ),
+      Specialty(
+        id: 'biz_vaccination_center',
+        name: LocalizedText(
+          ku: 'سەنتەری کوتان',
+          ar: 'مركز تطعيم',
+          en: 'Vaccination center',
+        ),
+        iconName: 'vaccine',
+        isBusinessType: true,
+      ),
+      Specialty(
+        id: 'biz_blood_test_center',
+        name: LocalizedText(
+          ku: 'سەنتەری تاقیکردنەوەی خوێن',
+          ar: 'مركز فحص الدم',
+          en: 'Blood test center',
+        ),
+        iconName: 'blood',
+        isBusinessType: true,
+      ),
+      Specialty(
+        id: 'biz_pharmacy',
+        name: LocalizedText(ku: 'دەرمانخانە', ar: 'صيدلية', en: 'Pharmacy'),
+        iconName: 'pharmacy',
+        isBusinessType: true,
+      ),
+      Specialty(
+        id: 'biz_other_healthcare',
+        name: LocalizedText(
+          ku: 'خزمەتگوزاری تەندروستی تر',
+          ar: 'خدمات صحية أخرى',
+          en: 'Other healthcare services',
         ),
         iconName: 'medical',
+        isBusinessType: true,
       ),
     ];
+    final specialties = [...doctorSpecialties, ...businessTypes];
     _specialties.addAll(specialties);
 
     const clinic = Clinic(
@@ -649,7 +755,7 @@ class InMemoryClinicBackend implements ClinicBackend {
           en: 'Dr. Aras Mohammed',
         ),
         specialtyId: 'general',
-        specialty: specialties[0],
+        specialty: doctorSpecialties[0],
         clinicId: seededClinic.id,
         clinic: seededClinic,
         rating: 4.8,
@@ -761,7 +867,7 @@ class InMemoryClinicBackend implements ClinicBackend {
           en: 'Dr. Sara Ahmed',
         ),
         specialtyId: 'dental',
-        specialty: specialties[1],
+        specialty: doctorSpecialties[1],
         clinicId: seededClinic.id,
         clinic: seededClinic,
         rating: 4.6,
@@ -826,7 +932,7 @@ class InMemoryClinicBackend implements ClinicBackend {
           en: 'Dr. Karim Rashid',
         ),
         specialtyId: 'ortho',
-        specialty: specialties[2],
+        specialty: doctorSpecialties[2],
         clinicId: seededClinic.id,
         clinic: seededClinic,
         rating: 4.9,
@@ -886,8 +992,8 @@ class InMemoryClinicBackend implements ClinicBackend {
           ar: 'مركز روز للتجميل',
           en: 'Roz Beauty Center',
         ),
-        specialtyId: 'healthcare_services',
-        specialty: specialties[4],
+        specialtyId: 'biz_beauty_center',
+        specialty: businessTypes[1],
         clinicId: seededClinic.id,
         clinic: seededClinic,
         rating: 4.6,

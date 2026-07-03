@@ -306,7 +306,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get addDoctor => 'دکتۆر زیاد بکە';
 
   @override
-  String get addSpecialty => 'بوار زیاد بکە';
+  String get addSpecialty => 'زیادکردنی تایبەتمەندی';
 
   @override
   String get addStaff => 'کارمەند زیاد بکە';
@@ -2039,4 +2039,27 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get maintenanceModeHint => 'وەستاندنی پلاتفۆرم بۆ چاکسازی';
+
+  @override
+  String get businessType => 'جۆری بازرگانی';
+
+  @override
+  String get addBusinessType => 'زیادکردنی جۆری بازرگانی';
+
+  @override
+  String get localizedTypeHint => 'ناوەکە بە کوردی، عەرەبی و ئینگلیزی بنووسە. نەخۆشەکان بەپێی زمانەکەیان دەبینن.';
+
+  @override
+  String get typeToSearchOrCreate => 'بنووسە بۆ گەڕان یان دروستکردن';
+
+  @override
+  String createNewType(String name) {
+    return 'دروستکردنی \"$name\"';
+  }
+
+  @override
+  String get completeProfileBanner => 'پرۆفایلەکەت تەواو بکە — ناوی نۆرینگە، ناونیشان، کاتژمێر، وێنە و زانیاری پەیوەندی زیاد بکە.';
+
+  @override
+  String get completeProfileAction => 'تەواوکردنی پرۆفایل';
 }

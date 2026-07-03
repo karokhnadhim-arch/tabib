@@ -2039,4 +2039,27 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get maintenanceModeHint => 'إيقاف المنصة للصيانة';
+
+  @override
+  String get businessType => 'نوع المنشأة';
+
+  @override
+  String get addBusinessType => 'إضافة نوع منشأة';
+
+  @override
+  String get localizedTypeHint => 'أدخل الاسم بالكردية والعربية والإنجليزية. يرى المرضى التسمية بلغتهم.';
+
+  @override
+  String get typeToSearchOrCreate => 'اكتب للبحث أو الإنشاء';
+
+  @override
+  String createNewType(String name) {
+    return 'إنشاء \"$name\"';
+  }
+
+  @override
+  String get completeProfileBanner => 'أكمل ملفك — أضف اسم العيادة والعنوان وساعات العمل والصور وبيانات الاتصال.';
+
+  @override
+  String get completeProfileAction => 'إكمال الملف';
 }

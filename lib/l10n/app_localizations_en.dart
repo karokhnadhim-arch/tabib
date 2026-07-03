@@ -2039,4 +2039,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get maintenanceModeHint => 'Take the platform offline for maintenance';
+
+  @override
+  String get businessType => 'Business type';
+
+  @override
+  String get addBusinessType => 'Add business type';
+
+  @override
+  String get localizedTypeHint => 'Enter the name in Kurdish, Arabic, and English. Patients see the label in their language.';
+
+  @override
+  String get typeToSearchOrCreate => 'Type to search or create';
+
+  @override
+  String createNewType(String name) {
+    return 'Create \"$name\"';
+  }
+
+  @override
+  String get completeProfileBanner => 'Complete your profile — add clinic name, address, hours, photos, and contact details.';
+
+  @override
+  String get completeProfileAction => 'Complete profile';
 }

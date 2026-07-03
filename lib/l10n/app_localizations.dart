@@ -4078,6 +4078,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Take the platform offline for maintenance'**
   String get maintenanceModeHint;
+
+  /// No description provided for @businessType.
+  ///
+  /// In en, this message translates to:
+  /// **'Business type'**
+  String get businessType;
+
+  /// No description provided for @addBusinessType.
+  ///
+  /// In en, this message translates to:
+  /// **'Add business type'**
+  String get addBusinessType;
+
+  /// No description provided for @localizedTypeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the name in Kurdish, Arabic, and English. Patients see the label in their language.'**
+  String get localizedTypeHint;
+
+  /// No description provided for @typeToSearchOrCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Type to search or create'**
+  String get typeToSearchOrCreate;
+
+  /// No description provided for @createNewType.
+  ///
+  /// In en, this message translates to:
+  /// **'Create \"{name}\"'**
+  String createNewType(String name);
+
+  /// No description provided for @completeProfileBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile — add clinic name, address, hours, photos, and contact details.'**
+  String get completeProfileBanner;
+
+  /// No description provided for @completeProfileAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete profile'**
+  String get completeProfileAction;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
