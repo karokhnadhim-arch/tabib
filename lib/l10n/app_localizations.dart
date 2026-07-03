@@ -3292,6 +3292,750 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This module will be available in a future update.'**
   String get moduleComingSoon;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get comingSoon;
+
+  /// No description provided for @ownerNavSubscriptionsPackages.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscriptions & packages'**
+  String get ownerNavSubscriptionsPackages;
+
+  /// No description provided for @paymentsBilling.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments & billing'**
+  String get paymentsBilling;
+
+  /// No description provided for @feedbackSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback & support'**
+  String get feedbackSupport;
+
+  /// No description provided for @notificationsCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications center'**
+  String get notificationsCenter;
+
+  /// No description provided for @reportsAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports & analytics'**
+  String get reportsAnalytics;
+
+  /// No description provided for @systemHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'System health'**
+  String get systemHealth;
+
+  /// No description provided for @auditLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Audit log'**
+  String get auditLog;
+
+  /// No description provided for @securityCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Security center'**
+  String get securityCenter;
+
+  /// No description provided for @backupRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup & restore'**
+  String get backupRestore;
+
+  /// No description provided for @totalBusinesses.
+  ///
+  /// In en, this message translates to:
+  /// **'Total businesses'**
+  String get totalBusinesses;
+
+  /// No description provided for @totalPatients.
+  ///
+  /// In en, this message translates to:
+  /// **'Total patients'**
+  String get totalPatients;
+
+  /// No description provided for @activeUsersToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Active users'**
+  String get activeUsersToday;
+
+  /// No description provided for @expiredSubscriptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired subscriptions'**
+  String get expiredSubscriptions;
+
+  /// No description provided for @revenueOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue overview'**
+  String get revenueOverview;
+
+  /// No description provided for @newRegistrations.
+  ///
+  /// In en, this message translates to:
+  /// **'New registrations'**
+  String get newRegistrations;
+
+  /// No description provided for @liveQueueStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Live queue statistics'**
+  String get liveQueueStatistics;
+
+  /// No description provided for @queueWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get queueWaiting;
+
+  /// No description provided for @queueInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get queueInProgress;
+
+  /// No description provided for @quickActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick actions'**
+  String get quickActions;
+
+  /// No description provided for @allBusinesses.
+  ///
+  /// In en, this message translates to:
+  /// **'All businesses'**
+  String get allBusinesses;
+
+  /// No description provided for @allBusinessesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'View and manage every business on the platform'**
+  String get allBusinessesHint;
+
+  /// No description provided for @businessCategoryBrowseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse providers in this category'**
+  String get businessCategoryBrowseHint;
+
+  /// No description provided for @subscriptionPackagesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage clinic plans, renewals, and expiration alerts'**
+  String get subscriptionPackagesHint;
+
+  /// No description provided for @createPackages.
+  ///
+  /// In en, this message translates to:
+  /// **'Create packages'**
+  String get createPackages;
+
+  /// No description provided for @createPackagesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Define subscription tiers for clinics'**
+  String get createPackagesHint;
+
+  /// No description provided for @subscriptionPlanHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Open subscription management for this plan'**
+  String get subscriptionPlanHint;
+
+  /// No description provided for @plan1Month.
+  ///
+  /// In en, this message translates to:
+  /// **'1 month'**
+  String get plan1Month;
+
+  /// No description provided for @plan2Months.
+  ///
+  /// In en, this message translates to:
+  /// **'2 months'**
+  String get plan2Months;
+
+  /// No description provided for @plan3Months.
+  ///
+  /// In en, this message translates to:
+  /// **'3 months'**
+  String get plan3Months;
+
+  /// No description provided for @plan6Months.
+  ///
+  /// In en, this message translates to:
+  /// **'6 months'**
+  String get plan6Months;
+
+  /// No description provided for @plan12Months.
+  ///
+  /// In en, this message translates to:
+  /// **'12 months'**
+  String get plan12Months;
+
+  /// No description provided for @activateSubscriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable a clinic subscription plan'**
+  String get activateSubscriptionHint;
+
+  /// No description provided for @renewSubscriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Extend an existing clinic subscription'**
+  String get renewSubscriptionHint;
+
+  /// No description provided for @suspendSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspend subscription'**
+  String get suspendSubscription;
+
+  /// No description provided for @suspendSubscriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Temporarily block subscription access'**
+  String get suspendSubscriptionHint;
+
+  /// No description provided for @remainingDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining days'**
+  String get remainingDays;
+
+  /// No description provided for @remainingDaysHint.
+  ///
+  /// In en, this message translates to:
+  /// **'View days left on each clinic plan'**
+  String get remainingDaysHint;
+
+  /// No description provided for @expirationAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiration alerts'**
+  String get expirationAlerts;
+
+  /// No description provided for @expirationAlertsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor clinics nearing expiry'**
+  String get expirationAlertsHint;
+
+  /// No description provided for @paymentsBillingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoices, billing, and payment methods'**
+  String get paymentsBillingHint;
+
+  /// No description provided for @invoices.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoices'**
+  String get invoices;
+
+  /// No description provided for @invoicesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'View and export platform invoices'**
+  String get invoicesHint;
+
+  /// No description provided for @billingOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Billing overview'**
+  String get billingOverview;
+
+  /// No description provided for @billingOverviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary of platform billing activity'**
+  String get billingOverviewHint;
+
+  /// No description provided for @paymentMethods.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment methods'**
+  String get paymentMethods;
+
+  /// No description provided for @paymentMethodsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure accepted payment methods'**
+  String get paymentMethodsHint;
+
+  /// No description provided for @feedbackSupportHint.
+  ///
+  /// In en, this message translates to:
+  /// **'User feedback and support requests'**
+  String get feedbackSupportHint;
+
+  /// No description provided for @bugReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Bug reports'**
+  String get bugReports;
+
+  /// No description provided for @bugReportsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Review reported software issues'**
+  String get bugReportsHint;
+
+  /// No description provided for @featureRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Feature requests'**
+  String get featureRequests;
+
+  /// No description provided for @featureRequestsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ideas submitted by users'**
+  String get featureRequestsHint;
+
+  /// No description provided for @userFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'User feedback'**
+  String get userFeedback;
+
+  /// No description provided for @userFeedbackHint.
+  ///
+  /// In en, this message translates to:
+  /// **'General platform feedback'**
+  String get userFeedbackHint;
+
+  /// No description provided for @supportConversations.
+  ///
+  /// In en, this message translates to:
+  /// **'Support conversations'**
+  String get supportConversations;
+
+  /// No description provided for @supportConversationsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages with users needing help'**
+  String get supportConversationsHint;
+
+  /// No description provided for @notificationsCenterHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Broadcast and system notifications'**
+  String get notificationsCenterHint;
+
+  /// No description provided for @broadcastNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Broadcast notifications'**
+  String get broadcastNotifications;
+
+  /// No description provided for @broadcastNotificationsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Send announcements to all users'**
+  String get broadcastNotificationsHint;
+
+  /// No description provided for @subscriptionReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription reminders'**
+  String get subscriptionReminders;
+
+  /// No description provided for @subscriptionRemindersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Automated renewal reminders'**
+  String get subscriptionRemindersHint;
+
+  /// No description provided for @maintenanceAnnouncements.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance announcements'**
+  String get maintenanceAnnouncements;
+
+  /// No description provided for @maintenanceAnnouncementsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled downtime notices'**
+  String get maintenanceAnnouncementsHint;
+
+  /// No description provided for @reportsAnalyticsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Platform reports and growth analytics'**
+  String get reportsAnalyticsHint;
+
+  /// No description provided for @reportDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily report'**
+  String get reportDaily;
+
+  /// No description provided for @reportDailyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s platform activity'**
+  String get reportDailyHint;
+
+  /// No description provided for @reportWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly report'**
+  String get reportWeekly;
+
+  /// No description provided for @reportWeeklyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 days summary'**
+  String get reportWeeklyHint;
+
+  /// No description provided for @reportMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly report'**
+  String get reportMonthly;
+
+  /// No description provided for @reportMonthlyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 30 days summary'**
+  String get reportMonthlyHint;
+
+  /// No description provided for @reportYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly report'**
+  String get reportYearly;
+
+  /// No description provided for @reportYearlyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Annual platform summary'**
+  String get reportYearlyHint;
+
+  /// No description provided for @queueStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue statistics'**
+  String get queueStatistics;
+
+  /// No description provided for @queueStatisticsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting times and queue volume'**
+  String get queueStatisticsHint;
+
+  /// No description provided for @appointmentStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment statistics'**
+  String get appointmentStatistics;
+
+  /// No description provided for @appointmentStatisticsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookings and completion rates'**
+  String get appointmentStatisticsHint;
+
+  /// No description provided for @revenueStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue statistics'**
+  String get revenueStatistics;
+
+  /// No description provided for @revenueStatisticsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription and payment revenue'**
+  String get revenueStatisticsHint;
+
+  /// No description provided for @userGrowth.
+  ///
+  /// In en, this message translates to:
+  /// **'User growth'**
+  String get userGrowth;
+
+  /// No description provided for @userGrowthHint.
+  ///
+  /// In en, this message translates to:
+  /// **'New users over time'**
+  String get userGrowthHint;
+
+  /// No description provided for @systemHealthHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Infrastructure and service status'**
+  String get systemHealthHint;
+
+  /// No description provided for @firebaseStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Firebase status'**
+  String get firebaseStatus;
+
+  /// No description provided for @statusConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected and configured'**
+  String get statusConnected;
+
+  /// No description provided for @statusDemoOrOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo mode or not configured'**
+  String get statusDemoOrOffline;
+
+  /// No description provided for @storageUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage usage'**
+  String get storageUsage;
+
+  /// No description provided for @databaseUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'Database usage'**
+  String get databaseUsage;
+
+  /// No description provided for @clinicsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'clinics'**
+  String get clinicsLabel;
+
+  /// No description provided for @accountsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'accounts'**
+  String get accountsLabel;
+
+  /// No description provided for @errorLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Error logs'**
+  String get errorLogs;
+
+  /// No description provided for @errorLogsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Application error history'**
+  String get errorLogsHint;
+
+  /// No description provided for @crashReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Crash reports'**
+  String get crashReports;
+
+  /// No description provided for @crashReportsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Client crash summaries'**
+  String get crashReportsHint;
+
+  /// No description provided for @performanceMonitoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance monitoring'**
+  String get performanceMonitoring;
+
+  /// No description provided for @performanceMonitoringHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Latency and load metrics'**
+  String get performanceMonitoringHint;
+
+  /// No description provided for @noAuditEntries.
+  ///
+  /// In en, this message translates to:
+  /// **'No audit entries yet'**
+  String get noAuditEntries;
+
+  /// No description provided for @user.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get user;
+
+  /// No description provided for @device.
+  ///
+  /// In en, this message translates to:
+  /// **'Device'**
+  String get device;
+
+  /// No description provided for @ipAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'IP address'**
+  String get ipAddress;
+
+  /// No description provided for @securityCenterHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Login activity and account protection'**
+  String get securityCenterHint;
+
+  /// No description provided for @loginHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Login history'**
+  String get loginHistory;
+
+  /// No description provided for @loginHistoryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent sign-in events'**
+  String get loginHistoryHint;
+
+  /// No description provided for @activeSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Active sessions'**
+  String get activeSessions;
+
+  /// No description provided for @activeSessionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Devices currently signed in'**
+  String get activeSessionsHint;
+
+  /// No description provided for @failedLoginAttempts.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed login attempts'**
+  String get failedLoginAttempts;
+
+  /// No description provided for @failedLoginAttemptsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked or suspicious sign-ins'**
+  String get failedLoginAttemptsHint;
+
+  /// No description provided for @blockedAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked accounts'**
+  String get blockedAccounts;
+
+  /// No description provided for @blockedAccountsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspended and disabled accounts'**
+  String get blockedAccountsHint;
+
+  /// No description provided for @passwordResetLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset logs'**
+  String get passwordResetLogs;
+
+  /// No description provided for @passwordResetLogsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent password reset requests'**
+  String get passwordResetLogsHint;
+
+  /// No description provided for @backupRestoreHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Protect and restore platform data'**
+  String get backupRestoreHint;
+
+  /// No description provided for @manualBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual backup'**
+  String get manualBackup;
+
+  /// No description provided for @manualBackupHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Create an on-demand backup'**
+  String get manualBackupHint;
+
+  /// No description provided for @automaticBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic backup'**
+  String get automaticBackup;
+
+  /// No description provided for @automaticBackupHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule recurring backups'**
+  String get automaticBackupHint;
+
+  /// No description provided for @restoreData.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore data'**
+  String get restoreData;
+
+  /// No description provided for @restoreDataHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore from a backup snapshot'**
+  String get restoreDataHint;
+
+  /// No description provided for @systemSettingsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Platform-wide configuration'**
+  String get systemSettingsHint;
+
+  /// No description provided for @languageSettingsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Default and supported languages'**
+  String get languageSettingsHint;
+
+  /// No description provided for @themeSettingsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Light, dark, and branding options'**
+  String get themeSettingsHint;
+
+  /// No description provided for @notificationSettingsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'System notification defaults'**
+  String get notificationSettingsHint;
+
+  /// No description provided for @featureFlags.
+  ///
+  /// In en, this message translates to:
+  /// **'Feature flags'**
+  String get featureFlags;
+
+  /// No description provided for @featureFlagsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable or disable platform features'**
+  String get featureFlagsHint;
+
+  /// No description provided for @maintenanceMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance mode'**
+  String get maintenanceMode;
+
+  /// No description provided for @maintenanceModeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Take the platform offline for maintenance'**
+  String get maintenanceModeHint;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

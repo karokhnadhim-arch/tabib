@@ -26,6 +26,7 @@ import 'services/firebase_bootstrap.dart';
 import 'services/locale_service.dart';
 import 'services/queue_service.dart';
 import 'services/staff_data_service.dart';
+import 'services/owner_audit_service.dart';
 import 'services/subscription_monitor_service.dart';
 import 'services/theme_service.dart';
 import 'services/user_preferences_service.dart';
@@ -70,6 +71,7 @@ class _TabibAppState extends State<TabibApp> {
   late final PrescriptionProvider _prescriptionProvider;
   late final NotificationProvider _notificationProvider;
   late final ChatProvider _chatProvider;
+  late final OwnerAuditService _ownerAuditService;
   late final SubscriptionMonitorService _subscriptionMonitor;
   late final GoRouter _router;
 
@@ -113,6 +115,7 @@ class _TabibAppState extends State<TabibApp> {
     _prescriptionProvider = PrescriptionProvider(repository: _prescriptionRepository);
     _notificationProvider = NotificationProvider(repository: _notificationRepository);
     _chatProvider = ChatProvider(repository: _chatRepository);
+    _ownerAuditService = OwnerAuditService();
     _subscriptionMonitor = SubscriptionMonitorService(
       backend: _backend,
       catalog: _dataService,
@@ -158,6 +161,7 @@ class _TabibAppState extends State<TabibApp> {
         ChangeNotifierProvider.value(value: _prescriptionProvider),
         ChangeNotifierProvider.value(value: _notificationProvider),
         ChangeNotifierProvider.value(value: _chatProvider),
+        ChangeNotifierProvider.value(value: _ownerAuditService),
         ChangeNotifierProvider.value(value: _subscriptionMonitor),
       ],
       child: Consumer2<LocaleService, ThemeService>(

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../services/auth_service.dart';
 import '../auth/admin_routes.dart';
 import '../../models/provider_catalog_mode.dart';
+import '../../models/service_provider_type.dart';
 import '../../presentation/screens/admin/create_doctor_screen.dart';
 import '../../presentation/screens/admin/create_secretary_screen.dart';
 import '../../presentation/screens/auth/register_screen.dart';
@@ -14,7 +15,13 @@ import '../../presentation/screens/doctor/owner_doctors_screen.dart';
 import '../../presentation/screens/doctor/owner_doctor_detail_screen.dart';
 import '../../presentation/screens/doctor/owner_clinics_screen.dart';
 import '../../presentation/screens/doctor/owner_platform_screen.dart';
-import '../../presentation/screens/owner/system_owner_dashboard_screen.dart';
+import '../../presentation/layouts/system_owner_shell.dart';
+import '../../presentation/screens/owner/system_owner_overview_screen.dart';
+import '../../presentation/screens/owner/owner_business_management_screen.dart';
+import '../../presentation/screens/owner/owner_subscriptions_packages_screen.dart';
+import '../../presentation/screens/owner/owner_audit_log_screen.dart';
+import '../../presentation/screens/owner/owner_system_health_screen.dart';
+import '../../presentation/screens/owner/owner_hub_screens.dart';
 import '../../presentation/screens/owner/system_owner_module_placeholder_screen.dart';
 import '../../presentation/screens/doctor/owner_staff_list_screen.dart';
 import '../../presentation/screens/doctor/owner_stats_screen.dart';
@@ -138,10 +145,18 @@ class AppRouter {
               ),
             ],
           ),
-          GoRoute(
-            path: '/owner',
-            builder: (_, __) => const SystemOwnerDashboardScreen(),
+          ShellRoute(
+            builder: (context, state, child) {
+              final path = state.matchedLocation;
+              if (path == AdminRoutes.adminConsole) return child;
+              if (!_auth.isSystemOwner) return child;
+              return SystemOwnerShell(child: child);
+            },
             routes: [
+              GoRoute(
+                path: '/owner',
+                builder: (_, __) => const SystemOwnerOverviewScreen(),
+                routes: [
               GoRoute(
                 path: 'console',
                 builder: (_, __) => const OwnerPlatformScreen(),
@@ -172,7 +187,9 @@ class AppRouter {
               ),
               GoRoute(
                 path: 'doctors',
-                builder: (_, __) => const OwnerDoctorsScreen(),
+                builder: (_, __) => const OwnerDoctorsScreen(
+                  catalogMode: ProviderCatalogMode.doctors,
+                ),
                 routes: [
                   GoRoute(
                     path: ':doctorId',
@@ -187,7 +204,18 @@ class AppRouter {
               ),
               GoRoute(
                 path: 'businesses',
-                builder: (_, __) => const OwnerDoctorsScreen(),
+                builder: (_, state) {
+                  final categoryKey = state.uri.queryParameters['category'];
+                  return OwnerDoctorsScreen(
+                    catalogMode: ProviderCatalogMode.businesses,
+                    businessCategory:
+                        BusinessCategory.fromStorage(categoryKey),
+                  );
+                },
+              ),
+              GoRoute(
+                path: 'business-management',
+                builder: (_, __) => const OwnerBusinessManagementScreen(),
               ),
               GoRoute(
                 path: 'secretaries',
@@ -201,7 +229,7 @@ class AppRouter {
               ),
               GoRoute(
                 path: 'reports',
-                builder: (_, __) => const OwnerStatsScreen(),
+                builder: (_, __) => const OwnerReportsAnalyticsScreen(),
               ),
               GoRoute(
                 path: 'analytics',
@@ -212,6 +240,10 @@ class AppRouter {
                 builder: (_, __) => const OwnerSubscriptionsScreen(),
               ),
               GoRoute(
+                path: 'subscriptions-packages',
+                builder: (_, __) => const OwnerSubscriptionsPackagesScreen(),
+              ),
+              GoRoute(
                 path: 'packages',
                 builder: (context, __) => SystemOwnerModulePlaceholderScreen(
                   title: AppLocalizations.of(context).packageManagement,
@@ -219,19 +251,37 @@ class AppRouter {
               ),
               GoRoute(
                 path: 'payments',
-                builder: (context, __) => SystemOwnerModulePlaceholderScreen(
-                  title: AppLocalizations.of(context).payments,
-                ),
+                builder: (_, __) => const OwnerPaymentsBillingScreen(),
+              ),
+              GoRoute(
+                path: 'feedback',
+                builder: (_, __) => const OwnerFeedbackSupportScreen(),
               ),
               GoRoute(
                 path: 'notifications-admin',
-                builder: (context, __) => SystemOwnerModulePlaceholderScreen(
-                  title: AppLocalizations.of(context).notifications,
-                ),
+                builder: (_, __) => const OwnerNotificationsCenterScreen(),
+              ),
+              GoRoute(
+                path: 'system-health',
+                builder: (_, __) => const OwnerSystemHealthScreen(),
+              ),
+              GoRoute(
+                path: 'audit-log',
+                builder: (_, __) => const OwnerAuditLogScreen(),
+              ),
+              GoRoute(
+                path: 'security',
+                builder: (_, __) => const OwnerSecurityCenterScreen(),
+              ),
+              GoRoute(
+                path: 'backup',
+                builder: (_, __) => const OwnerBackupRestoreScreen(),
               ),
               GoRoute(
                 path: 'system-settings',
-                builder: (_, __) => const OwnerClinicsScreen(),
+                builder: (_, __) => const OwnerSystemSettingsScreen(),
+              ),
+                ],
               ),
             ],
           ),

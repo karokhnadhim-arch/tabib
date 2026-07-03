@@ -9,6 +9,8 @@ import '../../../core/utils/admin_doctor_staff_resolver.dart';
 import '../../../core/utils/doctor_subscription_resolver.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/doctor.dart';
+import '../../../models/provider_catalog_mode.dart';
+import '../../../models/service_provider_type.dart';
 import '../../../models/user_account.dart';
 import '../../../presentation/widgets/admin_guard.dart';
 import '../../../presentation/widgets/owner_module_app_bar.dart';
@@ -23,7 +25,14 @@ import '../../../utils/localization_utils.dart';
 import '../../../utils/provider_labels.dart';
 
 class OwnerDoctorsScreen extends StatefulWidget {
-  const OwnerDoctorsScreen({super.key});
+  const OwnerDoctorsScreen({
+    super.key,
+    this.catalogMode,
+    this.businessCategory,
+  });
+
+  final ProviderCatalogMode? catalogMode;
+  final BusinessCategory? businessCategory;
 
   @override
   State<OwnerDoctorsScreen> createState() => _OwnerDoctorsScreenState();
@@ -49,13 +58,16 @@ class _OwnerDoctorsScreenState extends State<OwnerDoctorsScreen> {
     await data.ensureCatalogLoaded();
     data.startRealtimeCatalog();
     staffData.startRealtime();
-    await data.loadDoctors(refresh: true);
+    await data.loadDoctors(
+      catalogMode: widget.catalogMode,
+      refresh: true,
+    );
   }
 
   Future<void> _loadMoreDoctors() async {
     final data = context.read<ClinicDataService>();
     if (!data.hasMoreDoctors || data.isDoctorsLoading) return;
-    await data.loadDoctors();
+    await data.loadDoctors(catalogMode: widget.catalogMode);
   }
 
   @override
@@ -71,6 +83,16 @@ class _OwnerDoctorsScreenState extends State<OwnerDoctorsScreen> {
   ) {
     final query = _searchController.text.trim();
     return data.doctors.where((d) {
+      if (widget.catalogMode == ProviderCatalogMode.doctors && !d.isDoctorAccount) {
+        return false;
+      }
+      if (widget.catalogMode == ProviderCatalogMode.businesses && !d.isBusiness) {
+        return false;
+      }
+      if (widget.businessCategory != null &&
+          d.businessCategory != widget.businessCategory) {
+        return false;
+      }
       if (!DoctorSubscriptionResolver.matchesFilter(d, data, _filter)) {
         return false;
       }
@@ -111,9 +133,16 @@ class _OwnerDoctorsScreenState extends State<OwnerDoctorsScreen> {
     }
     final pageItems = paginateSlice(filtered, safePage, _pageSize);
 
+    final screenTitle = widget.catalogMode == ProviderCatalogMode.businesses
+        ? (widget.businessCategory != null
+            ? ProviderLabels.businessCategoryLabel(
+                l10n, widget.businessCategory!)
+            : l10n.businessManagement)
+        : l10n.doctorManagement;
+
     return AdminGuard(
       child: Scaffold(
-        appBar: ownerModuleAppBar(context, title: l10n.doctorManagement),
+        appBar: ownerModuleAppBar(context, title: screenTitle),
         body: Column(
           children: [
             Padding(

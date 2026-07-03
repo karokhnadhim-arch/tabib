@@ -1642,4 +1642,376 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moduleComingSoon => 'This module will be available in a future update.';
+
+  @override
+  String get comingSoon => 'Coming soon';
+
+  @override
+  String get ownerNavSubscriptionsPackages => 'Subscriptions & packages';
+
+  @override
+  String get paymentsBilling => 'Payments & billing';
+
+  @override
+  String get feedbackSupport => 'Feedback & support';
+
+  @override
+  String get notificationsCenter => 'Notifications center';
+
+  @override
+  String get reportsAnalytics => 'Reports & analytics';
+
+  @override
+  String get systemHealth => 'System health';
+
+  @override
+  String get auditLog => 'Audit log';
+
+  @override
+  String get securityCenter => 'Security center';
+
+  @override
+  String get backupRestore => 'Backup & restore';
+
+  @override
+  String get totalBusinesses => 'Total businesses';
+
+  @override
+  String get totalPatients => 'Total patients';
+
+  @override
+  String get activeUsersToday => 'Active users';
+
+  @override
+  String get expiredSubscriptions => 'Expired subscriptions';
+
+  @override
+  String get revenueOverview => 'Revenue overview';
+
+  @override
+  String get newRegistrations => 'New registrations';
+
+  @override
+  String get liveQueueStatistics => 'Live queue statistics';
+
+  @override
+  String get queueWaiting => 'Waiting';
+
+  @override
+  String get queueInProgress => 'In progress';
+
+  @override
+  String get quickActions => 'Quick actions';
+
+  @override
+  String get allBusinesses => 'All businesses';
+
+  @override
+  String get allBusinessesHint => 'View and manage every business on the platform';
+
+  @override
+  String get businessCategoryBrowseHint => 'Browse providers in this category';
+
+  @override
+  String get subscriptionPackagesHint => 'Manage clinic plans, renewals, and expiration alerts';
+
+  @override
+  String get createPackages => 'Create packages';
+
+  @override
+  String get createPackagesHint => 'Define subscription tiers for clinics';
+
+  @override
+  String get subscriptionPlanHint => 'Open subscription management for this plan';
+
+  @override
+  String get plan1Month => '1 month';
+
+  @override
+  String get plan2Months => '2 months';
+
+  @override
+  String get plan3Months => '3 months';
+
+  @override
+  String get plan6Months => '6 months';
+
+  @override
+  String get plan12Months => '12 months';
+
+  @override
+  String get activateSubscriptionHint => 'Enable a clinic subscription plan';
+
+  @override
+  String get renewSubscriptionHint => 'Extend an existing clinic subscription';
+
+  @override
+  String get suspendSubscription => 'Suspend subscription';
+
+  @override
+  String get suspendSubscriptionHint => 'Temporarily block subscription access';
+
+  @override
+  String get remainingDays => 'Remaining days';
+
+  @override
+  String get remainingDaysHint => 'View days left on each clinic plan';
+
+  @override
+  String get expirationAlerts => 'Expiration alerts';
+
+  @override
+  String get expirationAlertsHint => 'Monitor clinics nearing expiry';
+
+  @override
+  String get paymentsBillingHint => 'Invoices, billing, and payment methods';
+
+  @override
+  String get invoices => 'Invoices';
+
+  @override
+  String get invoicesHint => 'View and export platform invoices';
+
+  @override
+  String get billingOverview => 'Billing overview';
+
+  @override
+  String get billingOverviewHint => 'Summary of platform billing activity';
+
+  @override
+  String get paymentMethods => 'Payment methods';
+
+  @override
+  String get paymentMethodsHint => 'Configure accepted payment methods';
+
+  @override
+  String get feedbackSupportHint => 'User feedback and support requests';
+
+  @override
+  String get bugReports => 'Bug reports';
+
+  @override
+  String get bugReportsHint => 'Review reported software issues';
+
+  @override
+  String get featureRequests => 'Feature requests';
+
+  @override
+  String get featureRequestsHint => 'Ideas submitted by users';
+
+  @override
+  String get userFeedback => 'User feedback';
+
+  @override
+  String get userFeedbackHint => 'General platform feedback';
+
+  @override
+  String get supportConversations => 'Support conversations';
+
+  @override
+  String get supportConversationsHint => 'Messages with users needing help';
+
+  @override
+  String get notificationsCenterHint => 'Broadcast and system notifications';
+
+  @override
+  String get broadcastNotifications => 'Broadcast notifications';
+
+  @override
+  String get broadcastNotificationsHint => 'Send announcements to all users';
+
+  @override
+  String get subscriptionReminders => 'Subscription reminders';
+
+  @override
+  String get subscriptionRemindersHint => 'Automated renewal reminders';
+
+  @override
+  String get maintenanceAnnouncements => 'Maintenance announcements';
+
+  @override
+  String get maintenanceAnnouncementsHint => 'Scheduled downtime notices';
+
+  @override
+  String get reportsAnalyticsHint => 'Platform reports and growth analytics';
+
+  @override
+  String get reportDaily => 'Daily report';
+
+  @override
+  String get reportDailyHint => 'Today\'s platform activity';
+
+  @override
+  String get reportWeekly => 'Weekly report';
+
+  @override
+  String get reportWeeklyHint => 'Last 7 days summary';
+
+  @override
+  String get reportMonthly => 'Monthly report';
+
+  @override
+  String get reportMonthlyHint => 'Last 30 days summary';
+
+  @override
+  String get reportYearly => 'Yearly report';
+
+  @override
+  String get reportYearlyHint => 'Annual platform summary';
+
+  @override
+  String get queueStatistics => 'Queue statistics';
+
+  @override
+  String get queueStatisticsHint => 'Waiting times and queue volume';
+
+  @override
+  String get appointmentStatistics => 'Appointment statistics';
+
+  @override
+  String get appointmentStatisticsHint => 'Bookings and completion rates';
+
+  @override
+  String get revenueStatistics => 'Revenue statistics';
+
+  @override
+  String get revenueStatisticsHint => 'Subscription and payment revenue';
+
+  @override
+  String get userGrowth => 'User growth';
+
+  @override
+  String get userGrowthHint => 'New users over time';
+
+  @override
+  String get systemHealthHint => 'Infrastructure and service status';
+
+  @override
+  String get firebaseStatus => 'Firebase status';
+
+  @override
+  String get statusConnected => 'Connected and configured';
+
+  @override
+  String get statusDemoOrOffline => 'Demo mode or not configured';
+
+  @override
+  String get storageUsage => 'Storage usage';
+
+  @override
+  String get databaseUsage => 'Database usage';
+
+  @override
+  String get clinicsLabel => 'clinics';
+
+  @override
+  String get accountsLabel => 'accounts';
+
+  @override
+  String get errorLogs => 'Error logs';
+
+  @override
+  String get errorLogsHint => 'Application error history';
+
+  @override
+  String get crashReports => 'Crash reports';
+
+  @override
+  String get crashReportsHint => 'Client crash summaries';
+
+  @override
+  String get performanceMonitoring => 'Performance monitoring';
+
+  @override
+  String get performanceMonitoringHint => 'Latency and load metrics';
+
+  @override
+  String get noAuditEntries => 'No audit entries yet';
+
+  @override
+  String get user => 'User';
+
+  @override
+  String get device => 'Device';
+
+  @override
+  String get ipAddress => 'IP address';
+
+  @override
+  String get securityCenterHint => 'Login activity and account protection';
+
+  @override
+  String get loginHistory => 'Login history';
+
+  @override
+  String get loginHistoryHint => 'Recent sign-in events';
+
+  @override
+  String get activeSessions => 'Active sessions';
+
+  @override
+  String get activeSessionsHint => 'Devices currently signed in';
+
+  @override
+  String get failedLoginAttempts => 'Failed login attempts';
+
+  @override
+  String get failedLoginAttemptsHint => 'Blocked or suspicious sign-ins';
+
+  @override
+  String get blockedAccounts => 'Blocked accounts';
+
+  @override
+  String get blockedAccountsHint => 'Suspended and disabled accounts';
+
+  @override
+  String get passwordResetLogs => 'Password reset logs';
+
+  @override
+  String get passwordResetLogsHint => 'Recent password reset requests';
+
+  @override
+  String get backupRestoreHint => 'Protect and restore platform data';
+
+  @override
+  String get manualBackup => 'Manual backup';
+
+  @override
+  String get manualBackupHint => 'Create an on-demand backup';
+
+  @override
+  String get automaticBackup => 'Automatic backup';
+
+  @override
+  String get automaticBackupHint => 'Schedule recurring backups';
+
+  @override
+  String get restoreData => 'Restore data';
+
+  @override
+  String get restoreDataHint => 'Restore from a backup snapshot';
+
+  @override
+  String get systemSettingsHint => 'Platform-wide configuration';
+
+  @override
+  String get languageSettingsHint => 'Default and supported languages';
+
+  @override
+  String get themeSettingsHint => 'Light, dark, and branding options';
+
+  @override
+  String get notificationSettingsHint => 'System notification defaults';
+
+  @override
+  String get featureFlags => 'Feature flags';
+
+  @override
+  String get featureFlagsHint => 'Enable or disable platform features';
+
+  @override
+  String get maintenanceMode => 'Maintenance mode';
+
+  @override
+  String get maintenanceModeHint => 'Take the platform offline for maintenance';
 }

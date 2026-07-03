@@ -1642,4 +1642,376 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get moduleComingSoon => 'ستتوفر هذه الوحدة في تحديث قادم.';
+
+  @override
+  String get comingSoon => 'قريباً';
+
+  @override
+  String get ownerNavSubscriptionsPackages => 'الاشتراكات والباقات';
+
+  @override
+  String get paymentsBilling => 'المدفوعات والفوترة';
+
+  @override
+  String get feedbackSupport => 'الملاحظات والدعم';
+
+  @override
+  String get notificationsCenter => 'مركز الإشعارات';
+
+  @override
+  String get reportsAnalytics => 'التقارير والتحليلات';
+
+  @override
+  String get systemHealth => 'صحة النظام';
+
+  @override
+  String get auditLog => 'سجل التدقيق';
+
+  @override
+  String get securityCenter => 'مركز الأمان';
+
+  @override
+  String get backupRestore => 'النسخ الاحتياطي والاستعادة';
+
+  @override
+  String get totalBusinesses => 'إجمالي الأعمال';
+
+  @override
+  String get totalPatients => 'إجمالي المرضى';
+
+  @override
+  String get activeUsersToday => 'المستخدمون النشطون';
+
+  @override
+  String get expiredSubscriptions => 'اشتراكات منتهية';
+
+  @override
+  String get revenueOverview => 'نظرة على الإيرادات';
+
+  @override
+  String get newRegistrations => 'تسجيلات جديدة';
+
+  @override
+  String get liveQueueStatistics => 'إحصائيات الطابور المباشرة';
+
+  @override
+  String get queueWaiting => 'في الانتظار';
+
+  @override
+  String get queueInProgress => 'قيد المعالجة';
+
+  @override
+  String get quickActions => 'إجراءات سريعة';
+
+  @override
+  String get allBusinesses => 'جميع الأعمال';
+
+  @override
+  String get allBusinessesHint => 'عرض وإدارة جميع منشآت الرعاية الصحية';
+
+  @override
+  String get businessCategoryBrowseHint => 'تصفح مقدمي الخدمة في هذه الفئة';
+
+  @override
+  String get subscriptionPackagesHint => 'إدارة خطط العيادات والتجديد والتنبيهات';
+
+  @override
+  String get createPackages => 'إنشاء باقات';
+
+  @override
+  String get createPackagesHint => 'تحديد مستويات الاشتراك للعيادات';
+
+  @override
+  String get subscriptionPlanHint => 'فتح إدارة الاشتراك لهذه الخطة';
+
+  @override
+  String get plan1Month => 'شهر واحد';
+
+  @override
+  String get plan2Months => 'شهران';
+
+  @override
+  String get plan3Months => '3 أشهر';
+
+  @override
+  String get plan6Months => '6 أشهر';
+
+  @override
+  String get plan12Months => '12 شهراً';
+
+  @override
+  String get activateSubscriptionHint => 'تفعيل خطة اشتراك العيادة';
+
+  @override
+  String get renewSubscriptionHint => 'تمديد اشتراك العيادة';
+
+  @override
+  String get suspendSubscription => 'تعليق الاشتراك';
+
+  @override
+  String get suspendSubscriptionHint => 'إيقاف الوصول مؤقتاً';
+
+  @override
+  String get remainingDays => 'الأيام المتبقية';
+
+  @override
+  String get remainingDaysHint => 'عرض الأيام المتبقية لكل عيادة';
+
+  @override
+  String get expirationAlerts => 'تنبيهات الانتهاء';
+
+  @override
+  String get expirationAlertsHint => 'متابعة العيادات قرب الانتهاء';
+
+  @override
+  String get paymentsBillingHint => 'الفواتير والفوترة وطرق الدفع';
+
+  @override
+  String get invoices => 'الفواتير';
+
+  @override
+  String get invoicesHint => 'عرض وتصدير فواتير المنصة';
+
+  @override
+  String get billingOverview => 'نظرة على الفوترة';
+
+  @override
+  String get billingOverviewHint => 'ملخص نشاط الفوترة';
+
+  @override
+  String get paymentMethods => 'طرق الدفع';
+
+  @override
+  String get paymentMethodsHint => 'تكوين طرق الدفع المقبولة';
+
+  @override
+  String get feedbackSupportHint => 'ملاحظات المستخدمين وطلبات الدعم';
+
+  @override
+  String get bugReports => 'تقارير الأخطاء';
+
+  @override
+  String get bugReportsHint => 'مراجعة المشاكل المبلغ عنها';
+
+  @override
+  String get featureRequests => 'طلبات الميزات';
+
+  @override
+  String get featureRequestsHint => 'أفكار مقدمة من المستخدمين';
+
+  @override
+  String get userFeedback => 'ملاحظات المستخدمين';
+
+  @override
+  String get userFeedbackHint => 'ملاحظات عامة عن المنصة';
+
+  @override
+  String get supportConversations => 'محادثات الدعم';
+
+  @override
+  String get supportConversationsHint => 'رسائل المستخدمين المحتاجين للمساعدة';
+
+  @override
+  String get notificationsCenterHint => 'الإشعارات العامة وإشعارات النظام';
+
+  @override
+  String get broadcastNotifications => 'إشعارات عامة';
+
+  @override
+  String get broadcastNotificationsHint => 'إرسال إعلانات لجميع المستخدمين';
+
+  @override
+  String get subscriptionReminders => 'تذكيرات الاشتراك';
+
+  @override
+  String get subscriptionRemindersHint => 'تذكيرات التجديد التلقائية';
+
+  @override
+  String get maintenanceAnnouncements => 'إعلانات الصيانة';
+
+  @override
+  String get maintenanceAnnouncementsHint => 'إشعارات التوقف المجدول';
+
+  @override
+  String get reportsAnalyticsHint => 'تقارير المنصة وتحليلات النمو';
+
+  @override
+  String get reportDaily => 'تقرير يومي';
+
+  @override
+  String get reportDailyHint => 'نشاط اليوم';
+
+  @override
+  String get reportWeekly => 'تقرير أسبوعي';
+
+  @override
+  String get reportWeeklyHint => 'ملخص آخر 7 أيام';
+
+  @override
+  String get reportMonthly => 'تقرير شهري';
+
+  @override
+  String get reportMonthlyHint => 'ملخص آخر 30 يوماً';
+
+  @override
+  String get reportYearly => 'تقرير سنوي';
+
+  @override
+  String get reportYearlyHint => 'ملخص سنوي للمنصة';
+
+  @override
+  String get queueStatistics => 'إحصائيات الطابور';
+
+  @override
+  String get queueStatisticsHint => 'أوقات الانتظار وحجم الطابور';
+
+  @override
+  String get appointmentStatistics => 'إحصائيات المواعيد';
+
+  @override
+  String get appointmentStatisticsHint => 'الحجوزات ومعدلات الإكمال';
+
+  @override
+  String get revenueStatistics => 'إحصائيات الإيرادات';
+
+  @override
+  String get revenueStatisticsHint => 'إيرادات الاشتراكات والمدفوعات';
+
+  @override
+  String get userGrowth => 'نمو المستخدمين';
+
+  @override
+  String get userGrowthHint => 'مستخدمون جدد بمرور الوقت';
+
+  @override
+  String get systemHealthHint => 'حالة البنية التحتية والخدمات';
+
+  @override
+  String get firebaseStatus => 'حالة Firebase';
+
+  @override
+  String get statusConnected => 'متصل ومُعد';
+
+  @override
+  String get statusDemoOrOffline => 'وضع تجريبي أو غير مُعد';
+
+  @override
+  String get storageUsage => 'استخدام التخزين';
+
+  @override
+  String get databaseUsage => 'استخدام قاعدة البيانات';
+
+  @override
+  String get clinicsLabel => 'عيادات';
+
+  @override
+  String get accountsLabel => 'حسابات';
+
+  @override
+  String get errorLogs => 'سجلات الأخطاء';
+
+  @override
+  String get errorLogsHint => 'سجل أخطاء التطبيق';
+
+  @override
+  String get crashReports => 'تقارير الأعطال';
+
+  @override
+  String get crashReportsHint => 'ملخصات أعطال العميل';
+
+  @override
+  String get performanceMonitoring => 'مراقبة الأداء';
+
+  @override
+  String get performanceMonitoringHint => 'زمن الاستجابة والحمل';
+
+  @override
+  String get noAuditEntries => 'لا توجد سجلات تدقيق بعد';
+
+  @override
+  String get user => 'المستخدم';
+
+  @override
+  String get device => 'الجهاز';
+
+  @override
+  String get ipAddress => 'عنوان IP';
+
+  @override
+  String get securityCenterHint => 'نشاط تسجيل الدخول وحماية الحسابات';
+
+  @override
+  String get loginHistory => 'سجل تسجيل الدخول';
+
+  @override
+  String get loginHistoryHint => 'أحداث تسجيل الدخول الأخيرة';
+
+  @override
+  String get activeSessions => 'الجلسات النشطة';
+
+  @override
+  String get activeSessionsHint => 'الأجهزة المسجلة حالياً';
+
+  @override
+  String get failedLoginAttempts => 'محاولات دخول فاشلة';
+
+  @override
+  String get failedLoginAttemptsHint => 'تسجيلات دخول مشبوهة';
+
+  @override
+  String get blockedAccounts => 'حسابات محظورة';
+
+  @override
+  String get blockedAccountsHint => 'حسابات معلقة أو معطلة';
+
+  @override
+  String get passwordResetLogs => 'سجل إعادة تعيين كلمة المرور';
+
+  @override
+  String get passwordResetLogsHint => 'طلبات إعادة التعيين الأخيرة';
+
+  @override
+  String get backupRestoreHint => 'حماية واستعادة بيانات المنصة';
+
+  @override
+  String get manualBackup => 'نسخ احتياطي يدوي';
+
+  @override
+  String get manualBackupHint => 'إنشاء نسخة احتياطية عند الطلب';
+
+  @override
+  String get automaticBackup => 'نسخ احتياطي تلقائي';
+
+  @override
+  String get automaticBackupHint => 'جدولة نسخ احتياطية دورية';
+
+  @override
+  String get restoreData => 'استعادة البيانات';
+
+  @override
+  String get restoreDataHint => 'استعادة من لقطة احتياطية';
+
+  @override
+  String get systemSettingsHint => 'إعدادات المنصة العامة';
+
+  @override
+  String get languageSettingsHint => 'اللغات الافتراضية والمدعومة';
+
+  @override
+  String get themeSettingsHint => 'الوضع الفاتح والداكن والعلامة التجارية';
+
+  @override
+  String get notificationSettingsHint => 'إعدادات إشعارات النظام الافتراضية';
+
+  @override
+  String get featureFlags => 'أعلام الميزات';
+
+  @override
+  String get featureFlagsHint => 'تفعيل أو تعطيل ميزات المنصة';
+
+  @override
+  String get maintenanceMode => 'وضع الصيانة';
+
+  @override
+  String get maintenanceModeHint => 'إيقاف المنصة للصيانة';
 }

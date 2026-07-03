@@ -1642,4 +1642,376 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get moduleComingSoon => 'ئەم یەکەیە لە نوێکردنەوەی داهاتوو بەردەست دەبێت.';
+
+  @override
+  String get comingSoon => 'بەزووی';
+
+  @override
+  String get ownerNavSubscriptionsPackages => 'بەشداریکردن و پاکێجەکان';
+
+  @override
+  String get paymentsBilling => 'پارەدان و وەسڵ';
+
+  @override
+  String get feedbackSupport => 'فیدباک و پشتگیری';
+
+  @override
+  String get notificationsCenter => 'ناوەندی ئاگاداریەکان';
+
+  @override
+  String get reportsAnalytics => 'ڕاپۆرت و شیکاری';
+
+  @override
+  String get systemHealth => 'تەندروستی سیستەم';
+
+  @override
+  String get auditLog => 'تۆماری وردبینی';
+
+  @override
+  String get securityCenter => 'ناوەندی ئاسایش';
+
+  @override
+  String get backupRestore => 'پاشەکەوت و گەڕاندنەوە';
+
+  @override
+  String get totalBusinesses => 'کۆی بازرگانیەکان';
+
+  @override
+  String get totalPatients => 'کۆی نەخۆشەکان';
+
+  @override
+  String get activeUsersToday => 'بەکارهێنەرانی چالاک';
+
+  @override
+  String get expiredSubscriptions => 'بەشداریکردنی بەسەرچوو';
+
+  @override
+  String get revenueOverview => 'پوختەی داهات';
+
+  @override
+  String get newRegistrations => 'تۆمارکردنی نوێ';
+
+  @override
+  String get liveQueueStatistics => 'ئاماری ڕیزی ڕاستەوخۆ';
+
+  @override
+  String get queueWaiting => 'چاوەڕوان';
+
+  @override
+  String get queueInProgress => 'لە جێبەجێکردندا';
+
+  @override
+  String get quickActions => 'کردارە خێراکان';
+
+  @override
+  String get allBusinesses => 'هەموو بازرگانیەکان';
+
+  @override
+  String get allBusinessesHint => 'بینین و بەڕێوەبردنی هەموو دامەزراوەکان';
+
+  @override
+  String get businessCategoryBrowseHint => 'گەڕان لەم پۆلەدا';
+
+  @override
+  String get subscriptionPackagesHint => 'بەڕێوەبردنی پلان، نوێکردنەوە و ئاگاداری بەسەرچوون';
+
+  @override
+  String get createPackages => 'دروستکردنی پاکێج';
+
+  @override
+  String get createPackagesHint => 'پێناسەکردنی ئاستی بەشداریکردن';
+
+  @override
+  String get subscriptionPlanHint => 'کردنەوەی بەڕێوەبردنی بەشداریکردن';
+
+  @override
+  String get plan1Month => '١ مانگ';
+
+  @override
+  String get plan2Months => '٢ مانگ';
+
+  @override
+  String get plan3Months => '٣ مانگ';
+
+  @override
+  String get plan6Months => '٦ مانگ';
+
+  @override
+  String get plan12Months => '١٢ مانگ';
+
+  @override
+  String get activateSubscriptionHint => 'چالاککردنی پلانی نۆرینگە';
+
+  @override
+  String get renewSubscriptionHint => 'درێژکردنەوەی بەشداریکردن';
+
+  @override
+  String get suspendSubscription => 'هەڵواسینی بەشداریکردن';
+
+  @override
+  String get suspendSubscriptionHint => 'ڕاگرتنی کاتی دەستگەیشتن';
+
+  @override
+  String get remainingDays => 'ڕۆژە ماوەکان';
+
+  @override
+  String get remainingDaysHint => 'ڕۆژەکانی ماوە بۆ هەر نۆرینگەیەک';
+
+  @override
+  String get expirationAlerts => 'ئاگاداری بەسەرچوون';
+
+  @override
+  String get expirationAlertsHint => 'چاودێری نۆرینگە نزیکە بەسەرچوونەکان';
+
+  @override
+  String get paymentsBillingHint => 'وەسڵ، پارەدان و شێوازەکانی پارەدان';
+
+  @override
+  String get invoices => 'وەسڵەکان';
+
+  @override
+  String get invoicesHint => 'بینین و هەناردەکردنی وەسڵ';
+
+  @override
+  String get billingOverview => 'پوختەی وەسڵ';
+
+  @override
+  String get billingOverviewHint => 'کورتەی چالاکی پارەدان';
+
+  @override
+  String get paymentMethods => 'شێوازەکانی پارەدان';
+
+  @override
+  String get paymentMethodsHint => 'ڕێکخستنی شێوازە قبوڵکراوەکان';
+
+  @override
+  String get feedbackSupportHint => 'فیدباک و داواکاری پشتگیری';
+
+  @override
+  String get bugReports => 'ڕاپۆرتی هەڵە';
+
+  @override
+  String get bugReportsHint => 'کێشە ڕاپۆرتکراوەکان';
+
+  @override
+  String get featureRequests => 'داواکاری تایبەتمەندی';
+
+  @override
+  String get featureRequestsHint => 'ئایدیاکانی بەکارهێنەران';
+
+  @override
+  String get userFeedback => 'فیدباکی بەکارهێنەر';
+
+  @override
+  String get userFeedbackHint => 'فیدباکی گشتی پلاتفۆرم';
+
+  @override
+  String get supportConversations => 'گفتوگۆی پشتگیری';
+
+  @override
+  String get supportConversationsHint => 'پەیامەکانی بەکارهێنەران';
+
+  @override
+  String get notificationsCenterHint => 'ئاگاداری گشتی و سیستەم';
+
+  @override
+  String get broadcastNotifications => 'ئاگاداری گشتی';
+
+  @override
+  String get broadcastNotificationsHint => 'ناردنی ڕاگەیاندن بۆ هەموو';
+
+  @override
+  String get subscriptionReminders => 'بیرهێنەرەوەی بەشداریکردن';
+
+  @override
+  String get subscriptionRemindersHint => 'بیرهێنەرەوەی خۆکار';
+
+  @override
+  String get maintenanceAnnouncements => 'ڕاگەیاندنی چاکسازی';
+
+  @override
+  String get maintenanceAnnouncementsHint => 'ئاگاداری وەستاندنی خزمەتگوزاری';
+
+  @override
+  String get reportsAnalyticsHint => 'ڕاپۆرت و شیکاری گەشە';
+
+  @override
+  String get reportDaily => 'ڕاپۆرتی ڕۆژانە';
+
+  @override
+  String get reportDailyHint => 'چالاکی ئەمڕۆ';
+
+  @override
+  String get reportWeekly => 'ڕاپۆرتی هەفتانە';
+
+  @override
+  String get reportWeeklyHint => 'کورتەی ٧ ڕۆژ';
+
+  @override
+  String get reportMonthly => 'ڕاپۆرتی مانگانە';
+
+  @override
+  String get reportMonthlyHint => 'کورتەی ٣٠ ڕۆژ';
+
+  @override
+  String get reportYearly => 'ڕاپۆرتی ساڵانە';
+
+  @override
+  String get reportYearlyHint => 'کورتەی ساڵانە';
+
+  @override
+  String get queueStatistics => 'ئاماری ڕیز';
+
+  @override
+  String get queueStatisticsHint => 'کاتی چاوەڕوانی و قەبارەی ڕیز';
+
+  @override
+  String get appointmentStatistics => 'ئاماری چاوپێکەوتن';
+
+  @override
+  String get appointmentStatisticsHint => 'حجز و تەواوکردن';
+
+  @override
+  String get revenueStatistics => 'ئاماری داهات';
+
+  @override
+  String get revenueStatisticsHint => 'داهاتی بەشداریکردن';
+
+  @override
+  String get userGrowth => 'گەشەی بەکارهێنەر';
+
+  @override
+  String get userGrowthHint => 'بەکارهێنەری نوێ بە درێژایی کات';
+
+  @override
+  String get systemHealthHint => 'دۆخی ژێرخان و خزمەتگوزاری';
+
+  @override
+  String get firebaseStatus => 'دۆخی Firebase';
+
+  @override
+  String get statusConnected => 'پەیوەست و ڕێکخراو';
+
+  @override
+  String get statusDemoOrOffline => 'دۆخی دیمۆ یان ڕێکنەخراو';
+
+  @override
+  String get storageUsage => 'بەکارهێنانی کۆگا';
+
+  @override
+  String get databaseUsage => 'بەکارهێنانی داتابەیس';
+
+  @override
+  String get clinicsLabel => 'نۆرینگە';
+
+  @override
+  String get accountsLabel => 'هەژمار';
+
+  @override
+  String get errorLogs => 'تۆماری هەڵە';
+
+  @override
+  String get errorLogsHint => 'مێژووی هەڵەکانی ئەپ';
+
+  @override
+  String get crashReports => 'ڕاپۆرتی تێکچوون';
+
+  @override
+  String get crashReportsHint => 'کورتەی تێکچوونی کڕیار';
+
+  @override
+  String get performanceMonitoring => 'چاودێری کارایی';
+
+  @override
+  String get performanceMonitoringHint => 'خاوێنی و بار';
+
+  @override
+  String get noAuditEntries => 'هێشتا تۆماری وردبینی نییە';
+
+  @override
+  String get user => 'بەکارهێنەر';
+
+  @override
+  String get device => 'ئامێر';
+
+  @override
+  String get ipAddress => 'ناونیشانی IP';
+
+  @override
+  String get securityCenterHint => 'چالاکی چوونەژوورەوە و پاراستن';
+
+  @override
+  String get loginHistory => 'مێژووی چوونەژوورەوە';
+
+  @override
+  String get loginHistoryHint => 'چوونەژوورەوەی دوایی';
+
+  @override
+  String get activeSessions => 'دانیشتنە چالاکەکان';
+
+  @override
+  String get activeSessionsHint => 'ئامێرە چالاکەکان';
+
+  @override
+  String get failedLoginAttempts => 'هەوڵی چوونەژوورەوەی شکستخواردوو';
+
+  @override
+  String get failedLoginAttemptsHint => 'چوونەژوورەوەی گومانلێکراو';
+
+  @override
+  String get blockedAccounts => 'هەژماری بلۆککراو';
+
+  @override
+  String get blockedAccountsHint => 'هەژماری هەڵواسراو یان ناچالاک';
+
+  @override
+  String get passwordResetLogs => 'تۆماری نوێکردنەوەی وشەی نهێنی';
+
+  @override
+  String get passwordResetLogsHint => 'داواکاری نوێکردنەوەی دوایی';
+
+  @override
+  String get backupRestoreHint => 'پاراستن و گەڕاندنەوەی داتا';
+
+  @override
+  String get manualBackup => 'پاشەکەوتی دەستی';
+
+  @override
+  String get manualBackupHint => 'دروستکردنی پاشەکەوت بە داوا';
+
+  @override
+  String get automaticBackup => 'پاشەکەوتی خۆکار';
+
+  @override
+  String get automaticBackupHint => 'خشتەی پاشەکەوتی دووبارە';
+
+  @override
+  String get restoreData => 'گەڕاندنەوەی داتا';
+
+  @override
+  String get restoreDataHint => 'گەڕاندنەوە لە پاشەکەوت';
+
+  @override
+  String get systemSettingsHint => 'ڕێکخستنی گشتی پلاتفۆرم';
+
+  @override
+  String get languageSettingsHint => 'زمانە پشتگیریکراوەکان';
+
+  @override
+  String get themeSettingsHint => 'ڕووناک، تاریک و براندینگ';
+
+  @override
+  String get notificationSettingsHint => 'ڕێکخستنی ئاگاداری سیستەم';
+
+  @override
+  String get featureFlags => 'ئاڵای تایبەتمەندی';
+
+  @override
+  String get featureFlagsHint => 'چالاک/ناچالاککردنی تایبەتمەندی';
+
+  @override
+  String get maintenanceMode => 'دۆخی چاکسازی';
+
+  @override
+  String get maintenanceModeHint => 'وەستاندنی پلاتفۆرم بۆ چاکسازی';
 }
