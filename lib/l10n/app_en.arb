@@ -947,5 +947,17 @@
   "notifyDelayShort": "Delay alert",
   "delayMinutes": "Delay (minutes)",
   "sendNotification": "Send",
-  "delayNotificationSent": "Delay notification sent to waiting patients"
+  "delayNotificationSent": "Delay notification sent to waiting patients",
+  "contactActionCall": "Call",
+  "contactActionWhatsApp": "WhatsApp",
+  "contactActionSms": "SMS",
+  "chooseMessageTemplate": "Choose a message",
+  "contactTemplateQueueReminder": "Hello, your turn in the queue is approaching. Please prepare to come to the clinic.",
+  "contactTemplateYourTurn": "Hello, it is now your turn. Please proceed to the doctor's room.",
+  "contactTemplateAppointmentReminder": "Hello, this is a reminder about your upcoming appointment.",
+  "contactTemplateFollowUp": "Hello, please contact the clinic regarding your recent visit.",
+  "contactTemplateCustom": "Write a custom message",
+  "searchPatientsHint": "Search patients by name or phone",
+  "communicationAuditLog": "Staff communication log",
+  "noCommunicationLogs": "No staff communication attempts recorded yet."
 }

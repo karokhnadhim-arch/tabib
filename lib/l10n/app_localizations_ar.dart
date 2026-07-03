@@ -2496,4 +2496,40 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get delayNotificationSent => 'تم إرسال إشعار التأخير للمرضى المنتظرين';
+
+  @override
+  String get contactActionCall => 'اتصال';
+
+  @override
+  String get contactActionWhatsApp => 'واتساب';
+
+  @override
+  String get contactActionSms => 'رسالة SMS';
+
+  @override
+  String get chooseMessageTemplate => 'اختر رسالة';
+
+  @override
+  String get contactTemplateQueueReminder => 'مرحباً، يقترب دورك في الطابور. يرجى الاستعداد للحضور إلى العيادة.';
+
+  @override
+  String get contactTemplateYourTurn => 'مرحباً، حان دورك الآن. يرجى التوجه إلى غرفة الطبيب.';
+
+  @override
+  String get contactTemplateAppointmentReminder => 'مرحباً، هذا تذكير بموعدك القادم.';
+
+  @override
+  String get contactTemplateFollowUp => 'مرحباً، يرجى التواصل مع العيادة بخصوص زيارتك الأخيرة.';
+
+  @override
+  String get contactTemplateCustom => 'اكتب رسالة مخصصة';
+
+  @override
+  String get searchPatientsHint => 'ابحث عن المرضى بالاسم أو الهاتف';
+
+  @override
+  String get communicationAuditLog => 'سجل تواصل الموظفين';
+
+  @override
+  String get noCommunicationLogs => 'لا توجد محاولات تواصل مسجلة بعد.';
 }

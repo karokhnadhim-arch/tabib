@@ -33,6 +33,8 @@ import 'services/staff_data_service.dart';
 import 'services/owner_audit_service.dart';
 import 'services/subscription_monitor_service.dart';
 import 'services/theme_service.dart';
+import 'services/patient_contact_service.dart';
+import 'services/staff_communication_log_service.dart';
 import 'services/platform_notification_config_service.dart';
 import 'services/smart_notification_service.dart';
 import 'services/queue_notification_monitor.dart';
@@ -86,6 +88,8 @@ class _TabibAppState extends State<TabibApp> {
   late final SubscriptionMonitorService _subscriptionMonitor;
   late final PlatformNotificationConfigService _platformNotificationConfig;
   late final SmartNotificationService _smartNotificationService;
+  late final StaffCommunicationLogService _staffCommunicationLog;
+  late final PatientContactService _patientContactService;
   QueueNotificationMonitor? _queueNotificationMonitor;
   late final GoRouter _router;
 
@@ -129,6 +133,11 @@ class _TabibAppState extends State<TabibApp> {
       configService: _platformNotificationConfig,
       userPreferences: _userPreferencesService,
       authService: _authService,
+    );
+    _staffCommunicationLog = StaffCommunicationLogService();
+    _patientContactService = PatientContactService(
+      authService: _authService,
+      communicationLog: _staffCommunicationLog,
     );
     _favoritesService = FavoritesService();
     _patientProfileService = PatientProfileService();
@@ -194,6 +203,8 @@ class _TabibAppState extends State<TabibApp> {
         ChangeNotifierProvider.value(value: _userPreferencesService),
         ChangeNotifierProvider.value(value: _platformNotificationConfig),
         ChangeNotifierProvider.value(value: _smartNotificationService),
+        Provider<PatientContactService>.value(value: _patientContactService),
+        ChangeNotifierProvider.value(value: _staffCommunicationLog),
         ChangeNotifierProvider.value(value: _favoritesService),
         ChangeNotifierProvider.value(value: _patientProfileService),
         ChangeNotifierProvider.value(value: _recentlyVisitedService),

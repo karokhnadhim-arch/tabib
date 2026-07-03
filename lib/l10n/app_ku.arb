@@ -888,5 +888,17 @@
   "notifyDelayShort": "ئaگادari دواکەوتن",
   "delayMinutes": "دواکەوتن (خولەک)",
   "sendNotification": "ناردن",
-  "delayNotificationSent": "ئaگادari دواکەوتن نێردرا بۆ چاوەڕوانەکان"
+  "delayNotificationSent": "ئaگادari دواکەوتن نێردرا بۆ چاوەڕوانەکان",
+  "contactActionCall": "پەیوەندی",
+  "contactActionWhatsApp": "واتساپ",
+  "contactActionSms": "SMS",
+  "chooseMessageTemplate": "پەیامێک هەڵبژێرە",
+  "contactTemplateQueueReminder": "سڵاو، کاتەکەت لە نۆر نزیکە. تکایە ئامادەبە بۆ هاتنە نۆرینگە.",
+  "contactTemplateYourTurn": "سڵاو، ئێستا کاتەکەتە. تکایە بچۆ ژوورەوەی ژووری پزیشک.",
+  "contactTemplateAppointmentReminder": "سڵاو، ئەمە بیرخستنەوەیە بۆ چاوپێکەوتنەکەت.",
+  "contactTemplateFollowUp": "سڵاو، تکایە پەیوەندی بە نۆرینگەوە بکە سەبارەت بە سەردانەکەت.",
+  "contactTemplateCustom": "پەیامێکی تایبەت بنووسە",
+  "searchPatientsHint": "گەڕان بە ناو یان ژمارەی مۆبایل",
+  "communicationAuditLog": "تۆماری پەیوەندی کارمەندان",
+  "noCommunicationLogs": "هێشتا هیچ پەیوەندییەک تۆمار نەکراوە."
 }

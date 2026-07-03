@@ -33,4 +33,8 @@ abstract final class PatientCommunicationPolicy {
     if (auth.patientId == patientUserId) return true;
     return canSendToPatient(auth, doctorId: doctorId);
   }
+
+  /// Whether clinical staff may view and use patient phone contact tools.
+  static bool canViewPatientPhone(AuthService auth, {String? doctorId}) =>
+      canSendToPatient(auth, doctorId: doctorId);
 }

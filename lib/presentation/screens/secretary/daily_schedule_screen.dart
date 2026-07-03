@@ -7,6 +7,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../models/appointment.dart';
 import '../../../widgets/common_widgets.dart';
 import '../../providers/app_providers.dart';
+import '../../widgets/staff_patient_contact_bar.dart';
 
 class DailyScheduleScreen extends StatefulWidget {
   const DailyScheduleScreen({
@@ -128,27 +129,52 @@ class _DailyScheduleScreenState extends State<DailyScheduleScreen> {
     Appointment a,
   ) {
     return Card(
-      child: ListTile(
-        leading: Text(
-          DateFormat.jm().format(a.dateTime),
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: AppTheme.medicalBlue,
-          ),
-        ),
-        title: Text(
-          '${a.doctorName} — ${a.patientName ?? ''}',
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: Text(
-          a.specialty,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-        trailing: QueueStatusChip(
-          label: a.isPending ? l10n.statusPending : l10n.statusAccepted,
-          color: a.isPending ? Colors.orange : AppTheme.medicalGreen,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              DateFormat.jm().format(a.dateTime),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: AppTheme.medicalBlue,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${a.doctorName} — ${a.patientName ?? ''}',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  Text(
+                    a.specialty,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
+                  ),
+                  const SizedBox(height: 8),
+                  StaffPatientContactBar(
+                    phone: a.patientPhone ?? '',
+                    patientName: a.patientName ?? l10n.patientName,
+                    doctorId: a.doctorId ?? '',
+                    doctorName: a.doctorName,
+                    patientId: a.patientId,
+                    compact: true,
+                  ),
+                ],
+              ),
+            ),
+            QueueStatusChip(
+              label: a.isPending ? l10n.statusPending : l10n.statusAccepted,
+              color: a.isPending ? Colors.orange : AppTheme.medicalGreen,
+            ),
+          ],
         ),
       ),
     );

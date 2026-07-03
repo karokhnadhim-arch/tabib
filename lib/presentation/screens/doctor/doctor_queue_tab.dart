@@ -6,9 +6,12 @@ import '../../../core/widgets/medical_ui.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/appointment.dart';
 import '../../../models/queue_entry.dart';
+import '../../../utils/localization_utils.dart';
+import '../../../services/clinic_data_service.dart';
 import '../../../services/queue_service.dart';
 import '../../../utils/queue_status_utils.dart';
 import '../../providers/app_providers.dart';
+import '../../widgets/staff_patient_contact_bar.dart';
 
 class DoctorQueueTab extends StatelessWidget {
   const DoctorQueueTab({super.key, required this.doctorId});
@@ -28,6 +31,9 @@ class DoctorQueueTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final queueService = context.watch<QueueService>();
+    final data = context.watch<ClinicDataService>();
+    final doctor = data.doctorById(doctorId);
+    final doctorName = doctor?.name.localized(context) ?? doctorId;
     final queue = queueService.queueForDoctor(doctorId);
 
     if (queue.isEmpty) {
@@ -79,6 +85,14 @@ class DoctorQueueTab extends StatelessWidget {
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
+                  ),
+                  const SizedBox(height: 8),
+                  StaffPatientContactBar(
+                    phone: current.patientPhone,
+                    patientName: current.patientName,
+                    doctorId: doctorId,
+                    doctorName: doctorName,
+                    patientId: current.patientId,
                   ),
                   const SizedBox(height: 12),
                   Wrap(
@@ -189,6 +203,15 @@ class DoctorQueueTab extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
+                        ),
+                        const SizedBox(height: 8),
+                        StaffPatientContactBar(
+                          phone: entry.patientPhone,
+                          patientName: entry.patientName,
+                          doctorId: doctorId,
+                          doctorName: doctorName,
+                          patientId: entry.patientId,
+                          compact: true,
                         ),
                       ],
                     ),

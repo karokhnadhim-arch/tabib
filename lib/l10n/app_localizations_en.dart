@@ -2496,4 +2496,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get delayNotificationSent => 'Delay notification sent to waiting patients';
+
+  @override
+  String get contactActionCall => 'Call';
+
+  @override
+  String get contactActionWhatsApp => 'WhatsApp';
+
+  @override
+  String get contactActionSms => 'SMS';
+
+  @override
+  String get chooseMessageTemplate => 'Choose a message';
+
+  @override
+  String get contactTemplateQueueReminder => 'Hello, your turn in the queue is approaching. Please prepare to come to the clinic.';
+
+  @override
+  String get contactTemplateYourTurn => 'Hello, it is now your turn. Please proceed to the doctor\'s room.';
+
+  @override
+  String get contactTemplateAppointmentReminder => 'Hello, this is a reminder about your upcoming appointment.';
+
+  @override
+  String get contactTemplateFollowUp => 'Hello, please contact the clinic regarding your recent visit.';
+
+  @override
+  String get contactTemplateCustom => 'Write a custom message';
+
+  @override
+  String get searchPatientsHint => 'Search patients by name or phone';
+
+  @override
+  String get communicationAuditLog => 'Staff communication log';
+
+  @override
+  String get noCommunicationLogs => 'No staff communication attempts recorded yet.';
 }

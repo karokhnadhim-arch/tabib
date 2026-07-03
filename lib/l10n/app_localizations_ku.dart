@@ -2496,4 +2496,40 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get delayNotificationSent => 'ئaگادari دواکەوتن نێردرا بۆ چاوەڕوانەکان';
+
+  @override
+  String get contactActionCall => 'پەیوەندی';
+
+  @override
+  String get contactActionWhatsApp => 'واتساپ';
+
+  @override
+  String get contactActionSms => 'SMS';
+
+  @override
+  String get chooseMessageTemplate => 'پەیامێک هەڵبژێرە';
+
+  @override
+  String get contactTemplateQueueReminder => 'سڵاو، کاتەکەت لە نۆر نزیکە. تکایە ئامادەبە بۆ هاتنە نۆرینگە.';
+
+  @override
+  String get contactTemplateYourTurn => 'سڵاو، ئێستا کاتەکەتە. تکایە بچۆ ژوورەوەی ژووری پزیشک.';
+
+  @override
+  String get contactTemplateAppointmentReminder => 'سڵاو، ئەمە بیرخستنەوەیە بۆ چاوپێکەوتنەکەت.';
+
+  @override
+  String get contactTemplateFollowUp => 'سڵاو، تکایە پەیوەندی بە نۆرینگەوە بکە سەبارەت بە سەردانەکەت.';
+
+  @override
+  String get contactTemplateCustom => 'پەیامێکی تایبەت بنووسە';
+
+  @override
+  String get searchPatientsHint => 'گەڕان بە ناو یان ژمارەی مۆبایل';
+
+  @override
+  String get communicationAuditLog => 'تۆماری پەیوەندی کارمەندان';
+
+  @override
+  String get noCommunicationLogs => 'هێشتا هیچ پەیوەندییەک تۆمار نەکراوە.';
 }

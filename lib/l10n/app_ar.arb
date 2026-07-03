@@ -888,5 +888,17 @@
   "notifyDelayShort": "تنبيه تأخير",
   "delayMinutes": "التأخير (دقائق)",
   "sendNotification": "إرسال",
-  "delayNotificationSent": "تم إرسال إشعار التأخير للمرضى المنتظرين"
+  "delayNotificationSent": "تم إرسال إشعار التأخير للمرضى المنتظرين",
+  "contactActionCall": "اتصال",
+  "contactActionWhatsApp": "واتساب",
+  "contactActionSms": "رسالة SMS",
+  "chooseMessageTemplate": "اختر رسالة",
+  "contactTemplateQueueReminder": "مرحباً، يقترب دورك في الطابور. يرجى الاستعداد للحضور إلى العيادة.",
+  "contactTemplateYourTurn": "مرحباً، حان دورك الآن. يرجى التوجه إلى غرفة الطبيب.",
+  "contactTemplateAppointmentReminder": "مرحباً، هذا تذكير بموعدك القادم.",
+  "contactTemplateFollowUp": "مرحباً، يرجى التواصل مع العيادة بخصوص زيارتك الأخيرة.",
+  "contactTemplateCustom": "اكتب رسالة مخصصة",
+  "searchPatientsHint": "ابحث عن المرضى بالاسم أو الهاتف",
+  "communicationAuditLog": "سجل تواصل الموظفين",
+  "noCommunicationLogs": "لا توجد محاولات تواصل مسجلة بعد."
 }

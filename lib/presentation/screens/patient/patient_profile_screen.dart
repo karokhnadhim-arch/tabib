@@ -491,16 +491,6 @@ class _PatientProfileScreenState extends State<PatientProfileScreen> {
                                     ),
                               ),
                               SettingsSwitchTile(
-                                icon: Icons.phone_android_outlined,
-                                title: l10n.showPhoneNumber,
-                                value: profile.showPhoneNumber,
-                                onChanged: (v) => context
-                                    .read<PatientProfileService>()
-                                    .updateField(
-                                      (p) => p.copyWith(showPhoneNumber: v),
-                                    ),
-                              ),
-                              SettingsSwitchTile(
                                 icon: Icons.visibility_outlined,
                                 title: l10n.profileVisibleToVisitedOnly,
                                 value: profile.visibleToVisitedOnly,

@@ -19,6 +19,7 @@ import '../../../utils/localization_utils.dart';
 import '../../../utils/provider_labels.dart';
 import '../../../utils/schedule_utils.dart';
 import '../../../widgets/language_picker.dart';
+import '../../widgets/staff_patient_contact_bar.dart';
 import '../../providers/app_providers.dart';
 import '../../widgets/doctor_avatar.dart';
 import '../../widgets/doctor_schedule_view.dart';
@@ -647,7 +648,16 @@ class _AppointmentList extends StatelessWidget {
                   a.patientName ?? l10n.patientName,
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
-                Text(a.patientPhone ?? ''),
+                const SizedBox(height: 6),
+                StaffPatientContactBar(
+                  phone: a.patientPhone ?? '',
+                  patientName: a.patientName ?? l10n.patientName,
+                  doctorId: doctorId,
+                  doctorName: a.doctorName,
+                  patientId: a.patientId,
+                  compact: true,
+                ),
+                const SizedBox(height: 6),
                 Text(DateFormat.yMMMd().add_jm().format(a.dateTime)),
                 if (a.notes != null && a.notes!.isNotEmpty)
                   Text('${l10n.notesOptional}: ${a.notes}'),

@@ -12,6 +12,7 @@ import '../../../services/clinic_data_service.dart';
 import '../../../services/queue_service.dart';
 import '../../../services/smart_notification_service.dart';
 import '../../../utils/localization_utils.dart';
+import '../../widgets/staff_patient_contact_bar.dart';
 import '../../../utils/queue_status_utils.dart';
 import '../../providers/app_providers.dart';
 
@@ -362,6 +363,8 @@ class _SecretaryQueueRow extends StatelessWidget {
           statusColor: statusColor,
           timeLabel: timeLabel,
           l10n: l10n,
+          doctorId: doctorId,
+          doctorName: doctorName,
           onMarkEntered: onMarkEntered,
           onMarkAbsent: onMarkAbsent,
           onReturnToReview: onReturnToReview,
@@ -566,6 +569,8 @@ class _QueueRowLayout extends StatelessWidget {
     required this.statusColor,
     required this.timeLabel,
     required this.l10n,
+    required this.doctorId,
+    required this.doctorName,
     required this.onMarkEntered,
     required this.onMarkAbsent,
     required this.onReturnToReview,
@@ -581,6 +586,8 @@ class _QueueRowLayout extends StatelessWidget {
   final Color statusColor;
   final String timeLabel;
   final AppLocalizations l10n;
+  final String doctorId;
+  final String doctorName;
   final VoidCallback onMarkEntered;
   final VoidCallback onMarkAbsent;
   final VoidCallback onReturnToReview;
@@ -615,6 +622,15 @@ class _QueueRowLayout extends StatelessWidget {
               style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 8),
+            StaffPatientContactBar(
+              phone: entry.patientPhone,
+              patientName: entry.patientName,
+              doctorId: doctorId,
+              doctorName: doctorName,
+              patientId: entry.patientId,
+              compact: true,
             ),
           ],
         );

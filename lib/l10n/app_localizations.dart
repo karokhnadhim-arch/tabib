@@ -4984,6 +4984,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delay notification sent to waiting patients'**
   String get delayNotificationSent;
+
+  /// No description provided for @contactActionCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get contactActionCall;
+
+  /// No description provided for @contactActionWhatsApp.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp'**
+  String get contactActionWhatsApp;
+
+  /// No description provided for @contactActionSms.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS'**
+  String get contactActionSms;
+
+  /// No description provided for @chooseMessageTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a message'**
+  String get chooseMessageTemplate;
+
+  /// No description provided for @contactTemplateQueueReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, your turn in the queue is approaching. Please prepare to come to the clinic.'**
+  String get contactTemplateQueueReminder;
+
+  /// No description provided for @contactTemplateYourTurn.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, it is now your turn. Please proceed to the doctor\'s room.'**
+  String get contactTemplateYourTurn;
+
+  /// No description provided for @contactTemplateAppointmentReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, this is a reminder about your upcoming appointment.'**
+  String get contactTemplateAppointmentReminder;
+
+  /// No description provided for @contactTemplateFollowUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, please contact the clinic regarding your recent visit.'**
+  String get contactTemplateFollowUp;
+
+  /// No description provided for @contactTemplateCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a custom message'**
+  String get contactTemplateCustom;
+
+  /// No description provided for @searchPatientsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search patients by name or phone'**
+  String get searchPatientsHint;
+
+  /// No description provided for @communicationAuditLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff communication log'**
+  String get communicationAuditLog;
+
+  /// No description provided for @noCommunicationLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'No staff communication attempts recorded yet.'**
+  String get noCommunicationLogs;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
