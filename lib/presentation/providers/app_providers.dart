@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 
@@ -344,22 +346,38 @@ class ChatProvider extends ChangeNotifier {
 
   List<ChatMessage> _messages = [];
   bool _loading = false;
+  bool _loadingOlder = false;
+  bool _hasMore = true;
   String? _watchKey;
+  String? _clinicId;
+  String? _patientId;
+  ChatTypingState? _typing;
+  Timer? _typingClearTimer;
 
   List<ChatMessage> get messages => List.unmodifiable(_messages);
   bool get isLoading => _loading;
+  bool get isLoadingOlder => _loadingOlder;
+  bool get hasMore => _hasMore;
+  ChatTypingState? get typing => _typing;
 
   void watch({required String clinicId, required String patientId}) {
     final key = '$clinicId:$patientId';
     if (_watchKey == key) return;
+
+    stopWatching();
     _watchKey = key;
+    _clinicId = clinicId;
+    _patientId = patientId;
     _loading = true;
+    _hasMore = true;
+
     _subscriptions.replace(
       'chat',
       _repository.watchConversation(clinicId: clinicId, patientId: patientId),
       (list) {
         _messages = list;
         _loading = false;
+        if (list.length < 50) _hasMore = false;
         notifyListeners();
       },
       onError: (_) {
@@ -367,18 +385,70 @@ class ChatProvider extends ChangeNotifier {
         notifyListeners();
       },
     );
+
+    _subscriptions.replace(
+      'chatTyping',
+      _repository.watchTyping(clinicId: clinicId, patientId: patientId),
+      (state) {
+        _typing = state;
+        notifyListeners();
+      },
+    );
   }
 
   void stopWatching() {
+    _typingClearTimer?.cancel();
+    _typingClearTimer = null;
     _subscriptions.cancel('chat');
+    _subscriptions.cancel('chatTyping');
     _watchKey = null;
+    _clinicId = null;
+    _patientId = null;
     _messages = [];
+    _typing = null;
+    _loading = false;
+    _loadingOlder = false;
+    _hasMore = true;
+    notifyListeners();
   }
 
   @override
   void dispose() {
+    _typingClearTimer?.cancel();
     _subscriptions.cancelAll();
     super.dispose();
+  }
+
+  Future<void> loadOlderMessages() async {
+    if (_loadingOlder || !_hasMore) return;
+    final clinicId = _clinicId;
+    final patientId = _patientId;
+    if (clinicId == null || patientId == null || _messages.isEmpty) return;
+
+    _loadingOlder = true;
+    notifyListeners();
+
+    try {
+      final older = await _repository.loadOlderMessages(
+        clinicId: clinicId,
+        patientId: patientId,
+        before: _messages.first.createdAt,
+      );
+      if (older.isEmpty) {
+        _hasMore = false;
+      } else {
+        final existingIds = _messages.map((m) => m.id).toSet();
+        final merged = [
+          ...older.where((m) => !existingIds.contains(m.id)),
+          ..._messages,
+        ];
+        _messages = merged;
+        if (older.length < 30) _hasMore = false;
+      }
+    } finally {
+      _loadingOlder = false;
+      notifyListeners();
+    }
   }
 
   Future<void> send({
@@ -388,22 +458,101 @@ class ChatProvider extends ChangeNotifier {
     required String senderName,
     required String senderRole,
     required String text,
-  }) =>
-      _repository.sendMessage(
-        clinicId: clinicId,
-        patientId: patientId,
-        senderId: senderId,
-        senderName: senderName,
-        senderRole: senderRole,
-        text: text,
-      );
+  }) async {
+    await _repository.sendMessage(
+      clinicId: clinicId,
+      patientId: patientId,
+      senderId: senderId,
+      senderName: senderName,
+      senderRole: senderRole,
+      text: text,
+    );
+    await setTyping(
+      clinicId: clinicId,
+      patientId: patientId,
+      userId: senderId,
+      userName: senderName,
+      role: senderRole,
+      isTyping: false,
+    );
+  }
+
+  Future<void> sendImage({
+    required String clinicId,
+    required String patientId,
+    required String senderId,
+    required String senderName,
+    required String senderRole,
+    required String imageUrl,
+    required String imageThumbnailUrl,
+    String caption = '',
+  }) async {
+    await _repository.sendImageMessage(
+      clinicId: clinicId,
+      patientId: patientId,
+      senderId: senderId,
+      senderName: senderName,
+      senderRole: senderRole,
+      imageUrl: imageUrl,
+      imageThumbnailUrl: imageThumbnailUrl,
+      caption: caption,
+    );
+  }
+
+  Future<void> setTyping({
+    required String clinicId,
+    required String patientId,
+    required String userId,
+    required String userName,
+    required String role,
+    required bool isTyping,
+  }) async {
+    _typingClearTimer?.cancel();
+    await _repository.setTyping(
+      clinicId: clinicId,
+      patientId: patientId,
+      userId: userId,
+      userName: userName,
+      role: role,
+      isTyping: isTyping,
+    );
+    if (isTyping) {
+      _typingClearTimer = Timer(const Duration(seconds: 4), () {
+        _repository.setTyping(
+          clinicId: clinicId,
+          patientId: patientId,
+          userId: userId,
+          userName: userName,
+          role: role,
+          isTyping: false,
+        );
+      });
+    }
+  }
+
+  Future<void> acknowledgeIncoming({
+    required String clinicId,
+    required String patientId,
+    required String readerRole,
+  }) async {
+    await _repository.markDelivered(
+      clinicId: clinicId,
+      patientId: patientId,
+      readerRole: readerRole,
+    );
+    await _repository.markConversationRead(
+      clinicId: clinicId,
+      patientId: patientId,
+      readerRole: readerRole,
+    );
+  }
 
   Future<void> markRead({
     required String clinicId,
     required String patientId,
     required String readerRole,
   }) =>
-      _repository.markConversationRead(
+      acknowledgeIncoming(
         clinicId: clinicId,
         patientId: patientId,
         readerRole: readerRole,

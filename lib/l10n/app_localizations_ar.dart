@@ -2846,4 +2846,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get showAuditLog => 'عرض سجل التدقيق';
+
+  @override
+  String get messageSeen => 'مقروء';
+
+  @override
+  String get attachImage => 'إرفاق صورة';
+
+  @override
+  String userIsTyping(String name) {
+    return '$name يكتب…';
+  }
 }

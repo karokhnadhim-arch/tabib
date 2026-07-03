@@ -15,6 +15,7 @@ import 'data/repositories/prescription_repository_impl.dart';
 import 'domain/repositories/repositories.dart';
 import 'l10n/app_localizations.dart';
 import 'presentation/providers/app_providers.dart';
+import 'models/user_account.dart';
 import 'services/appointment_service.dart';
 import 'services/auth_service.dart';
 import 'services/backend/clinic_backend.dart';
@@ -101,6 +102,7 @@ class _TabibAppState extends State<TabibApp> {
   late final SystemMaintenanceService _systemMaintenanceService;
   QueueNotificationMonitor? _queueNotificationMonitor;
   late final GoRouter _router;
+  String? _activePatientQueueId;
 
   @override
   void initState() {
@@ -193,7 +195,21 @@ class _TabibAppState extends State<TabibApp> {
   }
 
   void _onAuthChanged() {
-    final userId = _authService.currentUser?.id;
+    final user = _authService.currentUser;
+    final userId = user?.id;
+
+    if (userId == null) {
+      if (_activePatientQueueId != null) {
+        _queueService.stopWatchingPatientQueue(_activePatientQueueId!);
+        _activePatientQueueId = null;
+      }
+      _chatProvider.stopWatching();
+    } else if (user!.role == UserRole.patient) {
+      _activePatientQueueId = userId;
+    } else {
+      _activePatientQueueId = null;
+    }
+
     _userPreferencesService.bindUser(userId);
     _favoritesService.bindUser(userId);
     _patientProfileService.bindUser(userId);

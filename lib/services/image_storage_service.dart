@@ -12,6 +12,7 @@ enum ImageStorageCategory {
   doctorProfile('doctors/profile'),
   patientProfile('patients/profile'),
   clinicPhoto('clinics/photos'),
+  chatImage('chat/images'),
   general('general');
 
   const ImageStorageCategory(this.pathSegment);

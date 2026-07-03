@@ -5680,6 +5680,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show audit log'**
   String get showAuditLog;
+
+  /// No description provided for @messageSeen.
+  ///
+  /// In en, this message translates to:
+  /// **'Seen'**
+  String get messageSeen;
+
+  /// No description provided for @attachImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach image'**
+  String get attachImage;
+
+  /// No description provided for @userIsTyping.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is typing…'**
+  String userIsTyping(String name);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

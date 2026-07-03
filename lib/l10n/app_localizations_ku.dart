@@ -2846,4 +2846,15 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get showAuditLog => 'نیشاندانی تۆماری پشکنین';
+
+  @override
+  String get messageSeen => 'بینراو';
+
+  @override
+  String get attachImage => 'وێنە هاوپێچ بکە';
+
+  @override
+  String userIsTyping(String name) {
+    return '$name دەنووسێت…';
+  }
 }

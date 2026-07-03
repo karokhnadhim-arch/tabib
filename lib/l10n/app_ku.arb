@@ -1005,5 +1005,8 @@
   "loadMore": "زیاتر بار بکە",
   "showActivityFeed": "نیشاندانی تۆماری چالاکی",
   "showReports": "نیشاندانی ڕاپۆرتەکان",
-  "showAuditLog": "نیشاندانی تۆماری پشکنین"
+  "showAuditLog": "نیشاندانی تۆماری پشکنین",
+  "messageSeen": "بینراو",
+  "attachImage": "وێنە هاوپێچ بکە",
+  "userIsTyping": "{name} دەنووسێت…"
 }

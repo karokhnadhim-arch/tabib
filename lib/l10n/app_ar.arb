@@ -1005,5 +1005,8 @@
   "loadMore": "تحميل المزيد",
   "showActivityFeed": "عرض سجل النشاط",
   "showReports": "عرض التقارير",
-  "showAuditLog": "عرض سجل التدقيق"
+  "showAuditLog": "عرض سجل التدقيق",
+  "messageSeen": "مقروء",
+  "attachImage": "إرفاق صورة",
+  "userIsTyping": "{name} يكتب…"
 }

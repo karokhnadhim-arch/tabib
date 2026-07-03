@@ -137,11 +137,36 @@ service cloud.firestore {
         || (isSecretary() && accountActive() && resource.data.clinicId == clinicId());
 
       allow create: if isSystemOwner()
-        || (isPatient() && resource.data.patientId == request.auth.uid)
-        || (isDoctor() && accountActive())
-        || (isSecretary() && accountActive());
+        || (isPatient() && request.resource.data.patientId == request.auth.uid)
+        || (isDoctor() && accountActive()
+            && request.resource.data.clinicId == clinicId())
+        || (isSecretary() && accountActive()
+            && request.resource.data.clinicId == clinicId());
 
-      allow update, delete: if isSystemOwner();
+      allow update: if isSystemOwner()
+        || (isPatient() && resource.data.patientId == request.auth.uid
+            && resource.data.senderRole != 'patient'
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read', 'delivered']))
+        || (isSecretary() && accountActive() && resource.data.clinicId == clinicId()
+            && resource.data.senderRole == 'patient'
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read', 'delivered']));
+
+      allow delete: if isSystemOwner();
+    }
+
+    match /chat_typing/{docId} {
+      allow read: if isSystemOwner()
+        || (isPatient() && resource.data.patientId == request.auth.uid)
+        || (isSecretary() && accountActive() && resource.data.clinicId == clinicId());
+
+      allow create, update: if isSystemOwner()
+        || (isPatient() && request.resource.data.patientId == request.auth.uid
+            && request.resource.data.userId == request.auth.uid)
+        || (isSecretary() && accountActive()
+            && request.resource.data.clinicId == clinicId()
+            && request.resource.data.userId == request.auth.uid);
+
+      allow delete: if isSystemOwner();
     }
   }
 }

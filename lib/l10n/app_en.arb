@@ -1069,5 +1069,13 @@
   "loadMore": "Load more",
   "showActivityFeed": "Show activity feed",
   "showReports": "Show reports",
-  "showAuditLog": "Show audit log"
+  "showAuditLog": "Show audit log",
+  "messageSeen": "Seen",
+  "attachImage": "Attach image",
+  "userIsTyping": "{name} is typing…",
+  "@userIsTyping": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  }
 }

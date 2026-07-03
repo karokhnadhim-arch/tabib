@@ -70,13 +70,51 @@ abstract class ChatRepository {
     required String patientId,
   });
 
-  Future<void> sendMessage({
+  Stream<ChatTypingState?> watchTyping({
+    required String clinicId,
+    required String patientId,
+  });
+
+  Future<List<ChatMessage>> loadOlderMessages({
+    required String clinicId,
+    required String patientId,
+    required DateTime before,
+    int limit = 30,
+  });
+
+  Future<String> sendMessage({
     required String clinicId,
     required String patientId,
     required String senderId,
     required String senderName,
     required String senderRole,
     required String text,
+  });
+
+  Future<String> sendImageMessage({
+    required String clinicId,
+    required String patientId,
+    required String senderId,
+    required String senderName,
+    required String senderRole,
+    required String imageUrl,
+    required String imageThumbnailUrl,
+    String caption,
+  });
+
+  Future<void> setTyping({
+    required String clinicId,
+    required String patientId,
+    required String userId,
+    required String userName,
+    required String role,
+    required bool isTyping,
+  });
+
+  Future<void> markDelivered({
+    required String clinicId,
+    required String patientId,
+    required String readerRole,
   });
 
   Future<void> markConversationRead({

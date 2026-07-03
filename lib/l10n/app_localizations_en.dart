@@ -2846,4 +2846,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get showAuditLog => 'Show audit log';
+
+  @override
+  String get messageSeen => 'Seen';
+
+  @override
+  String get attachImage => 'Attach image';
+
+  @override
+  String userIsTyping(String name) {
+    return '$name is typing…';
+  }
 }

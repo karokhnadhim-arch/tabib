@@ -11,6 +11,7 @@ class QueueService extends ChangeNotifier {
   final SubscriptionManager _subscriptions = SubscriptionManager();
   final Map<String, List<QueueEntry>> _queuesByDoctor = {};
   final Map<String, List<QueueEntry>> _secretaryQueuesByDoctor = {};
+  final Set<String> _patientAutoDoctorWatches = {};
   List<QueueEntry> _patientQueues = [];
   QueueEntry? _patientQueue;
 
@@ -47,14 +48,26 @@ class QueueService extends ChangeNotifier {
       (List<QueueEntry> entries) {
         _patientQueues = entries;
         _patientQueue = entries.isNotEmpty ? entries.first : null;
-        for (final entry in entries) {
-          if (!_queuesByDoctor.containsKey(entry.doctorId)) {
-            watchDoctorQueue(entry.doctorId);
-          }
-        }
+        _syncAutoDoctorWatches(entries);
         notifyListeners();
       },
     );
+  }
+
+  void _syncAutoDoctorWatches(List<QueueEntry> entries) {
+    final needed = entries.map((e) => e.doctorId).toSet();
+    for (final doctorId in needed) {
+      if (!_patientAutoDoctorWatches.contains(doctorId)) {
+        watchDoctorQueue(doctorId);
+        _patientAutoDoctorWatches.add(doctorId);
+      }
+    }
+    for (final doctorId in List<String>.from(_patientAutoDoctorWatches)) {
+      if (!needed.contains(doctorId)) {
+        _patientAutoDoctorWatches.remove(doctorId);
+        stopWatchingDoctorQueue(doctorId);
+      }
+    }
   }
 
   void refreshPatientQueues(String patientId) => watchPatientQueues(patientId);
@@ -76,6 +89,9 @@ class QueueService extends ChangeNotifier {
       _backend.watchSecretaryQueue(doctorId),
       (entries) {
         _secretaryQueuesByDoctor[doctorId] = entries;
+        _queuesByDoctor[doctorId] = entries
+            .where((e) => activeQueueStatuses.contains(e.status))
+            .toList();
         notifyListeners();
       },
     );
@@ -97,6 +113,10 @@ class QueueService extends ChangeNotifier {
 
   void stopWatchingPatientQueue(String patientId) {
     _subscriptions.cancel('patientQueues:$patientId');
+    for (final doctorId in List<String>.from(_patientAutoDoctorWatches)) {
+      _patientAutoDoctorWatches.remove(doctorId);
+      stopWatchingDoctorQueue(doctorId);
+    }
     _patientQueues = [];
     _patientQueue = null;
     notifyListeners();

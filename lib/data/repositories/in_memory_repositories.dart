@@ -345,8 +345,11 @@ class InMemoryPrescriptionRepository implements PrescriptionRepository {
 
 class InMemoryChatRepository implements ChatRepository {
   final List<ChatMessage> _messages = [];
+  final Map<String, ChatTypingState?> _typing = {};
   final _change = StreamController<void>.broadcast();
   int _idCounter = 0;
+
+  String _key(String clinicId, String patientId) => '$clinicId:$patientId';
 
   void _notify() => _change.add(null);
 
@@ -361,6 +364,17 @@ class InMemoryChatRepository implements ChatRepository {
     }
   }
 
+  @override
+  Stream<ChatTypingState?> watchTyping({
+    required String clinicId,
+    required String patientId,
+  }) async* {
+    yield _typing[_key(clinicId, patientId)];
+    await for (final _ in _change.stream) {
+      yield _typing[_key(clinicId, patientId)];
+    }
+  }
+
   List<ChatMessage> _for(String clinicId, String patientId) {
     return _messages
         .where((m) => m.clinicId == clinicId && m.patientId == patientId)
@@ -369,7 +383,22 @@ class InMemoryChatRepository implements ChatRepository {
   }
 
   @override
-  Future<void> sendMessage({
+  Future<List<ChatMessage>> loadOlderMessages({
+    required String clinicId,
+    required String patientId,
+    required DateTime before,
+    int limit = 30,
+  }) async {
+    final older = _for(clinicId, patientId)
+        .where((m) => m.createdAt.isBefore(before))
+        .toList()
+      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    if (older.length <= limit) return older;
+    return older.sublist(older.length - limit);
+  }
+
+  @override
+  Future<String> sendMessage({
     required String clinicId,
     required String patientId,
     required String senderId,
@@ -377,9 +406,10 @@ class InMemoryChatRepository implements ChatRepository {
     required String senderRole,
     required String text,
   }) async {
+    final id = 'chat_${_idCounter++}';
     _messages.add(
       ChatMessage(
-        id: 'chat_${_idCounter++}',
+        id: id,
         clinicId: clinicId,
         patientId: patientId,
         senderId: senderId,
@@ -387,8 +417,79 @@ class InMemoryChatRepository implements ChatRepository {
         senderRole: senderRole,
         text: text,
         createdAt: DateTime.now(),
+        delivered: false,
+        read: false,
       ),
     );
+    _notify();
+    return id;
+  }
+
+  @override
+  Future<String> sendImageMessage({
+    required String clinicId,
+    required String patientId,
+    required String senderId,
+    required String senderName,
+    required String senderRole,
+    required String imageUrl,
+    required String imageThumbnailUrl,
+    String caption = '',
+  }) async {
+    final id = 'chat_${_idCounter++}';
+    _messages.add(
+      ChatMessage(
+        id: id,
+        clinicId: clinicId,
+        patientId: patientId,
+        senderId: senderId,
+        senderName: senderName,
+        senderRole: senderRole,
+        text: caption,
+        createdAt: DateTime.now(),
+        type: ChatMessageType.image,
+        imageUrl: imageUrl,
+        imageThumbnailUrl: imageThumbnailUrl,
+        delivered: false,
+        read: false,
+      ),
+    );
+    _notify();
+    return id;
+  }
+
+  @override
+  Future<void> setTyping({
+    required String clinicId,
+    required String patientId,
+    required String userId,
+    required String userName,
+    required String role,
+    required bool isTyping,
+  }) async {
+    _typing[_key(clinicId, patientId)] = isTyping
+        ? ChatTypingState(
+            userId: userId,
+            userName: userName,
+            role: role,
+            updatedAt: DateTime.now(),
+          )
+        : null;
+    _notify();
+  }
+
+  @override
+  Future<void> markDelivered({
+    required String clinicId,
+    required String patientId,
+    required String readerRole,
+  }) async {
+    for (var i = 0; i < _messages.length; i++) {
+      final m = _messages[i];
+      if (m.clinicId != clinicId || m.patientId != patientId) continue;
+      if (m.senderRole == readerRole || m.delivered) continue;
+      _messages[i] = m.copyWith(delivered: true);
+    }
     _notify();
   }
 
@@ -402,7 +503,7 @@ class InMemoryChatRepository implements ChatRepository {
       final m = _messages[i];
       if (m.clinicId != clinicId || m.patientId != patientId) continue;
       if (m.senderRole == readerRole) continue;
-      _messages[i] = m.copyWith(read: true);
+      _messages[i] = m.copyWith(read: true, delivered: true);
     }
     _notify();
   }

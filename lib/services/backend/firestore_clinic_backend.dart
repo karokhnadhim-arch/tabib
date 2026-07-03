@@ -233,6 +233,7 @@ class FirestoreClinicBackend implements ClinicBackend {
     return _queues
         .where('patientId', isEqualTo: patientId)
         .where('status', whereIn: patientVisibleQueueStatusNames)
+        .limit(20)
         .snapshots()
         .map((snap) {
       final entries = snap.docs
