@@ -2250,4 +2250,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bookAgain => 'Book again';
+
+  @override
+  String get setCityForAds => 'Set your city in Profile to see local health offers.';
+
+  @override
+  String get advertisementDetails => 'Advertisement';
+
+  @override
+  String get advertisementNotFound => 'This advertisement is no longer available.';
 }

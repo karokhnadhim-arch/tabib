@@ -805,5 +805,8 @@
   "female": "مێ",
   "searchProvidersHint": "دکتۆر، دامەزراوە، پسپۆڕی یان شار...",
   "viewAll": "هەمووی ببینە",
-  "bookAgain": "دووبارە نۆرە بگرە"
+  "bookAgain": "دووبارە نۆرە بگرە",
+  "setCityForAds": "شارەکەت لە پرۆفایل دابنێ بۆ بینینی پێشکەشکراوە تەندروستییە خۆجێییەکان.",
+  "advertisementDetails": "ڕیکلام",
+  "advertisementNotFound": "ئەم ڕیکلامە چیتر بەردەست نییە."
 }

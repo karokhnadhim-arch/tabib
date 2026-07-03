@@ -805,5 +805,8 @@
   "female": "أنثى",
   "searchProvidersHint": "طبيب، منشأة، تخصص، أو مدينة...",
   "viewAll": "عرض الكل",
-  "bookAgain": "احجز مرة أخرى"
+  "bookAgain": "احجز مرة أخرى",
+  "setCityForAds": "حدد مدينتك في الملف الشخصي لعرض العروض الصحية المحلية.",
+  "advertisementDetails": "إعلان",
+  "advertisementNotFound": "هذا الإعلان لم يعد متاحاً."
 }

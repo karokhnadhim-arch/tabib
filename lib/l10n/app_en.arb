@@ -864,5 +864,8 @@
   "female": "Female",
   "searchProvidersHint": "Doctor, business, specialty, or city...",
   "viewAll": "View all",
-  "bookAgain": "Book again"
+  "bookAgain": "Book again",
+  "setCityForAds": "Set your city in Profile to see local health offers.",
+  "advertisementDetails": "Advertisement",
+  "advertisementNotFound": "This advertisement is no longer available."
 }

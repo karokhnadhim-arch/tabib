@@ -1045,29 +1045,48 @@ class InMemoryClinicBackend implements ClinicBackend {
         title: 'Erbil Health Week',
         description: 'Free check-ups at participating clinics this month.',
         imageUrl: 'https://picsum.photos/seed/erbil-health/800/400',
+        imageThumbnailUrl: 'https://picsum.photos/seed/erbil-health/480/240',
         buttonLabel: 'Learn more',
         linkUrl: 'https://tabib.app',
         city: 'Erbil',
-        expiresAt: DateTime.now().add(const Duration(days: 30)),
+        startsAt: DateTime.now().subtract(const Duration(days: 1)),
+        endsAt: DateTime.now().add(const Duration(days: 30)),
+      ),
+      Advertisement(
+        id: 'ad_erbil_2',
+        title: 'Erbil Dental Care',
+        description: 'Special offers on dental check-ups.',
+        imageUrl: 'https://picsum.photos/seed/erbil-dental/800/400',
+        imageThumbnailUrl: 'https://picsum.photos/seed/erbil-dental/480/240',
+        buttonLabel: 'Book now',
+        linkUrl: 'https://tabib.app',
+        city: 'Erbil',
+        startsAt: DateTime.now().subtract(const Duration(days: 2)),
+        endsAt: DateTime.now().add(const Duration(days: 45)),
       ),
       Advertisement(
         id: 'ad_kirkuk_1',
         title: 'Kirkuk Wellness Fair',
         description: 'Discover local healthcare providers near you.',
         imageUrl: 'https://picsum.photos/seed/kirkuk-wellness/800/400',
+        imageThumbnailUrl: 'https://picsum.photos/seed/kirkuk-wellness/480/240',
         buttonLabel: 'View fair',
         linkUrl: 'https://tabib.app',
         city: 'Kirkuk',
-        expiresAt: DateTime.now().add(const Duration(days: 30)),
+        startsAt: DateTime.now().subtract(const Duration(days: 1)),
+        endsAt: DateTime.now().add(const Duration(days: 30)),
       ),
-      const Advertisement(
-        id: 'ad_national_1',
-        title: 'Tabib — Your health companion',
-        description: 'Book queues and appointments from your phone.',
-        imageUrl: 'https://picsum.photos/seed/tabib-national/800/400',
-        buttonLabel: 'Get started',
+      Advertisement(
+        id: 'ad_sulaymaniyah_1',
+        title: 'Sulaymaniyah Family Health',
+        description: 'Pediatric and family medicine promotions.',
+        imageUrl: 'https://picsum.photos/seed/suli-health/800/400',
+        imageThumbnailUrl: 'https://picsum.photos/seed/suli-health/480/240',
+        buttonLabel: 'Explore',
         linkUrl: 'https://tabib.app',
-        isNational: true,
+        city: 'Sulaymaniyah',
+        startsAt: DateTime.now().subtract(const Duration(days: 3)),
+        endsAt: DateTime.now().add(const Duration(days: 60)),
       ),
     ]);
 
@@ -1077,16 +1096,10 @@ class InMemoryClinicBackend implements ClinicBackend {
   @override
   Stream<List<Advertisement>> watchAdvertisements({String? city}) async* {
     List<Advertisement> resolve() {
-      final ads =
-          _advertisements.where((a) => a.isActive).toList(growable: false);
-      final cityNorm = city?.trim().toLowerCase();
-      if (cityNorm != null && cityNorm.isNotEmpty) {
-        final cityAds =
-            ads.where((a) => a.city?.toLowerCase() == cityNorm).toList();
-        if (cityAds.isNotEmpty) return cityAds;
-      }
-      final national = ads.where((a) => a.isNational).toList();
-      return national.isNotEmpty ? national : ads;
+      final ads = _advertisements.where((a) => a.isPublished).toList();
+      final cityNorm = normalizeAdvertisementCity(city);
+      if (cityNorm == null || cityNorm.isEmpty) return const <Advertisement>[];
+      return ads.where((a) => advertisementMatchesCity(a, city)).toList();
     }
 
     yield resolve();

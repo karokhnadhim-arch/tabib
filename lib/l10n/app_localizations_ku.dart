@@ -2250,4 +2250,13 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get bookAgain => 'دووبارە نۆرە بگرە';
+
+  @override
+  String get setCityForAds => 'شارەکەت لە پرۆفایل دابنێ بۆ بینینی پێشکەشکراوە تەندروستییە خۆجێییەکان.';
+
+  @override
+  String get advertisementDetails => 'ڕیکلام';
+
+  @override
+  String get advertisementNotFound => 'ئەم ڕیکلامە چیتر بەردەست نییە.';
 }

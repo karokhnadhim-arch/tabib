@@ -4,7 +4,7 @@ import '../core/utils/subscription_manager.dart';
 import '../models/advertisement.dart';
 import 'backend/clinic_backend.dart';
 
-/// City-targeted patient advertisements with national fallback.
+/// City-targeted patient advertisements (patient's selected city only).
 class AdvertisementService extends ChangeNotifier {
   AdvertisementService({required ClinicBackend backend}) : _backend = backend;
 

@@ -166,6 +166,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 icon: Icons.person_outline,
                 children: [
                   SettingsTile(
+                    icon: Icons.account_circle_outlined,
+                    title: l10n.patientProfile,
+                    onTap: () => context.push('/profile'),
+                  ),
+                  const SettingsDivider(),
+                  SettingsTile(
                     icon: Icons.favorite_outline,
                     title: l10n.favoriteDoctors,
                     onTap: () => context.push('/settings/favorites?kind=doctor'),

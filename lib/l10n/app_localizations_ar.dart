@@ -2250,4 +2250,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get bookAgain => 'احجز مرة أخرى';
+
+  @override
+  String get setCityForAds => 'حدد مدينتك في الملف الشخصي لعرض العروض الصحية المحلية.';
+
+  @override
+  String get advertisementDetails => 'إعلان';
+
+  @override
+  String get advertisementNotFound => 'هذا الإعلان لم يعد متاحاً.';
 }

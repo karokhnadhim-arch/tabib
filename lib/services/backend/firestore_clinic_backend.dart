@@ -253,30 +253,20 @@ class FirestoreClinicBackend implements ClinicBackend {
   Stream<List<Advertisement>> watchAdvertisements({String? city}) {
     return _advertisements.limit(50).snapshots().map((snap) {
       final ads = _mapActiveAds(snap);
-      final cityNorm = city?.trim().toLowerCase();
-      if (cityNorm != null && cityNorm.isNotEmpty) {
-        final cityAds =
-            ads.where((a) => a.city?.toLowerCase() == cityNorm).toList();
-        if (cityAds.isNotEmpty) return cityAds;
-      }
-      final national = ads.where((a) => a.isNational).toList();
-      return national.isNotEmpty ? national : ads;
+      final cityNorm = normalizeAdvertisementCity(city);
+      if (cityNorm == null || cityNorm.isEmpty) return const <Advertisement>[];
+      return ads
+          .where((a) => advertisementMatchesCity(a, city))
+          .toList();
     });
   }
 
   List<Advertisement> _mapActiveAds(
     QuerySnapshot<Map<String, dynamic>> snap,
   ) {
-    final now = DateTime.now();
     return snap.docs
         .map((d) => Advertisement.fromFirestore(d.id, d.data()))
-        .where((ad) {
-          if (!ad.isActive) return false;
-          if (ad.expiresAt != null && now.isAfter(ad.expiresAt!)) {
-            return false;
-          }
-          return true;
-        })
+        .where((ad) => ad.isPublished)
         .toList();
   }
 

@@ -35,6 +35,7 @@ import '../../presentation/screens/patient/appointment_booking_screen.dart';
 import '../../presentation/screens/patient/doctor_detail_screen.dart';
 import '../../presentation/screens/patient/doctor_list_screen.dart';
 import '../../presentation/screens/patient/notifications_screen.dart';
+import '../../presentation/screens/patient/advertisement_detail_screen.dart';
 import '../../presentation/screens/patient/my_queues_screen.dart';
 import '../../presentation/screens/patient/patient_profile_screen.dart';
 import '../../presentation/screens/patient/patient_home_screen.dart';
@@ -307,6 +308,12 @@ class AppRouter {
           GoRoute(
             path: '/profile',
             builder: (_, __) => const PatientProfileScreen(),
+          ),
+          GoRoute(
+            path: '/ads/:id',
+            builder: (_, state) => AdvertisementDetailScreen(
+              adId: state.pathParameters['id']!,
+            ),
           ),
           GoRoute(
             path: '/chat',

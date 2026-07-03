@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/responsive_scaffold.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../services/advertisement_service.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/locale_service.dart';
 import '../../../services/patient_profile_service.dart';
@@ -15,7 +16,9 @@ import '../../../utils/patient_photo_utils.dart';
 import '../../widgets/settings/settings_widgets.dart';
 
 class PatientProfileScreen extends StatefulWidget {
-  const PatientProfileScreen({super.key});
+  const PatientProfileScreen({super.key, this.embedded = false});
+
+  final bool embedded;
 
   @override
   State<PatientProfileScreen> createState() => _PatientProfileScreenState();
@@ -83,6 +86,9 @@ class _PatientProfileScreenState extends State<PatientProfileScreen> {
         gender: _gender,
       ),
     );
+    context.read<AdvertisementService>().watchForCity(
+          _cityController.text.trim(),
+        );
 
     if (!mounted) return;
     setState(() => _saving = false);
@@ -139,28 +145,36 @@ class _PatientProfileScreenState extends State<PatientProfileScreen> {
       preferThumbnail: false,
     );
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.patientProfile),
-        backgroundColor: AppTheme.patientColor,
-        actions: [
-          TextButton(
-            onPressed: _saving ? null : _save,
-            child: _saving
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : Text(l10n.save),
-          ),
-        ],
-      ),
-      body: ResponsiveBody(
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            Center(
+    final body = ResponsiveBody(
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          if (widget.embedded) ...[
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    l10n.patientProfile,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: _saving ? null : _save,
+                  child: _saving
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(l10n.save),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+          ],
+          Center(
               child: Stack(
                 children: [
                   CircleAvatar(
@@ -307,7 +321,28 @@ class _PatientProfileScreenState extends State<PatientProfileScreen> {
             ],
           ],
         ),
+    );
+
+    if (widget.embedded) return body;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.patientProfile),
+        backgroundColor: AppTheme.patientColor,
+        actions: [
+          TextButton(
+            onPressed: _saving ? null : _save,
+            child: _saving
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Text(l10n.save),
+          ),
+        ],
       ),
+      body: body,
     );
   }
 

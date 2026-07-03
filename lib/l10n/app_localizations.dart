@@ -4492,6 +4492,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Book again'**
   String get bookAgain;
+
+  /// No description provided for @setCityForAds.
+  ///
+  /// In en, this message translates to:
+  /// **'Set your city in Profile to see local health offers.'**
+  String get setCityForAds;
+
+  /// No description provided for @advertisementDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Advertisement'**
+  String get advertisementDetails;
+
+  /// No description provided for @advertisementNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'This advertisement is no longer available.'**
+  String get advertisementNotFound;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -10,11 +10,11 @@ import '../../../services/patient_profile_service.dart';
 import '../../../services/recently_visited_service.dart';
 import '../../../services/staff_data_service.dart';
 import '../../../services/queue_service.dart';
-import '../../../utils/localization_utils.dart';
 import '../../providers/app_providers.dart';
 import 'doctor_list_screen.dart';
 import 'my_queues_screen.dart';
 import 'patient_dashboard_tab.dart';
+import 'patient_profile_screen.dart';
 
 class PatientHomeScreen extends StatefulWidget {
   const PatientHomeScreen({super.key});
@@ -58,7 +58,6 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
         index: _navIndex,
         children: [
           PatientDashboardTab(
-            userName: auth.currentUser?.name.localized(context) ?? '',
             onQueuesTap: () => setState(() => _navIndex = 3),
             onDoctorsTap: () => setState(() => _navIndex = 1),
             onBusinessesTap: () => setState(() => _navIndex = 2),
@@ -72,6 +71,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
             catalogMode: ProviderCatalogMode.businesses,
           ),
           const MyQueuesScreen(embedded: true),
+          const PatientProfileScreen(embedded: true),
         ],
       ),
       bottomNavigationBar: NavigationBar(
@@ -95,16 +95,21 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
           ),
           NavigationDestination(
             icon: Badge(
-              isLabelVisible: activeQueues.length > 1,
+              isLabelVisible: activeQueues.isNotEmpty,
               label: Text('${activeQueues.length}'),
               child: const Icon(Icons.queue_play_next_outlined),
             ),
             selectedIcon: Badge(
-              isLabelVisible: activeQueues.length > 1,
+              isLabelVisible: activeQueues.isNotEmpty,
               label: Text('${activeQueues.length}'),
               child: const Icon(Icons.queue_play_next),
             ),
             label: l10n.myQueues,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.person_outline),
+            selectedIcon: const Icon(Icons.person),
+            label: l10n.patientProfile,
           ),
         ],
       ),
