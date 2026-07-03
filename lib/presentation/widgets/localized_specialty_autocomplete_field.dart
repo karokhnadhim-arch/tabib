@@ -75,9 +75,9 @@ class _LocalizedSpecialtyAutocompleteFieldState
 
   List<Specialty> _options(String query) {
     final catalog = context.read<ClinicDataService>().specialties;
-    final filtered =
-        SpecialtyCatalogUtils.forAccountType(catalog, _forBusiness);
-    return SpecialtyCatalogUtils.filterQuery(filtered, query);
+    final filtered = SpecialtyCatalogUtils.forAccountType(catalog, _forBusiness)
+        .where((s) => s.isActive);
+    return SpecialtyCatalogUtils.filterQuery(filtered.toList(), query);
   }
 
   Future<Specialty?> _promptCreateType(String typed) async {

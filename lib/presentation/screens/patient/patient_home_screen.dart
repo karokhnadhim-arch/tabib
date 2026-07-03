@@ -11,6 +11,7 @@ import '../../../models/queue_entry.dart';
 import '../../../models/specialty.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
+import '../../../services/staff_data_service.dart';
 import '../../../services/queue_service.dart';
 import '../../../utils/localization_utils.dart';
 import '../../../widgets/common_widgets.dart';
@@ -35,9 +36,15 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final auth = context.read<AuthService>();
+      final data = context.read<ClinicDataService>();
+      final staffData = context.read<StaffDataService>();
+      staffData.startRealtime();
       context.read<NotificationProvider>().watch(auth.patientId);
       context.read<QueueService>().watchPatientQueue(auth.patientId);
-      await context.read<ClinicDataService>().ensureCatalogLoaded();
+      await data.ensureCatalogLoaded();
+      data.startRealtimeCatalog();
+      data.syncProviderLoginIndex(staffData.staff);
+      await data.ensureFullProviderCatalog(ProviderCatalogMode.doctors);
     });
   }
 
@@ -127,7 +134,9 @@ class _HomeTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final data = context.watch<ClinicDataService>();
+    context.watch<StaffDataService>();
     final auth = context.watch<AuthService>();
+    final visibleSpecialties = data.patientVisibleDoctorSpecialties;
 
     return CustomScrollView(
       slivers: [
@@ -201,9 +210,9 @@ class _HomeTab extends StatelessWidget {
                   crossAxisSpacing: 12,
                   childAspectRatio: 1.05,
                 ),
-                itemCount: data.specialties.length,
+                itemCount: visibleSpecialties.length,
                 itemBuilder: (context, index) {
-                  final specialty = data.specialties[index];
+                  final specialty = visibleSpecialties[index];
                   return _SpecialtyCard(specialty: specialty);
                 },
               ),

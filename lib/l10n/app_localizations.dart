@@ -4120,6 +4120,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Complete profile'**
   String get completeProfileAction;
+
+  /// No description provided for @manageBusinessTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Business types'**
+  String get manageBusinessTypes;
+
+  /// No description provided for @manageBusinessTypesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Create, translate, and enable centralized business types'**
+  String get manageBusinessTypesHint;
+
+  /// No description provided for @editBusinessType.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit business type'**
+  String get editBusinessType;
+
+  /// No description provided for @businessTypeActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get businessTypeActive;
+
+  /// No description provided for @businessTypeActiveHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive types are hidden from patients until enabled and assigned'**
+  String get businessTypeActiveHint;
+
+  /// No description provided for @businessTypeDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'This business type already exists'**
+  String get businessTypeDuplicate;
+
+  /// No description provided for @noBusinessTypesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No business types yet. Add one to get started.'**
+  String get noBusinessTypesYet;
+
+  /// No description provided for @businessTypeAssignedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} businesses assigned'**
+  String businessTypeAssignedCount(int count);
+
+  /// No description provided for @allBusinessTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'All business types'**
+  String get allBusinessTypes;
+
+  /// No description provided for @iconName.
+  ///
+  /// In en, this message translates to:
+  /// **'Icon name'**
+  String get iconName;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

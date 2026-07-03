@@ -78,7 +78,8 @@ enum SystemOwnerNavSection {
       return SystemOwnerNavSection.doctors;
     }
     if (path.startsWith('${AdminRoutes.platformPrefix}/businesses') ||
-        path.startsWith('${AdminRoutes.platformPrefix}/business-management')) {
+        path.startsWith('${AdminRoutes.platformPrefix}/business-management') ||
+        path.startsWith('${AdminRoutes.platformPrefix}/business-types')) {
       return SystemOwnerNavSection.businesses;
     }
     if (path.startsWith('${AdminRoutes.platformPrefix}/subscriptions') ||

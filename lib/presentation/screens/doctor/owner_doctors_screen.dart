@@ -32,10 +32,12 @@ class OwnerDoctorsScreen extends StatefulWidget {
     super.key,
     this.catalogMode,
     this.businessCategory,
+    this.businessTypeId,
   });
 
   final ProviderCatalogMode? catalogMode;
   final BusinessCategory? businessCategory;
+  final String? businessTypeId;
 
   @override
   State<OwnerDoctorsScreen> createState() => _OwnerDoctorsScreenState();
@@ -92,6 +94,10 @@ class _OwnerDoctorsScreenState extends State<OwnerDoctorsScreen> {
       if (widget.catalogMode == ProviderCatalogMode.businesses && !d.isBusiness) {
         return false;
       }
+      if (widget.businessTypeId != null &&
+          d.specialtyId != widget.businessTypeId) {
+        return false;
+      }
       if (widget.businessCategory != null &&
           d.businessCategory != widget.businessCategory) {
         return false;
@@ -137,10 +143,14 @@ class _OwnerDoctorsScreenState extends State<OwnerDoctorsScreen> {
     final pageItems = paginateSlice(filtered, safePage, _pageSize);
 
     final screenTitle = widget.catalogMode == ProviderCatalogMode.businesses
-        ? (widget.businessCategory != null
-            ? ProviderLabels.businessCategoryLabel(
-                l10n, widget.businessCategory!)
-            : l10n.businessManagement)
+        ? (widget.businessTypeId != null
+            ? (data.specialtyById(widget.businessTypeId!)?.name
+                    .localized(context) ??
+                l10n.businessManagement)
+            : widget.businessCategory != null
+                ? ProviderLabels.businessCategoryLabel(
+                    l10n, widget.businessCategory!)
+                : l10n.businessManagement)
         : l10n.doctorManagement;
 
     return AdminGuard(

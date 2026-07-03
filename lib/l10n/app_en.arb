@@ -797,5 +797,20 @@
     }
   },
   "completeProfileBanner": "Complete your profile — add clinic name, address, hours, photos, and contact details.",
-  "completeProfileAction": "Complete profile"
+  "completeProfileAction": "Complete profile",
+  "manageBusinessTypes": "Business types",
+  "manageBusinessTypesHint": "Create, translate, and enable centralized business types",
+  "editBusinessType": "Edit business type",
+  "businessTypeActive": "Active",
+  "businessTypeActiveHint": "Inactive types are hidden from patients until enabled and assigned",
+  "businessTypeDuplicate": "This business type already exists",
+  "noBusinessTypesYet": "No business types yet. Add one to get started.",
+  "businessTypeAssignedCount": "{count} businesses assigned",
+  "@businessTypeAssignedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "allBusinessTypes": "All business types",
+  "iconName": "Icon name"
 }

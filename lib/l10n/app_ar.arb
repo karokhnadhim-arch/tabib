@@ -743,5 +743,15 @@
   "createNewType": "إنشاء \"{name}\"",
   "completeProfileBanner": "أكمل ملفك — أضف اسم العيادة والعنوان وساعات العمل والصور وبيانات الاتصال.",
   "completeProfileAction": "إكمال الملف",
+  "manageBusinessTypes": "أنواع المنشآت",
+  "manageBusinessTypesHint": "إنشاء وترجمة وتفعيل أنواع المنشآت المركزية",
+  "editBusinessType": "تعديل نوع المنشأة",
+  "businessTypeActive": "نشط",
+  "businessTypeActiveHint": "الأنواع غير النشطة مخفية عن المرضى حتى يتم تفعيلها وربطها بحساب",
+  "businessTypeDuplicate": "نوع المنشأة هذا موجود مسبقاً",
+  "noBusinessTypesYet": "لا توجد أنواع منشآت بعد. أضف نوعاً للبدء.",
+  "businessTypeAssignedCount": "{count} منشأة مرتبطة",
+  "allBusinessTypes": "جميع أنواع المنشآت",
+  "iconName": "اسم الأيقونة",
   "helpContent": "تحتاج مساعدة؟ راسلنا على {email} أو تواصل مع مسؤول عيادتك."
 }

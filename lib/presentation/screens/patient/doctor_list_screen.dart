@@ -9,8 +9,8 @@ import '../../../l10n/app_localizations.dart';
 import '../../../models/appointment.dart';
 import '../../../models/doctor.dart';
 import '../../../models/provider_catalog_mode.dart';
-import '../../../models/service_provider_type.dart';
 import '../../../services/clinic_data_service.dart';
+import '../../../services/staff_data_service.dart';
 import '../../../utils/localization_utils.dart';
 import '../../../utils/provider_labels.dart';
 import '../../../core/utils/doctor_subscription_resolver.dart';
@@ -41,7 +41,7 @@ class _TabibDoctorListScreenState extends State<TabibDoctorListScreen> {
   final _searchController = TextEditingController();
   final _scrollController = ScrollController();
   String? _specialtyFilter;
-  BusinessCategory? _categoryFilter;
+  String? _businessTypeFilter;
 
   @override
   void initState() {
@@ -50,8 +50,11 @@ class _TabibDoctorListScreenState extends State<TabibDoctorListScreen> {
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final data = context.read<ClinicDataService>();
+      final staffData = context.read<StaffDataService>();
+      staffData.startRealtime();
       await data.ensureCatalogLoaded();
       data.startRealtimeCatalog();
+      data.syncProviderLoginIndex(staffData.staff);
       await _loadInitial();
     });
   }
@@ -59,11 +62,22 @@ class _TabibDoctorListScreenState extends State<TabibDoctorListScreen> {
   Future<void> _loadInitial() async {
     final data = context.read<ClinicDataService>();
     await data.ensureCatalogLoaded();
-    await data.loadDoctors(
-      specialtyId: widget.isBusinessCatalog ? null : _specialtyFilter,
-      catalogMode: widget.catalogMode,
-      refresh: true,
-    );
+    if (widget.isBusinessCatalog) {
+      await data.ensureFullProviderCatalog(widget.catalogMode);
+      if (_businessTypeFilter != null) {
+        await data.loadDoctors(
+          specialtyId: _businessTypeFilter,
+          catalogMode: widget.catalogMode,
+          refresh: true,
+        );
+      }
+    } else {
+      await data.loadDoctors(
+        specialtyId: _specialtyFilter,
+        catalogMode: widget.catalogMode,
+        refresh: true,
+      );
+    }
   }
 
   void _onScroll() {
@@ -71,7 +85,9 @@ class _TabibDoctorListScreenState extends State<TabibDoctorListScreen> {
     final pos = _scrollController.position;
     if (pos.pixels >= pos.maxScrollExtent - 240) {
       context.read<ClinicDataService>().loadDoctors(
-            specialtyId: widget.isBusinessCatalog ? null : _specialtyFilter,
+            specialtyId: widget.isBusinessCatalog
+                ? _businessTypeFilter
+                : _specialtyFilter,
             catalogMode: widget.catalogMode,
           );
     }
@@ -86,8 +102,13 @@ class _TabibDoctorListScreenState extends State<TabibDoctorListScreen> {
         );
   }
 
-  Future<void> _onCategoryChanged(BusinessCategory? category) async {
-    setState(() => _categoryFilter = category);
+  Future<void> _onBusinessTypeChanged(String? businessTypeId) async {
+    setState(() => _businessTypeFilter = businessTypeId);
+    await context.read<ClinicDataService>().loadDoctors(
+          specialtyId: businessTypeId,
+          catalogMode: widget.catalogMode,
+          refresh: true,
+        );
   }
 
   @override
@@ -102,32 +123,28 @@ class _TabibDoctorListScreenState extends State<TabibDoctorListScreen> {
     ClinicDataService data,
     AppLocalizations l10n,
   ) {
-    var providers = data.doctors;
-    if (widget.isBusinessCatalog) {
-      providers = providers.where((d) => d.isBusiness).toList();
-      if (_categoryFilter != null) {
-        providers = providers
-            .where((d) => d.businessCategory == _categoryFilter)
-            .toList();
-      }
-    } else {
-      providers = providers.where((d) => d.isDoctorAccount).toList();
-    }
+    final providers = data.patientCatalogProviders(
+      catalogMode: widget.catalogMode,
+      specialtyId: widget.isBusinessCatalog ? null : _specialtyFilter,
+      businessTypeId: widget.isBusinessCatalog ? _businessTypeFilter : null,
+    );
 
     final query = _searchController.text.trim().toLowerCase();
     if (query.isEmpty) return providers;
 
     return providers.where((d) {
       final name = d.name.localized(context).toLowerCase();
-      final clinic = d.clinic.name.localized(context).toLowerCase();
-      if (widget.isBusinessCatalog) {
-        return name.contains(query) || clinic.contains(query);
-      }
-      final specialty =
+      final businessName = d.effectiveClinicName.localized(context).toLowerCase();
+      final typeLabel =
           ProviderLabels.displayCategory(context, l10n, d).toLowerCase();
+      if (widget.isBusinessCatalog) {
+        return name.contains(query) ||
+            businessName.contains(query) ||
+            typeLabel.contains(query);
+      }
       return name.contains(query) ||
-          specialty.contains(query) ||
-          clinic.contains(query);
+          typeLabel.contains(query) ||
+          businessName.contains(query);
     }).toList();
   }
 
@@ -135,7 +152,10 @@ class _TabibDoctorListScreenState extends State<TabibDoctorListScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final data = context.watch<ClinicDataService>();
+    context.watch<StaffDataService>();
     final providers = _filteredProviders(context, data, l10n);
+    final visibleDoctorSpecialties = data.patientVisibleDoctorSpecialties;
+    final visibleBusinessTypes = data.patientVisibleBusinessTypes;
 
     final body = ResponsiveBody(
       child: Column(
@@ -149,7 +169,7 @@ class _TabibDoctorListScreenState extends State<TabibDoctorListScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          if (!widget.isBusinessCatalog && data.specialties.isNotEmpty)
+          if (!widget.isBusinessCatalog && visibleDoctorSpecialties.isNotEmpty)
             SizedBox(
               height: 40,
               child: ListView(
@@ -163,7 +183,7 @@ class _TabibDoctorListScreenState extends State<TabibDoctorListScreen> {
                       onSelected: (_) => _onSpecialtyChanged(null),
                     ),
                   ),
-                  ...data.specialties.map(
+                  ...visibleDoctorSpecialties.map(
                     (s) => Padding(
                       padding: const EdgeInsets.only(right: 8),
                       child: FilterChip(
@@ -176,7 +196,7 @@ class _TabibDoctorListScreenState extends State<TabibDoctorListScreen> {
                 ],
               ),
             ),
-          if (widget.isBusinessCatalog) ...[
+          if (widget.isBusinessCatalog && visibleBusinessTypes.isNotEmpty) ...[
             SizedBox(
               height: 40,
               child: ListView(
@@ -185,18 +205,18 @@ class _TabibDoctorListScreenState extends State<TabibDoctorListScreen> {
                   Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: FilterChip(
-                      label: Text(l10n.allBusinessCategories),
-                      selected: _categoryFilter == null,
-                      onSelected: (_) => _onCategoryChanged(null),
+                      label: Text(l10n.allBusinessTypes),
+                      selected: _businessTypeFilter == null,
+                      onSelected: (_) => _onBusinessTypeChanged(null),
                     ),
                   ),
-                  ...BusinessCategory.values.map(
-                    (c) => Padding(
+                  ...visibleBusinessTypes.map(
+                    (type) => Padding(
                       padding: const EdgeInsets.only(right: 8),
                       child: FilterChip(
-                        label: Text(ProviderLabels.businessCategoryLabel(l10n, c)),
-                        selected: _categoryFilter == c,
-                        onSelected: (_) => _onCategoryChanged(c),
+                        label: Text(type.name.localized(context)),
+                        selected: _businessTypeFilter == type.id,
+                        onSelected: (_) => _onBusinessTypeChanged(type.id),
                       ),
                     ),
                   ),
@@ -271,7 +291,7 @@ class _TabibDoctorListScreenState extends State<TabibDoctorListScreen> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    '${ProviderLabels.displayCategory(context, l10n, provider)} • ${provider.clinic.name.localized(context)}',
+                                    '${ProviderLabels.displayCategory(context, l10n, provider)} • ${provider.effectiveClinicName.localized(context)}',
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   ),

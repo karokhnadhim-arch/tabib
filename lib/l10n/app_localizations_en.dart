@@ -2062,4 +2062,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get completeProfileAction => 'Complete profile';
+
+  @override
+  String get manageBusinessTypes => 'Business types';
+
+  @override
+  String get manageBusinessTypesHint => 'Create, translate, and enable centralized business types';
+
+  @override
+  String get editBusinessType => 'Edit business type';
+
+  @override
+  String get businessTypeActive => 'Active';
+
+  @override
+  String get businessTypeActiveHint => 'Inactive types are hidden from patients until enabled and assigned';
+
+  @override
+  String get businessTypeDuplicate => 'This business type already exists';
+
+  @override
+  String get noBusinessTypesYet => 'No business types yet. Add one to get started.';
+
+  @override
+  String businessTypeAssignedCount(int count) {
+    return '$count businesses assigned';
+  }
+
+  @override
+  String get allBusinessTypes => 'All business types';
+
+  @override
+  String get iconName => 'Icon name';
 }

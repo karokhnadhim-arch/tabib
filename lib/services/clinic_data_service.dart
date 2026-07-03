@@ -2,15 +2,18 @@ import 'package:flutter/foundation.dart';
 
 import '../core/constants/firestore_limits.dart';
 import '../core/utils/async_request_cache.dart';
+import '../core/utils/business_type_catalog.dart';
 import '../core/utils/clinic_subscription.dart';
 import '../core/utils/specialty_catalog_utils.dart';
 import '../core/utils/subscription_manager.dart';
+import '../models/account_status.dart';
 import '../models/clinic.dart';
 import '../models/doctor.dart';
 import '../models/localized_text.dart';
 import '../models/provider_catalog_mode.dart';
 import '../models/service_provider_type.dart';
 import '../models/specialty.dart';
+import '../models/user_account.dart';
 import 'backend/clinic_backend.dart';
 
 /// Cached clinic catalog with lazy loading and paginated doctor fetch.
@@ -26,6 +29,7 @@ class ClinicDataService extends ChangeNotifier {
   List<Specialty> _specialties = [];
   List<Clinic> _clinics = [];
   List<Doctor> _doctors = [];
+  Map<String, AccountStatus> _providerLoginStatus = {};
 
   bool _catalogLoaded = false;
   Future<void>? _catalogLoadFuture;
@@ -42,6 +46,32 @@ class ClinicDataService extends ChangeNotifier {
   bool get isDoctorsLoading => _doctorsLoading;
   bool get hasMoreDoctors => _hasMoreDoctors;
   bool get isCatalogLoaded => _catalogLoaded;
+
+  List<Specialty> get businessTypes =>
+      BusinessTypeCatalog.allBusinessTypes(_specialties);
+
+  List<Specialty> get activeBusinessTypes =>
+      BusinessTypeCatalog.activeBusinessTypes(_specialties);
+
+  List<Specialty> get doctorSpecialties =>
+      BusinessTypeCatalog.doctorSpecialties(_specialties);
+
+  List<Specialty> get patientVisibleBusinessTypes =>
+      BusinessTypeCatalog.patientVisibleBusinessTypes(
+        catalog: _specialties,
+        providers: _doctors,
+        loginStatusByDoctorId: _providerLoginStatus,
+      );
+
+  List<Specialty> get patientVisibleDoctorSpecialties =>
+      BusinessTypeCatalog.patientVisibleDoctorSpecialties(
+        catalog: _specialties,
+        providers: _doctors,
+        loginStatusByDoctorId: _providerLoginStatus,
+      );
+
+  Specialty? specialtyById(String id) =>
+      BusinessTypeCatalog.byId(_specialties, id);
 
   ClinicBackend get backend => _backend;
 
@@ -62,6 +92,7 @@ class ClinicDataService extends ChangeNotifier {
       _specialties = results[0] as List<Specialty>;
       _clinics = results[1] as List<Clinic>;
       await _backend.ensureProviderAccountCodes();
+      await refreshProviderLoginIndex();
       _catalogLoaded = true;
       notifyListeners();
     } finally {
@@ -69,7 +100,6 @@ class ClinicDataService extends ChangeNotifier {
     }
   }
 
-  /// Paginated doctor list — no real-time listener (reduces Firestore reads).
   Future<void> loadDoctors({
     String? specialtyId,
     String? clinicId,
@@ -100,6 +130,7 @@ class ClinicDataService extends ChangeNotifier {
     notifyListeners();
     try {
       await ensureCatalogLoaded();
+      await refreshProviderLoginIndex();
       final page = await _backend.fetchDoctorsPage(
         specialtyId: specialtyId,
         clinicId: clinicId,
@@ -123,6 +154,15 @@ class ClinicDataService extends ChangeNotifier {
       _doctorsLoading = false;
       notifyListeners();
     }
+  }
+
+  /// Load every provider page — used to compute patient-visible business types.
+  Future<void> ensureFullProviderCatalog(ProviderCatalogMode mode) async {
+    await loadDoctors(catalogMode: mode, refresh: true);
+    while (_hasMoreDoctors) {
+      await loadDoctors(catalogMode: mode);
+    }
+    await refreshProviderLoginIndex();
   }
 
   /// Real-time updates for a single doctor profile (1 document listener).
@@ -211,7 +251,7 @@ class ClinicDataService extends ChangeNotifier {
 
   bool clinicAllowsQueue(String clinicId) => clinicAllowsAppointments(clinicId);
 
-  /// Real-time clinic catalog for subscription dashboards and gates.
+  /// Real-time clinic + specialty catalog for dashboards and patient browse.
   void startRealtimeCatalog() {
     if (_realtimeStarted) return;
     _realtimeStarted = true;
@@ -220,6 +260,15 @@ class ClinicDataService extends ChangeNotifier {
       _backend.watchClinics(),
       (list) {
         _clinics = list;
+        _catalogLoaded = true;
+        notifyListeners();
+      },
+    );
+    _subscriptions.replace(
+      'specialties',
+      _backend.watchSpecialties(),
+      (list) {
+        _specialties = list;
         _catalogLoaded = true;
         notifyListeners();
       },
@@ -235,9 +284,68 @@ class ClinicDataService extends ChangeNotifier {
   String? get defaultClinicId =>
       _clinics.isNotEmpty ? _clinics.first.id : null;
 
-  /// Reload specialty catalog after admin creates a new business type / specialty.
+  /// Reload specialty catalog after admin creates or edits a business type.
   Future<void> reloadSpecialties() async {
     _specialties = await _backend.fetchSpecialties();
+    notifyListeners();
+  }
+
+  /// Index provider login accounts for patient catalog visibility.
+  Future<void> refreshProviderLoginIndex() async {
+    final staff = await _backend.fetchStaff();
+    syncProviderLoginIndex(staff);
+  }
+
+  void syncProviderLoginIndex(Iterable<UserAccount> staff) {
+    _providerLoginStatus = {
+      for (final account in staff)
+        if (account.doctorId != null && account.doctorId!.isNotEmpty)
+          account.doctorId!: account.accountStatus,
+    };
+    notifyListeners();
+  }
+
+  bool isCatalogVisibleProvider(Doctor provider) =>
+      BusinessTypeCatalog.isProviderAccountActive(
+        provider,
+        _providerLoginStatus,
+      );
+
+  /// Providers visible in the patient catalog (active login + optional filters).
+  List<Doctor> patientCatalogProviders({
+    ProviderCatalogMode? catalogMode,
+    String? businessTypeId,
+    String? specialtyId,
+  }) {
+    var list = _doctors.where(isCatalogVisibleProvider);
+    if (catalogMode == ProviderCatalogMode.doctors) {
+      list = list.where((d) => d.isDoctorAccount);
+      if (specialtyId != null) {
+        list = list.where((d) => d.specialtyId == specialtyId);
+      }
+    } else if (catalogMode == ProviderCatalogMode.businesses) {
+      list = list.where((d) => d.isBusiness);
+      if (businessTypeId != null) {
+        list = list.where((d) => d.specialtyId == businessTypeId);
+      }
+    }
+    return list.toList();
+  }
+
+  Future<void> saveSpecialty(Specialty specialty) async {
+    await _backend.upsertSpecialty(specialty);
+    final index = _specialties.indexWhere((s) => s.id == specialty.id);
+    if (index >= 0) {
+      _specialties = [..._specialties]..[index] = specialty;
+    } else {
+      _specialties = [..._specialties, specialty];
+    }
+    notifyListeners();
+  }
+
+  Future<void> deleteSpecialty(String id) async {
+    await _backend.deleteSpecialty(id);
+    _specialties = _specialties.where((s) => s.id != id).toList();
     notifyListeners();
   }
 
@@ -245,6 +353,7 @@ class ClinicDataService extends ChangeNotifier {
   Future<Specialty> findOrCreateSpecialty({
     required LocalizedText name,
     required bool forBusiness,
+    bool isActive = true,
   }) async {
     await ensureCatalogLoaded();
 
@@ -264,10 +373,9 @@ class ClinicDataService extends ChangeNotifier {
       name: name,
       iconName: forBusiness ? 'storefront' : 'medical',
       isBusinessType: forBusiness,
+      isActive: isActive,
     );
-    await _backend.upsertSpecialty(specialty);
-    _specialties = [..._specialties, specialty];
-    notifyListeners();
+    await saveSpecialty(specialty);
     return specialty;
   }
 

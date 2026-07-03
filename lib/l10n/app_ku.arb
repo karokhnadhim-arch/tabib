@@ -743,5 +743,15 @@
   "createNewType": "دروستکردنی \"{name}\"",
   "completeProfileBanner": "پرۆفایلەکەت تەواو بکە — ناوی نۆرینگە، ناونیشان، کاتژمێر، وێنە و زانیاری پەیوەندی زیاد بکە.",
   "completeProfileAction": "تەواوکردنی پرۆفایل",
+  "manageBusinessTypes": "جۆرەکانی بازرگانی",
+  "manageBusinessTypesHint": "دروستکردن، وەرگێڕان و چالاککردنی جۆرەکانی بازرگانی",
+  "editBusinessType": "دەستکاری جۆری بازرگانی",
+  "businessTypeActive": "چالاک",
+  "businessTypeActiveHint": "جۆرە ناچالاکەکان بۆ نەخۆشەکان شاردراونەتەوە تا چالاک بکرێن و دابەش بکرێن",
+  "businessTypeDuplicate": "ئەم جۆرە بازرگانییە پێشتر هەیە",
+  "noBusinessTypesYet": "هێشتا جۆری بازرگانی نییە. یەکێک زیاد بکە.",
+  "businessTypeAssignedCount": "{count} بازرگانی دابەشکراو",
+  "allBusinessTypes": "هەموو جۆرەکانی بازرگانی",
+  "iconName": "ناوی ئایکۆن",
   "helpContent": "پێویستت بە یارمەتییە؟ ئیمەیڵ بنێرە بۆ {email} یان پەیوەندی بە بەڕێوەبەری نۆرینگەکەت بکە."
 }

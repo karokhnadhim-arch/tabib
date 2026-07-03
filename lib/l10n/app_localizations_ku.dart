@@ -2062,4 +2062,36 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get completeProfileAction => 'تەواوکردنی پرۆفایل';
+
+  @override
+  String get manageBusinessTypes => 'جۆرەکانی بازرگانی';
+
+  @override
+  String get manageBusinessTypesHint => 'دروستکردن، وەرگێڕان و چالاککردنی جۆرەکانی بازرگانی';
+
+  @override
+  String get editBusinessType => 'دەستکاری جۆری بازرگانی';
+
+  @override
+  String get businessTypeActive => 'چالاک';
+
+  @override
+  String get businessTypeActiveHint => 'جۆرە ناچالاکەکان بۆ نەخۆشەکان شاردراونەتەوە تا چالاک بکرێن و دابەش بکرێن';
+
+  @override
+  String get businessTypeDuplicate => 'ئەم جۆرە بازرگانییە پێشتر هەیە';
+
+  @override
+  String get noBusinessTypesYet => 'هێشتا جۆری بازرگانی نییە. یەکێک زیاد بکە.';
+
+  @override
+  String businessTypeAssignedCount(int count) {
+    return '$count بازرگانی دابەشکراو';
+  }
+
+  @override
+  String get allBusinessTypes => 'هەموو جۆرەکانی بازرگانی';
+
+  @override
+  String get iconName => 'ناوی ئایکۆن';
 }

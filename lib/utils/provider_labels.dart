@@ -92,6 +92,9 @@ abstract final class ProviderLabels {
     AppLocalizations l10n,
     Doctor provider,
   ) {
+    if (provider.specialty.name.localized(context).trim().isNotEmpty) {
+      return provider.specialty.name.localized(context);
+    }
     if (provider.accountType.isBusiness && provider.businessCategory != null) {
       return businessCategoryLabel(l10n, provider.businessCategory!);
     }

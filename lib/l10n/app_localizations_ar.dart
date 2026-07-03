@@ -2062,4 +2062,36 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get completeProfileAction => 'إكمال الملف';
+
+  @override
+  String get manageBusinessTypes => 'أنواع المنشآت';
+
+  @override
+  String get manageBusinessTypesHint => 'إنشاء وترجمة وتفعيل أنواع المنشآت المركزية';
+
+  @override
+  String get editBusinessType => 'تعديل نوع المنشأة';
+
+  @override
+  String get businessTypeActive => 'نشط';
+
+  @override
+  String get businessTypeActiveHint => 'الأنواع غير النشطة مخفية عن المرضى حتى يتم تفعيلها وربطها بحساب';
+
+  @override
+  String get businessTypeDuplicate => 'نوع المنشأة هذا موجود مسبقاً';
+
+  @override
+  String get noBusinessTypesYet => 'لا توجد أنواع منشآت بعد. أضف نوعاً للبدء.';
+
+  @override
+  String businessTypeAssignedCount(int count) {
+    return '$count منشأة مرتبطة';
+  }
+
+  @override
+  String get allBusinessTypes => 'جميع أنواع المنشآت';
+
+  @override
+  String get iconName => 'اسم الأيقونة';
 }

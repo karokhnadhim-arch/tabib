@@ -17,6 +17,7 @@ import '../../presentation/screens/doctor/owner_clinics_screen.dart';
 import '../../presentation/screens/doctor/owner_platform_screen.dart';
 import '../../presentation/layouts/system_owner_shell.dart';
 import '../../presentation/screens/owner/system_owner_overview_screen.dart';
+import '../../presentation/screens/owner/owner_business_types_screen.dart';
 import '../../presentation/screens/owner/owner_business_management_screen.dart';
 import '../../presentation/screens/owner/owner_subscriptions_packages_screen.dart';
 import '../../presentation/screens/owner/owner_audit_log_screen.dart';
@@ -205,13 +206,19 @@ class AppRouter {
               GoRoute(
                 path: 'businesses',
                 builder: (_, state) {
+                  final typeId = state.uri.queryParameters['type'];
                   final categoryKey = state.uri.queryParameters['category'];
                   return OwnerDoctorsScreen(
                     catalogMode: ProviderCatalogMode.businesses,
+                    businessTypeId: typeId,
                     businessCategory:
                         BusinessCategory.fromStorage(categoryKey),
                   );
                 },
+              ),
+              GoRoute(
+                path: 'business-types',
+                builder: (_, __) => const OwnerBusinessTypesScreen(),
               ),
               GoRoute(
                 path: 'business-management',
