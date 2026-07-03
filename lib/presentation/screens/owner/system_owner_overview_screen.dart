@@ -8,6 +8,7 @@ import '../../../core/owner/system_owner_nav.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/user_account.dart';
+import '../../../presentation/widgets/owner_metric_card.dart';
 import '../../../presentation/widgets/system_owner_guard.dart';
 import '../../../services/backend/clinic_backend.dart';
 import '../../../services/clinic_data_service.dart';
@@ -122,16 +123,17 @@ class _SystemOwnerOverviewScreenState extends State<SystemOwnerOverviewScreen> {
                 child: LinearProgressIndicator(),
               ),
             _MetricsGrid(
+              width: width,
               isWide: isWide,
               children: [
-                _MetricCard(
+                OwnerMetricCard(
                   label: l10n.totalDoctors,
                   value: '${metrics.totalDoctors}',
                   icon: Icons.medical_services_outlined,
                   color: AppTheme.doctorColor,
                   onTap: () => context.go(SystemOwnerNavSection.doctors.routePath),
                 ),
-                _MetricCard(
+                OwnerMetricCard(
                   label: l10n.totalBusinesses,
                   value: '${metrics.totalBusinesses}',
                   icon: Icons.storefront_outlined,
@@ -139,7 +141,7 @@ class _SystemOwnerOverviewScreenState extends State<SystemOwnerOverviewScreen> {
                   onTap: () =>
                       context.go(SystemOwnerNavSection.businesses.routePath),
                 ),
-                _MetricCard(
+                OwnerMetricCard(
                   label: l10n.totalSecretaries,
                   value: '${metrics.totalSecretaries}',
                   icon: Icons.support_agent_outlined,
@@ -147,7 +149,7 @@ class _SystemOwnerOverviewScreenState extends State<SystemOwnerOverviewScreen> {
                   onTap: () =>
                       context.go(SystemOwnerNavSection.secretaries.routePath),
                 ),
-                _MetricCard(
+                OwnerMetricCard(
                   label: l10n.totalPatients,
                   value: '${metrics.totalPatients}',
                   icon: Icons.people_alt_outlined,
@@ -155,13 +157,13 @@ class _SystemOwnerOverviewScreenState extends State<SystemOwnerOverviewScreen> {
                   onTap: () =>
                       context.go(SystemOwnerNavSection.patients.routePath),
                 ),
-                _MetricCard(
+                OwnerMetricCard(
                   label: l10n.activeUsersToday,
                   value: '${metrics.activeUsersToday}',
                   icon: Icons.person_pin_outlined,
                   color: AppTheme.medicalBlue,
                 ),
-                _MetricCard(
+                OwnerMetricCard(
                   label: l10n.activeSubscriptions,
                   value: '${metrics.activeSubscriptions}',
                   icon: Icons.verified_outlined,
@@ -169,7 +171,7 @@ class _SystemOwnerOverviewScreenState extends State<SystemOwnerOverviewScreen> {
                   onTap: () =>
                       context.go(SystemOwnerNavSection.subscriptions.routePath),
                 ),
-                _MetricCard(
+                OwnerMetricCard(
                   label: l10n.expiredSubscriptions,
                   value: '${metrics.expiredSubscriptions}',
                   icon: Icons.event_busy_outlined,
@@ -177,7 +179,7 @@ class _SystemOwnerOverviewScreenState extends State<SystemOwnerOverviewScreen> {
                   onTap: () =>
                       context.go(SystemOwnerNavSection.subscriptions.routePath),
                 ),
-                _MetricCard(
+                OwnerMetricCard(
                   label: l10n.revenueOverview,
                   value: metrics.revenueEstimateLabel,
                   icon: Icons.payments_outlined,
@@ -185,18 +187,22 @@ class _SystemOwnerOverviewScreenState extends State<SystemOwnerOverviewScreen> {
                   onTap: () =>
                       context.go(SystemOwnerNavSection.payments.routePath),
                 ),
-                _MetricCard(
+                OwnerMetricCard(
                   label: l10n.newRegistrations,
                   value: '${metrics.newRegistrationsEstimate}',
                   icon: Icons.person_add_alt_1_outlined,
                   color: Colors.indigo,
                 ),
-                _MetricCard(
+                OwnerMetricCard(
                   label: l10n.liveQueueStatistics,
                   value:
                       '${metrics.queueWaiting + metrics.queueInProgress}',
-                  subtitle:
-                      '${l10n.queueWaiting}: ${metrics.queueWaiting} · ${l10n.queueInProgress}: ${metrics.queueInProgress}',
+                  subtitleContent: OwnerQueueMetricDetails(
+                    waitingLabel: l10n.queueWaiting,
+                    waitingCount: metrics.queueWaiting,
+                    inProgressLabel: l10n.queueInProgress,
+                    inProgressCount: metrics.queueInProgress,
+                  ),
                   icon: Icons.queue_outlined,
                   color: AppTheme.medicalBlue,
                   onTap: () => context.go('${AdminRoutes.platformPrefix}/reports'),
@@ -249,10 +255,22 @@ class _SystemOwnerOverviewScreenState extends State<SystemOwnerOverviewScreen> {
 }
 
 class _MetricsGrid extends StatelessWidget {
-  const _MetricsGrid({required this.isWide, required this.children});
+  const _MetricsGrid({
+    required this.width,
+    required this.isWide,
+    required this.children,
+  });
 
+  final double width;
   final bool isWide;
   final List<Widget> children;
+
+  double _childAspectRatio() {
+    if (isWide) return 1.22;
+    if (width < 380) return 0.74;
+    if (width < 600) return 0.84;
+    return 0.92;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -263,94 +281,8 @@ class _MetricsGrid extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       mainAxisSpacing: 12,
       crossAxisSpacing: 12,
-      childAspectRatio: isWide ? 1.45 : 1.05,
+      childAspectRatio: _childAspectRatio(),
       children: children,
-    );
-  }
-}
-
-class _MetricCard extends StatelessWidget {
-  const _MetricCard({
-    required this.label,
-    required this.value,
-    required this.icon,
-    required this.color,
-    this.subtitle,
-    this.onTap,
-  });
-
-  final String label;
-  final String value;
-  final IconData icon;
-  final Color color;
-  final String? subtitle;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-        side: BorderSide(color: Colors.grey.shade200),
-      ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: color.withOpacity(0.12),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(icon, color: color, size: 22),
-                  ),
-                  const Spacer(),
-                  if (onTap != null)
-                    Icon(Icons.chevron_right, color: Colors.grey.shade400),
-                ],
-              ),
-              const Spacer(),
-              Text(
-                value,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: color,
-                    ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 12.5,
-                  color: Colors.grey.shade700,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              if (subtitle != null) ...[
-                const SizedBox(height: 4),
-                Text(
-                  subtitle!,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

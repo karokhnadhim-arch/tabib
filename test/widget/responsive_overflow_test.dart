@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tabib/core/theme/app_theme.dart';
 import 'package:tabib/core/widgets/responsive_scaffold.dart';
 import 'package:tabib/l10n/app_localizations.dart';
+import 'package:tabib/presentation/widgets/owner_metric_card.dart';
 
 void main() {
   Future<void> pumpSized(
@@ -85,6 +87,81 @@ void main() {
             Card(child: SizedBox(height: 80, child: Center(child: Text('A')))),
             Card(child: SizedBox(height: 80, child: Center(child: Text('B')))),
           ],
+        ),
+      );
+    });
+
+    testWidgets('Live Queue Statistics card at ${size.width}x${size.height}', (
+      tester,
+    ) async {
+      final crossAxisCount = size.width >= 900 ? 5 : 2;
+      final aspectRatio = size.width >= 900
+          ? 1.22
+          : size.width < 380
+              ? 0.74
+              : size.width < 600
+                  ? 0.84
+                  : 0.92;
+      final cellWidth =
+          (size.width - 32 - (crossAxisCount - 1) * 12) / crossAxisCount;
+      final cellHeight = cellWidth / aspectRatio;
+
+      await pumpSized(
+        tester,
+        size,
+        SizedBox(
+          width: cellWidth,
+          height: cellHeight,
+          child: OwnerMetricCard(
+            label: 'Live queue statistics',
+            value: '42',
+            icon: Icons.queue_outlined,
+            color: AppTheme.medicalBlue,
+            subtitleContent: const OwnerQueueMetricDetails(
+              waitingLabel: 'Waiting',
+              waitingCount: 12,
+              inProgressLabel: 'In progress',
+              inProgressCount: 30,
+            ),
+            onTap: () {},
+          ),
+        ),
+      );
+    });
+
+    testWidgets('OwnerMetricCard long Kurdish label at ${size.width}x${size.height}', (
+      tester,
+    ) async {
+      final crossAxisCount = size.width >= 900 ? 5 : 2;
+      final aspectRatio = size.width >= 900
+          ? 1.22
+          : size.width < 380
+              ? 0.74
+              : size.width < 600
+                  ? 0.84
+                  : 0.92;
+      final cellWidth =
+          (size.width - 32 - (crossAxisCount - 1) * 12) / crossAxisCount;
+      final cellHeight = cellWidth / aspectRatio;
+
+      await pumpSized(
+        tester,
+        size,
+        SizedBox(
+          width: cellWidth,
+          height: cellHeight,
+          child: OwnerMetricCard(
+            label: 'ئاماری ڕیزی ڕاستەوخۆ',
+            value: '99',
+            icon: Icons.queue_outlined,
+            color: AppTheme.medicalBlue,
+            subtitleContent: const OwnerQueueMetricDetails(
+              waitingLabel: 'چاوەڕوان',
+              waitingCount: 5,
+              inProgressLabel: 'لە جێبەجێکردندا',
+              inProgressCount: 94,
+            ),
+          ),
         ),
       );
     });
