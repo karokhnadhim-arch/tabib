@@ -2259,4 +2259,49 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get advertisementNotFound => 'ئەم ڕیکلامە چیتر بەردەست نییە.';
+
+  @override
+  String get viewDetails => 'وردەکاری ببینە';
+
+  @override
+  String get currentServing => 'ئێستا ژمارە';
+
+  @override
+  String get queueStatusServing => 'لە خزمەتکردندا';
+
+  @override
+  String get queueStatusFinished => 'تەواو بوو';
+
+  @override
+  String get queueProgress => 'پێشکەوتنی نۆرە';
+
+  @override
+  String get sortQueueProgress => 'پێشکەوتنی نۆرە';
+
+  @override
+  String get nearbyHealthcareCenters => 'ناوەندە تەندروستییە نزیکەکان';
+
+  @override
+  String get recommendedHealthcareCenters => 'ناوەندە تەندروستییە پێشنیارکراوەکان';
+
+  @override
+  String get noNearbyProviders => 'هیچ دامەزراوەیەکی نزیک نەدۆزرایەوە.';
+
+  @override
+  String get callClinic => 'پەیوەندی بە نۆرینگە';
+
+  @override
+  String get openMap => 'نەخشە بکەرەوە';
+
+  @override
+  String get addToFavorites => 'زیادکردن بۆ دڵخواز';
+
+  @override
+  String get removeFromFavorites => 'لابردن لە دڵخواز';
+
+  @override
+  String get cancelQueueConfirm => 'دڵنیایت دەتەوێت ئەم نۆرەیە هەڵبوەشێنیتەوە؟';
+
+  @override
+  String get notNow => 'ئێستا نا';
 }

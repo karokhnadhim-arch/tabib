@@ -4510,6 +4510,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This advertisement is no longer available.'**
   String get advertisementNotFound;
+
+  /// No description provided for @viewDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View details'**
+  String get viewDetails;
+
+  /// No description provided for @currentServing.
+  ///
+  /// In en, this message translates to:
+  /// **'Now serving'**
+  String get currentServing;
+
+  /// No description provided for @queueStatusServing.
+  ///
+  /// In en, this message translates to:
+  /// **'Serving'**
+  String get queueStatusServing;
+
+  /// No description provided for @queueStatusFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Finished'**
+  String get queueStatusFinished;
+
+  /// No description provided for @queueProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue progress'**
+  String get queueProgress;
+
+  /// No description provided for @sortQueueProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue progress'**
+  String get sortQueueProgress;
+
+  /// No description provided for @nearbyHealthcareCenters.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearby healthcare centers'**
+  String get nearbyHealthcareCenters;
+
+  /// No description provided for @recommendedHealthcareCenters.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended healthcare centers'**
+  String get recommendedHealthcareCenters;
+
+  /// No description provided for @noNearbyProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'No nearby providers found in your area.'**
+  String get noNearbyProviders;
+
+  /// No description provided for @callClinic.
+  ///
+  /// In en, this message translates to:
+  /// **'Call clinic'**
+  String get callClinic;
+
+  /// No description provided for @openMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Open map'**
+  String get openMap;
+
+  /// No description provided for @addToFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to favorites'**
+  String get addToFavorites;
+
+  /// No description provided for @removeFromFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from favorites'**
+  String get removeFromFavorites;
+
+  /// No description provided for @cancelQueueConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to cancel this queue?'**
+  String get cancelQueueConfirm;
+
+  /// No description provided for @notNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get notNow;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

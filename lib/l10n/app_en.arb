@@ -867,5 +867,20 @@
   "bookAgain": "Book again",
   "setCityForAds": "Set your city in Profile to see local health offers.",
   "advertisementDetails": "Advertisement",
-  "advertisementNotFound": "This advertisement is no longer available."
+  "advertisementNotFound": "This advertisement is no longer available.",
+  "viewDetails": "View details",
+  "currentServing": "Now serving",
+  "queueStatusServing": "Serving",
+  "queueStatusFinished": "Finished",
+  "queueProgress": "Queue progress",
+  "sortQueueProgress": "Queue progress",
+  "nearbyHealthcareCenters": "Nearby healthcare centers",
+  "recommendedHealthcareCenters": "Recommended healthcare centers",
+  "noNearbyProviders": "No nearby providers found in your area.",
+  "callClinic": "Call clinic",
+  "openMap": "Open map",
+  "addToFavorites": "Add to favorites",
+  "removeFromFavorites": "Remove from favorites",
+  "cancelQueueConfirm": "Are you sure you want to cancel this queue?",
+  "notNow": "Not now"
 }

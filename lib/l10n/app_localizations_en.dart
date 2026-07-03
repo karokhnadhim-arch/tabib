@@ -2259,4 +2259,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get advertisementNotFound => 'This advertisement is no longer available.';
+
+  @override
+  String get viewDetails => 'View details';
+
+  @override
+  String get currentServing => 'Now serving';
+
+  @override
+  String get queueStatusServing => 'Serving';
+
+  @override
+  String get queueStatusFinished => 'Finished';
+
+  @override
+  String get queueProgress => 'Queue progress';
+
+  @override
+  String get sortQueueProgress => 'Queue progress';
+
+  @override
+  String get nearbyHealthcareCenters => 'Nearby healthcare centers';
+
+  @override
+  String get recommendedHealthcareCenters => 'Recommended healthcare centers';
+
+  @override
+  String get noNearbyProviders => 'No nearby providers found in your area.';
+
+  @override
+  String get callClinic => 'Call clinic';
+
+  @override
+  String get openMap => 'Open map';
+
+  @override
+  String get addToFavorites => 'Add to favorites';
+
+  @override
+  String get removeFromFavorites => 'Remove from favorites';
+
+  @override
+  String get cancelQueueConfirm => 'Are you sure you want to cancel this queue?';
+
+  @override
+  String get notNow => 'Not now';
 }

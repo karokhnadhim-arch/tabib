@@ -808,5 +808,20 @@
   "bookAgain": "دووبارە نۆرە بگرە",
   "setCityForAds": "شارەکەت لە پرۆفایل دابنێ بۆ بینینی پێشکەشکراوە تەندروستییە خۆجێییەکان.",
   "advertisementDetails": "ڕیکلام",
-  "advertisementNotFound": "ئەم ڕیکلامە چیتر بەردەست نییە."
+  "advertisementNotFound": "ئەم ڕیکلامە چیتر بەردەست نییە.",
+  "viewDetails": "وردەکاری ببینە",
+  "currentServing": "ئێستا ژمارە",
+  "queueStatusServing": "لە خزمەتکردندا",
+  "queueStatusFinished": "تەواو بوو",
+  "queueProgress": "پێشکەوتنی نۆرە",
+  "sortQueueProgress": "پێشکەوتنی نۆرە",
+  "nearbyHealthcareCenters": "ناوەندە تەندروستییە نزیکەکان",
+  "recommendedHealthcareCenters": "ناوەندە تەندروستییە پێشنیارکراوەکان",
+  "noNearbyProviders": "هیچ دامەزراوەیەکی نزیک نەدۆزرایەوە.",
+  "callClinic": "پەیوەندی بە نۆرینگە",
+  "openMap": "نەخشە بکەرەوە",
+  "addToFavorites": "زیادکردن بۆ دڵخواز",
+  "removeFromFavorites": "لابردن لە دڵخواز",
+  "cancelQueueConfirm": "دڵنیایت دەتەوێت ئەم نۆرەیە هەڵبوەشێنیتەوە؟",
+  "notNow": "ئێستا نا"
 }

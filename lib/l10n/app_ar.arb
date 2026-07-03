@@ -808,5 +808,20 @@
   "bookAgain": "احجز مرة أخرى",
   "setCityForAds": "حدد مدينتك في الملف الشخصي لعرض العروض الصحية المحلية.",
   "advertisementDetails": "إعلان",
-  "advertisementNotFound": "هذا الإعلان لم يعد متاحاً."
+  "advertisementNotFound": "هذا الإعلان لم يعد متاحاً.",
+  "viewDetails": "عرض التفاصيل",
+  "currentServing": "الدور الحالي",
+  "queueStatusServing": "قيد الخدمة",
+  "queueStatusFinished": "منتهي",
+  "queueProgress": "تقدم الطابور",
+  "sortQueueProgress": "تقدم الطابور",
+  "nearbyHealthcareCenters": "مراكز صحية قريبة",
+  "recommendedHealthcareCenters": "مراكز صحية موصى بها",
+  "noNearbyProviders": "لم يتم العثور على منشآت قريبة في منطقتك.",
+  "callClinic": "اتصل بالعيادة",
+  "openMap": "فتح الخريطة",
+  "addToFavorites": "إضافة إلى المفضلة",
+  "removeFromFavorites": "إزالة من المفضلة",
+  "cancelQueueConfirm": "هل أنت متأكد من إلغاء هذا الطابور؟",
+  "notNow": "ليس الآن"
 }

@@ -2259,4 +2259,49 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get advertisementNotFound => 'هذا الإعلان لم يعد متاحاً.';
+
+  @override
+  String get viewDetails => 'عرض التفاصيل';
+
+  @override
+  String get currentServing => 'الدور الحالي';
+
+  @override
+  String get queueStatusServing => 'قيد الخدمة';
+
+  @override
+  String get queueStatusFinished => 'منتهي';
+
+  @override
+  String get queueProgress => 'تقدم الطابور';
+
+  @override
+  String get sortQueueProgress => 'تقدم الطابور';
+
+  @override
+  String get nearbyHealthcareCenters => 'مراكز صحية قريبة';
+
+  @override
+  String get recommendedHealthcareCenters => 'مراكز صحية موصى بها';
+
+  @override
+  String get noNearbyProviders => 'لم يتم العثور على منشآت قريبة في منطقتك.';
+
+  @override
+  String get callClinic => 'اتصل بالعيادة';
+
+  @override
+  String get openMap => 'فتح الخريطة';
+
+  @override
+  String get addToFavorites => 'إضافة إلى المفضلة';
+
+  @override
+  String get removeFromFavorites => 'إزالة من المفضلة';
+
+  @override
+  String get cancelQueueConfirm => 'هل أنت متأكد من إلغاء هذا الطابور؟';
+
+  @override
+  String get notNow => 'ليس الآن';
 }
