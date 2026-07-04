@@ -2854,6 +2854,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get attachImage => 'Attach image';
 
   @override
+  String userIsTyping(String userName) {
+    return '$userName is typing…';
+  }
+
+  @override
   String get metricNotAvailable => 'N/A';
 
   @override
@@ -3170,4 +3175,121 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get autoBackup => 'Automatic backups';
+
+  @override
+  String get superOwner => 'Super Owner';
+
+  @override
+  String get superOwnerDashboard => 'Super Owner Dashboard';
+
+  @override
+  String get superOwnerDashboardHint => 'Monitor all organizations, platform revenue, and subscription plans.';
+
+  @override
+  String get totalOrganizations => 'Total organizations';
+
+  @override
+  String get activeOrganizations => 'Active organizations';
+
+  @override
+  String get suspendedOrganizations => 'Suspended organizations';
+
+  @override
+  String get platformRevenue => 'Platform revenue';
+
+  @override
+  String get firebaseUsage => 'Firebase usage';
+
+  @override
+  String get createOrganization => 'Create organization';
+
+  @override
+  String get suspendOrganization => 'Suspend organization';
+
+  @override
+  String get deleteOrganization => 'Delete organization';
+
+  @override
+  String get organizationName => 'Organization name';
+
+  @override
+  String get organizationSettings => 'Organization settings';
+
+  @override
+  String get organizationSettingsHint => 'Customize branding, language, and rules for your organization.';
+
+  @override
+  String get organizationBilling => 'Organization billing';
+
+  @override
+  String get organizationBillingHint => 'View your plan, usage limits, and payment history.';
+
+  @override
+  String get currentPlan => 'Current plan';
+
+  @override
+  String get expirationDate => 'Expiration date';
+
+  @override
+  String get usageLimits => 'Usage limits';
+
+  @override
+  String get upgradePlan => 'Upgrade plan';
+
+  @override
+  String get paymentHistory => 'Payment history';
+
+  @override
+  String get whiteLabelReady => 'Architecture supports per-organization white-label Android, iOS, and Web apps on the same backend.';
+
+  @override
+  String get organizationCreated => 'Organization created';
+
+  @override
+  String get organizationSuspended => 'Organization status updated';
+
+  @override
+  String get organizationDeleted => 'Organization deleted';
+
+  @override
+  String get globalStatistics => 'Global statistics';
+
+  @override
+  String get manageOrganizations => 'Manage organizations';
+
+  @override
+  String get planTrial => 'Trial';
+
+  @override
+  String get planMonthly => 'Monthly';
+
+  @override
+  String get planAnnual => 'Annual';
+
+  @override
+  String get planEnterprise => 'Enterprise';
+
+  @override
+  String get cancelLabel => 'Cancel';
+
+  @override
+  String get activate => 'Activate';
+
+  @override
+  String get noDataAvailable => 'No data available';
+
+  @override
+  String get primaryColor => 'Primary color';
+
+  @override
+  String get branding => 'Branding';
+
+  @override
+  String get rulesAndHours => 'Rules & hours';
+
+  @override
+  String get queueRules => 'Queue rules';
+
+  @override
+  String get appointmentRules => 'Appointment rules';
 }

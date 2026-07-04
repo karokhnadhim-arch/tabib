@@ -19,6 +19,10 @@ service cloud.firestore {
       return signedIn() && userData().isSystemOwner == true;
     }
 
+    function isSuperOwner() {
+      return signedIn() && userData().isSuperOwner == true;
+    }
+
     function userRole() {
       return userData().role;
     }
@@ -167,6 +171,17 @@ service cloud.firestore {
             && request.resource.data.userId == request.auth.uid);
 
       allow delete: if isSystemOwner();
+    }
+
+    // Enterprise multi-tenant metadata (future organization scoping).
+    match /organizations/{orgId} {
+      allow read: if isSystemOwner() || isSuperOwner();
+      allow write: if isSuperOwner();
+    }
+
+    match /platformMetrics/{docId} {
+      allow read: if isSystemOwner() || isSuperOwner();
+      allow write: if isSystemOwner() || isSuperOwner();
     }
   }
 }

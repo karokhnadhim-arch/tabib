@@ -15,6 +15,8 @@ class UserAccount {
     this.clinicId,
     this.linkedDoctorId,
     this.isSystemOwner = false,
+    this.isSuperOwner = false,
+    this.organizationId,
     this.isActive = true,
     this.accountStatus = AccountStatus.active,
     this.adminPermissions = AdminPermissionSet.empty,
@@ -30,6 +32,10 @@ class UserAccount {
   final String? linkedDoctorId;
   /// Super Admin flag — must never appear in shared UI; see [SystemOwnerPrivacy].
   final bool isSystemOwner;
+  /// Platform Super Owner — manages all organizations (above Organization Owner).
+  final bool isSuperOwner;
+  /// Organization partition — null uses [TenantConstants.defaultOrganizationId].
+  final String? organizationId;
   /// Legacy flag — kept in sync with [accountStatus] for older clients.
   final bool isActive;
   final AccountStatus accountStatus;
@@ -45,6 +51,8 @@ class UserAccount {
     String? clinicId,
     String? linkedDoctorId,
     bool? isSystemOwner,
+    bool? isSuperOwner,
+    String? organizationId,
     bool? isActive,
     AccountStatus? accountStatus,
     AdminPermissionSet? adminPermissions,
@@ -63,6 +71,8 @@ class UserAccount {
       clinicId: clinicId ?? this.clinicId,
       linkedDoctorId: linkedDoctorId ?? this.linkedDoctorId,
       isSystemOwner: isSystemOwner ?? this.isSystemOwner,
+      isSuperOwner: isSuperOwner ?? this.isSuperOwner,
+      organizationId: organizationId ?? this.organizationId,
       accountStatus: nextStatus,
       isActive: nextStatus.isActive,
       adminPermissions: adminPermissions ?? this.adminPermissions,
@@ -78,6 +88,8 @@ class UserAccount {
         'clinicId': clinicId,
         'linkedDoctorId': linkedDoctorId,
         if (isSystemOwner) 'isSystemOwner': true,
+        if (isSuperOwner) 'isSuperOwner': true,
+        if (organizationId != null) 'organizationId': organizationId,
         'isActive': accountStatus.isActive,
         'accountStatus': accountStatus.storageKey,
         if (role == UserRole.admin)
@@ -104,6 +116,8 @@ class UserAccount {
       clinicId: data['clinicId'] as String?,
       linkedDoctorId: data['linkedDoctorId'] as String?,
       isSystemOwner: data['isSystemOwner'] == true,
+      isSuperOwner: data['isSuperOwner'] == true,
+      organizationId: data['organizationId'] as String?,
       accountStatus: status,
       isActive: status.isActive,
       adminPermissions: AdminPermissionSet.fromStorage(

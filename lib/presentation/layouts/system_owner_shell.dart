@@ -103,6 +103,8 @@ class SystemOwnerShell extends StatelessWidget {
         SystemOwnerNavSection.auditLog => l10n.auditLog,
         SystemOwnerNavSection.security => l10n.securityCenter,
         SystemOwnerNavSection.backup => l10n.backupRestore,
+        SystemOwnerNavSection.organizationSettings => l10n.organizationSettings,
+        SystemOwnerNavSection.organizationBilling => l10n.organizationBilling,
         SystemOwnerNavSection.settings => l10n.systemSettings,
       };
 }

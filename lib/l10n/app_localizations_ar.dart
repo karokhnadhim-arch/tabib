@@ -2854,6 +2854,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get attachImage => 'إرفاق صورة';
 
   @override
+  String userIsTyping(String userName) {
+    return '$userName يكتب…';
+  }
+
+  @override
   String get metricNotAvailable => 'غير متاح';
 
   @override
@@ -3170,4 +3175,121 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get autoBackup => 'نسخ احتياطي تلقائي';
+
+  @override
+  String get superOwner => 'المالك الأعلى';
+
+  @override
+  String get superOwnerDashboard => 'لوحة المالك الأعلى';
+
+  @override
+  String get superOwnerDashboardHint => 'مراقبة جميع المنظمات وإيرادات المنصة وخطط الاشتراك.';
+
+  @override
+  String get totalOrganizations => 'إجمالي المنظمات';
+
+  @override
+  String get activeOrganizations => 'المنظمات النشطة';
+
+  @override
+  String get suspendedOrganizations => 'المنظمات الموقوفة';
+
+  @override
+  String get platformRevenue => 'إيرادات المنصة';
+
+  @override
+  String get firebaseUsage => 'استخدام Firebase';
+
+  @override
+  String get createOrganization => 'إنشاء منظمة';
+
+  @override
+  String get suspendOrganization => 'إيقاف المنظمة';
+
+  @override
+  String get deleteOrganization => 'حذف المنظمة';
+
+  @override
+  String get organizationName => 'اسم المنظمة';
+
+  @override
+  String get organizationSettings => 'إعدادات المنظمة';
+
+  @override
+  String get organizationSettingsHint => 'تخصيص العلامة التجارية واللغة والقواعد لمنظمتك.';
+
+  @override
+  String get organizationBilling => 'فوترة المنظمة';
+
+  @override
+  String get organizationBillingHint => 'عرض خطتك وحدود الاستخدام وسجل المدفوعات.';
+
+  @override
+  String get currentPlan => 'الخطة الحالية';
+
+  @override
+  String get expirationDate => 'تاريخ الانتهاء';
+
+  @override
+  String get usageLimits => 'حدود الاستخدام';
+
+  @override
+  String get upgradePlan => 'ترقية الخطة';
+
+  @override
+  String get paymentHistory => 'سجل المدفوعات';
+
+  @override
+  String get whiteLabelReady => 'البنية تدعم تطبيقات Android و iOS و Web بعلامة تجارية لكل منظمة على نفس الخادم.';
+
+  @override
+  String get organizationCreated => 'تم إنشاء المنظمة';
+
+  @override
+  String get organizationSuspended => 'تم تحديث حالة المنظمة';
+
+  @override
+  String get organizationDeleted => 'تم حذف المنظمة';
+
+  @override
+  String get globalStatistics => 'إحصائيات عامة';
+
+  @override
+  String get manageOrganizations => 'إدارة المنظمات';
+
+  @override
+  String get planTrial => 'تجريبي';
+
+  @override
+  String get planMonthly => 'شهري';
+
+  @override
+  String get planAnnual => 'سنوي';
+
+  @override
+  String get planEnterprise => 'مؤسسي';
+
+  @override
+  String get cancelLabel => 'إلغاء';
+
+  @override
+  String get activate => 'تفعيل';
+
+  @override
+  String get noDataAvailable => 'لا توجد بيانات';
+
+  @override
+  String get primaryColor => 'اللون الأساسي';
+
+  @override
+  String get branding => 'العلامة التجارية';
+
+  @override
+  String get rulesAndHours => 'القواعد والساعات';
+
+  @override
+  String get queueRules => 'قواعد قائمة الانتظار';
+
+  @override
+  String get appointmentRules => 'قواعد المواعيد';
 }

@@ -19,6 +19,8 @@ enum SystemOwnerNavSection {
   auditLog,
   security,
   backup,
+  organizationSettings,
+  organizationBilling,
   settings;
 
   String get routePath => switch (this) {
@@ -49,6 +51,10 @@ enum SystemOwnerNavSection {
           '${AdminRoutes.platformPrefix}/security',
         SystemOwnerNavSection.backup =>
           '${AdminRoutes.platformPrefix}/backup',
+        SystemOwnerNavSection.organizationSettings =>
+          '${AdminRoutes.platformPrefix}/organization-settings',
+        SystemOwnerNavSection.organizationBilling =>
+          '${AdminRoutes.platformPrefix}/organization-billing',
         SystemOwnerNavSection.settings =>
           '${AdminRoutes.platformPrefix}/system-settings',
       };
@@ -69,6 +75,8 @@ enum SystemOwnerNavSection {
         SystemOwnerNavSection.auditLog => Icons.history_outlined,
         SystemOwnerNavSection.security => Icons.shield_outlined,
         SystemOwnerNavSection.backup => Icons.backup_outlined,
+        SystemOwnerNavSection.organizationSettings => Icons.business_outlined,
+        SystemOwnerNavSection.organizationBilling => Icons.receipt_long_outlined,
         SystemOwnerNavSection.settings => Icons.tune_outlined,
       };
 

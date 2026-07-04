@@ -5693,6 +5693,12 @@ abstract class AppLocalizations {
   /// **'Attach image'**
   String get attachImage;
 
+  /// No description provided for @userIsTyping.
+  ///
+  /// In en, this message translates to:
+  /// **'{userName} is typing…'**
+  String userIsTyping(String userName);
+
   /// No description provided for @metricNotAvailable.
   ///
   /// In en, this message translates to:
@@ -6316,6 +6322,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Automatic backups'**
   String get autoBackup;
+
+  /// No description provided for @superOwner.
+  ///
+  /// In en, this message translates to:
+  /// **'Super Owner'**
+  String get superOwner;
+
+  /// No description provided for @superOwnerDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Super Owner Dashboard'**
+  String get superOwnerDashboard;
+
+  /// No description provided for @superOwnerDashboardHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor all organizations, platform revenue, and subscription plans.'**
+  String get superOwnerDashboardHint;
+
+  /// No description provided for @totalOrganizations.
+  ///
+  /// In en, this message translates to:
+  /// **'Total organizations'**
+  String get totalOrganizations;
+
+  /// No description provided for @activeOrganizations.
+  ///
+  /// In en, this message translates to:
+  /// **'Active organizations'**
+  String get activeOrganizations;
+
+  /// No description provided for @suspendedOrganizations.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspended organizations'**
+  String get suspendedOrganizations;
+
+  /// No description provided for @platformRevenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Platform revenue'**
+  String get platformRevenue;
+
+  /// No description provided for @firebaseUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'Firebase usage'**
+  String get firebaseUsage;
+
+  /// No description provided for @createOrganization.
+  ///
+  /// In en, this message translates to:
+  /// **'Create organization'**
+  String get createOrganization;
+
+  /// No description provided for @suspendOrganization.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspend organization'**
+  String get suspendOrganization;
+
+  /// No description provided for @deleteOrganization.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete organization'**
+  String get deleteOrganization;
+
+  /// No description provided for @organizationName.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization name'**
+  String get organizationName;
+
+  /// No description provided for @organizationSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization settings'**
+  String get organizationSettings;
+
+  /// No description provided for @organizationSettingsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize branding, language, and rules for your organization.'**
+  String get organizationSettingsHint;
+
+  /// No description provided for @organizationBilling.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization billing'**
+  String get organizationBilling;
+
+  /// No description provided for @organizationBillingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'View your plan, usage limits, and payment history.'**
+  String get organizationBillingHint;
+
+  /// No description provided for @currentPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Current plan'**
+  String get currentPlan;
+
+  /// No description provided for @expirationDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiration date'**
+  String get expirationDate;
+
+  /// No description provided for @usageLimits.
+  ///
+  /// In en, this message translates to:
+  /// **'Usage limits'**
+  String get usageLimits;
+
+  /// No description provided for @upgradePlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade plan'**
+  String get upgradePlan;
+
+  /// No description provided for @paymentHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment history'**
+  String get paymentHistory;
+
+  /// No description provided for @whiteLabelReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Architecture supports per-organization white-label Android, iOS, and Web apps on the same backend.'**
+  String get whiteLabelReady;
+
+  /// No description provided for @organizationCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization created'**
+  String get organizationCreated;
+
+  /// No description provided for @organizationSuspended.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization status updated'**
+  String get organizationSuspended;
+
+  /// No description provided for @organizationDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization deleted'**
+  String get organizationDeleted;
+
+  /// No description provided for @globalStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Global statistics'**
+  String get globalStatistics;
+
+  /// No description provided for @manageOrganizations.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage organizations'**
+  String get manageOrganizations;
+
+  /// No description provided for @planTrial.
+  ///
+  /// In en, this message translates to:
+  /// **'Trial'**
+  String get planTrial;
+
+  /// No description provided for @planMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get planMonthly;
+
+  /// No description provided for @planAnnual.
+  ///
+  /// In en, this message translates to:
+  /// **'Annual'**
+  String get planAnnual;
+
+  /// No description provided for @planEnterprise.
+  ///
+  /// In en, this message translates to:
+  /// **'Enterprise'**
+  String get planEnterprise;
+
+  /// No description provided for @cancelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancelLabel;
+
+  /// No description provided for @activate.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate'**
+  String get activate;
+
+  /// No description provided for @noDataAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No data available'**
+  String get noDataAvailable;
+
+  /// No description provided for @primaryColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary color'**
+  String get primaryColor;
+
+  /// No description provided for @branding.
+  ///
+  /// In en, this message translates to:
+  /// **'Branding'**
+  String get branding;
+
+  /// No description provided for @rulesAndHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Rules & hours'**
+  String get rulesAndHours;
+
+  /// No description provided for @queueRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue rules'**
+  String get queueRules;
+
+  /// No description provided for @appointmentRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment rules'**
+  String get appointmentRules;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

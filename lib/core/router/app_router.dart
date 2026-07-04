@@ -50,6 +50,9 @@ import '../../presentation/screens/settings/legal_content_screen.dart';
 import '../../presentation/screens/settings/provider_settings_screen.dart';
 import '../../presentation/screens/settings/settings_screen.dart';
 import '../../presentation/widgets/clinical_provider_guard.dart';
+import '../../presentation/screens/owner/organization_billing_screen.dart';
+import '../../presentation/screens/owner/organization_settings_screen.dart';
+import '../../presentation/screens/super_owner/super_owner_dashboard_screen.dart';
 import '../../presentation/screens/splash/splash_screen.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/favorites_service.dart';
@@ -150,6 +153,10 @@ class AppRouter {
                 ),
               ),
             ],
+          ),
+          GoRoute(
+            path: '/super-owner',
+            builder: (_, __) => const SuperOwnerDashboardScreen(),
           ),
           ShellRoute(
             builder: (context, state, child) {
@@ -300,6 +307,14 @@ class AppRouter {
                 builder: (_, __) => const OwnerBackupRestoreScreen(),
               ),
               GoRoute(
+                path: 'organization-settings',
+                builder: (_, __) => const OrganizationSettingsScreen(),
+              ),
+              GoRoute(
+                path: 'organization-billing',
+                builder: (_, __) => const OrganizationBillingScreen(),
+              ),
+              GoRoute(
                 path: 'system-settings',
                 builder: (_, __) => const OwnerSystemSettingsScreen(),
               ),
@@ -386,10 +401,27 @@ class AppRouter {
 
     if (loggedIn &&
         (path == '/login' || path == '/register' || path == '/splash')) {
+      if (_auth.isSuperOwner && !_auth.isSystemOwner) {
+        return AdminRoutes.superOwnerHome;
+      }
       if (_auth.isSystemOwner) return AdminRoutes.ownerHome;
       if (_auth.canAccessAdminPanel && !_auth.isClinicalProvider) {
         return AdminRoutes.adminConsole;
       }
+      if (_auth.isClinicalProvider) return '/doctor';
+      if (_auth.isSecretary) return '/secretary';
+      return '/home';
+    }
+
+    if (loggedIn && _auth.isSuperOwner && !_auth.isSystemOwner) {
+      if (AdminRoutes.isAdminRoute(path) && !AdminRoutes.isSuperOwnerRoute(path)) {
+        return AdminRoutes.superOwnerHome;
+      }
+    }
+
+    if (loggedIn && AdminRoutes.isSuperOwnerRoute(path) && !_auth.isSuperOwner) {
+      if (_auth.isSystemOwner) return AdminRoutes.ownerHome;
+      if (_auth.canAccessAdminPanel) return AdminRoutes.adminConsole;
       if (_auth.isClinicalProvider) return '/doctor';
       if (_auth.isSecretary) return '/secretary';
       return '/home';

@@ -12,6 +12,7 @@ import '../models/doctor.dart';
 import '../models/service_provider_type.dart';
 import '../models/clinic.dart';
 import '../models/user_account.dart';
+import '../core/config/super_owner_config.dart';
 import '../core/config/system_owner_config.dart';
 import '../core/auth/permission_policy.dart';
 import '../core/utils/clinic_subscription.dart';
@@ -45,6 +46,7 @@ class AuthService extends ChangeNotifier {
 
   /// Demo staff accounts when Firebase is not configured.
   static const demoAdminEmail = 'admin@tabib.demo';
+  static const demoSuperOwnerEmail = 'super@tabib.demo';
   static const demoDoctorEmail = 'doctor@tabib.demo';
   static const demoSecretaryEmail = 'secretary@tabib.demo';
   static const demoPassword = 'demo123';
@@ -52,6 +54,9 @@ class AuthService extends ChangeNotifier {
   bool get isSecretary => _currentUser?.role == UserRole.secretary;
   /// System owner — unrestricted platform access; hidden from all other users.
   bool get isSystemOwner => _currentUser?.isSystemOwner == true;
+
+  /// Super Owner — platform-level multi-tenant control above Organization Owners.
+  bool get isSuperOwner => _currentUser?.isSuperOwner == true;
 
   /// Delegated Admin or System Owner with panel access.
   bool get canAccessAdminPanel =>
@@ -64,7 +69,7 @@ class AuthService extends ChangeNotifier {
       PermissionPolicy.hasCapability(_currentUser, capability);
 
   bool get isDoctor =>
-      !isSystemOwner && _currentUser?.role == UserRole.doctor;
+      !isSystemOwner && !isSuperOwner && _currentUser?.role == UserRole.doctor;
 
   /// Doctor or business provider with clinical dashboard (never System Owner).
   bool get isClinicalProvider => isDoctor;
@@ -131,6 +136,10 @@ class AuthService extends ChangeNotifier {
           await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
       if (doc.exists) {
         _currentUser = UserAccount.fromFirestore(doc.id, doc.data()!);
+        await _applySuperOwnerPrivileges(
+          persist: true,
+          authEmail: user.email,
+        );
         await _applySystemOwnerPrivileges(
           persist: true,
           authEmail: user.email,
@@ -148,12 +157,48 @@ class AuthService extends ChangeNotifier {
     }
   }
 
+  Future<void> _applySuperOwnerPrivileges({
+    bool persist = false,
+    String? authEmail,
+  }) async {
+    final user = _currentUser;
+    if (user == null) return;
+
+    final shouldSuper = user.isSuperOwner ||
+        SuperOwnerConfig.isSuperOwnerEmail(user.email) ||
+        SuperOwnerConfig.isSuperOwnerEmail(authEmail);
+    if (!shouldSuper) return;
+
+    final needsUpdate = !user.isSuperOwner ||
+        user.role != UserRole.admin ||
+        user.doctorId != null ||
+        user.linkedDoctorId != null;
+    if (!needsUpdate) return;
+
+    _currentUser = user.copyWith(
+      isSuperOwner: true,
+      role: UserRole.admin,
+      email: user.email ?? authEmail,
+      doctorId: null,
+      linkedDoctorId: null,
+    );
+    if (persist && !_demoMode) {
+      await _backend.upsertStaff(_currentUser!);
+    }
+    notifyListeners();
+  }
+
   Future<void> _applySystemOwnerPrivileges({
     bool persist = false,
     String? authEmail,
   }) async {
     final user = _currentUser;
     if (user == null) return;
+    if (user.isSuperOwner &&
+        !SystemOwnerConfig.isOwnerEmail(user.email) &&
+        !SystemOwnerConfig.isOwnerEmail(authEmail)) {
+      return;
+    }
 
     final shouldOwn = user.isSystemOwner ||
         SystemOwnerConfig.isOwnerEmail(user.email) ||
@@ -183,7 +228,7 @@ class AuthService extends ChangeNotifier {
   Future<String?> _rejectBlockedAccount() async {
     final user = _currentUser;
     if (user == null) return 'invalid_credentials';
-    if (user.isSystemOwner) return null;
+    if (user.isSystemOwner || user.isSuperOwner) return null;
 
     Clinic? clinic;
     if (user.clinicId != null && user.clinicId!.isNotEmpty) {
@@ -321,6 +366,10 @@ class AuthService extends ChangeNotifier {
         await _loadUserFromFirebase(fbUser);
       }
       if (_currentUser == null) return 'invalid_credentials';
+      await _applySuperOwnerPrivileges(
+        persist: true,
+        authEmail: fbUser?.email ?? authEmail,
+      );
       await _applySystemOwnerPrivileges(
         persist: true,
         authEmail: fbUser?.email ?? authEmail,
@@ -718,6 +767,7 @@ class AuthService extends ChangeNotifier {
     if (!StaffAuthIdentifiers.looksLikeEmail(identifier)) return false;
     final normalizedEmail = identifier.trim().toLowerCase();
     return normalizedEmail == demoAdminEmail ||
+        normalizedEmail == demoSuperOwnerEmail ||
         normalizedEmail == demoDoctorEmail ||
         normalizedEmail == demoSecretaryEmail;
   }
@@ -726,6 +776,21 @@ class AuthService extends ChangeNotifier {
     if (StaffAuthIdentifiers.looksLikeEmail(identifier) &&
         password == demoPassword) {
       final normalizedEmail = identifier.trim().toLowerCase();
+
+      if (normalizedEmail == demoSuperOwnerEmail) {
+        _currentUser = const UserAccount(
+          id: 'demo_super_owner',
+          name: LocalizedText(
+            ku: 'سوپەر خاوەن',
+            ar: 'المالك الأعلى',
+            en: 'Super Owner',
+          ),
+          role: UserRole.admin,
+          email: demoSuperOwnerEmail,
+          isSuperOwner: true,
+        );
+        return await _rejectBlockedAccount();
+      }
 
       if (normalizedEmail == demoAdminEmail) {
         _currentUser = const UserAccount(
@@ -778,6 +843,7 @@ class AuthService extends ChangeNotifier {
     final dynamic = await _backend.lookupStaffCredentials(identifier, password);
     if (dynamic != null) {
       _currentUser = dynamic;
+      await _applySuperOwnerPrivileges();
       await _applySystemOwnerPrivileges();
       return await _rejectBlockedAccount();
     }

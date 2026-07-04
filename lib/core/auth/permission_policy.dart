@@ -7,6 +7,14 @@ abstract final class PermissionPolicy {
 
   static bool isSystemOwner(UserAccount? user) => user?.isSystemOwner == true;
 
+  static bool isSuperOwner(UserAccount? user) => user?.isSuperOwner == true;
+
+  /// Organization Owner — existing System Owner role (single-tenant compatible).
+  static bool isOrganizationOwner(UserAccount? user) =>
+      isSystemOwner(user) && !isSuperOwner(user);
+
+  static bool canAccessSuperOwnerConsole(UserAccount? user) => isSuperOwner(user);
+
   static bool isDelegatedAdmin(UserAccount? user) =>
       user != null && user.role == UserRole.admin && !user.isSystemOwner;
 
@@ -33,7 +41,8 @@ abstract final class PermissionPolicy {
   /// Whether [actor] may change [target] (status, delete, password, etc.).
   static bool canModifyAccount(UserAccount? actor, UserAccount target) {
     if (actor == null) return false;
-    if (target.isSystemOwner) return false;
+    if (target.isSuperOwner) return false;
+    if (target.isSystemOwner) return isSuperOwner(actor);
     if (target.role == UserRole.admin) return false;
     if (isSystemOwner(actor)) return actor.id != target.id;
     if (isDelegatedAdmin(actor)) return true;

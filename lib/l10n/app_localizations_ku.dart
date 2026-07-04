@@ -2854,6 +2854,11 @@ class AppLocalizationsKu extends AppLocalizations {
   String get attachImage => 'وێنە هاوپێچ بکە';
 
   @override
+  String userIsTyping(String userName) {
+    return '$userName دەنووسێت…';
+  }
+
+  @override
   String get metricNotAvailable => 'بەردەست نییە';
 
   @override
@@ -3170,4 +3175,121 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get autoBackup => 'پاشەکەوتی خۆکار';
+
+  @override
+  String get superOwner => 'سوپەر خاوەن';
+
+  @override
+  String get superOwnerDashboard => 'داشبۆردی سوپەر خاوەن';
+
+  @override
+  String get superOwnerDashboardHint => 'چاودێری هەموو ڕێکخراوەکان، داهاتی پلاتفۆرم و پلانی بەشداریکردن.';
+
+  @override
+  String get totalOrganizations => 'کۆی ڕێکخراوەکان';
+
+  @override
+  String get activeOrganizations => 'ڕێکخراوە چالاکەکان';
+
+  @override
+  String get suspendedOrganizations => 'ڕێکخراوە هەڵواسراوەکان';
+
+  @override
+  String get platformRevenue => 'داهاتی پلاتفۆرم';
+
+  @override
+  String get firebaseUsage => 'بەکارهێنانی Firebase';
+
+  @override
+  String get createOrganization => 'دروستکردنی ڕێکخراو';
+
+  @override
+  String get suspendOrganization => 'هەڵواسینی ڕێکخراو';
+
+  @override
+  String get deleteOrganization => 'سڕینەوەی ڕێکخراو';
+
+  @override
+  String get organizationName => 'ناوی ڕێکخراو';
+
+  @override
+  String get organizationSettings => 'ڕێکخستنەکانی ڕێکخراو';
+
+  @override
+  String get organizationSettingsHint => 'بەکەسیکردنی براند، زمان و یاساکان بۆ ڕێکخراوەکەت.';
+
+  @override
+  String get organizationBilling => 'وەسڵی ڕێکخراو';
+
+  @override
+  String get organizationBillingHint => 'پلان، سنوورەکانی بەکارهێنان و مێژووی پارەدان ببینە.';
+
+  @override
+  String get currentPlan => 'پلانی ئێستا';
+
+  @override
+  String get expirationDate => 'بەرواری بەسەرچوون';
+
+  @override
+  String get usageLimits => 'سنوورەکانی بەکارهێنان';
+
+  @override
+  String get upgradePlan => 'بەرزکردنەوەی پلان';
+
+  @override
+  String get paymentHistory => 'مێژووی پارەدان';
+
+  @override
+  String get whiteLabelReady => 'ئارکیتێکتور پشتگیری ئەپەکانی Android و iOS و Web بە براندی هەر ڕێکخراوێک دەکات لەسەر هەمان backend.';
+
+  @override
+  String get organizationCreated => 'ڕێکخراو دروستکرا';
+
+  @override
+  String get organizationSuspended => 'دۆخی ڕێکخراو نوێکرایەوە';
+
+  @override
+  String get organizationDeleted => 'ڕێکخراو سڕایەوە';
+
+  @override
+  String get globalStatistics => 'ئامارە گشتییەکان';
+
+  @override
+  String get manageOrganizations => 'بەڕێوەبردنی ڕێکخراوەکان';
+
+  @override
+  String get planTrial => 'تاقیکردنەوە';
+
+  @override
+  String get planMonthly => 'مانگانە';
+
+  @override
+  String get planAnnual => 'ساڵانە';
+
+  @override
+  String get planEnterprise => 'Enterprise';
+
+  @override
+  String get cancelLabel => 'پاشگەزبوونەوە';
+
+  @override
+  String get activate => 'چالاککردن';
+
+  @override
+  String get noDataAvailable => 'هیچ داتایەک نییە';
+
+  @override
+  String get primaryColor => 'ڕەنگی سەرەکی';
+
+  @override
+  String get branding => 'براند';
+
+  @override
+  String get rulesAndHours => 'یاسا و کاتژمێرەکان';
+
+  @override
+  String get queueRules => 'یاساکانی ڕیز';
+
+  @override
+  String get appointmentRules => 'یاساکانی چاوپێکەوتن';
 }

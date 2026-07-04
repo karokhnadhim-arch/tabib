@@ -53,6 +53,9 @@ import 'services/system_monitoring_service.dart';
 import 'services/system_error_log_service.dart';
 import 'services/system_activity_feed_service.dart';
 import 'services/system_maintenance_service.dart';
+import 'services/organization_billing_service.dart';
+import 'services/organization_service.dart';
+import 'services/tenant_context_service.dart';
 import 'core/widgets/maintenance_mode_gate.dart';
 
 /// Root widget for Tabib — medical appointment platform.
@@ -117,6 +120,9 @@ class _TabibAppState extends State<TabibApp> {
   late final OwnerDashboardAppearanceService _ownerDashboardAppearanceService;
   late final FirebaseCostOptimizerService _firebaseCostOptimizerService;
   late final OwnerMonitoringSettingsService _ownerMonitoringSettingsService;
+  late final OrganizationService _organizationService;
+  late final TenantContextService _tenantContextService;
+  late final OrganizationBillingService _organizationBillingService;
   QueueNotificationMonitor? _queueNotificationMonitor;
   late final GoRouter _router;
   String? _activePatientQueueId;
@@ -204,6 +210,11 @@ class _TabibAppState extends State<TabibApp> {
     _ownerMonitoringSettingsService = OwnerMonitoringSettingsService(
       maintenance: _systemMaintenanceService,
     )..load();
+    _organizationService = OrganizationService();
+    _tenantContextService = TenantContextService();
+    _organizationBillingService = OrganizationBillingService(
+      organizations: _organizationService,
+    );
     _systemMonitoringService = SystemMonitoringService(
       backend: _backend,
       clinicData: _dataService,
@@ -259,6 +270,7 @@ class _TabibAppState extends State<TabibApp> {
     _favoritesService.bindUser(userId);
     _patientProfileService.bindUser(userId);
     _recentlyVisitedService.bindUser(userId);
+    _tenantContextService.bindUser(user);
   }
 
   @override
@@ -310,6 +322,9 @@ class _TabibAppState extends State<TabibApp> {
         ChangeNotifierProvider.value(value: _ownerDashboardAppearanceService),
         ChangeNotifierProvider.value(value: _firebaseCostOptimizerService),
         ChangeNotifierProvider.value(value: _ownerMonitoringSettingsService),
+        ChangeNotifierProvider.value(value: _organizationService),
+        ChangeNotifierProvider.value(value: _tenantContextService),
+        ChangeNotifierProvider.value(value: _organizationBillingService),
       ],
       child: Consumer2<LocaleService, ThemeService>(
         builder: (context, localeService, themeService, _) {
