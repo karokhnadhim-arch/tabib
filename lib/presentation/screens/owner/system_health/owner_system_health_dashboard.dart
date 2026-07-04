@@ -14,6 +14,7 @@ import 'owner_monitoring_theme.dart';
 import 'owner_phase1_monitoring_section.dart';
 import 'owner_phase2_monitoring_sections.dart';
 import 'owner_phase3_monitoring_sections.dart';
+import 'owner_step3_operations_sections.dart';
 import 'owner_phase4_monitoring_sections.dart';
 
 /// Owner monitoring center — Phases 1–4 complete.
@@ -113,6 +114,7 @@ class _OwnerSystemHealthDashboardState extends State<OwnerSystemHealthDashboard>
                             const OwnerPhase3AnalyticsSection(),
                             const OwnerRevenueDashboardSection(),
                             const OwnerSecurityCenterSection(),
+                            const OwnerSessionManagerSection(),
                             const OwnerErrorMonitoringSection(),
                             const OwnerBackupCenterSection(),
                             const OwnerAuditLogSection(),

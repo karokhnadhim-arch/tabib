@@ -1750,6 +1750,60 @@ class AppLocalizationsKu extends AppLocalizations {
   String get analyticsDashboard => 'داشبۆردی شیکاری';
 
   @override
+  String get sessionManager => 'بەڕێوەبەری دانیشتن';
+
+  @override
+  String get sessionManagerHint => 'دانیشتنە چالاکەکان ببینە و کۆتایی پێ بێنە. ناتوانیت دانیشتنی ئێستات کۆتایی پێ بێنیت.';
+
+  @override
+  String get loggedInDevices => 'ئامێرە چوونەژوورەوەکان';
+
+  @override
+  String get recentlyLoggedInUsers => 'بەکارهێنەرانی نوێ چوونەژوورەوە';
+
+  @override
+  String get searchUsers => 'گەڕان بۆ بەکارهێنەر';
+
+  @override
+  String get loginTime => 'کاتی چوونەژوورەوە';
+
+  @override
+  String get lastActivity => 'دوایین چالاکی';
+
+  @override
+  String get browserDevice => 'وێبگەڕ / ئامێر';
+
+  @override
+  String get currentSession => 'دانیشتنی ئێستا';
+
+  @override
+  String get cannotTerminateCurrentSession => 'ناتوانیت دانیشتنی ئێستات کۆتایی پێ بێنیت';
+
+  @override
+  String get errorFilterCriticalOnly => 'تەنها گرنگ';
+
+  @override
+  String get allModules => 'هەموو یەکەکان';
+
+  @override
+  String get errorStatus => 'دۆخ';
+
+  @override
+  String get platformLabel => 'پلاتفۆرم';
+
+  @override
+  String get severity => 'گرنگی';
+
+  @override
+  String get backupInProgress => 'پاشەکەوتکردن لە جریانە';
+
+  @override
+  String get exportAuditLog => 'هەناردەی تۆماری وردبینی';
+
+  @override
+  String get auditLogExported => 'تۆماری وردبینی هەناردە کرا';
+
+  @override
   String reportSavedToFile(String path) {
     return 'ڕاپۆرت پاشەکەوت کرا لە $path';
   }

@@ -35,6 +35,22 @@ class OwnerAuditService extends ChangeNotifier {
     }).toList(growable: false);
   }
 
+  String exportCsv() {
+    final buffer = StringBuffer('User,Action,Date,Time,Device,IP Address,Details\n');
+    for (final e in filteredEntries) {
+      final ts = e.timestamp.toLocal();
+      buffer.writeln(
+        '${_csv(e.userName)},${_csv(e.action)},'
+        '${ts.year}-${ts.month.toString().padLeft(2, '0')}-${ts.day.toString().padLeft(2, '0')},'
+        '${ts.hour.toString().padLeft(2, '0')}:${ts.minute.toString().padLeft(2, '0')},'
+        '${_csv(e.device ?? '')},${_csv(e.ipAddress ?? '')},${_csv(e.details ?? '')}',
+      );
+    }
+    return buffer.toString();
+  }
+
+  String _csv(String value) => '"${value.replaceAll('"', '""')}"';
+
   void setSearchQuery(String query) {
     if (_searchQuery == query) return;
     _searchQuery = query;
@@ -172,6 +188,25 @@ class OwnerAuditService extends ChangeNotifier {
         action: 'Logout — console session ended',
         timestamp: now.subtract(const Duration(hours: 14)),
         device: 'web',
+      ),
+      AuditLogEntry(
+        id: 'audit_seed_10',
+        userId: 'demo_admin',
+        userName: 'System Owner',
+        action: 'User created — patient account PAT-8821',
+        timestamp: now.subtract(const Duration(hours: 3)),
+        device: 'web',
+        ipAddress: '192.168.1.10',
+      ),
+      AuditLogEntry(
+        id: 'audit_seed_11',
+        userId: 'demo_admin',
+        userName: 'System Owner',
+        action: 'Restore executed — platform snapshot 2026-06-20',
+        timestamp: now.subtract(const Duration(days: 1)),
+        device: 'web',
+        ipAddress: '192.168.1.10',
+        details: 'backup_20260620',
       ),
     ]);
   }

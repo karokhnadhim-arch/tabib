@@ -3,6 +3,10 @@ import 'package:uuid/uuid.dart';
 
 import '../models/system_monitoring.dart';
 
+enum ErrorLogTimeFilter { all, today, thisWeek }
+
+enum ErrorLogSeverityFilter { all, criticalOnly }
+
 class SystemErrorLogService extends ChangeNotifier {
   SystemErrorLogService() {
     _seedDemo();
@@ -10,6 +14,9 @@ class SystemErrorLogService extends ChangeNotifier {
 
   static const _uuid = Uuid();
   final List<AppErrorEntry> _entries = [];
+  ErrorLogTimeFilter _timeFilter = ErrorLogTimeFilter.all;
+  ErrorLogSeverityFilter _severityFilter = ErrorLogSeverityFilter.all;
+  String? _moduleFilter;
 
   List<AppErrorEntry> get entries => List.unmodifiable(
         _entries..sort((a, b) => b.timestamp.compareTo(a.timestamp)),
@@ -17,6 +24,52 @@ class SystemErrorLogService extends ChangeNotifier {
 
   List<AppErrorEntry> get openEntries =>
       entries.where((e) => e.status == AppErrorStatus.open).toList();
+
+  ErrorLogTimeFilter get timeFilter => _timeFilter;
+  ErrorLogSeverityFilter get severityFilter => _severityFilter;
+  String? get moduleFilter => _moduleFilter;
+
+  List<String> get availableModules {
+    final modules = _entries.map((e) => e.module).toSet().toList()..sort();
+    return modules;
+  }
+
+  List<AppErrorEntry> get filteredEntries => entries.where(_matchesFilters).toList();
+
+  void setTimeFilter(ErrorLogTimeFilter filter) {
+    if (_timeFilter == filter) return;
+    _timeFilter = filter;
+    notifyListeners();
+  }
+
+  void setSeverityFilter(ErrorLogSeverityFilter filter) {
+    if (_severityFilter == filter) return;
+    _severityFilter = filter;
+    notifyListeners();
+  }
+
+  void setModuleFilter(String? module) {
+    if (_moduleFilter == module) return;
+    _moduleFilter = module;
+    notifyListeners();
+  }
+
+  bool _matchesFilters(AppErrorEntry entry) {
+    if (_moduleFilter != null && entry.module != _moduleFilter) return false;
+    if (_severityFilter == ErrorLogSeverityFilter.criticalOnly &&
+        entry.severity != AppErrorSeverity.critical) {
+      return false;
+    }
+    final now = DateTime.now();
+    final ts = entry.timestamp;
+    return switch (_timeFilter) {
+      ErrorLogTimeFilter.all => true,
+      ErrorLogTimeFilter.today =>
+        ts.year == now.year && ts.month == now.month && ts.day == now.day,
+      ErrorLogTimeFilter.thisWeek =>
+        ts.isAfter(now.subtract(const Duration(days: 7))),
+    };
+  }
 
   void record({
     required String module,
@@ -115,6 +168,18 @@ class SystemErrorLogService extends ChangeNotifier {
         status: AppErrorStatus.fixed,
         message: 'Session token expired during background refresh',
         stackTrace: 'TokenExpired at AuthService.validateSession',
+      ),
+      AppErrorEntry(
+        id: 'err_seed_4',
+        timestamp: now.subtract(const Duration(days: 2)),
+        module: 'FirestoreBackend',
+        errorType: 'PermissionDenied',
+        severity: AppErrorSeverity.critical,
+        device: 'web',
+        platform: 'web',
+        status: AppErrorStatus.open,
+        message: 'Platform metrics read denied — using cached summary',
+        stackTrace: 'PermissionDenied at firestore_clinic_backend.fetchPlatformDashboardSummary',
       ),
     ]);
   }

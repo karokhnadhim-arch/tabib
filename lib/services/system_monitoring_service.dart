@@ -48,6 +48,7 @@ class SystemMonitoringService extends ChangeNotifier {
   static const sessionPageSize = 5;
   static const activityPageSize = 10;
   static const errorPageSize = 10;
+  static const ownerCurrentSessionId = 'session_owner_current';
 
   final DashboardSummaryRepository _summaryRepo;
   final ClinicDataService _clinicData;
@@ -128,6 +129,9 @@ class SystemMonitoringService extends ChangeNotifier {
   DateTime? _customRangeEnd;
   Timer? _filterRefreshDebounce;
   OwnerDashboardFilter _activeFilter = const OwnerDashboardFilter();
+  String _sessionSearchQuery = '';
+  bool _backupInProgress = false;
+  double _backupProgress = 0;
   final Set<String> _lockedUserIds = {};
   final Set<String> _terminatedSessions = {};
   final List<BackupHistoryEntry> _backupHistory = [];
@@ -172,12 +176,54 @@ class SystemMonitoringService extends ChangeNotifier {
   List<BackupHistoryEntry> get backupHistory => List.unmodifiable(_backupHistory);
   SystemErrorLogService get errorLogService => _errorLog;
 
-  List<AppErrorEntry> get visibleErrors =>
-      _errorLog.entries.take(errorVisibleCount).toList(growable: false);
+  List<AppErrorEntry> get visibleErrors {
+    final filtered = _errorLog.filteredEntries;
+    return filtered.take(errorVisibleCount).toList(growable: false);
+  }
+
+  int get filteredErrorCount => _errorLog.filteredEntries.length;
 
   List<ActiveSessionEntry> get visibleSessions => _sessions
       .where((s) => !_terminatedSessions.contains(s.id))
       .toList(growable: false);
+
+  List<ActiveSessionEntry> get searchableSessions {
+    final sessions = visibleSessions;
+    final query = _sessionSearchQuery.trim().toLowerCase();
+    if (query.isEmpty) return sessions;
+    return sessions
+        .where(
+          (s) =>
+              s.userName.toLowerCase().contains(query) ||
+              s.role.toLowerCase().contains(query) ||
+              s.device.toLowerCase().contains(query) ||
+              s.platform.toLowerCase().contains(query) ||
+              s.browser.toLowerCase().contains(query),
+        )
+        .toList(growable: false);
+  }
+
+  int get loggedInDevicesCount =>
+      visibleSessions.map((s) => '${s.device}|${s.platform}').toSet().length;
+
+  List<ActiveSessionEntry> get recentlyLoggedInUsers {
+    final sorted = [...visibleSessions]
+      ..sort((a, b) => b.loginTime.compareTo(a.loginTime));
+    return sorted.take(5).toList(growable: false);
+  }
+
+  String get sessionSearchQuery => _sessionSearchQuery;
+  bool get backupInProgress => _backupInProgress;
+  double get backupProgress => _backupProgress;
+
+  void setSessionSearch(String query) {
+    if (_sessionSearchQuery == query) return;
+    _sessionSearchQuery = query;
+    notifyListeners();
+  }
+
+  bool canTerminateSession(String sessionId) =>
+      sessionId != ownerCurrentSessionId;
 
   int get effectiveLockedAccounts =>
       (_snapshot?.lockedAccounts ?? 0) + _lockedUserIds.length;
@@ -428,6 +474,7 @@ class SystemMonitoringService extends ChangeNotifier {
   }
 
   void terminateSession(String sessionId) {
+    if (!canTerminateSession(sessionId)) return;
     _terminatedSessions.add(sessionId);
     _sessions = _sessions.where((s) => s.id != sessionId).toList();
     notifyListeners();
@@ -444,7 +491,10 @@ class SystemMonitoringService extends ChangeNotifier {
     notifyListeners();
   }
 
-  void forceLogout(String sessionId) => terminateSession(sessionId);
+  void forceLogout(String sessionId) {
+    if (!canTerminateSession(sessionId)) return;
+    terminateSession(sessionId);
+  }
 
   String todaysRevenueLabel() {
     final s = _snapshot;
@@ -555,6 +605,23 @@ class SystemMonitoringService extends ChangeNotifier {
   }
 
   Future<void> runManualBackup() async {
+    if (_backupInProgress) return;
+    _backupInProgress = true;
+    _backupProgress = 0;
+    _backup = BackupSnapshot(
+      lastBackup: _backup.lastBackup,
+      sizeLabel: _backup.sizeLabel,
+      status: 'Running',
+      nextScheduled: _backup.nextScheduled,
+    );
+    notifyListeners();
+
+    for (var step = 1; step <= 10; step++) {
+      await Future<void>.delayed(const Duration(milliseconds: 180));
+      _backupProgress = step / 10;
+      notifyListeners();
+    }
+
     final now = DateTime.now();
     _backup = BackupSnapshot(
       lastBackup: now,
@@ -572,6 +639,8 @@ class SystemMonitoringService extends ChangeNotifier {
         trigger: 'Manual',
       ),
     );
+    _backupInProgress = false;
+    _backupProgress = 1;
     notifyListeners();
   }
 
@@ -1140,15 +1209,18 @@ class SystemMonitoringService extends ChangeNotifier {
     return [
       for (var i = 0; i < pool.length; i++)
         ActiveSessionEntry(
-          id: 'session_${pool[i].id}',
+          id: i == 0 ? ownerCurrentSessionId : 'session_${pool[i].id}',
           userName: pool[i].name.en.isNotEmpty
               ? pool[i].name.en
               : pool[i].name.ar,
           role: pool[i].role.name,
           device: i.isEven ? 'web' : 'android',
           platform: i.isEven ? 'Chrome' : 'Android',
+          browser: i.isEven ? 'Chrome 120' : 'Chrome Mobile 120',
+          loginTime: DateTime.now().subtract(Duration(hours: 1 + i * 2)),
           lastActive: DateTime.now().subtract(Duration(minutes: 5 * i)),
           suspicious: i == pool.length - 1 && pool.length > 3,
+          isCurrent: i == 0,
         ),
     ];
   }

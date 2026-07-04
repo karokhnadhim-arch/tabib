@@ -325,7 +325,10 @@ class ActiveSessionEntry {
     required this.device,
     required this.platform,
     required this.lastActive,
+    required this.loginTime,
+    this.browser = '',
     this.suspicious = false,
+    this.isCurrent = false,
   });
 
   final String id;
@@ -334,7 +337,10 @@ class ActiveSessionEntry {
   final String device;
   final String platform;
   final DateTime lastActive;
+  final DateTime loginTime;
+  final String browser;
   final bool suspicious;
+  final bool isCurrent;
 }
 
 class BackupSnapshot {

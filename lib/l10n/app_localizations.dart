@@ -3497,6 +3497,114 @@ abstract class AppLocalizations {
   /// **'Analytics dashboard'**
   String get analyticsDashboard;
 
+  /// No description provided for @sessionManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Session manager'**
+  String get sessionManager;
+
+  /// No description provided for @sessionManagerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'View and terminate active platform sessions. Your current session cannot be terminated.'**
+  String get sessionManagerHint;
+
+  /// No description provided for @loggedInDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'Logged-in devices'**
+  String get loggedInDevices;
+
+  /// No description provided for @recentlyLoggedInUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Recently logged-in users'**
+  String get recentlyLoggedInUsers;
+
+  /// No description provided for @searchUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Search users'**
+  String get searchUsers;
+
+  /// No description provided for @loginTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Login time'**
+  String get loginTime;
+
+  /// No description provided for @lastActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Last activity'**
+  String get lastActivity;
+
+  /// No description provided for @browserDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Browser / device'**
+  String get browserDevice;
+
+  /// No description provided for @currentSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Current session'**
+  String get currentSession;
+
+  /// No description provided for @cannotTerminateCurrentSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot terminate your current session'**
+  String get cannotTerminateCurrentSession;
+
+  /// No description provided for @errorFilterCriticalOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical only'**
+  String get errorFilterCriticalOnly;
+
+  /// No description provided for @allModules.
+  ///
+  /// In en, this message translates to:
+  /// **'All modules'**
+  String get allModules;
+
+  /// No description provided for @errorStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get errorStatus;
+
+  /// No description provided for @platformLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Platform'**
+  String get platformLabel;
+
+  /// No description provided for @severity.
+  ///
+  /// In en, this message translates to:
+  /// **'Severity'**
+  String get severity;
+
+  /// No description provided for @backupInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup in progress'**
+  String get backupInProgress;
+
+  /// No description provided for @exportAuditLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Export audit log'**
+  String get exportAuditLog;
+
+  /// No description provided for @auditLogExported.
+  ///
+  /// In en, this message translates to:
+  /// **'Audit log exported'**
+  String get auditLogExported;
+
   /// No description provided for @reportSavedToFile.
   ///
   /// In en, this message translates to:

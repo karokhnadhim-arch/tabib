@@ -1750,6 +1750,60 @@ class AppLocalizationsAr extends AppLocalizations {
   String get analyticsDashboard => 'لوحة التحليلات';
 
   @override
+  String get sessionManager => 'مدير الجلسات';
+
+  @override
+  String get sessionManagerHint => 'عرض وإنهاء الجلسات النشطة. لا يمكن إنهاء جلستك الحالية.';
+
+  @override
+  String get loggedInDevices => 'الأجهزة المتصلة';
+
+  @override
+  String get recentlyLoggedInUsers => 'المستخدمون الذين سجلوا دخولهم مؤخراً';
+
+  @override
+  String get searchUsers => 'بحث عن مستخدمين';
+
+  @override
+  String get loginTime => 'وقت تسجيل الدخول';
+
+  @override
+  String get lastActivity => 'آخر نشاط';
+
+  @override
+  String get browserDevice => 'المتصفح / الجهاز';
+
+  @override
+  String get currentSession => 'الجلسة الحالية';
+
+  @override
+  String get cannotTerminateCurrentSession => 'لا يمكن إنهاء جلستك الحالية';
+
+  @override
+  String get errorFilterCriticalOnly => 'حرج فقط';
+
+  @override
+  String get allModules => 'جميع الوحدات';
+
+  @override
+  String get errorStatus => 'الحالة';
+
+  @override
+  String get platformLabel => 'المنصة';
+
+  @override
+  String get severity => 'الخطورة';
+
+  @override
+  String get backupInProgress => 'النسخ الاحتياطي قيد التنفيذ';
+
+  @override
+  String get exportAuditLog => 'تصدير سجل التدقيق';
+
+  @override
+  String get auditLogExported => 'تم تصدير سجل التدقيق';
+
+  @override
   String reportSavedToFile(String path) {
     return 'تم حفظ التقرير في $path';
   }

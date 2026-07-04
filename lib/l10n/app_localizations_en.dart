@@ -1750,6 +1750,60 @@ class AppLocalizationsEn extends AppLocalizations {
   String get analyticsDashboard => 'Analytics dashboard';
 
   @override
+  String get sessionManager => 'Session manager';
+
+  @override
+  String get sessionManagerHint => 'View and terminate active platform sessions. Your current session cannot be terminated.';
+
+  @override
+  String get loggedInDevices => 'Logged-in devices';
+
+  @override
+  String get recentlyLoggedInUsers => 'Recently logged-in users';
+
+  @override
+  String get searchUsers => 'Search users';
+
+  @override
+  String get loginTime => 'Login time';
+
+  @override
+  String get lastActivity => 'Last activity';
+
+  @override
+  String get browserDevice => 'Browser / device';
+
+  @override
+  String get currentSession => 'Current session';
+
+  @override
+  String get cannotTerminateCurrentSession => 'Cannot terminate your current session';
+
+  @override
+  String get errorFilterCriticalOnly => 'Critical only';
+
+  @override
+  String get allModules => 'All modules';
+
+  @override
+  String get errorStatus => 'Status';
+
+  @override
+  String get platformLabel => 'Platform';
+
+  @override
+  String get severity => 'Severity';
+
+  @override
+  String get backupInProgress => 'Backup in progress';
+
+  @override
+  String get exportAuditLog => 'Export audit log';
+
+  @override
+  String get auditLogExported => 'Audit log exported';
+
+  @override
   String reportSavedToFile(String path) {
     return 'Report saved to $path';
   }
