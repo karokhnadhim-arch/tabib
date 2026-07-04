@@ -1,6 +1,8 @@
 enum SystemHealthLevel { healthy, warning, critical }
 
-enum AnalyticsRange { today, week, month, year, custom }
+enum AnalyticsRange { today, yesterday, week, month, year, custom }
+
+enum ReportExportFormat { csv, pdf, excel }
 
 enum AppErrorSeverity { low, medium, high, critical }
 
@@ -244,6 +246,7 @@ class AppErrorEntry {
     required this.platform,
     required this.status,
     required this.message,
+    this.stackTrace,
   });
 
   final String id;
@@ -255,6 +258,7 @@ class AppErrorEntry {
   final String platform;
   final AppErrorStatus status;
   final String message;
+  final String? stackTrace;
 
   AppErrorEntry copyWith({AppErrorStatus? status}) => AppErrorEntry(
         id: id,
@@ -266,6 +270,7 @@ class AppErrorEntry {
         platform: platform,
         status: status ?? this.status,
         message: message,
+        stackTrace: stackTrace,
       );
 }
 
@@ -335,4 +340,20 @@ class BackupSnapshot {
   final String sizeLabel;
   final String status;
   final DateTime? nextScheduled;
+}
+
+class BackupHistoryEntry {
+  const BackupHistoryEntry({
+    required this.id,
+    required this.timestamp,
+    required this.sizeLabel,
+    required this.status,
+    required this.trigger,
+  });
+
+  final String id;
+  final DateTime timestamp;
+  final String sizeLabel;
+  final String status;
+  final String trigger;
 }

@@ -7,6 +7,7 @@ import '../../../../services/system_monitoring_service.dart';
 import '../../../widgets/system_owner_guard.dart';
 import 'owner_phase1_monitoring_section.dart';
 import 'owner_phase2_monitoring_sections.dart';
+import 'owner_phase3_monitoring_sections.dart';
 
 /// Owner monitoring center — Phase 1 infrastructure + Phase 2 live statistics.
 class OwnerSystemHealthDashboard extends StatefulWidget {
@@ -37,6 +38,7 @@ class _OwnerSystemHealthDashboardState extends State<OwnerSystemHealthDashboard>
 
   Future<void> _refreshAll() async {
     await _monitoring?.refreshDashboard(force: true);
+    await _monitoring?.refreshPhase3(force: true);
   }
 
   @override
@@ -79,6 +81,13 @@ class _OwnerSystemHealthDashboardState extends State<OwnerSystemHealthDashboard>
                     OwnerPhase1MonitoringSection(),
                     OwnerLiveStatisticsSection(),
                     OwnerActivityFeedSection(),
+                    OwnerPhase3AnalyticsSection(),
+                    OwnerRevenueDashboardSection(),
+                    OwnerSecurityCenterSection(),
+                    OwnerErrorMonitoringSection(),
+                    OwnerBackupCenterSection(),
+                    OwnerAuditLogSection(),
+                    OwnerReportsSection(),
                     SizedBox(height: 24),
                   ],
                 ),

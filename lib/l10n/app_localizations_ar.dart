@@ -2967,4 +2967,64 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get activityEventLogout => 'تسجيل خروج';
+
+  @override
+  String get monitoringPhase3AnalyticsHint => 'تحليلات تفاعلية — تُحمَّل الرسوم عند الحاجة وتُخزَّن حسب النطاق الزمني';
+
+  @override
+  String get filterYesterday => 'أمس';
+
+  @override
+  String get filterLast7Days => 'آخر 7 أيام';
+
+  @override
+  String get doctorGrowthChart => 'نمو الأطباء';
+
+  @override
+  String get queueWaitingTrends => 'اتجاهات انتظار القوائم';
+
+  @override
+  String get todaysRevenue => 'إيرادات اليوم';
+
+  @override
+  String get avgRevenuePerDoctor => 'متوسط الإيراد لكل طبيب';
+
+  @override
+  String get advertisementRevenue => 'إيرادات الإعلانات';
+
+  @override
+  String get lockedStatus => 'مقفل';
+
+  @override
+  String get lockUser => 'قفل المستخدم';
+
+  @override
+  String get unlockUser => 'فتح قفل المستخدم';
+
+  @override
+  String get forceLogout => 'إجبار تسجيل الخروج';
+
+  @override
+  String get errorTypeLabel => 'نوع الخطأ';
+
+  @override
+  String get stackTrace => 'تتبع المكدس';
+
+  @override
+  String get deleteError => 'حذف';
+
+  @override
+  String get runManualBackup => 'تشغيل نسخ احتياطي يدوي';
+
+  @override
+  String get backupHistory => 'سجل النسخ الاحتياطي';
+
+  @override
+  String get auditSearchHint => 'البحث في سجل التدقيق…';
+
+  @override
+  String get generateReports => 'إنشاء تقارير';
+
+  @override
+  String get reportsFilterHint => 'اختر نطاقاً زمنياً ثم صدّر مقاييس المنصة';
 }

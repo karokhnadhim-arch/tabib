@@ -2967,4 +2967,64 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get activityEventLogout => 'چوونەدەرەوە';
+
+  @override
+  String get monitoringPhase3AnalyticsHint => 'شیکاری کارا — چارتەکان بە شێوەی lazy بار دەکرێن و بەپێی ماوە هەڵدەگیرێن';
+
+  @override
+  String get filterYesterday => 'دوێنێ';
+
+  @override
+  String get filterLast7Days => '7 ڕۆژی ڕابردوو';
+
+  @override
+  String get doctorGrowthChart => 'گەشەی پزیشکان';
+
+  @override
+  String get queueWaitingTrends => 'ڕەوتی چاوەڕوانی ڕیز';
+
+  @override
+  String get todaysRevenue => 'داهاتی ئەمڕۆ';
+
+  @override
+  String get avgRevenuePerDoctor => 'ناوەندی داهات بۆ هەر پزیشک';
+
+  @override
+  String get advertisementRevenue => 'داهاتی ڕیکلام';
+
+  @override
+  String get lockedStatus => 'داخراو';
+
+  @override
+  String get lockUser => 'داخستنی بەکارهێنەر';
+
+  @override
+  String get unlockUser => 'کردنەوەی قوفڵی بەکارهێنەر';
+
+  @override
+  String get forceLogout => 'دەرچوونی ناچار';
+
+  @override
+  String get errorTypeLabel => 'جۆری هەڵە';
+
+  @override
+  String get stackTrace => 'شوێنپێی کۆد';
+
+  @override
+  String get deleteError => 'سڕینەوە';
+
+  @override
+  String get runManualBackup => 'پاشەکەوتی دەستی';
+
+  @override
+  String get backupHistory => 'مێژووی پاشەکەوت';
+
+  @override
+  String get auditSearchHint => 'گەڕان لە تۆماری پشکنین…';
+
+  @override
+  String get generateReports => 'دروستکردنی ڕاپۆرت';
+
+  @override
+  String get reportsFilterHint => 'ماوەیەک هەڵبژێرە، پاشان ئامارەکان هەناردە بکە';
 }

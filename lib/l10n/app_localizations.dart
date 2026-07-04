@@ -5914,6 +5914,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Logout'**
   String get activityEventLogout;
+
+  /// No description provided for @monitoringPhase3AnalyticsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Interactive analytics — charts load lazily and cache per date range'**
+  String get monitoringPhase3AnalyticsHint;
+
+  /// No description provided for @filterYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get filterYesterday;
+
+  /// No description provided for @filterLast7Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 days'**
+  String get filterLast7Days;
+
+  /// No description provided for @doctorGrowthChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor growth'**
+  String get doctorGrowthChart;
+
+  /// No description provided for @queueWaitingTrends.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue waiting trends'**
+  String get queueWaitingTrends;
+
+  /// No description provided for @todaysRevenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s revenue'**
+  String get todaysRevenue;
+
+  /// No description provided for @avgRevenuePerDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Average revenue per doctor'**
+  String get avgRevenuePerDoctor;
+
+  /// No description provided for @advertisementRevenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Advertisement revenue'**
+  String get advertisementRevenue;
+
+  /// No description provided for @lockedStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Locked'**
+  String get lockedStatus;
+
+  /// No description provided for @lockUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock user'**
+  String get lockUser;
+
+  /// No description provided for @unlockUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock user'**
+  String get unlockUser;
+
+  /// No description provided for @forceLogout.
+  ///
+  /// In en, this message translates to:
+  /// **'Force logout'**
+  String get forceLogout;
+
+  /// No description provided for @errorTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Error type'**
+  String get errorTypeLabel;
+
+  /// No description provided for @stackTrace.
+  ///
+  /// In en, this message translates to:
+  /// **'Stack trace'**
+  String get stackTrace;
+
+  /// No description provided for @deleteError.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get deleteError;
+
+  /// No description provided for @runManualBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Run manual backup'**
+  String get runManualBackup;
+
+  /// No description provided for @backupHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup history'**
+  String get backupHistory;
+
+  /// No description provided for @auditSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search audit log…'**
+  String get auditSearchHint;
+
+  /// No description provided for @generateReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate reports'**
+  String get generateReports;
+
+  /// No description provided for @reportsFilterHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a date range, then export platform metrics'**
+  String get reportsFilterHint;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

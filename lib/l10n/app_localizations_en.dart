@@ -2967,4 +2967,64 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get activityEventLogout => 'Logout';
+
+  @override
+  String get monitoringPhase3AnalyticsHint => 'Interactive analytics — charts load lazily and cache per date range';
+
+  @override
+  String get filterYesterday => 'Yesterday';
+
+  @override
+  String get filterLast7Days => 'Last 7 days';
+
+  @override
+  String get doctorGrowthChart => 'Doctor growth';
+
+  @override
+  String get queueWaitingTrends => 'Queue waiting trends';
+
+  @override
+  String get todaysRevenue => 'Today\'s revenue';
+
+  @override
+  String get avgRevenuePerDoctor => 'Average revenue per doctor';
+
+  @override
+  String get advertisementRevenue => 'Advertisement revenue';
+
+  @override
+  String get lockedStatus => 'Locked';
+
+  @override
+  String get lockUser => 'Lock user';
+
+  @override
+  String get unlockUser => 'Unlock user';
+
+  @override
+  String get forceLogout => 'Force logout';
+
+  @override
+  String get errorTypeLabel => 'Error type';
+
+  @override
+  String get stackTrace => 'Stack trace';
+
+  @override
+  String get deleteError => 'Delete';
+
+  @override
+  String get runManualBackup => 'Run manual backup';
+
+  @override
+  String get backupHistory => 'Backup history';
+
+  @override
+  String get auditSearchHint => 'Search audit log…';
+
+  @override
+  String get generateReports => 'Generate reports';
+
+  @override
+  String get reportsFilterHint => 'Select a date range, then export platform metrics';
 }

@@ -224,6 +224,7 @@ class DashboardSummaryRepository {
   ) {
     final scale = switch (range) {
       AnalyticsRange.today => 1.0,
+      AnalyticsRange.yesterday => 0.85,
       AnalyticsRange.week => 1.4,
       AnalyticsRange.month => 2.0,
       AnalyticsRange.year => 3.0,
@@ -245,6 +246,8 @@ class DashboardSummaryRepository {
       userGrowth: series(summary.totalPatients),
       activeUsers: series(summary.activeToday),
       businessGrowth: series(summary.totalBusinesses),
+      doctorGrowth: series(summary.totalDoctors),
+      queueWaitingTrends: series(summary.queueWaiting),
     );
   }
 

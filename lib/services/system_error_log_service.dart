@@ -23,6 +23,7 @@ class SystemErrorLogService extends ChangeNotifier {
     required String errorType,
     required String message,
     AppErrorSeverity severity = AppErrorSeverity.medium,
+    String? stackTrace,
   }) {
     _entries.insert(
       0,
@@ -36,6 +37,7 @@ class SystemErrorLogService extends ChangeNotifier {
         platform: kIsWeb ? 'web' : 'mobile',
         status: AppErrorStatus.open,
         message: message,
+        stackTrace: stackTrace,
       ),
     );
     notifyListeners();
@@ -44,6 +46,11 @@ class SystemErrorLogService extends ChangeNotifier {
   void markFixed(String id) => _setStatus(id, AppErrorStatus.fixed);
 
   void ignore(String id) => _setStatus(id, AppErrorStatus.ignored);
+
+  void delete(String id) {
+    _entries.removeWhere((e) => e.id == id);
+    notifyListeners();
+  }
 
   void _setStatus(String id, AppErrorStatus status) {
     final index = _entries.indexWhere((e) => e.id == id);
@@ -54,14 +61,15 @@ class SystemErrorLogService extends ChangeNotifier {
 
   String exportCsv() {
     final buffer = StringBuffer(
-      'Date,Time,Module,Type,Severity,Device,Platform,Status,Message\n',
+      'Date,Time,Module,Type,Severity,Device,Platform,Status,Message,StackTrace\n',
     );
     for (final e in entries) {
       buffer.writeln(
         '${e.timestamp.toIso8601String().split('T').first},'
         '${e.timestamp.hour}:${e.timestamp.minute},'
         '${_csv(e.module)},${_csv(e.errorType)},${e.severity.name},'
-        '${_csv(e.device)},${e.platform},${e.status.name},${_csv(e.message)}',
+        '${_csv(e.device)},${e.platform},${e.status.name},'
+        '${_csv(e.message)},${_csv(e.stackTrace ?? '')}',
       );
     }
     return buffer.toString();
@@ -82,6 +90,7 @@ class SystemErrorLogService extends ChangeNotifier {
         platform: 'web',
         status: AppErrorStatus.open,
         message: 'Queue snapshot refresh exceeded 1200ms',
+        stackTrace: 'SyncTimeout at QueueService.refreshSnapshot\n  at firestore_clinic_backend.dart:142',
       ),
       AppErrorEntry(
         id: 'err_seed_2',
@@ -93,6 +102,19 @@ class SystemErrorLogService extends ChangeNotifier {
         platform: 'mobile',
         status: AppErrorStatus.open,
         message: 'SMS provider returned unavailable in demo mode',
+        stackTrace: 'DeliveryFailed: provider timeout after 30s',
+      ),
+      AppErrorEntry(
+        id: 'err_seed_3',
+        timestamp: now.subtract(const Duration(hours: 8)),
+        module: 'AuthService',
+        errorType: 'TokenExpired',
+        severity: AppErrorSeverity.high,
+        device: 'ios',
+        platform: 'mobile',
+        status: AppErrorStatus.fixed,
+        message: 'Session token expired during background refresh',
+        stackTrace: 'TokenExpired at AuthService.validateSession',
       ),
     ]);
   }

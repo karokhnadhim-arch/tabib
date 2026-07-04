@@ -252,6 +252,8 @@ class DashboardChartsBundle {
     required this.userGrowth,
     required this.activeUsers,
     required this.businessGrowth,
+    this.doctorGrowth = const [],
+    this.queueWaitingTrends = const [],
   });
 
   final String range;
@@ -263,6 +265,8 @@ class DashboardChartsBundle {
   final List<double> userGrowth;
   final List<double> activeUsers;
   final List<double> businessGrowth;
+  final List<double> doctorGrowth;
+  final List<double> queueWaitingTrends;
 
   Map<String, dynamic> toJson() => {
         'range': range,
@@ -274,6 +278,8 @@ class DashboardChartsBundle {
         'userGrowth': userGrowth,
         'activeUsers': activeUsers,
         'businessGrowth': businessGrowth,
+        'doctorGrowth': doctorGrowth,
+        'queueWaitingTrends': queueWaitingTrends,
       };
 
   factory DashboardChartsBundle.fromJson(Map<String, dynamic> json) {
@@ -291,6 +297,8 @@ class DashboardChartsBundle {
       userGrowth: series(json['userGrowth']),
       activeUsers: series(json['activeUsers']),
       businessGrowth: series(json['businessGrowth']),
+      doctorGrowth: series(json['doctorGrowth']),
+      queueWaitingTrends: series(json['queueWaitingTrends']),
     );
   }
 }

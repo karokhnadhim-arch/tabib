@@ -84,6 +84,12 @@ class SystemMonitoringService extends ChangeNotifier {
   int _errorPage = 1;
   bool _activityRequested = false;
   bool _reportsExpanded = false;
+  bool _chartsRequested = false;
+  DateTime? _customRangeStart;
+  DateTime? _customRangeEnd;
+  final Set<String> _lockedUserIds = {};
+  final Set<String> _terminatedSessions = {};
+  final List<BackupHistoryEntry> _backupHistory = [];
 
   SystemMonitoringSnapshot? get snapshot => _snapshot;
   DashboardChartsBundle? get charts => _charts;
@@ -119,6 +125,23 @@ class SystemMonitoringService extends ChangeNotifier {
   int get sessionPage => _sessionPage;
   int get errorPage => _errorPage;
   int get errorVisibleCount => errorPageSize * _errorPage;
+  bool get chartsRequested => _chartsRequested;
+  DateTime? get customRangeStart => _customRangeStart;
+  DateTime? get customRangeEnd => _customRangeEnd;
+  List<BackupHistoryEntry> get backupHistory => List.unmodifiable(_backupHistory);
+  SystemErrorLogService get errorLogService => _errorLog;
+
+  List<AppErrorEntry> get visibleErrors =>
+      _errorLog.entries.take(errorVisibleCount).toList(growable: false);
+
+  List<ActiveSessionEntry> get visibleSessions => _sessions
+      .where((s) => !_terminatedSessions.contains(s.id))
+      .toList(growable: false);
+
+  int get effectiveLockedAccounts =>
+      (_snapshot?.lockedAccounts ?? 0) + _lockedUserIds.length;
+
+  bool isUserLocked(String userName) => _lockedUserIds.contains(userName);
 
   Future<void> activate() async {
     if (_dashboardActive) return;
@@ -185,6 +208,10 @@ class SystemMonitoringService extends ChangeNotifier {
   Future<void> refreshDashboard({bool force = false}) async {
     await refreshStatistics(force: force, showPhase1Indicator: true);
     await _activityFeed?.refresh(force: force);
+  }
+
+  Future<void> refreshPhase3({bool force = false}) async {
+    if (_chartsRequested) await loadCharts(force: force);
   }
 
   Future<void> refreshStatistics({
@@ -279,10 +306,27 @@ class SystemMonitoringService extends ChangeNotifier {
   void setRange(AnalyticsRange range) {
     if (_range == range) return;
     _range = range;
+    if (range != AnalyticsRange.custom) {
+      _customRangeStart = null;
+      _customRangeEnd = null;
+    }
     _chartsLoaded = false;
     _charts = null;
     notifyListeners();
-    if (_dashboardActive) loadCharts(force: true);
+    if (_dashboardActive && _chartsRequested) loadCharts(force: true);
+  }
+
+  void setCustomDateRange(DateTime start, DateTime end) {
+    _customRangeStart = start;
+    _customRangeEnd = end;
+    setRange(AnalyticsRange.custom);
+  }
+
+  void requestCharts() {
+    if (_chartsRequested && _chartsLoaded) return;
+    _chartsRequested = true;
+    notifyListeners();
+    if (_dashboardActive) loadCharts();
   }
 
   void requestActivityFeed() {
@@ -308,16 +352,113 @@ class SystemMonitoringService extends ChangeNotifier {
   }
 
   void terminateSession(String sessionId) {
+    _terminatedSessions.add(sessionId);
     _sessions = _sessions.where((s) => s.id != sessionId).toList();
     notifyListeners();
   }
 
+  void lockUser(String userName) {
+    if (_lockedUserIds.contains(userName)) return;
+    _lockedUserIds.add(userName);
+    notifyListeners();
+  }
+
+  void unlockUser(String userName) {
+    if (!_lockedUserIds.remove(userName)) return;
+    notifyListeners();
+  }
+
+  void forceLogout(String sessionId) => terminateSession(sessionId);
+
+  String todaysRevenueLabel() {
+    final s = _snapshot;
+    if (s == null) return '—';
+    final monthly = _parseRevenueNumber(s.monthlyRevenue);
+    return '${(monthly / 30).round()}K IQD';
+  }
+
+  String advertisementRevenueLabel() {
+    final s = _snapshot;
+    if (s == null) return '—';
+    final clicks = s.adClicks;
+    return '${(clicks * 2.5).round()}K IQD';
+  }
+
+  String avgRevenuePerDoctorLabel() {
+    final s = _snapshot;
+    if (s == null || s.totalDoctors == 0) return '—';
+    final monthly = _parseRevenueNumber(s.monthlyRevenue);
+    return '${(monthly / s.totalDoctors).round()}K IQD';
+  }
+
+  int _parseRevenueNumber(String label) {
+    final match = RegExp(r'(\d+)').firstMatch(label);
+    return int.tryParse(match?.group(1) ?? '') ?? 0;
+  }
+
+  String exportMonitoringReport(ReportExportFormat format) {
+    final s = _snapshot;
+    if (s == null) return '';
+    final rows = <List<String>>[
+      ['Metric', 'Value'],
+      ['Total Users', '${s.totalUsers}'],
+      ['Total Doctors', '${s.totalDoctors}'],
+      ['Total Patients', '${s.totalPatients}'],
+      ['Monthly Revenue', s.monthlyRevenue],
+      ['Annual Revenue', s.annualRevenue],
+      ['Active Queues', '${s.activeQueues}'],
+      ['Today Appointments', '${s.todaysAppointments}'],
+    ];
+    return switch (format) {
+      ReportExportFormat.csv => _rowsToCsv(rows),
+      ReportExportFormat.excel => rows.map((r) => r.join('\t')).join('\n'),
+      ReportExportFormat.pdf => _rowsToPdfText(rows),
+    };
+  }
+
+  String exportBackupReport() {
+    final buffer = StringBuffer('Backup Report\n');
+    buffer.writeln('Status: ${_backup.status}');
+    buffer.writeln('Size: ${_backup.sizeLabel}');
+    buffer.writeln('Last: ${_backup.lastBackup}');
+    buffer.writeln('Next: ${_backup.nextScheduled}');
+    for (final h in _backupHistory) {
+      buffer.writeln('${h.timestamp} | ${h.status} | ${h.sizeLabel} | ${h.trigger}');
+    }
+    return buffer.toString();
+  }
+
+  String _rowsToCsv(List<List<String>> rows) =>
+      rows.map((r) => r.map(_csvCell).join(',')).join('\n');
+
+  String _csvCell(String value) => '"${value.replaceAll('"', '""')}"';
+
+  String _rowsToPdfText(List<List<String>> rows) {
+    final buffer = StringBuffer('TABIB PLATFORM REPORT\n');
+    buffer.writeln('Generated: ${DateTime.now().toIso8601String()}\n');
+    for (final row in rows) {
+      buffer.writeln('${row.first}: ${row.length > 1 ? row[1] : ''}');
+    }
+    return buffer.toString();
+  }
+
   Future<void> runManualBackup() async {
+    final now = DateTime.now();
     _backup = BackupSnapshot(
-      lastBackup: DateTime.now(),
+      lastBackup: now,
       sizeLabel: _backup.sizeLabel,
       status: 'Completed',
-      nextScheduled: DateTime.now().add(const Duration(hours: 24)),
+      nextScheduled: now.add(const Duration(hours: 24)),
+    );
+    _backupHistory.insert(
+      0,
+      BackupHistoryEntry(
+        id: 'backup_${now.millisecondsSinceEpoch}',
+        timestamp: now,
+        sizeLabel: _backup.sizeLabel,
+        status: 'Completed',
+        trigger: 'Manual',
+      ),
     );
     notifyListeners();
   }
