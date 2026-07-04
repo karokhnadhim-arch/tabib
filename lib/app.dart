@@ -56,6 +56,16 @@ import 'services/system_maintenance_service.dart';
 import 'services/organization_billing_service.dart';
 import 'services/organization_service.dart';
 import 'services/tenant_context_service.dart';
+import 'data/repositories/offline_chat_repository.dart';
+import 'presentation/widgets/offline_indicator_banner.dart';
+import 'services/offline/connectivity_service.dart';
+import 'services/offline/offline_appointment_cache_service.dart';
+import 'services/offline/offline_chat_cache_service.dart';
+import 'services/offline/offline_image_cache_service.dart';
+import 'services/offline/offline_profile_cache_service.dart';
+import 'services/offline/offline_queue_cache_service.dart';
+import 'services/offline/offline_recent_chats_service.dart';
+import 'services/offline/offline_sync_coordinator.dart';
 import 'core/widgets/maintenance_mode_gate.dart';
 
 /// Root widget for Tabib — medical appointment platform.
@@ -97,7 +107,16 @@ class _TabibAppState extends State<TabibApp> {
   late final AppointmentRepository _appointmentRepository;
   late final PrescriptionRepository _prescriptionRepository;
   late final NotificationRepository _notificationRepository;
-  late final ChatRepository _chatRepository;
+  late final ChatRepository _baseChatRepository;
+  late final OfflineChatRepository _offlineChatRepository;
+  late final ConnectivityService _connectivityService;
+  late final OfflineChatCacheService _offlineChatCacheService;
+  late final OfflineQueueCacheService _offlineQueueCacheService;
+  late final OfflineAppointmentCacheService _offlineAppointmentCacheService;
+  late final OfflineProfileCacheService _offlineProfileCacheService;
+  late final OfflineRecentChatsService _offlineRecentChatsService;
+  late final OfflineImageCacheService _offlineImageCacheService;
+  late final OfflineSyncCoordinator _offlineSyncCoordinator;
   late final AppointmentProvider _appointmentProvider;
   late final PrescriptionProvider _prescriptionProvider;
   late final NotificationProvider _notificationProvider;
@@ -143,7 +162,7 @@ class _TabibAppState extends State<TabibApp> {
       _prescriptionRepository = InMemoryPrescriptionRepository(
         notifications: inMemoryNotifications,
       );
-      _chatRepository = InMemoryChatRepository();
+      _baseChatRepository = InMemoryChatRepository();
       _appointmentService = AppointmentService(demoMode: true);
     } else {
       _backend = FirestoreClinicBackend();
@@ -151,9 +170,30 @@ class _TabibAppState extends State<TabibApp> {
       _appointmentRepository = FirestoreAppointmentRepository();
       _prescriptionRepository = FirestorePrescriptionRepository();
       _notificationRepository = FirestoreNotificationRepository();
-      _chatRepository = FirestoreChatRepository();
+      _baseChatRepository = FirestoreChatRepository();
       _appointmentService = AppointmentService();
     }
+
+    _connectivityService = ConnectivityService();
+    _offlineChatCacheService = OfflineChatCacheService();
+    _offlineChatRepository = OfflineChatRepository(
+      inner: _baseChatRepository,
+      cache: _offlineChatCacheService,
+      connectivity: _connectivityService,
+    );
+    _offlineQueueCacheService = OfflineQueueCacheService();
+    _offlineAppointmentCacheService = OfflineAppointmentCacheService();
+    _offlineProfileCacheService = OfflineProfileCacheService();
+    _offlineRecentChatsService = OfflineRecentChatsService();
+    _offlineImageCacheService = OfflineImageCacheService(
+      connectivity: _connectivityService,
+    );
+    _offlineSyncCoordinator = OfflineSyncCoordinator(
+      connectivity: _connectivityService,
+      chatRepository: _offlineChatRepository,
+      queueCache: _offlineQueueCacheService,
+      appointmentCache: _offlineAppointmentCacheService,
+    );
 
     _dataService = ClinicDataService(backend: _backend);
     _staffDataService = StaffDataService(backend: _backend);
@@ -185,7 +225,7 @@ class _TabibAppState extends State<TabibApp> {
     );
     _prescriptionProvider = PrescriptionProvider(repository: _prescriptionRepository);
     _notificationProvider = NotificationProvider(repository: _notificationRepository);
-    _chatProvider = ChatProvider(repository: _chatRepository);
+    _chatProvider = ChatProvider(repository: _offlineChatRepository);
     _ownerAuditService = OwnerAuditService();
     _systemErrorLogService = SystemErrorLogService();
     final dashboardSummaryRepo = DashboardSummaryRepository(backend: _backend);
@@ -248,6 +288,9 @@ class _TabibAppState extends State<TabibApp> {
       authService: _authService,
       appReady: true,
     ).router;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _offlineSyncCoordinator.onAppOpen();
+    });
   }
 
   void _onAuthChanged() {
@@ -271,6 +314,19 @@ class _TabibAppState extends State<TabibApp> {
     _patientProfileService.bindUser(userId);
     _recentlyVisitedService.bindUser(userId);
     _tenantContextService.bindUser(user);
+    _offlineRecentChatsService.bindUser(userId);
+    final patientId =
+        user?.role == UserRole.patient ? userId : null;
+    _offlineQueueCacheService.bindPatient(patientId);
+    _offlineAppointmentCacheService.bindPatient(patientId);
+    if (patientId != null) {
+      _offlineSyncCoordinator.attachPatientSession(
+        patientId: patientId,
+        queue: _queueService,
+        appointments: _appointmentProvider,
+      );
+    }
+    _offlineSyncCoordinator.onAppOpen();
   }
 
   @override
@@ -279,6 +335,9 @@ class _TabibAppState extends State<TabibApp> {
     _subscriptionMonitor.dispose();
     _systemMonitoringService.dispose();
     _queueNotificationMonitor?.dispose();
+    _connectivityService.dispose();
+    _offlineChatRepository.dispose();
+    _offlineSyncCoordinator.dispose();
     super.dispose();
   }
 
@@ -325,6 +384,16 @@ class _TabibAppState extends State<TabibApp> {
         ChangeNotifierProvider.value(value: _organizationService),
         ChangeNotifierProvider.value(value: _tenantContextService),
         ChangeNotifierProvider.value(value: _organizationBillingService),
+        ChangeNotifierProvider.value(value: _connectivityService),
+        ChangeNotifierProvider.value(value: _offlineQueueCacheService),
+        ChangeNotifierProvider.value(value: _offlineAppointmentCacheService),
+        ChangeNotifierProvider.value(value: _offlineRecentChatsService),
+        Provider<OfflineProfileCacheService>.value(
+          value: _offlineProfileCacheService,
+        ),
+        Provider<OfflineImageCacheService>.value(
+          value: _offlineImageCacheService,
+        ),
       ],
       child: Consumer2<LocaleService, ThemeService>(
         builder: (context, localeService, themeService, _) {
@@ -352,6 +421,7 @@ class _TabibAppState extends State<TabibApp> {
                 child: Column(
                   children: [
                     if (_demoMode) const DemoModeBanner(),
+                    const OfflineIndicatorBanner(),
                     Expanded(
                       child: MaintenanceModeGate(
                         child: child ??

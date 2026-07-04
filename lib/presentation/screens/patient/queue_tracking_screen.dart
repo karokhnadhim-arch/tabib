@@ -13,6 +13,9 @@ import '../../../services/queue_alert_service.dart';
 import '../../../utils/localization_utils.dart';
 import '../../../services/smart_notification_service.dart';
 import '../../../services/queue_service.dart';
+import '../../../services/offline/connectivity_service.dart';
+import '../../../services/offline/offline_queue_cache_service.dart';
+import '../../widgets/offline_indicator_banner.dart';
 import '../../widgets/premium_queue_dashboard.dart';
 
 
@@ -134,16 +137,32 @@ class _QueueTrackingScreenState extends State<QueueTrackingScreen>
     final auth = context.watch<AuthService>();
     final queue = context.watch<QueueService>();
     final data = context.watch<ClinicDataService>();
-    final entry = widget.entryId != null
+    final offlineQueue = context.watch<OfflineQueueCacheService>();
+    final connectivity = context.watch<ConnectivityService>();
+    QueueEntry? entry = widget.entryId != null
         ? queue.queueEntryById(auth.patientId, widget.entryId!)
         : queue.activeEntryForPatient(auth.patientId);
+    if (entry == null && connectivity.isOffline) {
+      final cached = offlineQueue.cachedPatientQueues(auth.patientId);
+      if (widget.entryId != null) {
+        for (final e in cached) {
+          if (e.id == widget.entryId) {
+            entry = e;
+            break;
+          }
+        }
+      } else if (cached.isNotEmpty) {
+        entry = cached.first;
+      }
+    }
     _syncDoctorQueueWatch(entry);
 
     if (entry != null) {
-      final ahead = queue.peopleAhead(entry);
+      final activeEntry = entry!;
+      final ahead = queue.peopleAhead(activeEntry);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        _handleAlerts(entry: entry, ahead: ahead, auth: auth);
+        _handleAlerts(entry: activeEntry, ahead: ahead, auth: auth);
       });
     } else {
       _alertService.reset();
@@ -195,14 +214,18 @@ class _QueueTrackingScreenState extends State<QueueTrackingScreen>
       );
     }
 
-    final doctor = data.doctorById(entry.doctorId);
-    final ahead = queue.peopleAhead(entry);
-    final current = queue.currentServingNumber(entry) ?? 0;
-    final waitMin = queue.estimatedWaitMinutes(entry);
+    final activeEntry = entry!;
+
+    final doctor = data.doctorById(activeEntry.doctorId);
+    final ahead = queue.peopleAhead(activeEntry);
+    final current = queue.currentServingNumber(activeEntry) ?? 0;
+    final waitMin = queue.estimatedWaitMinutes(activeEntry);
 
     final queueBody = ResponsiveBody(
       child: Column(
         children: [
+          if (connectivity.isOffline)
+            const OfflineIndicatorBanner(compact: true),
           if (widget.embedded)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -221,7 +244,7 @@ class _QueueTrackingScreenState extends State<QueueTrackingScreen>
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
               child: PremiumQueueDashboard(
-                entry: entry,
+                entry: activeEntry,
                 doctor: doctor,
                 currentNumber: current,
                 peopleAhead: ahead,
@@ -246,7 +269,7 @@ class _QueueTrackingScreenState extends State<QueueTrackingScreen>
                   ),
                   FilledButton.icon(
                     onPressed: () async {
-                      await queue.cancelEntry(entry.id, entry.doctorId);
+                      await queue.cancelEntry(activeEntry.id, activeEntry.doctorId);
                       if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(l10n.queueCancelled)),

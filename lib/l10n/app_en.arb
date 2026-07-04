@@ -1235,5 +1235,9 @@
   "branding": "Branding",
   "rulesAndHours": "Rules & hours",
   "queueRules": "Queue rules",
-  "appointmentRules": "Appointment rules"
+  "appointmentRules": "Appointment rules",
+  "offlineMode": "Offline",
+  "offlineModeHint": "You are offline — showing saved data. Changes sync when connection returns.",
+  "offlineQueueHint": "Last known queue status (offline)",
+  "syncingData": "Syncing…"
 }

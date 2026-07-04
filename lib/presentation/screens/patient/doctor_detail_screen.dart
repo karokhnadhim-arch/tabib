@@ -11,6 +11,8 @@ import '../../../models/provider_catalog_mode.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../services/favorites_service.dart';
+import '../../../services/offline/offline_profile_cache_service.dart';
+import '../../../services/offline/connectivity_service.dart';
 import '../../../services/recently_visited_service.dart';
 import '../../../services/queue_service.dart';
 import '../../../utils/localization_utils.dart';
@@ -60,10 +62,16 @@ class _TabibDoctorDetailScreenState extends State<TabibDoctorDetailScreen> {
 
   Future<void> _loadDoctor() async {
     final data = context.read<ClinicDataService>();
+    final offlineProfiles = context.read<OfflineProfileCacheService>();
+    final connectivity = context.read<ConnectivityService>();
     setState(() => _loadingDoctor = true);
-    await data.fetchDoctorById(widget.doctorId, forceRefresh: true);
-    final doctor = data.doctorById(widget.doctorId);
+    if (connectivity.isOnline) {
+      await data.fetchDoctorById(widget.doctorId, forceRefresh: true);
+    }
+    var doctor = data.doctorById(widget.doctorId);
+    doctor ??= await offlineProfiles.getDoctor(widget.doctorId);
     if (doctor != null) {
+      await offlineProfiles.saveDoctor(doctor);
       await context.read<RecentlyVisitedService>().recordVisit(
             doctor.id,
             doctor.isBusiness

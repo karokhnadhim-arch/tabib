@@ -1151,5 +1151,9 @@
   "branding": "براند",
   "rulesAndHours": "یاسا و کاتژمێرەکان",
   "queueRules": "یاساکانی ڕیز",
-  "appointmentRules": "یاساکانی چاوپێکەوتن"
+  "appointmentRules": "یاساکانی چاوپێکەوتن",
+  "offlineMode": "Offline",
+  "offlineModeHint": "Offline — داتای پاشەکەوتکراو پیشان دەدرێت. کاتێک پەیوەندی گەڕایەوە هاوکات دەبێت.",
+  "offlineQueueHint": "دوایین دۆخی ڕیز (offline)",
+  "syncingData": "هاوکاتکردن…"
 }

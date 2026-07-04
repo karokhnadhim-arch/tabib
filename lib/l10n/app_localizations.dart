@@ -6556,6 +6556,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Appointment rules'**
   String get appointmentRules;
+
+  /// No description provided for @offlineMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline'**
+  String get offlineMode;
+
+  /// No description provided for @offlineModeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You are offline — showing saved data. Changes sync when connection returns.'**
+  String get offlineModeHint;
+
+  /// No description provided for @offlineQueueHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Last known queue status (offline)'**
+  String get offlineQueueHint;
+
+  /// No description provided for @syncingData.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing…'**
+  String get syncingData;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

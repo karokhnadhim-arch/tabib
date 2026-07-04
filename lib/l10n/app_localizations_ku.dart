@@ -3292,4 +3292,16 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get appointmentRules => 'یاساکانی چاوپێکەوتن';
+
+  @override
+  String get offlineMode => 'Offline';
+
+  @override
+  String get offlineModeHint => 'Offline — داتای پاشەکەوتکراو پیشان دەدرێت. کاتێک پەیوەندی گەڕایەوە هاوکات دەبێت.';
+
+  @override
+  String get offlineQueueHint => 'دوایین دۆخی ڕیز (offline)';
+
+  @override
+  String get syncingData => 'هاوکاتکردن…';
 }

@@ -1151,5 +1151,9 @@
   "branding": "العلامة التجارية",
   "rulesAndHours": "القواعد والساعات",
   "queueRules": "قواعد قائمة الانتظار",
-  "appointmentRules": "قواعد المواعيد"
+  "appointmentRules": "قواعد المواعيد",
+  "offlineMode": "غير متصل",
+  "offlineModeHint": "أنت غير متصل — يتم عرض البيانات المحفوظة. تتم المزامنة عند عودة الاتصال.",
+  "offlineQueueHint": "آخر حالة معروفة للقائمة (غير متصل)",
+  "syncingData": "جاري المزامنة…"
 }

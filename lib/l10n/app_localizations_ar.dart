@@ -3292,4 +3292,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get appointmentRules => 'قواعد المواعيد';
+
+  @override
+  String get offlineMode => 'غير متصل';
+
+  @override
+  String get offlineModeHint => 'أنت غير متصل — يتم عرض البيانات المحفوظة. تتم المزامنة عند عودة الاتصال.';
+
+  @override
+  String get offlineQueueHint => 'آخر حالة معروفة للقائمة (غير متصل)';
+
+  @override
+  String get syncingData => 'جاري المزامنة…';
 }

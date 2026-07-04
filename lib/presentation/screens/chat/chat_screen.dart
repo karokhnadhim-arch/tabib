@@ -10,7 +10,9 @@ import '../../../services/image_storage_service.dart';
 import '../../../utils/image_upload_utils.dart';
 import '../../../utils/localization_utils.dart';
 import '../../../utils/tabib_image_upload.dart';
+import '../../../services/offline/offline_recent_chats_service.dart';
 import '../../providers/app_providers.dart';
+import '../../widgets/offline_indicator_banner.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({
@@ -79,6 +81,14 @@ class _ChatScreenState extends State<ChatScreen> {
         : auth.patientId;
     final chat = context.read<ChatProvider>();
     chat.watch(clinicId: widget.clinicId, patientId: _patientId);
+    final title = widget.patientName?.trim().isNotEmpty == true
+        ? widget.patientName!.trim()
+        : widget.clinicId;
+    context.read<OfflineRecentChatsService>().recordOpen(
+          clinicId: widget.clinicId,
+          patientId: _patientId,
+          title: title,
+        );
     _acknowledgeMessages();
   }
 
@@ -227,6 +237,7 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       body: Column(
         children: [
+          const OfflineIndicatorBanner(compact: true),
           Expanded(
             child: chat.isLoading
                 ? const Center(child: CircularProgressIndicator())

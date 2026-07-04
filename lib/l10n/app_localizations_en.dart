@@ -3292,4 +3292,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appointmentRules => 'Appointment rules';
+
+  @override
+  String get offlineMode => 'Offline';
+
+  @override
+  String get offlineModeHint => 'You are offline — showing saved data. Changes sync when connection returns.';
+
+  @override
+  String get offlineQueueHint => 'Last known queue status (offline)';
+
+  @override
+  String get syncingData => 'Syncing…';
 }
