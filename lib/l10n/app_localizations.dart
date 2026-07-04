@@ -6034,6 +6034,288 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select a date range, then export platform metrics'**
   String get reportsFilterHint;
+
+  /// No description provided for @aiInsightsCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Insights Center'**
+  String get aiInsightsCenter;
+
+  /// No description provided for @aiInsightsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Automated recommendations from aggregated platform metrics'**
+  String get aiInsightsHint;
+
+  /// No description provided for @priorityHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High priority'**
+  String get priorityHigh;
+
+  /// No description provided for @priorityMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium priority'**
+  String get priorityMedium;
+
+  /// No description provided for @priorityLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low priority'**
+  String get priorityLow;
+
+  /// No description provided for @forecastDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Forecast dashboard'**
+  String get forecastDashboard;
+
+  /// No description provided for @forecastNext7Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Next 7 days'**
+  String get forecastNext7Days;
+
+  /// No description provided for @forecastNextMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Next month'**
+  String get forecastNextMonth;
+
+  /// No description provided for @forecastNextYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Next year'**
+  String get forecastNextYear;
+
+  /// No description provided for @smartOwnerNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart owner notifications'**
+  String get smartOwnerNotifications;
+
+  /// No description provided for @markAsRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as read'**
+  String get markAsRead;
+
+  /// No description provided for @archiveNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get archiveNotification;
+
+  /// No description provided for @firebaseCostOptimizer.
+  ///
+  /// In en, this message translates to:
+  /// **'Firebase cost optimizer'**
+  String get firebaseCostOptimizer;
+
+  /// No description provided for @estimatedMonthlyCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated monthly cost'**
+  String get estimatedMonthlyCost;
+
+  /// No description provided for @bandwidthUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'Bandwidth usage'**
+  String get bandwidthUsage;
+
+  /// No description provided for @optimizationSuggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Optimization suggestions'**
+  String get optimizationSuggestions;
+
+  /// No description provided for @globalSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search doctors, patients, businesses, ads, audit logs…'**
+  String get globalSearchHint;
+
+  /// No description provided for @globalDashboardFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Global dashboard filters'**
+  String get globalDashboardFilters;
+
+  /// No description provided for @clearFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear filters'**
+  String get clearFilters;
+
+  /// No description provided for @filterByCity.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get filterByCity;
+
+  /// No description provided for @filterByBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get filterByBusiness;
+
+  /// No description provided for @filterByDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor'**
+  String get filterByDoctor;
+
+  /// No description provided for @filterByStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get filterByStatus;
+
+  /// No description provided for @statusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get statusActive;
+
+  /// No description provided for @statusSuspended.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspended'**
+  String get statusSuspended;
+
+  /// No description provided for @filterScaleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing ~{percent}% of platform metrics for selected filters'**
+  String filterScaleHint(String percent);
+
+  /// No description provided for @themeAndAppearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme & appearance'**
+  String get themeAndAppearance;
+
+  /// No description provided for @themeAppearanceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize the monitoring center look and feel'**
+  String get themeAppearanceHint;
+
+  /// No description provided for @lightMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get lightMode;
+
+  /// No description provided for @darkMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get darkMode;
+
+  /// No description provided for @systemMode.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get systemMode;
+
+  /// No description provided for @accentColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Accent color'**
+  String get accentColor;
+
+  /// No description provided for @cardDensity.
+  ///
+  /// In en, this message translates to:
+  /// **'Card density'**
+  String get cardDensity;
+
+  /// No description provided for @compactMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Compact'**
+  String get compactMode;
+
+  /// No description provided for @comfortableMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Comfortable'**
+  String get comfortableMode;
+
+  /// No description provided for @dashboardLayout.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard layout'**
+  String get dashboardLayout;
+
+  /// No description provided for @layoutStandard.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard'**
+  String get layoutStandard;
+
+  /// No description provided for @layoutWide.
+  ///
+  /// In en, this message translates to:
+  /// **'Wide'**
+  String get layoutWide;
+
+  /// No description provided for @layoutFocused.
+  ///
+  /// In en, this message translates to:
+  /// **'Focused'**
+  String get layoutFocused;
+
+  /// No description provided for @advancedSystemSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced system settings'**
+  String get advancedSystemSettings;
+
+  /// No description provided for @useAggregatedMetrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Use aggregated metrics documents'**
+  String get useAggregatedMetrics;
+
+  /// No description provided for @warnBeforeExpensiveOps.
+  ///
+  /// In en, this message translates to:
+  /// **'Warn before expensive operations'**
+  String get warnBeforeExpensiveOps;
+
+  /// No description provided for @queueRealtimeEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Real-time queue updates'**
+  String get queueRealtimeEnabled;
+
+  /// No description provided for @autoCleanupListeners.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-cleanup idle listeners'**
+  String get autoCleanupListeners;
+
+  /// No description provided for @cityTargeting.
+  ///
+  /// In en, this message translates to:
+  /// **'City-targeted advertisements'**
+  String get cityTargeting;
+
+  /// No description provided for @renewalReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Package renewal reminders'**
+  String get renewalReminders;
+
+  /// No description provided for @autoBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic backups'**
+  String get autoBackup;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

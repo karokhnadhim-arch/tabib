@@ -8,6 +8,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../../models/system_monitoring.dart';
 import '../../../../services/owner_audit_service.dart';
 import '../../../../services/system_monitoring_service.dart';
+import 'monitoring_filter_scope.dart';
 import 'monitoring_interactive_chart.dart';
 import 'system_health_widgets.dart';
 
@@ -70,17 +71,18 @@ class _AnalyticsBody extends StatelessWidget {
               final crossCount = constraints.maxWidth >= 900
                   ? 2
                   : 1;
+              final scale = (List<double> v) => MonitoringFilterScope.scaleSeries(context, v);
               final chartDefs = [
-                (l10n.dailyRegistrations, charts.registrations, scheme.primary, false),
-                (l10n.dailyQueues, charts.queues, Colors.orange, false),
-                (l10n.dailyAppointments, charts.appointments, Colors.teal, false),
-                (l10n.monthlyRevenue, charts.revenue, AppTheme.medicalGreen, true),
-                (l10n.adPerformance, charts.adPerformance, Colors.purple, false),
-                (l10n.userGrowth, charts.userGrowth, scheme.tertiary, false),
-                (l10n.doctorGrowthChart, charts.doctorGrowth, Colors.indigo, false),
-                (l10n.businessGrowth, charts.businessGrowth, Colors.brown, false),
-                (l10n.activeUsersChart, charts.activeUsers, Colors.blue, false),
-                (l10n.queueWaitingTrends, charts.queueWaitingTrends, Colors.deepOrange, false),
+                (l10n.dailyRegistrations, scale(charts.registrations), scheme.primary, false),
+                (l10n.dailyQueues, scale(charts.queues), Colors.orange, false),
+                (l10n.dailyAppointments, scale(charts.appointments), Colors.teal, false),
+                (l10n.monthlyRevenue, scale(charts.revenue), AppTheme.medicalGreen, true),
+                (l10n.adPerformance, scale(charts.adPerformance), Colors.purple, false),
+                (l10n.userGrowth, scale(charts.userGrowth), scheme.tertiary, false),
+                (l10n.doctorGrowthChart, scale(charts.doctorGrowth), Colors.indigo, false),
+                (l10n.businessGrowth, scale(charts.businessGrowth), Colors.brown, false),
+                (l10n.activeUsersChart, scale(charts.activeUsers), Colors.blue, false),
+                (l10n.queueWaitingTrends, scale(charts.queueWaitingTrends), Colors.deepOrange, false),
               ];
               return GridView.builder(
                 shrinkWrap: true,

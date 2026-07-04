@@ -3027,4 +3027,147 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reportsFilterHint => 'Select a date range, then export platform metrics';
+
+  @override
+  String get aiInsightsCenter => 'AI Insights Center';
+
+  @override
+  String get aiInsightsHint => 'Automated recommendations from aggregated platform metrics';
+
+  @override
+  String get priorityHigh => 'High priority';
+
+  @override
+  String get priorityMedium => 'Medium priority';
+
+  @override
+  String get priorityLow => 'Low priority';
+
+  @override
+  String get forecastDashboard => 'Forecast dashboard';
+
+  @override
+  String get forecastNext7Days => 'Next 7 days';
+
+  @override
+  String get forecastNextMonth => 'Next month';
+
+  @override
+  String get forecastNextYear => 'Next year';
+
+  @override
+  String get smartOwnerNotifications => 'Smart owner notifications';
+
+  @override
+  String get markAsRead => 'Mark as read';
+
+  @override
+  String get archiveNotification => 'Archive';
+
+  @override
+  String get firebaseCostOptimizer => 'Firebase cost optimizer';
+
+  @override
+  String get estimatedMonthlyCost => 'Estimated monthly cost';
+
+  @override
+  String get bandwidthUsage => 'Bandwidth usage';
+
+  @override
+  String get optimizationSuggestions => 'Optimization suggestions';
+
+  @override
+  String get globalSearchHint => 'Search doctors, patients, businesses, ads, audit logs…';
+
+  @override
+  String get globalDashboardFilters => 'Global dashboard filters';
+
+  @override
+  String get clearFilters => 'Clear filters';
+
+  @override
+  String get filterByCity => 'City';
+
+  @override
+  String get filterByBusiness => 'Business';
+
+  @override
+  String get filterByDoctor => 'Doctor';
+
+  @override
+  String get filterByStatus => 'Status';
+
+  @override
+  String get statusActive => 'Active';
+
+  @override
+  String get statusSuspended => 'Suspended';
+
+  @override
+  String filterScaleHint(String percent) {
+    return 'Showing ~$percent% of platform metrics for selected filters';
+  }
+
+  @override
+  String get themeAndAppearance => 'Theme & appearance';
+
+  @override
+  String get themeAppearanceHint => 'Customize the monitoring center look and feel';
+
+  @override
+  String get lightMode => 'Light';
+
+  @override
+  String get darkMode => 'Dark';
+
+  @override
+  String get systemMode => 'System';
+
+  @override
+  String get accentColor => 'Accent color';
+
+  @override
+  String get cardDensity => 'Card density';
+
+  @override
+  String get compactMode => 'Compact';
+
+  @override
+  String get comfortableMode => 'Comfortable';
+
+  @override
+  String get dashboardLayout => 'Dashboard layout';
+
+  @override
+  String get layoutStandard => 'Standard';
+
+  @override
+  String get layoutWide => 'Wide';
+
+  @override
+  String get layoutFocused => 'Focused';
+
+  @override
+  String get advancedSystemSettings => 'Advanced system settings';
+
+  @override
+  String get useAggregatedMetrics => 'Use aggregated metrics documents';
+
+  @override
+  String get warnBeforeExpensiveOps => 'Warn before expensive operations';
+
+  @override
+  String get queueRealtimeEnabled => 'Real-time queue updates';
+
+  @override
+  String get autoCleanupListeners => 'Auto-cleanup idle listeners';
+
+  @override
+  String get cityTargeting => 'City-targeted advertisements';
+
+  @override
+  String get renewalReminders => 'Package renewal reminders';
+
+  @override
+  String get autoBackup => 'Automatic backups';
 }

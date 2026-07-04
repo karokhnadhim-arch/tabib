@@ -41,6 +41,14 @@ import 'services/smart_notification_service.dart';
 import 'services/queue_notification_monitor.dart';
 import 'services/user_preferences_service.dart';
 import 'services/dashboard_summary_repository.dart';
+import 'services/owner_dashboard_appearance_service.dart';
+import 'services/owner_dashboard_filter_service.dart';
+import 'services/owner_dashboard_search_service.dart';
+import 'services/owner_forecast_service.dart';
+import 'services/owner_insights_service.dart';
+import 'services/owner_monitoring_settings_service.dart';
+import 'services/firebase_cost_optimizer_service.dart';
+import 'services/smart_owner_notification_service.dart';
 import 'services/system_monitoring_service.dart';
 import 'services/system_error_log_service.dart';
 import 'services/system_activity_feed_service.dart';
@@ -101,6 +109,14 @@ class _TabibAppState extends State<TabibApp> {
   late final SystemErrorLogService _systemErrorLogService;
   late final SystemActivityFeedService _systemActivityFeedService;
   late final SystemMaintenanceService _systemMaintenanceService;
+  late final OwnerInsightsService _ownerInsightsService;
+  late final OwnerForecastService _ownerForecastService;
+  late final SmartOwnerNotificationService _smartOwnerNotificationService;
+  late final OwnerDashboardSearchService _ownerDashboardSearchService;
+  late final OwnerDashboardFilterService _ownerDashboardFilterService;
+  late final OwnerDashboardAppearanceService _ownerDashboardAppearanceService;
+  late final FirebaseCostOptimizerService _firebaseCostOptimizerService;
+  late final OwnerMonitoringSettingsService _ownerMonitoringSettingsService;
   QueueNotificationMonitor? _queueNotificationMonitor;
   late final GoRouter _router;
   String? _activePatientQueueId;
@@ -171,6 +187,23 @@ class _TabibAppState extends State<TabibApp> {
       summaryRepo: dashboardSummaryRepo,
     );
     _systemMaintenanceService = SystemMaintenanceService()..load();
+    _ownerInsightsService = OwnerInsightsService();
+    _ownerForecastService = OwnerForecastService();
+    _smartOwnerNotificationService = SmartOwnerNotificationService();
+    _ownerDashboardSearchService = OwnerDashboardSearchService(
+      clinicData: _dataService,
+      staffData: _staffDataService,
+      auditService: _ownerAuditService,
+      advertisementService: _advertisementService,
+    );
+    _ownerDashboardFilterService = OwnerDashboardFilterService(
+      clinicData: _dataService,
+    );
+    _ownerDashboardAppearanceService = OwnerDashboardAppearanceService()..load();
+    _firebaseCostOptimizerService = FirebaseCostOptimizerService();
+    _ownerMonitoringSettingsService = OwnerMonitoringSettingsService(
+      maintenance: _systemMaintenanceService,
+    )..load();
     _systemMonitoringService = SystemMonitoringService(
       backend: _backend,
       clinicData: _dataService,
@@ -178,7 +211,15 @@ class _TabibAppState extends State<TabibApp> {
       communicationLog: _staffCommunicationLog,
       errorLog: _systemErrorLogService,
       advertisementService: _advertisementService,
-    )..attachActivityFeed(_systemActivityFeedService);
+    )
+      ..attachActivityFeed(_systemActivityFeedService)
+      ..attachPhase4Services(
+        insights: _ownerInsightsService,
+        forecast: _ownerForecastService,
+        smartNotifications: _smartOwnerNotificationService,
+        costOptimizer: _firebaseCostOptimizerService,
+        search: _ownerDashboardSearchService,
+      );
     _subscriptionMonitor = SubscriptionMonitorService(
       backend: _backend,
       catalog: _dataService,
@@ -261,6 +302,14 @@ class _TabibAppState extends State<TabibApp> {
         ChangeNotifierProvider.value(value: _systemErrorLogService),
         ChangeNotifierProvider.value(value: _systemActivityFeedService),
         ChangeNotifierProvider.value(value: _systemMaintenanceService),
+        ChangeNotifierProvider.value(value: _ownerInsightsService),
+        ChangeNotifierProvider.value(value: _ownerForecastService),
+        ChangeNotifierProvider.value(value: _smartOwnerNotificationService),
+        ChangeNotifierProvider.value(value: _ownerDashboardSearchService),
+        ChangeNotifierProvider.value(value: _ownerDashboardFilterService),
+        ChangeNotifierProvider.value(value: _ownerDashboardAppearanceService),
+        ChangeNotifierProvider.value(value: _firebaseCostOptimizerService),
+        ChangeNotifierProvider.value(value: _ownerMonitoringSettingsService),
       ],
       child: Consumer2<LocaleService, ThemeService>(
         builder: (context, localeService, themeService, _) {

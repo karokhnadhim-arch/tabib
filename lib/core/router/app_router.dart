@@ -22,6 +22,7 @@ import '../../presentation/screens/owner/owner_business_management_screen.dart';
 import '../../presentation/screens/owner/owner_subscriptions_packages_screen.dart';
 import '../../presentation/screens/owner/owner_audit_log_screen.dart';
 import '../../presentation/screens/owner/owner_system_health_screen.dart';
+import '../../presentation/screens/owner/system_health/owner_monitoring_settings_screen.dart';
 import '../../presentation/screens/owner/owner_notification_config_screen.dart';
 import '../../presentation/screens/owner/owner_hub_screens.dart';
 import '../../presentation/screens/owner/system_owner_module_placeholder_screen.dart';
@@ -279,6 +280,12 @@ class AppRouter {
               GoRoute(
                 path: 'system-health',
                 builder: (_, __) => const OwnerSystemHealthScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'settings',
+                    builder: (_, __) => const OwnerMonitoringSettingsScreen(),
+                  ),
+                ],
               ),
               GoRoute(
                 path: 'audit-log',

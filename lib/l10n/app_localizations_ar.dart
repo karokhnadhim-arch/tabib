@@ -3027,4 +3027,147 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get reportsFilterHint => 'اختر نطاقاً زمنياً ثم صدّر مقاييس المنصة';
+
+  @override
+  String get aiInsightsCenter => 'مركز رؤى الذكاء الاصطناعي';
+
+  @override
+  String get aiInsightsHint => 'توصيات تلقائية من مقاييس المنصة المجمّعة';
+
+  @override
+  String get priorityHigh => 'أولوية عالية';
+
+  @override
+  String get priorityMedium => 'أولوية متوسطة';
+
+  @override
+  String get priorityLow => 'أولوية منخفضة';
+
+  @override
+  String get forecastDashboard => 'لوحة التوقعات';
+
+  @override
+  String get forecastNext7Days => 'الأيام السبعة القادمة';
+
+  @override
+  String get forecastNextMonth => 'الشهر القادم';
+
+  @override
+  String get forecastNextYear => 'السنة القادمة';
+
+  @override
+  String get smartOwnerNotifications => 'إشعارات المالك الذكية';
+
+  @override
+  String get markAsRead => 'تعليم كمقروء';
+
+  @override
+  String get archiveNotification => 'أرشفة';
+
+  @override
+  String get firebaseCostOptimizer => 'محسّن تكلفة Firebase';
+
+  @override
+  String get estimatedMonthlyCost => 'التكلفة الشهرية المقدرة';
+
+  @override
+  String get bandwidthUsage => 'استخدام النطاق الترددي';
+
+  @override
+  String get optimizationSuggestions => 'اقتراحات التحسين';
+
+  @override
+  String get globalSearchHint => 'ابحث عن الأطباء والمرضى والأعمال والإعلانات وسجلات التدقيق…';
+
+  @override
+  String get globalDashboardFilters => 'فلاتر لوحة التحكم العامة';
+
+  @override
+  String get clearFilters => 'مسح الفلاتر';
+
+  @override
+  String get filterByCity => 'المدينة';
+
+  @override
+  String get filterByBusiness => 'النشاط';
+
+  @override
+  String get filterByDoctor => 'الطبيب';
+
+  @override
+  String get filterByStatus => 'الحالة';
+
+  @override
+  String get statusActive => 'نشط';
+
+  @override
+  String get statusSuspended => 'موقوف';
+
+  @override
+  String filterScaleHint(String percent) {
+    return 'عرض ~$percent% من مقاييس المنصة للفلاتر المحددة';
+  }
+
+  @override
+  String get themeAndAppearance => 'المظهر والسمة';
+
+  @override
+  String get themeAppearanceHint => 'خصص مظهر مركز المراقبة';
+
+  @override
+  String get lightMode => 'فاتح';
+
+  @override
+  String get darkMode => 'داكن';
+
+  @override
+  String get systemMode => 'النظام';
+
+  @override
+  String get accentColor => 'لون التمييز';
+
+  @override
+  String get cardDensity => 'كثافة البطاقات';
+
+  @override
+  String get compactMode => 'مضغوط';
+
+  @override
+  String get comfortableMode => 'مريح';
+
+  @override
+  String get dashboardLayout => 'تخطيط اللوحة';
+
+  @override
+  String get layoutStandard => 'قياسي';
+
+  @override
+  String get layoutWide => 'عريض';
+
+  @override
+  String get layoutFocused => 'مركّز';
+
+  @override
+  String get advancedSystemSettings => 'إعدادات النظام المتقدمة';
+
+  @override
+  String get useAggregatedMetrics => 'استخدام مستندات المقاييس المجمّعة';
+
+  @override
+  String get warnBeforeExpensiveOps => 'تحذير قبل العمليات المكلفة';
+
+  @override
+  String get queueRealtimeEnabled => 'تحديثات قائمة الانتظار المباشرة';
+
+  @override
+  String get autoCleanupListeners => 'تنظيف المستمعين الخاملين تلقائياً';
+
+  @override
+  String get cityTargeting => 'إعلانات مستهدفة بالمدينة';
+
+  @override
+  String get renewalReminders => 'تذكيرات تجديد الباقات';
+
+  @override
+  String get autoBackup => 'نسخ احتياطي تلقائي';
 }

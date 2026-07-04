@@ -16,6 +16,11 @@ import 'firebase_bootstrap.dart';
 import 'staff_communication_log_service.dart';
 import 'staff_data_service.dart';
 import 'system_error_log_service.dart';
+import 'firebase_cost_optimizer_service.dart';
+import 'owner_forecast_service.dart';
+import 'owner_insights_service.dart';
+import 'owner_dashboard_search_service.dart';
+import 'smart_owner_notification_service.dart';
 import 'system_activity_feed_service.dart';
 
 /// Owner monitoring with cost-aware polling, lazy sections, and offline cache.
@@ -52,6 +57,38 @@ class SystemMonitoringService extends ChangeNotifier {
 
   void attachActivityFeed(SystemActivityFeedService feed) {
     _activityFeed = feed;
+  }
+
+  OwnerInsightsService? _insights;
+  OwnerForecastService? _forecast;
+  SmartOwnerNotificationService? _smartNotifications;
+  FirebaseCostOptimizerService? _costOptimizer;
+  OwnerDashboardSearchService? _search;
+
+  void attachPhase4Services({
+    OwnerInsightsService? insights,
+    OwnerForecastService? forecast,
+    SmartOwnerNotificationService? smartNotifications,
+    FirebaseCostOptimizerService? costOptimizer,
+    OwnerDashboardSearchService? search,
+  }) {
+    _insights = insights;
+    _forecast = forecast;
+    _smartNotifications = smartNotifications;
+    _costOptimizer = costOptimizer;
+    _search = search;
+  }
+
+  void _syncPhase4(SystemMonitoringSnapshot snapshot, SystemHealthLevel health) {
+    _insights?.generateFromSnapshot(snapshot);
+    _forecast?.generate(snapshot: snapshot, charts: _charts);
+    _costOptimizer?.analyze(snapshot);
+    _search?.setSnapshot(snapshot);
+    _smartNotifications?.syncFromMonitoring(
+      snapshot: snapshot,
+      alerts: _criticalAlerts,
+      healthLevel: health,
+    );
   }
 
   Timer? _statisticsTimer;
@@ -299,6 +336,9 @@ class SystemMonitoringService extends ChangeNotifier {
     } finally {
       _chartsRefreshInFlight = false;
       _isLoadingCharts = false;
+      if (_snapshot != null) {
+        _forecast?.generate(snapshot: _snapshot!, charts: _charts);
+      }
       notifyListeners();
     }
   }
@@ -515,6 +555,9 @@ class SystemMonitoringService extends ChangeNotifier {
     }
 
     unawaited(_activityFeed?.syncFromSummary(summary));
+    if (_snapshot != null) {
+      _syncPhase4(_snapshot!, _snapshot!.healthLevel);
+    }
   }
 
   SystemMonitoringSnapshot _buildSnapshot({

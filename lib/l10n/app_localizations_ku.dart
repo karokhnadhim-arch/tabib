@@ -3027,4 +3027,147 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get reportsFilterHint => 'ماوەیەک هەڵبژێرە، پاشان ئامارەکان هەناردە بکە';
+
+  @override
+  String get aiInsightsCenter => 'ناوەندی زیرەکی تێڕوانین';
+
+  @override
+  String get aiInsightsHint => 'پێشنیارە خۆکارەکان لە ئامارە کۆکراوەکان';
+
+  @override
+  String get priorityHigh => 'گرنگی بەرز';
+
+  @override
+  String get priorityMedium => 'گرنگی مامناوەند';
+
+  @override
+  String get priorityLow => 'گرنگی نزم';
+
+  @override
+  String get forecastDashboard => 'داشبۆردی پێشبینی';
+
+  @override
+  String get forecastNext7Days => '7 ڕۆژی داهاتوو';
+
+  @override
+  String get forecastNextMonth => 'مانگی داهاتوو';
+
+  @override
+  String get forecastNextYear => 'ساڵی داهاتوو';
+
+  @override
+  String get smartOwnerNotifications => 'ئاگادارییە زیرەکەکانی خاوەن';
+
+  @override
+  String get markAsRead => 'نیشانکردن وەک خوێندراو';
+
+  @override
+  String get archiveNotification => 'ئارکایڤ';
+
+  @override
+  String get firebaseCostOptimizer => 'باشترکەری تێچووی Firebase';
+
+  @override
+  String get estimatedMonthlyCost => 'تێچووی مانگانەی خەمڵاندراو';
+
+  @override
+  String get bandwidthUsage => 'بەکارهێنانی پانی باند';
+
+  @override
+  String get optimizationSuggestions => 'پێشنیارەکانی باشترکردن';
+
+  @override
+  String get globalSearchHint => 'گەڕان بۆ پزیشک، نەخۆش، بزنس، ڕیکلام، تۆماری پشکنین…';
+
+  @override
+  String get globalDashboardFilters => 'فلتەرە گشتییەکانی داشبۆرد';
+
+  @override
+  String get clearFilters => 'سڕینەوەی فلتەرەکان';
+
+  @override
+  String get filterByCity => 'شار';
+
+  @override
+  String get filterByBusiness => 'بزنس';
+
+  @override
+  String get filterByDoctor => 'پزیشک';
+
+  @override
+  String get filterByStatus => 'دۆخ';
+
+  @override
+  String get statusActive => 'چالاک';
+
+  @override
+  String get statusSuspended => 'هەڵواسراو';
+
+  @override
+  String filterScaleHint(String percent) {
+    return 'نیشاندانی ~$percent% ئامارەکانی پلاتفۆرم بۆ فلتەرە هەڵبژێردراوەکان';
+  }
+
+  @override
+  String get themeAndAppearance => 'ڕووکار و دیمەن';
+
+  @override
+  String get themeAppearanceHint => 'دیمەنی ناوەندی چاودێری بەکەسیکەرە';
+
+  @override
+  String get lightMode => 'ڕووناک';
+
+  @override
+  String get darkMode => 'تاریک';
+
+  @override
+  String get systemMode => 'سیستەم';
+
+  @override
+  String get accentColor => 'ڕەنگی تیشک';
+
+  @override
+  String get cardDensity => 'چڕی کارتی';
+
+  @override
+  String get compactMode => 'کۆمپاکت';
+
+  @override
+  String get comfortableMode => 'ئاسوودە';
+
+  @override
+  String get dashboardLayout => 'شێوازی داشبۆرد';
+
+  @override
+  String get layoutStandard => 'ستاندارد';
+
+  @override
+  String get layoutWide => 'پان';
+
+  @override
+  String get layoutFocused => 'ناوەندی';
+
+  @override
+  String get advancedSystemSettings => 'ڕێکخستنە پێشکەوتووەکانی سیستەم';
+
+  @override
+  String get useAggregatedMetrics => 'بەکارهێنانی بەڵگەی ئامارە کۆکراوەکان';
+
+  @override
+  String get warnBeforeExpensiveOps => 'ئاگادارکردنەوە پێش کارە گرانەکان';
+
+  @override
+  String get queueRealtimeEnabled => 'نوێکردنەوەی ڕاستەوخۆی ڕیز';
+
+  @override
+  String get autoCleanupListeners => 'پاککردنەوەی گوێگرە بەجێماوەکان';
+
+  @override
+  String get cityTargeting => 'ڕیکلامی ئامانجدار بە شار';
+
+  @override
+  String get renewalReminders => 'ئاگاداری نوێکردنەوەی پاکێج';
+
+  @override
+  String get autoBackup => 'پاشەکەوتی خۆکار';
 }

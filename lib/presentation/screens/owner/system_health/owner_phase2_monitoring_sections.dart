@@ -7,6 +7,7 @@ import '../../../../models/system_monitoring.dart';
 import '../../../../services/system_activity_feed_service.dart';
 import '../../../../services/system_monitoring_service.dart';
 import 'monitoring_view_models.dart';
+import 'monitoring_filter_scope.dart';
 import 'system_health_widgets.dart';
 
 class OwnerLiveStatisticsSection extends StatelessWidget {
@@ -195,7 +196,9 @@ class _StatGroup extends StatelessWidget {
               .map(
                 (item) => (
                   label: item.label,
-                  value: '${item.value}',
+                  value: item.value is int
+                      ? MonitoringFilterScope.scaleText(context, item.value as int)
+                      : '${item.value}',
                   icon: item.icon,
                   color: item.color,
                 ),
