@@ -648,6 +648,16 @@
   "backupInProgress": "پاشەکەوتکردن لە جریانە",
   "exportAuditLog": "هەناردەی تۆماری وردبینی",
   "auditLogExported": "تۆماری وردبینی هەناردە کرا",
+  "queueAnalytics": "شیکاری ڕیز",
+  "appointmentAnalytics": "شیکاری چاوپێکەوتن",
+  "packageAnalytics": "شیکاری پاکێج",
+  "suspendedPackages": "Pakêjە هەڵواسراوەکان",
+  "revenueByPackage": "داهات بەپێی پاکێج",
+  "avgServiceTime": "ناوەندی کاتی خزمەتگوزاری",
+  "completedAppointments": "چاوپێکەوتنە تەواوکراوەکان",
+  "cacheEfficiency": "کارایی کاش",
+  "highCostOperationWarning": "پێش بەردەوامبوون ئەم کارە بپشکنە — لەوانەیە تێچووی Firebase زیاد بکات",
+  "maintenanceAllowOwnerAdmin": "خاوەن و بەڕێوەبەر دەتوانن لە کاتی چاکسازی دەستگەیشتن بە پلاتفۆرم بکەن",
   "reportSavedToFile": "ڕاپۆرت پاشەکەوت کرا لە {path}",
   "@reportSavedToFile": {
     "placeholders": {

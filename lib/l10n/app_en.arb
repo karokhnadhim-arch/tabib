@@ -704,6 +704,16 @@
   "backupInProgress": "Backup in progress",
   "exportAuditLog": "Export audit log",
   "auditLogExported": "Audit log exported",
+  "queueAnalytics": "Queue analytics",
+  "appointmentAnalytics": "Appointment analytics",
+  "packageAnalytics": "Package analytics",
+  "suspendedPackages": "Suspended packages",
+  "revenueByPackage": "Revenue by package",
+  "avgServiceTime": "Average service time",
+  "completedAppointments": "Completed appointments",
+  "cacheEfficiency": "Cache efficiency",
+  "highCostOperationWarning": "Review this operation before proceeding — it may increase Firebase costs",
+  "maintenanceAllowOwnerAdmin": "Owner and admin accounts can still access the platform during maintenance",
   "reportSavedToFile": "Report saved to {path}",
   "@reportSavedToFile": {
     "placeholders": {

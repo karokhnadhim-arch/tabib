@@ -1804,6 +1804,36 @@ class AppLocalizationsKu extends AppLocalizations {
   String get auditLogExported => 'تۆماری وردبینی هەناردە کرا';
 
   @override
+  String get queueAnalytics => 'شیکاری ڕیز';
+
+  @override
+  String get appointmentAnalytics => 'شیکاری چاوپێکەوتن';
+
+  @override
+  String get packageAnalytics => 'شیکاری پاکێج';
+
+  @override
+  String get suspendedPackages => 'Pakêjە هەڵواسراوەکان';
+
+  @override
+  String get revenueByPackage => 'داهات بەپێی پاکێج';
+
+  @override
+  String get avgServiceTime => 'ناوەندی کاتی خزمەتگوزاری';
+
+  @override
+  String get completedAppointments => 'چاوپێکەوتنە تەواوکراوەکان';
+
+  @override
+  String get cacheEfficiency => 'کارایی کاش';
+
+  @override
+  String get highCostOperationWarning => 'پێش بەردەوامبوون ئەم کارە بپشکنە — لەوانەیە تێچووی Firebase زیاد بکات';
+
+  @override
+  String get maintenanceAllowOwnerAdmin => 'خاوەن و بەڕێوەبەر دەتوانن لە کاتی چاکسازی دەستگەیشتن بە پلاتفۆرم بکەن';
+
+  @override
   String reportSavedToFile(String path) {
     return 'ڕاپۆرت پاشەکەوت کرا لە $path';
   }

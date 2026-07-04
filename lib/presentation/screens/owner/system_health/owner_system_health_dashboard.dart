@@ -15,6 +15,7 @@ import 'owner_phase1_monitoring_section.dart';
 import 'owner_phase2_monitoring_sections.dart';
 import 'owner_phase3_monitoring_sections.dart';
 import 'owner_step3_operations_sections.dart';
+import 'owner_step4_final_sections.dart';
 import 'owner_phase4_monitoring_sections.dart';
 
 /// Owner monitoring center — Phases 1–4 complete.
@@ -95,33 +96,45 @@ class _OwnerSystemHealthDashboardState extends State<OwnerSystemHealthDashboard>
                   child: OwnerDashboardFilterSync(
                     child: MonitoringFilterScope(
                       scaleFactor: filters.scaleFactor,
-                      child: AnimatedPadding(
-                        duration: const Duration(milliseconds: 250),
-                        padding: EdgeInsets.all(appearance.cardPadding),
-                        child: ListView(
-                          children: [
-                            const OwnerGlobalSearchBar(),
-                            SizedBox(height: appearance.sectionSpacing),
-                            const OwnerGlobalFilterBar(),
-                            SizedBox(height: appearance.sectionSpacing),
-                            const OwnerPhase1MonitoringSection(),
-                            const OwnerLiveStatisticsSection(),
-                            const OwnerActivityFeedSection(),
-                            const OwnerAiInsightsSection(),
-                            const OwnerForecastSection(),
-                            const OwnerSmartNotificationsSection(),
-                            const OwnerFirebaseCostSection(),
-                            const OwnerPhase3AnalyticsSection(),
-                            const OwnerRevenueDashboardSection(),
-                            const OwnerSecurityCenterSection(),
-                            const OwnerSessionManagerSection(),
-                            const OwnerErrorMonitoringSection(),
-                            const OwnerBackupCenterSection(),
-                            const OwnerAuditLogSection(),
-                            const OwnerReportsSection(),
-                            const OwnerAppearanceSection(),
-                            const SizedBox(height: 24),
-                          ],
+                      child: OwnerDashboardResponsiveShell(
+                        child: AnimatedPadding(
+                          duration: const Duration(milliseconds: 250),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: appearance.horizontalPadding,
+                            vertical: appearance.cardPadding,
+                          ),
+                          child: ListView(
+                            children: [
+                              const OwnerGlobalSearchBar(),
+                              SizedBox(height: appearance.sectionSpacing),
+                              const OwnerGlobalFilterBar(),
+                              SizedBox(height: appearance.sectionSpacing * 1.25),
+                              const OwnerPhase1MonitoringSection(),
+                              const OwnerLiveStatisticsSection(),
+                              const OwnerActivityFeedSection(),
+                              SizedBox(height: appearance.sectionSpacing * 0.5),
+                              const OwnerStep4AiInsightsSection(),
+                              const OwnerStep4ForecastSection(),
+                              const OwnerSmartNotificationsSection(),
+                              const OwnerStep4FirebaseCostSection(),
+                              const OwnerAdvertisementMonitoringSection(),
+                              const OwnerNotificationMonitoringSection(),
+                              const OwnerQueueAnalyticsSection(),
+                              const OwnerAppointmentAnalyticsSection(),
+                              const OwnerPackageAnalyticsSection(),
+                              const OwnerPhase3AnalyticsSection(),
+                              const OwnerRevenueDashboardSection(),
+                              const OwnerSecurityCenterSection(),
+                              const OwnerSessionManagerSection(),
+                              const OwnerErrorMonitoringSection(),
+                              const OwnerBackupCenterSection(),
+                              const OwnerAuditLogSection(),
+                              const OwnerReportsSection(),
+                              const OwnerMaintenanceModeSection(),
+                              const OwnerAppearanceSection(),
+                              SizedBox(height: appearance.sectionSpacing * 1.5),
+                            ],
+                          ),
                         ),
                       ),
                     ),

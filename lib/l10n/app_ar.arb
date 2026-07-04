@@ -648,6 +648,16 @@
   "backupInProgress": "النسخ الاحتياطي قيد التنفيذ",
   "exportAuditLog": "تصدير سجل التدقيق",
   "auditLogExported": "تم تصدير سجل التدقيق",
+  "queueAnalytics": "تحليلات الطوابير",
+  "appointmentAnalytics": "تحليلات المواعيد",
+  "packageAnalytics": "تحليلات الباقات",
+  "suspendedPackages": "الباقات المعلقة",
+  "revenueByPackage": "الإيرادات حسب الباقة",
+  "avgServiceTime": "متوسط وقت الخدمة",
+  "completedAppointments": "المواعيد المكتملة",
+  "cacheEfficiency": "كفاءة التخزين المؤقت",
+  "highCostOperationWarning": "راجع هذه العملية قبل المتابعة — قد تزيد تكاليف Firebase",
+  "maintenanceAllowOwnerAdmin": "يمكن للمالك والمسؤول الوصول إلى المنصة أثناء الصيانة",
   "reportSavedToFile": "تم حفظ التقرير في {path}",
   "@reportSavedToFile": {
     "placeholders": {

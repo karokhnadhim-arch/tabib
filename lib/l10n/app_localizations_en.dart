@@ -1804,6 +1804,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get auditLogExported => 'Audit log exported';
 
   @override
+  String get queueAnalytics => 'Queue analytics';
+
+  @override
+  String get appointmentAnalytics => 'Appointment analytics';
+
+  @override
+  String get packageAnalytics => 'Package analytics';
+
+  @override
+  String get suspendedPackages => 'Suspended packages';
+
+  @override
+  String get revenueByPackage => 'Revenue by package';
+
+  @override
+  String get avgServiceTime => 'Average service time';
+
+  @override
+  String get completedAppointments => 'Completed appointments';
+
+  @override
+  String get cacheEfficiency => 'Cache efficiency';
+
+  @override
+  String get highCostOperationWarning => 'Review this operation before proceeding — it may increase Firebase costs';
+
+  @override
+  String get maintenanceAllowOwnerAdmin => 'Owner and admin accounts can still access the platform during maintenance';
+
+  @override
   String reportSavedToFile(String path) {
     return 'Report saved to $path';
   }

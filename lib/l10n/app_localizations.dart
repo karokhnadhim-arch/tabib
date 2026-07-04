@@ -3605,6 +3605,66 @@ abstract class AppLocalizations {
   /// **'Audit log exported'**
   String get auditLogExported;
 
+  /// No description provided for @queueAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue analytics'**
+  String get queueAnalytics;
+
+  /// No description provided for @appointmentAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment analytics'**
+  String get appointmentAnalytics;
+
+  /// No description provided for @packageAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Package analytics'**
+  String get packageAnalytics;
+
+  /// No description provided for @suspendedPackages.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspended packages'**
+  String get suspendedPackages;
+
+  /// No description provided for @revenueByPackage.
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue by package'**
+  String get revenueByPackage;
+
+  /// No description provided for @avgServiceTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Average service time'**
+  String get avgServiceTime;
+
+  /// No description provided for @completedAppointments.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed appointments'**
+  String get completedAppointments;
+
+  /// No description provided for @cacheEfficiency.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache efficiency'**
+  String get cacheEfficiency;
+
+  /// No description provided for @highCostOperationWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Review this operation before proceeding — it may increase Firebase costs'**
+  String get highCostOperationWarning;
+
+  /// No description provided for @maintenanceAllowOwnerAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner and admin accounts can still access the platform during maintenance'**
+  String get maintenanceAllowOwnerAdmin;
+
   /// No description provided for @reportSavedToFile.
   ///
   /// In en, this message translates to:

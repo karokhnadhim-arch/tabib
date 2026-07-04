@@ -1804,6 +1804,36 @@ class AppLocalizationsAr extends AppLocalizations {
   String get auditLogExported => 'تم تصدير سجل التدقيق';
 
   @override
+  String get queueAnalytics => 'تحليلات الطوابير';
+
+  @override
+  String get appointmentAnalytics => 'تحليلات المواعيد';
+
+  @override
+  String get packageAnalytics => 'تحليلات الباقات';
+
+  @override
+  String get suspendedPackages => 'الباقات المعلقة';
+
+  @override
+  String get revenueByPackage => 'الإيرادات حسب الباقة';
+
+  @override
+  String get avgServiceTime => 'متوسط وقت الخدمة';
+
+  @override
+  String get completedAppointments => 'المواعيد المكتملة';
+
+  @override
+  String get cacheEfficiency => 'كفاءة التخزين المؤقت';
+
+  @override
+  String get highCostOperationWarning => 'راجع هذه العملية قبل المتابعة — قد تزيد تكاليف Firebase';
+
+  @override
+  String get maintenanceAllowOwnerAdmin => 'يمكن للمالك والمسؤول الوصول إلى المنصة أثناء الصيانة';
+
+  @override
   String reportSavedToFile(String path) {
     return 'تم حفظ التقرير في $path';
   }

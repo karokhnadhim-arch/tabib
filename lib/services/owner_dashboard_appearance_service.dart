@@ -25,6 +25,18 @@ class OwnerDashboardAppearanceService extends ChangeNotifier {
         DashboardDensity.comfortable => 16,
       };
 
+  double get horizontalPadding => switch (_layout) {
+        DashboardLayout.standard => cardPadding,
+        DashboardLayout.wide => 24,
+        DashboardLayout.focused => cardPadding * 1.5,
+      };
+
+  double get contentMaxWidth => switch (_layout) {
+        DashboardLayout.standard => 960,
+        DashboardLayout.wide => 1280,
+        DashboardLayout.focused => 720,
+      };
+
   int get gridCrossAxisCountMultiplier => switch (_layout) {
         DashboardLayout.standard => 1,
         DashboardLayout.wide => 2,

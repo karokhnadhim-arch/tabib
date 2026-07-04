@@ -20,6 +20,7 @@ class OwnerInsight {
     required this.priority,
     required this.category,
     required this.title,
+    required this.description,
     required this.recommendation,
     required this.generatedAt,
   });
@@ -28,6 +29,7 @@ class OwnerInsight {
   final InsightPriority priority;
   final InsightCategory category;
   final String title;
+  final String description;
   final String recommendation;
   final DateTime generatedAt;
 }
@@ -187,7 +189,9 @@ class FirebaseCostAnalysis {
     required this.readOperations,
     required this.writeOperations,
     required this.storageMb,
+    required this.imageStorageMb,
     required this.bandwidthMb,
+    required this.cacheHitRate,
     required this.suggestions,
     required this.expensiveOperationWarnings,
   });
@@ -196,7 +200,9 @@ class FirebaseCostAnalysis {
   final int readOperations;
   final int writeOperations;
   final double storageMb;
+  final double imageStorageMb;
   final double bandwidthMb;
+  final int cacheHitRate;
   final List<String> suggestions;
   final List<String> expensiveOperationWarnings;
 }

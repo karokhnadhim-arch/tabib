@@ -62,7 +62,9 @@ class FirebaseCostOptimizerService extends ChangeNotifier {
       readOperations: reads,
       writeOperations: writes,
       storageMb: storage,
+      imageStorageMb: snapshot.imageStorageMb,
       bandwidthMb: bandwidth,
+      cacheHitRate: snapshot.cacheHitRate,
       suggestions: suggestions,
       expensiveOperationWarnings: warnings,
     );
