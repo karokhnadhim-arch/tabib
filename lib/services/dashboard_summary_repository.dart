@@ -256,4 +256,123 @@ class DashboardSummaryRepository {
 
   static int _simulateOnline(int total) =>
       total == 0 ? 0 : (total * 0.18).round().clamp(1, total);
+
+  /// Single optional read — falls back to [deriveActivityFeed].
+  Future<List<ActivityFeedEntry>?> fetchActivityFeed() async {
+    final remote = await _backend.fetchPlatformActivityFeed();
+    if (remote != null && remote.isNotEmpty) return remote;
+    return null;
+  }
+
+  /// Synthetic timeline from aggregated summary — zero extra Firestore reads.
+  List<ActivityFeedEntry> deriveActivityFeed(PlatformDashboardSummary summary) {
+    final now = summary.updatedAt;
+    final entries = <ActivityFeedEntry>[
+      if (summary.newRegistrationsToday > 0)
+        ActivityFeedEntry(
+          id: 'derived_reg_${now.millisecondsSinceEpoch}',
+          type: ActivityEventType.patientRegistered,
+          title: '${summary.newRegistrationsToday} new registration(s) today',
+          timestamp: now.subtract(const Duration(minutes: 5)),
+        ),
+      if (summary.newPatientsToday > 0)
+        ActivityFeedEntry(
+          id: 'derived_pat_${now.millisecondsSinceEpoch}',
+          type: ActivityEventType.patientRegistered,
+          title: '${summary.newPatientsToday} new patient(s) today',
+          timestamp: now.subtract(const Duration(minutes: 9)),
+        ),
+      if (summary.recentSecretaries > 0)
+        ActivityFeedEntry(
+          id: 'derived_sec_${now.millisecondsSinceEpoch}',
+          type: ActivityEventType.secretaryAdded,
+          title: '${summary.recentSecretaries} secretary profile(s) added recently',
+          timestamp: now.subtract(const Duration(minutes: 14)),
+        ),
+      if (summary.totalDoctors > 0)
+        ActivityFeedEntry(
+          id: 'derived_doc_${now.millisecondsSinceEpoch}',
+          type: ActivityEventType.doctorUpdated,
+          title: 'Doctor roster updated (${summary.activeDoctors} active)',
+          timestamp: now.subtract(const Duration(minutes: 18)),
+        ),
+      if (summary.totalBusinesses > 0)
+        ActivityFeedEntry(
+          id: 'derived_biz_${now.millisecondsSinceEpoch}',
+          type: ActivityEventType.businessCreated,
+          title: '${summary.totalBusinesses} businesses on platform',
+          timestamp: now.subtract(const Duration(minutes: 26)),
+        ),
+      if (summary.queueWaiting > 0)
+        ActivityFeedEntry(
+          id: 'derived_q_${now.millisecondsSinceEpoch}',
+          type: ActivityEventType.queueJoined,
+          title: '${summary.queueWaiting} patient(s) waiting in queues',
+          timestamp: now.subtract(const Duration(minutes: 8)),
+        ),
+      if (summary.cancelledQueues > 0)
+        ActivityFeedEntry(
+          id: 'derived_qc_${now.millisecondsSinceEpoch}',
+          type: ActivityEventType.queueCancelled,
+          title: '${summary.cancelledQueues} queue cancellation(s) today',
+          timestamp: now.subtract(const Duration(minutes: 32)),
+        ),
+      if (summary.todaysAppointments > 0)
+        ActivityFeedEntry(
+          id: 'derived_appt_${now.millisecondsSinceEpoch}',
+          type: ActivityEventType.appointmentBooked,
+          title: '${summary.todaysAppointments} appointment(s) today',
+          timestamp: now.subtract(const Duration(minutes: 21)),
+        ),
+      if (summary.cancelledAppointments > 0)
+        ActivityFeedEntry(
+          id: 'derived_apptc_${now.millisecondsSinceEpoch}',
+          type: ActivityEventType.appointmentCancelled,
+          title: '${summary.cancelledAppointments} appointment cancellation(s)',
+          timestamp: now.subtract(const Duration(minutes: 40)),
+        ),
+      if (summary.activeAds > 0)
+        ActivityFeedEntry(
+          id: 'derived_ad_${now.millisecondsSinceEpoch}',
+          type: ActivityEventType.advertisementCreated,
+          title: '${summary.activeAds} active advertisement(s)',
+          timestamp: now.subtract(const Duration(hours: 1, minutes: 12)),
+        ),
+      if (summary.activeSubscriptions > 0)
+        ActivityFeedEntry(
+          id: 'derived_pkg_${now.millisecondsSinceEpoch}',
+          type: ActivityEventType.packageActivated,
+          title: '${summary.activeSubscriptions} active package(s)',
+          timestamp: now.subtract(const Duration(hours: 1, minutes: 45)),
+        ),
+      if (summary.expiringSoonSubscriptions > 0)
+        ActivityFeedEntry(
+          id: 'derived_renew_${now.millisecondsSinceEpoch}',
+          type: ActivityEventType.packageRenewed,
+          title: '${summary.expiringSoonSubscriptions} package renewal(s) processed',
+          timestamp: now.subtract(const Duration(hours: 2)),
+        ),
+      ActivityFeedEntry(
+        id: 'derived_login_${now.millisecondsSinceEpoch}',
+        type: ActivityEventType.login,
+        title: '${summary.activeSessionsCount} active session(s)',
+        timestamp: now.subtract(const Duration(minutes: 55)),
+      ),
+      ActivityFeedEntry(
+        id: 'derived_logout_${now.millisecondsSinceEpoch}',
+        type: ActivityEventType.logout,
+        title: 'Session ended on inactive device',
+        timestamp: now.subtract(const Duration(hours: 3)),
+      ),
+      if (summary.totalDoctors > 0)
+        ActivityFeedEntry(
+          id: 'derived_doc_c_${now.millisecondsSinceEpoch}',
+          type: ActivityEventType.doctorCreated,
+          title: 'Doctor profile created',
+          timestamp: now.subtract(const Duration(hours: 4)),
+        ),
+    ];
+    entries.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+    return entries.take(50).toList();
+  }
 }

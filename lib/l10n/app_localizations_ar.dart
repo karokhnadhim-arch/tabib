@@ -2854,7 +2854,117 @@ class AppLocalizationsAr extends AppLocalizations {
   String get attachImage => 'إرفاق صورة';
 
   @override
-  String userIsTyping(String name) {
-    return '$name يكتب…';
+  String get metricNotAvailable => 'غير متاح';
+
+  @override
+  String get monitoringPhase1Hint => 'صحة البنية التحتية المباشرة — Firebase والأداء والتنبيهات الذكية';
+
+  @override
+  String get ownerSmartAlerts => 'تنبيهات المالك الذكية';
+
+  @override
+  String get noActiveAlerts => 'لا توجد تنبيهات بنية تحتية نشطة. جميع الأنظمة تعمل بشكل طبيعي.';
+
+  @override
+  String get alertFirebaseDisconnected => 'Firebase غير متصل';
+
+  @override
+  String get alertBackupFailed => 'فشلت آخر نسخة احتياطية';
+
+  @override
+  String alertStorageHigh(String percent) {
+    return 'استخدام التخزين عند $percent%';
   }
+
+  @override
+  String get alertSlowResponse => 'تم رصد زمن استجابة API مرتفع';
+
+  @override
+  String get alertHighErrorRate => 'تم رصد معدل أخطاء مرتفع';
+
+  @override
+  String get monitoringPhase2Hint => 'إحصائيات المنصة المباشرة — تُحدَّث تلقائياً كل 60 ثانية من مقاييس مجمّعة';
+
+  @override
+  String get activityFilterLastHour => 'آخر ساعة';
+
+  @override
+  String get activityFilterAll => 'الكل';
+
+  @override
+  String get activeToday => 'نشط اليوم';
+
+  @override
+  String get newRegistrationsToday => 'تسجيلات جديدة اليوم';
+
+  @override
+  String get secretariesWithoutDoctor => 'سكرتير بدون طبيب';
+
+  @override
+  String get waitingPatients => 'مرضى في الانتظار';
+
+  @override
+  String get expiredPackages => 'باقات منتهية';
+
+  @override
+  String get cancelledQueuesToday => 'ملغاة اليوم';
+
+  @override
+  String get clinicsStat => 'عيادات';
+
+  @override
+  String get queuesSection => 'قوائم الانتظار';
+
+  @override
+  String get appointmentsSection => 'المواعيد';
+
+  @override
+  String get noActivityEvents => 'لا توجد أحداث نشاط للفترة المحددة';
+
+  @override
+  String waitingMinutesLabel(int minutes) {
+    return '$minutes د';
+  }
+
+  @override
+  String get activityEventDoctorCreated => 'تم إنشاء طبيب';
+
+  @override
+  String get activityEventDoctorUpdated => 'تم تحديث طبيب';
+
+  @override
+  String get activityEventSecretaryAdded => 'تمت إضافة سكرتير';
+
+  @override
+  String get activityEventPatientRegistered => 'تم تسجيل مريض';
+
+  @override
+  String get activityEventBusinessCreated => 'تم إنشاء نشاط تجاري';
+
+  @override
+  String get activityEventQueueJoined => 'انضمام لقائمة الانتظار';
+
+  @override
+  String get activityEventQueueCancelled => 'إلغاء قائمة الانتظار';
+
+  @override
+  String get activityEventAppointmentBooked => 'حجز موعد';
+
+  @override
+  String get activityEventAppointmentCancelled => 'إلغاء موعد';
+
+  @override
+  String get activityEventAdvertisementCreated => 'تم إنشاء إعلان';
+
+  @override
+  String get activityEventPackageActivated => 'تفعيل باقة';
+
+  @override
+  String get activityEventPackageRenewed => 'تجديد باقة';
+
+  @override
+  String get activityEventLogin => 'تسجيل دخول';
+
+  @override
+  String get activityEventLogout => 'تسجيل خروج';
 }

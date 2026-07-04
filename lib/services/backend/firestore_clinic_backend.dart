@@ -14,6 +14,7 @@ import '../../core/constants/firestore_limits.dart';
 import '../../core/utils/account_code.dart';
 import '../../models/doctor_page.dart';
 import '../../models/platform_dashboard_summary.dart';
+import '../../models/system_monitoring.dart';
 import 'firestore_reference_cache.dart';
 import 'clinic_backend.dart';
 
@@ -367,6 +368,29 @@ class FirestoreClinicBackend implements ClinicBackend {
   }
 
   @override
+  Future<List<ActivityFeedEntry>?> fetchPlatformActivityFeed() async {
+    try {
+      final doc = await _db
+          .collection('platformMetrics')
+          .doc('activityFeed')
+          .get(const GetOptions(source: Source.serverAndCache));
+      if (!doc.exists || doc.data() == null) return null;
+      final data = doc.data()!;
+      final raw = data['entries'];
+      if (raw is! List) return null;
+      return raw
+          .map(
+            (e) => ActivityFeedEntry.fromJson(
+              Map<String, dynamic>.from(e as Map),
+            ),
+          )
+          .toList();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
   Future<DashboardChartsBundle?> fetchPlatformDashboardCharts(
     String rangeKey,
   ) async {
@@ -376,7 +400,7 @@ class FirestoreClinicBackend implements ClinicBackend {
           .doc('dashboardCharts')
           .get(const GetOptions(source: Source.serverAndCache));
       if (!doc.exists || doc.data() == null) return null;
-      final data = Map<String, dynamic>.from(doc.data!);
+      final data = Map<String, dynamic>.from(doc.data()!);
       final ranges = data['ranges'];
       if (ranges is Map && ranges[rangeKey] is Map) {
         return DashboardChartsBundle.fromJson(

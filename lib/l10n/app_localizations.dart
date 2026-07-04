@@ -5693,11 +5693,227 @@ abstract class AppLocalizations {
   /// **'Attach image'**
   String get attachImage;
 
-  /// No description provided for @userIsTyping.
+  /// No description provided for @metricNotAvailable.
   ///
   /// In en, this message translates to:
-  /// **'{name} is typing…'**
-  String userIsTyping(String name);
+  /// **'N/A'**
+  String get metricNotAvailable;
+
+  /// No description provided for @monitoringPhase1Hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Live infrastructure health — Firebase, performance, and smart alerts'**
+  String get monitoringPhase1Hint;
+
+  /// No description provided for @ownerSmartAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart owner alerts'**
+  String get ownerSmartAlerts;
+
+  /// No description provided for @noActiveAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'No active infrastructure alerts. All systems operating normally.'**
+  String get noActiveAlerts;
+
+  /// No description provided for @alertFirebaseDisconnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Firebase is disconnected'**
+  String get alertFirebaseDisconnected;
+
+  /// No description provided for @alertBackupFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Last backup failed'**
+  String get alertBackupFailed;
+
+  /// No description provided for @alertStorageHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage usage is at {percent}%'**
+  String alertStorageHigh(String percent);
+
+  /// No description provided for @alertSlowResponse.
+  ///
+  /// In en, this message translates to:
+  /// **'High API response time detected'**
+  String get alertSlowResponse;
+
+  /// No description provided for @alertHighErrorRate.
+  ///
+  /// In en, this message translates to:
+  /// **'High application error rate detected'**
+  String get alertHighErrorRate;
+
+  /// No description provided for @monitoringPhase2Hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Live platform statistics — auto-refreshes every 60 seconds from aggregated metrics'**
+  String get monitoringPhase2Hint;
+
+  /// No description provided for @activityFilterLastHour.
+  ///
+  /// In en, this message translates to:
+  /// **'Last hour'**
+  String get activityFilterLastHour;
+
+  /// No description provided for @activityFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get activityFilterAll;
+
+  /// No description provided for @activeToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Active today'**
+  String get activeToday;
+
+  /// No description provided for @newRegistrationsToday.
+  ///
+  /// In en, this message translates to:
+  /// **'New registrations today'**
+  String get newRegistrationsToday;
+
+  /// No description provided for @secretariesWithoutDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Secretaries without doctor'**
+  String get secretariesWithoutDoctor;
+
+  /// No description provided for @waitingPatients.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting patients'**
+  String get waitingPatients;
+
+  /// No description provided for @expiredPackages.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired packages'**
+  String get expiredPackages;
+
+  /// No description provided for @cancelledQueuesToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled today'**
+  String get cancelledQueuesToday;
+
+  /// No description provided for @clinicsStat.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinics'**
+  String get clinicsStat;
+
+  /// No description provided for @queuesSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Queues'**
+  String get queuesSection;
+
+  /// No description provided for @appointmentsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointments'**
+  String get appointmentsSection;
+
+  /// No description provided for @noActivityEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'No activity events for the selected period'**
+  String get noActivityEvents;
+
+  /// No description provided for @waitingMinutesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String waitingMinutesLabel(int minutes);
+
+  /// No description provided for @activityEventDoctorCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor created'**
+  String get activityEventDoctorCreated;
+
+  /// No description provided for @activityEventDoctorUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor updated'**
+  String get activityEventDoctorUpdated;
+
+  /// No description provided for @activityEventSecretaryAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Secretary added'**
+  String get activityEventSecretaryAdded;
+
+  /// No description provided for @activityEventPatientRegistered.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient registered'**
+  String get activityEventPatientRegistered;
+
+  /// No description provided for @activityEventBusinessCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Business created'**
+  String get activityEventBusinessCreated;
+
+  /// No description provided for @activityEventQueueJoined.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue joined'**
+  String get activityEventQueueJoined;
+
+  /// No description provided for @activityEventQueueCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue cancelled'**
+  String get activityEventQueueCancelled;
+
+  /// No description provided for @activityEventAppointmentBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment booked'**
+  String get activityEventAppointmentBooked;
+
+  /// No description provided for @activityEventAppointmentCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment cancelled'**
+  String get activityEventAppointmentCancelled;
+
+  /// No description provided for @activityEventAdvertisementCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Advertisement created'**
+  String get activityEventAdvertisementCreated;
+
+  /// No description provided for @activityEventPackageActivated.
+  ///
+  /// In en, this message translates to:
+  /// **'Package activated'**
+  String get activityEventPackageActivated;
+
+  /// No description provided for @activityEventPackageRenewed.
+  ///
+  /// In en, this message translates to:
+  /// **'Package renewed'**
+  String get activityEventPackageRenewed;
+
+  /// No description provided for @activityEventLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get activityEventLogin;
+
+  /// No description provided for @activityEventLogout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get activityEventLogout;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -2854,7 +2854,117 @@ class AppLocalizationsKu extends AppLocalizations {
   String get attachImage => 'وێنە هاوپێچ بکە';
 
   @override
-  String userIsTyping(String name) {
-    return '$name دەنووسێت…';
+  String get metricNotAvailable => 'بەردەست نییە';
+
+  @override
+  String get monitoringPhase1Hint => 'تەندروستی ڕاستەوخۆی ژێرخان — Firebase، کارایی و ئاگادارییە زیرەکەکان';
+
+  @override
+  String get ownerSmartAlerts => 'ئاگادارییە زیرەکەکانی خاوەن';
+
+  @override
+  String get noActiveAlerts => 'هیچ ئاگادارییەکی چالاکی ژێرخان نییە. هەموو سیستەمەکان بە شێوەیەکی ئاسایی کاردەکەن.';
+
+  @override
+  String get alertFirebaseDisconnected => 'Firebase پچڕاوە';
+
+  @override
+  String get alertBackupFailed => 'دوایین پاشەکەوت شکستی هێنا';
+
+  @override
+  String alertStorageHigh(String percent) {
+    return 'بەکارهێنانی هەڵگرتن لە $percent%';
   }
+
+  @override
+  String get alertSlowResponse => 'کاتی وەڵامی API بەرز دۆزرایەوە';
+
+  @override
+  String get alertHighErrorRate => 'ڕێژەی بەرزی هەڵە دۆزرایەوە';
+
+  @override
+  String get monitoringPhase2Hint => 'ئامارە ڕاستەوخۆکانی پلاتفۆرم — هەر 60 چرکە جارێک لە ئامارە کۆکراوەکان نوێدەبێتەوە';
+
+  @override
+  String get activityFilterLastHour => 'کاتژمێری ڕابردوو';
+
+  @override
+  String get activityFilterAll => 'هەموو';
+
+  @override
+  String get activeToday => 'چالاک ئەمڕۆ';
+
+  @override
+  String get newRegistrationsToday => 'تۆمارکردنی نوێ ئەمڕۆ';
+
+  @override
+  String get secretariesWithoutDoctor => 'سکرتێر بەبێ پزیشک';
+
+  @override
+  String get waitingPatients => 'نەخۆشانی چاوەڕوان';
+
+  @override
+  String get expiredPackages => 'پاکێجە بەسەرچووەکان';
+
+  @override
+  String get cancelledQueuesToday => 'هەڵوەشاوە ئەمڕۆ';
+
+  @override
+  String get clinicsStat => 'کلینیکەکان';
+
+  @override
+  String get queuesSection => 'ڕیزەکان';
+
+  @override
+  String get appointmentsSection => 'چاوپێکەوتنەکان';
+
+  @override
+  String get noActivityEvents => 'هیچ ڕووداوێکی چالاکی بۆ ماوەی هەڵبژێردراو نییە';
+
+  @override
+  String waitingMinutesLabel(int minutes) {
+    return '$minutes خولەک';
+  }
+
+  @override
+  String get activityEventDoctorCreated => 'پزیشک دروستکرا';
+
+  @override
+  String get activityEventDoctorUpdated => 'پزیشک نوێکرایەوە';
+
+  @override
+  String get activityEventSecretaryAdded => 'سکرتێر زیادکرا';
+
+  @override
+  String get activityEventPatientRegistered => 'نەخۆش تۆمارکرا';
+
+  @override
+  String get activityEventBusinessCreated => 'بزنس دروستکرا';
+
+  @override
+  String get activityEventQueueJoined => 'بەشداری لە ڕیز';
+
+  @override
+  String get activityEventQueueCancelled => 'ڕیز هەڵوەشێنرایەوە';
+
+  @override
+  String get activityEventAppointmentBooked => 'چاوپێکەوتن حجزکرا';
+
+  @override
+  String get activityEventAppointmentCancelled => 'چاوپێکەوتن هەڵوەشێنرایەوە';
+
+  @override
+  String get activityEventAdvertisementCreated => 'ڕیکلام دروستکرا';
+
+  @override
+  String get activityEventPackageActivated => 'پاکێج چالاککرا';
+
+  @override
+  String get activityEventPackageRenewed => 'پاکێج نوێکرایەوە';
+
+  @override
+  String get activityEventLogin => 'چوونەژوورەوە';
+
+  @override
+  String get activityEventLogout => 'چوونەدەرەوە';
 }

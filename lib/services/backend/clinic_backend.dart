@@ -6,6 +6,7 @@ import '../../models/platform_dashboard_summary.dart';
 import '../../models/queue_entry.dart';
 import '../../models/service_provider_type.dart';
 import '../../models/specialty.dart';
+import '../../models/system_monitoring.dart';
 import '../../models/user_account.dart';
 
 /// Abstract backend for clinic data — implemented by Firestore.
@@ -44,6 +45,9 @@ abstract class ClinicBackend {
 
   /// Optional chart bundle — loaded lazily when analytics are viewed (1 read).
   Future<DashboardChartsBundle?> fetchPlatformDashboardCharts(String rangeKey);
+
+  /// Optional aggregated activity feed document (1 read, no collection scans).
+  Future<List<ActivityFeedEntry>?> fetchPlatformActivityFeed();
 
   Stream<List<UserAccount>> watchAllAccounts();
 

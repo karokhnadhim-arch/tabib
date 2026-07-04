@@ -16,6 +16,7 @@ import 'firebase_bootstrap.dart';
 import 'staff_communication_log_service.dart';
 import 'staff_data_service.dart';
 import 'system_error_log_service.dart';
+import 'system_activity_feed_service.dart';
 
 /// Owner monitoring with cost-aware polling, lazy sections, and offline cache.
 class SystemMonitoringService extends ChangeNotifier {
@@ -47,6 +48,11 @@ class SystemMonitoringService extends ChangeNotifier {
   final StaffCommunicationLogService _communicationLog;
   final SystemErrorLogService _errorLog;
   final AdvertisementService? _advertisementService;
+  SystemActivityFeedService? _activityFeed;
+
+  void attachActivityFeed(SystemActivityFeedService feed) {
+    _activityFeed = feed;
+  }
 
   Timer? _statisticsTimer;
   Timer? _criticalTimer;
@@ -67,6 +73,8 @@ class SystemMonitoringService extends ChangeNotifier {
   );
 
   bool _isRefreshing = false;
+  bool _isRefreshingPhase1 = false;
+  bool _isRefreshingPhase2 = false;
   bool _isLoadingCharts = false;
   bool _chartsLoaded = false;
   bool _isOffline = false;
@@ -81,11 +89,26 @@ class SystemMonitoringService extends ChangeNotifier {
   DashboardChartsBundle? get charts => _charts;
   AnalyticsRange get range => _range;
   List<OwnerAlert> get criticalAlerts => List.unmodifiable(_criticalAlerts);
+  List<OwnerAlert> get phase1Alerts =>
+      _criticalAlerts.where((a) => a.type.isPhase1).toList(growable: false);
+
+  SystemHealthLevel get phase1HealthLevel {
+    final configured = DefaultFirebaseOptions.isConfigured;
+    final connected = FirebaseBootstrap.initialized;
+    final openErrors = _errorLog.openEntries.length;
+    final totalErrors = _errorLog.entries.length;
+    final errorRate =
+        totalErrors == 0 ? 0.0 : (openErrors / totalErrors) * 100;
+    return _healthLevel(phase1Alerts, connected, configured, errorRate);
+  }
+
   List<ActiveSessionEntry> get activeSessions => List.unmodifiable(_sessions);
   BackupSnapshot get backup => _backup;
 
   bool get isDashboardActive => _dashboardActive;
   bool get isRefreshing => _isRefreshing;
+  bool get isRefreshingPhase1 => _isRefreshingPhase1;
+  bool get isRefreshingPhase2 => _isRefreshingPhase2;
   bool get isLoadingCharts => _isLoadingCharts;
   bool get chartsLoaded => _chartsLoaded;
   bool get isOffline => _isOffline;
@@ -150,12 +173,31 @@ class SystemMonitoringService extends ChangeNotifier {
     }
   }
 
-  Future<void> refreshStatistics({bool force = false}) async {
+  /// Phase 1 infrastructure refresh — statistics only (no chart reads).
+  Future<void> refreshPhase1({bool force = false}) =>
+      refreshStatistics(force: force, showPhase1Indicator: true);
+
+  /// Phase 2 live statistics — reuses the same aggregated summary read.
+  Future<void> refreshPhase2({bool force = false}) =>
+      refreshStatistics(force: force);
+
+  /// Full dashboard refresh — statistics plus optional activity feed sync.
+  Future<void> refreshDashboard({bool force = false}) async {
+    await refreshStatistics(force: force, showPhase1Indicator: true);
+    await _activityFeed?.refresh(force: force);
+  }
+
+  Future<void> refreshStatistics({
+    bool force = false,
+    bool showPhase1Indicator = false,
+  }) async {
     if (!_dashboardActive) return;
     if (_statisticsRefreshInFlight && !force) return;
 
     _statisticsRefreshInFlight = true;
     _isRefreshing = true;
+    if (showPhase1Indicator) _isRefreshingPhase1 = true;
+    _isRefreshingPhase2 = true;
     notifyListeners();
 
     final sw = Stopwatch()..start();
@@ -187,6 +229,8 @@ class SystemMonitoringService extends ChangeNotifier {
     } finally {
       _statisticsRefreshInFlight = false;
       _isRefreshing = false;
+      _isRefreshingPhase1 = false;
+      _isRefreshingPhase2 = false;
       _refreshCriticalAlerts();
       notifyListeners();
     }
@@ -328,6 +372,8 @@ class SystemMonitoringService extends ChangeNotifier {
     if (fromCache && _lastSuccessfulSync == null) {
       _lastSuccessfulSync = summary.updatedAt;
     }
+
+    unawaited(_activityFeed?.syncFromSummary(summary));
   }
 
   SystemMonitoringSnapshot _buildSnapshot({

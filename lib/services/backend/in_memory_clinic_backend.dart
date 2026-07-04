@@ -14,6 +14,7 @@ import '../../core/utils/account_code.dart';
 import '../../core/utils/staff_auth_identifiers.dart';
 import '../../models/doctor_page.dart';
 import '../../models/platform_dashboard_summary.dart';
+import '../../models/system_monitoring.dart';
 import 'clinic_backend.dart';
 
 /// Local demo backend — works without Firebase.
@@ -193,6 +194,9 @@ class InMemoryClinicBackend implements ClinicBackend {
   @override
   Future<DashboardChartsBundle?> fetchPlatformDashboardCharts(String rangeKey) async =>
       null;
+
+  @override
+  Future<List<ActivityFeedEntry>?> fetchPlatformActivityFeed() async => null;
 
   @override
   Stream<List<UserAccount>> watchAllAccounts() async* {

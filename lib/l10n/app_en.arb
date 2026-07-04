@@ -1072,10 +1072,51 @@
   "showAuditLog": "Show audit log",
   "messageSeen": "Seen",
   "attachImage": "Attach image",
-  "userIsTyping": "{name} is typing…",
-  "@userIsTyping": {
+  "metricNotAvailable": "N/A",
+  "monitoringPhase1Hint": "Live infrastructure health — Firebase, performance, and smart alerts",
+  "ownerSmartAlerts": "Smart owner alerts",
+  "noActiveAlerts": "No active infrastructure alerts. All systems operating normally.",
+  "alertFirebaseDisconnected": "Firebase is disconnected",
+  "alertBackupFailed": "Last backup failed",
+  "alertStorageHigh": "Storage usage is at {percent}%",
+  "@alertStorageHigh": {
     "placeholders": {
-      "name": {"type": "String"}
+      "percent": {"type": "String"}
     }
-  }
+  },
+  "alertSlowResponse": "High API response time detected",
+  "alertHighErrorRate": "High application error rate detected",
+  "monitoringPhase2Hint": "Live platform statistics — auto-refreshes every 60 seconds from aggregated metrics",
+  "activityFilterLastHour": "Last hour",
+  "activityFilterAll": "All",
+  "activeToday": "Active today",
+  "newRegistrationsToday": "New registrations today",
+  "secretariesWithoutDoctor": "Secretaries without doctor",
+  "waitingPatients": "Waiting patients",
+  "expiredPackages": "Expired packages",
+  "cancelledQueuesToday": "Cancelled today",
+  "clinicsStat": "Clinics",
+  "queuesSection": "Queues",
+  "appointmentsSection": "Appointments",
+  "noActivityEvents": "No activity events for the selected period",
+  "waitingMinutesLabel": "{minutes} min",
+  "@waitingMinutesLabel": {
+    "placeholders": {
+      "minutes": {"type": "int"}
+    }
+  },
+  "activityEventDoctorCreated": "Doctor created",
+  "activityEventDoctorUpdated": "Doctor updated",
+  "activityEventSecretaryAdded": "Secretary added",
+  "activityEventPatientRegistered": "Patient registered",
+  "activityEventBusinessCreated": "Business created",
+  "activityEventQueueJoined": "Queue joined",
+  "activityEventQueueCancelled": "Queue cancelled",
+  "activityEventAppointmentBooked": "Appointment booked",
+  "activityEventAppointmentCancelled": "Appointment cancelled",
+  "activityEventAdvertisementCreated": "Advertisement created",
+  "activityEventPackageActivated": "Package activated",
+  "activityEventPackageRenewed": "Package renewed",
+  "activityEventLogin": "Login",
+  "activityEventLogout": "Logout"
 }

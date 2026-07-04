@@ -2854,7 +2854,117 @@ class AppLocalizationsEn extends AppLocalizations {
   String get attachImage => 'Attach image';
 
   @override
-  String userIsTyping(String name) {
-    return '$name is typing…';
+  String get metricNotAvailable => 'N/A';
+
+  @override
+  String get monitoringPhase1Hint => 'Live infrastructure health — Firebase, performance, and smart alerts';
+
+  @override
+  String get ownerSmartAlerts => 'Smart owner alerts';
+
+  @override
+  String get noActiveAlerts => 'No active infrastructure alerts. All systems operating normally.';
+
+  @override
+  String get alertFirebaseDisconnected => 'Firebase is disconnected';
+
+  @override
+  String get alertBackupFailed => 'Last backup failed';
+
+  @override
+  String alertStorageHigh(String percent) {
+    return 'Storage usage is at $percent%';
   }
+
+  @override
+  String get alertSlowResponse => 'High API response time detected';
+
+  @override
+  String get alertHighErrorRate => 'High application error rate detected';
+
+  @override
+  String get monitoringPhase2Hint => 'Live platform statistics — auto-refreshes every 60 seconds from aggregated metrics';
+
+  @override
+  String get activityFilterLastHour => 'Last hour';
+
+  @override
+  String get activityFilterAll => 'All';
+
+  @override
+  String get activeToday => 'Active today';
+
+  @override
+  String get newRegistrationsToday => 'New registrations today';
+
+  @override
+  String get secretariesWithoutDoctor => 'Secretaries without doctor';
+
+  @override
+  String get waitingPatients => 'Waiting patients';
+
+  @override
+  String get expiredPackages => 'Expired packages';
+
+  @override
+  String get cancelledQueuesToday => 'Cancelled today';
+
+  @override
+  String get clinicsStat => 'Clinics';
+
+  @override
+  String get queuesSection => 'Queues';
+
+  @override
+  String get appointmentsSection => 'Appointments';
+
+  @override
+  String get noActivityEvents => 'No activity events for the selected period';
+
+  @override
+  String waitingMinutesLabel(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get activityEventDoctorCreated => 'Doctor created';
+
+  @override
+  String get activityEventDoctorUpdated => 'Doctor updated';
+
+  @override
+  String get activityEventSecretaryAdded => 'Secretary added';
+
+  @override
+  String get activityEventPatientRegistered => 'Patient registered';
+
+  @override
+  String get activityEventBusinessCreated => 'Business created';
+
+  @override
+  String get activityEventQueueJoined => 'Queue joined';
+
+  @override
+  String get activityEventQueueCancelled => 'Queue cancelled';
+
+  @override
+  String get activityEventAppointmentBooked => 'Appointment booked';
+
+  @override
+  String get activityEventAppointmentCancelled => 'Appointment cancelled';
+
+  @override
+  String get activityEventAdvertisementCreated => 'Advertisement created';
+
+  @override
+  String get activityEventPackageActivated => 'Package activated';
+
+  @override
+  String get activityEventPackageRenewed => 'Package renewed';
+
+  @override
+  String get activityEventLogin => 'Login';
+
+  @override
+  String get activityEventLogout => 'Logout';
 }

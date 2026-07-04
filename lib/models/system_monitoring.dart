@@ -8,6 +8,7 @@ enum AppErrorStatus { open, fixed, ignored }
 
 enum ActivityEventType {
   doctorCreated,
+  doctorUpdated,
   secretaryAdded,
   patientRegistered,
   businessCreated,
@@ -22,6 +23,8 @@ enum ActivityEventType {
   logout,
 }
 
+enum ActivityFeedFilter { today, lastHour, all }
+
 enum OwnerAlertType {
   firebaseDisconnected,
   backupFailed,
@@ -32,6 +35,20 @@ enum OwnerAlertType {
   slowPerformance,
   highErrorRate,
   pushServiceFailed,
+}
+
+/// Phase 1 monitoring alerts shown on the owner infrastructure dashboard.
+extension OwnerAlertPhase on OwnerAlertType {
+  bool get isPhase1 => switch (this) {
+        OwnerAlertType.firebaseDisconnected ||
+        OwnerAlertType.backupFailed ||
+        OwnerAlertType.storageWarning ||
+        OwnerAlertType.storageCritical ||
+        OwnerAlertType.slowPerformance ||
+        OwnerAlertType.highErrorRate =>
+          true,
+        _ => false,
+      };
 }
 
 class OwnerAlert {
@@ -266,6 +283,24 @@ class ActivityFeedEntry {
   final String title;
   final DateTime timestamp;
   final String? actorName;
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'type': type.name,
+        'title': title,
+        'timestamp': timestamp.toIso8601String(),
+        if (actorName != null) 'actorName': actorName,
+      };
+
+  factory ActivityFeedEntry.fromJson(Map<String, dynamic> json) {
+    return ActivityFeedEntry(
+      id: json['id'] as String,
+      type: ActivityEventType.values.byName(json['type'] as String),
+      title: json['title'] as String,
+      timestamp: DateTime.parse(json['timestamp'] as String),
+      actorName: json['actorName'] as String?,
+    );
+  }
 }
 
 class ActiveSessionEntry {

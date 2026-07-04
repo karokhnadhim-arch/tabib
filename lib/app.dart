@@ -40,6 +40,7 @@ import 'services/platform_notification_config_service.dart';
 import 'services/smart_notification_service.dart';
 import 'services/queue_notification_monitor.dart';
 import 'services/user_preferences_service.dart';
+import 'services/dashboard_summary_repository.dart';
 import 'services/system_monitoring_service.dart';
 import 'services/system_error_log_service.dart';
 import 'services/system_activity_feed_service.dart';
@@ -165,7 +166,10 @@ class _TabibAppState extends State<TabibApp> {
     _chatProvider = ChatProvider(repository: _chatRepository);
     _ownerAuditService = OwnerAuditService();
     _systemErrorLogService = SystemErrorLogService();
-    _systemActivityFeedService = SystemActivityFeedService();
+    final dashboardSummaryRepo = DashboardSummaryRepository(backend: _backend);
+    _systemActivityFeedService = SystemActivityFeedService(
+      summaryRepo: dashboardSummaryRepo,
+    );
     _systemMaintenanceService = SystemMaintenanceService()..load();
     _systemMonitoringService = SystemMonitoringService(
       backend: _backend,
@@ -174,7 +178,7 @@ class _TabibAppState extends State<TabibApp> {
       communicationLog: _staffCommunicationLog,
       errorLog: _systemErrorLogService,
       advertisementService: _advertisementService,
-    );
+    )..attachActivityFeed(_systemActivityFeedService);
     _subscriptionMonitor = SubscriptionMonitorService(
       backend: _backend,
       catalog: _dataService,
