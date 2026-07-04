@@ -1747,6 +1747,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reportsAnalytics => 'Reports & analytics';
 
   @override
+  String get analyticsDashboard => 'Analytics dashboard';
+
+  @override
+  String reportSavedToFile(String path) {
+    return 'Report saved to $path';
+  }
+
+  @override
   String get systemHealth => 'System health';
 
   @override

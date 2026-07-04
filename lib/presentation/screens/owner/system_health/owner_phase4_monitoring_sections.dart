@@ -14,6 +14,7 @@ import '../../../../services/owner_forecast_service.dart';
 import '../../../../services/owner_insights_service.dart';
 import '../../../../services/smart_owner_notification_service.dart';
 import '../../../../services/theme_service.dart';
+import 'analytics_range_filters.dart';
 import 'monitoring_filter_scope.dart';
 import 'monitoring_interactive_chart.dart';
 import 'system_health_widgets.dart';
@@ -145,32 +146,10 @@ class OwnerGlobalFilterBar extends StatelessWidget {
               ],
               onSelected: (v) => filters.setFilter(f.copyWith(status: v)),
             ),
-            ActionChip(
-              avatar: const Icon(Icons.date_range, size: 18),
-              label: Text(
-                f.dateRange != null
-                    ? '${DateFormat.MMMd().format(f.dateRange!.start)} – ${DateFormat.MMMd().format(f.dateRange!.end)}'
-                    : l10n.filterCustomRange,
-              ),
-              onPressed: () async {
-                final now = DateTime.now();
-                final picked = await showDateRangePicker(
-                  context: context,
-                  firstDate: now.subtract(const Duration(days: 365)),
-                  lastDate: now,
-                  initialDateRange: f.dateRange ??
-                      DateTimeRange(
-                        start: now.subtract(const Duration(days: 30)),
-                        end: now,
-                      ),
-                );
-                if (picked != null && context.mounted) {
-                  filters.setFilter(f.copyWith(dateRange: picked));
-                }
-              },
-            ),
           ],
         ),
+        const SizedBox(height: 8),
+        const DashboardDatePresetFilters(),
         if (f.isActive)
           Padding(
             padding: const EdgeInsets.only(top: 6),

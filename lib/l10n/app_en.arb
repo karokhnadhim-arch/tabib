@@ -685,6 +685,13 @@
   "feedbackSupport": "Feedback & support",
   "notificationsCenter": "Notifications center",
   "reportsAnalytics": "Reports & analytics",
+  "analyticsDashboard": "Analytics dashboard",
+  "reportSavedToFile": "Report saved to {path}",
+  "@reportSavedToFile": {
+    "placeholders": {
+      "path": {"type": "String"}
+    }
+  },
   "systemHealth": "System health",
   "auditLog": "Audit log",
   "securityCenter": "Security center",

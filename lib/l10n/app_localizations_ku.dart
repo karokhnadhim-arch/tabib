@@ -1747,6 +1747,14 @@ class AppLocalizationsKu extends AppLocalizations {
   String get reportsAnalytics => 'ڕاپۆرت و شیکاری';
 
   @override
+  String get analyticsDashboard => 'داشبۆردی شیکاری';
+
+  @override
+  String reportSavedToFile(String path) {
+    return 'ڕاپۆرت پاشەکەوت کرا لە $path';
+  }
+
+  @override
   String get systemHealth => 'تەندروستی سیستەم';
 
   @override

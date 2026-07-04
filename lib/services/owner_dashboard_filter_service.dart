@@ -1,7 +1,9 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 import '../models/owner_monitoring_phase4.dart';
+import '../models/system_monitoring.dart';
 import 'clinic_data_service.dart';
+import 'dashboard_date_presets.dart';
 
 /// Global dashboard filters — client-side scaling from loaded catalog data.
 class OwnerDashboardFilterService extends ChangeNotifier {
@@ -43,6 +45,20 @@ class OwnerDashboardFilterService extends ChangeNotifier {
   }
 
   void clearFilters() => setFilter(const OwnerDashboardFilter());
+
+  void applyDatePreset(AnalyticsRange range) {
+    final dateRange = DashboardDatePresets.forAnalyticsRange(range);
+    setFilter(
+      _filter.copyWith(
+        dateRange: dateRange,
+        clearDateRange: dateRange == null,
+      ),
+    );
+  }
+
+  void applyCustomDateRange(DateTimeRange range) {
+    setFilter(_filter.copyWith(dateRange: range));
+  }
 
   int scaled(int value) => (value * _scaleFactor).round();
 

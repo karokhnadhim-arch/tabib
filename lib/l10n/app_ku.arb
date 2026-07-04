@@ -629,6 +629,13 @@
   "feedbackSupport": "فیدباک و پشتگیری",
   "notificationsCenter": "ناوەندی ئاگاداریەکان",
   "reportsAnalytics": "ڕاپۆرت و شیکاری",
+  "analyticsDashboard": "داشبۆردی شیکاری",
+  "reportSavedToFile": "ڕاپۆرت پاشەکەوت کرا لە {path}",
+  "@reportSavedToFile": {
+    "placeholders": {
+      "path": {"type": "String"}
+    }
+  },
   "systemHealth": "تەندروستی سیستەم",
   "auditLog": "تۆماری وردبینی",
   "securityCenter": "ناوەندی ئاسایش",

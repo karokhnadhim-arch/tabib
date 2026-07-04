@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 
 import '../core/privacy/system_owner_privacy.dart';
 import '../firebase_options.dart';
+import '../models/owner_monitoring_phase4.dart';
 import '../models/platform_dashboard_summary.dart';
 import '../models/system_monitoring.dart';
 import '../models/user_account.dart';
@@ -125,6 +126,8 @@ class SystemMonitoringService extends ChangeNotifier {
   bool _chartsRequested = false;
   DateTime? _customRangeStart;
   DateTime? _customRangeEnd;
+  Timer? _filterRefreshDebounce;
+  OwnerDashboardFilter _activeFilter = const OwnerDashboardFilter();
   final Set<String> _lockedUserIds = {};
   final Set<String> _terminatedSessions = {};
   final List<BackupHistoryEntry> _backupHistory = [];
@@ -202,6 +205,7 @@ class SystemMonitoringService extends ChangeNotifier {
     _dashboardActive = false;
     _statisticsTimer?.cancel();
     _criticalTimer?.cancel();
+    _filterRefreshDebounce?.cancel();
     _statisticsTimer = null;
     _criticalTimer = null;
   }
@@ -222,6 +226,7 @@ class SystemMonitoringService extends ChangeNotifier {
     _errorLog.removeListener(_onCriticalSignalsChanged);
     _statisticsTimer?.cancel();
     _criticalTimer?.cancel();
+    _filterRefreshDebounce?.cancel();
     super.dispose();
   }
 
@@ -363,6 +368,36 @@ class SystemMonitoringService extends ChangeNotifier {
     setRange(AnalyticsRange.custom);
   }
 
+  OwnerDashboardFilter get activeFilter => _activeFilter;
+
+  /// Applies global dashboard filters — syncs date range and debounces refresh.
+  void applyDashboardFilter(OwnerDashboardFilter filter) {
+    _activeFilter = filter;
+
+    if (filter.dateRange != null) {
+      final start = filter.dateRange!.start;
+      final end = filter.dateRange!.end;
+      final rangeChanged = _range != AnalyticsRange.custom ||
+          _customRangeStart != start ||
+          _customRangeEnd != end;
+      _customRangeStart = start;
+      _customRangeEnd = end;
+      _range = AnalyticsRange.custom;
+      if (rangeChanged) {
+        _chartsLoaded = false;
+        _charts = null;
+      }
+    }
+
+    _filterRefreshDebounce?.cancel();
+    _filterRefreshDebounce = Timer(const Duration(milliseconds: 350), () {
+      if (!_dashboardActive) return;
+      refreshStatistics(force: true);
+      if (_chartsRequested) loadCharts(force: true);
+    });
+    notifyListeners();
+  }
+
   void requestCharts() {
     if (_chartsRequested && _chartsLoaded) return;
     _chartsRequested = true;
@@ -442,20 +477,56 @@ class SystemMonitoringService extends ChangeNotifier {
     if (s == null) return '';
     final rows = <List<String>>[
       ['Metric', 'Value'],
+      ['Generated', DateTime.now().toIso8601String()],
+      ['Analytics Range', _range.name],
       ['Total Users', '${s.totalUsers}'],
       ['Total Doctors', '${s.totalDoctors}'],
       ['Total Patients', '${s.totalPatients}'],
       ['Monthly Revenue', s.monthlyRevenue],
       ['Annual Revenue', s.annualRevenue],
+      ["Today's Revenue", todaysRevenueLabel()],
+      ['Active Packages', '${s.activePackages}'],
+      ['Packages Expiring Soon', '${s.packagesExpiringSoon}'],
+      ['Renewals Today', '${s.renewalsToday}'],
       ['Active Queues', '${s.activeQueues}'],
       ['Today Appointments', '${s.todaysAppointments}'],
     ];
+
+    if (_activeFilter.isActive) {
+      rows.addAll([
+        ['Filter City', _activeFilter.city ?? 'All'],
+        ['Filter Business', _activeFilter.businessId ?? 'All'],
+        ['Filter Doctor', _activeFilter.doctorId ?? 'All'],
+        ['Filter Status', _activeFilter.status.name],
+      ]);
+      if (_activeFilter.dateRange != null) {
+        rows.add([
+          'Filter Date Range',
+          '${_activeFilter.dateRange!.start.toIso8601String()} – ${_activeFilter.dateRange!.end.toIso8601String()}',
+        ]);
+      }
+    }
+
+    final charts = _charts;
+    if (charts != null) {
+      rows.addAll([
+        ['Daily Registrations', charts.registrations.map(_formatNum).join(', ')],
+        ['Daily Queues', charts.queues.map(_formatNum).join(', ')],
+        ['Daily Appointments', charts.appointments.map(_formatNum).join(', ')],
+        ['User Growth', charts.userGrowth.map(_formatNum).join(', ')],
+        ['Doctor Growth', charts.doctorGrowth.map(_formatNum).join(', ')],
+        ['Business Growth', charts.businessGrowth.map(_formatNum).join(', ')],
+      ]);
+    }
+
     return switch (format) {
       ReportExportFormat.csv => _rowsToCsv(rows),
       ReportExportFormat.excel => rows.map((r) => r.join('\t')).join('\n'),
       ReportExportFormat.pdf => _rowsToPdfText(rows),
     };
   }
+
+  String _formatNum(double value) => value.toStringAsFixed(1);
 
   String exportBackupReport() {
     final buffer = StringBuffer('Backup Report\n');

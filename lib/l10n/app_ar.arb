@@ -629,6 +629,13 @@
   "feedbackSupport": "الملاحظات والدعم",
   "notificationsCenter": "مركز الإشعارات",
   "reportsAnalytics": "التقارير والتحليلات",
+  "analyticsDashboard": "لوحة التحليلات",
+  "reportSavedToFile": "تم حفظ التقرير في {path}",
+  "@reportSavedToFile": {
+    "placeholders": {
+      "path": {"type": "String"}
+    }
+  },
   "systemHealth": "صحة النظام",
   "auditLog": "سجل التدقيق",
   "securityCenter": "مركز الأمان",

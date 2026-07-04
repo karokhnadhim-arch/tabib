@@ -9,6 +9,7 @@ import '../../../../services/system_activity_feed_service.dart';
 import '../../../../services/system_monitoring_service.dart';
 import '../../../widgets/system_owner_guard.dart';
 import 'monitoring_filter_scope.dart';
+import 'owner_dashboard_filter_sync.dart';
 import 'owner_monitoring_theme.dart';
 import 'owner_phase1_monitoring_section.dart';
 import 'owner_phase2_monitoring_sections.dart';
@@ -90,34 +91,36 @@ class _OwnerSystemHealthDashboardState extends State<OwnerSystemHealthDashboard>
               ? const Center(child: CircularProgressIndicator())
               : RefreshIndicator(
                   onRefresh: _refreshAll,
-                  child: MonitoringFilterScope(
-                    scaleFactor: filters.scaleFactor,
-                    child: AnimatedPadding(
-                      duration: const Duration(milliseconds: 250),
-                      padding: EdgeInsets.all(appearance.cardPadding),
-                      child: ListView(
-                        children: [
-                          const OwnerGlobalSearchBar(),
-                          SizedBox(height: appearance.sectionSpacing),
-                          const OwnerGlobalFilterBar(),
-                          SizedBox(height: appearance.sectionSpacing),
-                          const OwnerPhase1MonitoringSection(),
-                          const OwnerLiveStatisticsSection(),
-                          const OwnerActivityFeedSection(),
-                          const OwnerAiInsightsSection(),
-                          const OwnerForecastSection(),
-                          const OwnerSmartNotificationsSection(),
-                          const OwnerFirebaseCostSection(),
-                          const OwnerPhase3AnalyticsSection(),
-                          const OwnerRevenueDashboardSection(),
-                          const OwnerSecurityCenterSection(),
-                          const OwnerErrorMonitoringSection(),
-                          const OwnerBackupCenterSection(),
-                          const OwnerAuditLogSection(),
-                          const OwnerReportsSection(),
-                          const OwnerAppearanceSection(),
-                          const SizedBox(height: 24),
-                        ],
+                  child: OwnerDashboardFilterSync(
+                    child: MonitoringFilterScope(
+                      scaleFactor: filters.scaleFactor,
+                      child: AnimatedPadding(
+                        duration: const Duration(milliseconds: 250),
+                        padding: EdgeInsets.all(appearance.cardPadding),
+                        child: ListView(
+                          children: [
+                            const OwnerGlobalSearchBar(),
+                            SizedBox(height: appearance.sectionSpacing),
+                            const OwnerGlobalFilterBar(),
+                            SizedBox(height: appearance.sectionSpacing),
+                            const OwnerPhase1MonitoringSection(),
+                            const OwnerLiveStatisticsSection(),
+                            const OwnerActivityFeedSection(),
+                            const OwnerAiInsightsSection(),
+                            const OwnerForecastSection(),
+                            const OwnerSmartNotificationsSection(),
+                            const OwnerFirebaseCostSection(),
+                            const OwnerPhase3AnalyticsSection(),
+                            const OwnerRevenueDashboardSection(),
+                            const OwnerSecurityCenterSection(),
+                            const OwnerErrorMonitoringSection(),
+                            const OwnerBackupCenterSection(),
+                            const OwnerAuditLogSection(),
+                            const OwnerReportsSection(),
+                            const OwnerAppearanceSection(),
+                            const SizedBox(height: 24),
+                          ],
+                        ),
                       ),
                     ),
                   ),

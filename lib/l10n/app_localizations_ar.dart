@@ -1747,6 +1747,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get reportsAnalytics => 'التقارير والتحليلات';
 
   @override
+  String get analyticsDashboard => 'لوحة التحليلات';
+
+  @override
+  String reportSavedToFile(String path) {
+    return 'تم حفظ التقرير في $path';
+  }
+
+  @override
   String get systemHealth => 'صحة النظام';
 
   @override

@@ -7,9 +7,11 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../models/system_monitoring.dart';
 import '../../../../services/owner_audit_service.dart';
+import '../../../../services/dashboard_report_exporter.dart';
 import '../../../../services/system_monitoring_service.dart';
+import 'analytics_chart_grid.dart';
+import 'analytics_range_filters.dart';
 import 'monitoring_filter_scope.dart';
-import 'monitoring_interactive_chart.dart';
 import 'system_health_widgets.dart';
 
 class OwnerPhase3AnalyticsSection extends StatelessWidget {
@@ -39,7 +41,7 @@ class _AnalyticsBody extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         MonitoringSectionHeader(
-          title: l10n.reportsAnalytics,
+          title: l10n.analyticsDashboard,
           icon: Icons.insights_outlined,
           trailing: monitoring.isLoadingCharts
               ? const SizedBox(
@@ -56,7 +58,7 @@ class _AnalyticsBody extends StatelessWidget {
               ),
         ),
         const SizedBox(height: 8),
-        _AnalyticsRangeFilters(monitoring: monitoring),
+        AnalyticsRangeFilters(monitoring: monitoring, syncGlobalFilter: true),
         const SizedBox(height: 12),
         if (monitoring.isLoadingCharts && charts == null)
           const Padding(
@@ -68,97 +70,28 @@ class _AnalyticsBody extends StatelessWidget {
         else
           LayoutBuilder(
             builder: (context, constraints) {
-              final crossCount = constraints.maxWidth >= 900
-                  ? 2
-                  : 1;
               final scale = (List<double> v) => MonitoringFilterScope.scaleSeries(context, v);
-              final chartDefs = [
-                (l10n.dailyRegistrations, scale(charts.registrations), scheme.primary, false),
-                (l10n.dailyQueues, scale(charts.queues), Colors.orange, false),
-                (l10n.dailyAppointments, scale(charts.appointments), Colors.teal, false),
-                (l10n.monthlyRevenue, scale(charts.revenue), AppTheme.medicalGreen, true),
-                (l10n.adPerformance, scale(charts.adPerformance), Colors.purple, false),
-                (l10n.userGrowth, scale(charts.userGrowth), scheme.tertiary, false),
-                (l10n.doctorGrowthChart, scale(charts.doctorGrowth), Colors.indigo, false),
-                (l10n.businessGrowth, scale(charts.businessGrowth), Colors.brown, false),
-                (l10n.activeUsersChart, scale(charts.activeUsers), Colors.blue, false),
-                (l10n.queueWaitingTrends, scale(charts.queueWaitingTrends), Colors.deepOrange, false),
+              final coreCharts = <AnalyticsChartDef>[
+                (title: l10n.dailyRegistrations, values: scale(charts.registrations), color: scheme.primary, barMode: false),
+                (title: l10n.dailyQueues, values: scale(charts.queues), color: Colors.orange, barMode: false),
+                (title: l10n.dailyAppointments, values: scale(charts.appointments), color: Colors.teal, barMode: false),
+                (title: l10n.userGrowth, values: scale(charts.userGrowth), color: scheme.tertiary, barMode: false),
+                (title: l10n.doctorGrowthChart, values: scale(charts.doctorGrowth), color: Colors.indigo, barMode: false),
+                (title: l10n.businessGrowth, values: scale(charts.businessGrowth), color: Colors.brown, barMode: false),
               ];
-              return GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: crossCount,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: crossCount == 2 ? 1.55 : 1.35,
-                ),
-                itemCount: chartDefs.length,
-                itemBuilder: (context, index) {
-                  final (title, values, color, bar) = chartDefs[index];
-                  return MonitoringInteractiveChart(
-                    title: title,
-                    values: values,
-                    color: color,
-                    barMode: bar,
-                  );
-                },
+              final extendedCharts = <AnalyticsChartDef>[
+                (title: l10n.monthlyRevenue, values: scale(charts.revenue), color: AppTheme.medicalGreen, barMode: true),
+                (title: l10n.adPerformance, values: scale(charts.adPerformance), color: Colors.purple, barMode: false),
+                (title: l10n.activeUsersChart, values: scale(charts.activeUsers), color: Colors.blue, barMode: false),
+                (title: l10n.queueWaitingTrends, values: scale(charts.queueWaitingTrends), color: Colors.deepOrange, barMode: false),
+              ];
+              return PaginatedAnalyticsChartGrid(
+                coreCharts: coreCharts,
+                extendedCharts: extendedCharts,
               );
             },
           ),
       ],
-    );
-  }
-}
-
-class _AnalyticsRangeFilters extends StatelessWidget {
-  const _AnalyticsRangeFilters({required this.monitoring});
-
-  final SystemMonitoringService monitoring;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final ranges = <(AnalyticsRange, String)>[
-      (AnalyticsRange.today, l10n.filterToday),
-      (AnalyticsRange.yesterday, l10n.filterYesterday),
-      (AnalyticsRange.week, l10n.filterLast7Days),
-      (AnalyticsRange.month, l10n.filterThisMonth),
-      (AnalyticsRange.year, l10n.filterThisYear),
-      (AnalyticsRange.custom, l10n.filterCustomRange),
-    ];
-
-    return Wrap(
-      spacing: 8,
-      runSpacing: 4,
-      children: ranges.map((entry) {
-        final selected = monitoring.range == entry.$1;
-        return FilterChip(
-          label: Text(entry.$2),
-          selected: selected,
-          showCheckmark: false,
-          onSelected: (_) async {
-            if (entry.$1 == AnalyticsRange.custom) {
-              final now = DateTime.now();
-              final picked = await showDateRangePicker(
-                context: context,
-                firstDate: now.subtract(const Duration(days: 365 * 3)),
-                lastDate: now,
-                initialDateRange: DateTimeRange(
-                  start: monitoring.customRangeStart ??
-                      now.subtract(const Duration(days: 7)),
-                  end: monitoring.customRangeEnd ?? now,
-                ),
-              );
-              if (picked != null && context.mounted) {
-                monitoring.setCustomDateRange(picked.start, picked.end);
-              }
-            } else {
-              monitoring.setRange(entry.$1);
-            }
-          },
-        );
-      }).toList(),
     );
   }
 }
@@ -188,9 +121,24 @@ class OwnerRevenueDashboardSection extends StatelessWidget {
             (l10n.monthlyRevenue, snapshot.monthlyRevenue, Icons.calendar_month, scheme.primary),
             (l10n.annualRevenue, snapshot.annualRevenue, Icons.trending_up, AppTheme.medicalGreen),
             (l10n.todaysRevenue, monitoring.todaysRevenueLabel(), Icons.today, Colors.teal),
-            (l10n.activePackages, '${snapshot.activePackages}', Icons.card_membership, Colors.blue),
-            (l10n.packagesExpiringSoon, '${snapshot.packagesExpiringSoon}', Icons.event_busy, Colors.orange),
-            (l10n.renewalsToday, '${snapshot.renewalsToday}', Icons.autorenew, scheme.tertiary),
+            (
+              l10n.activePackages,
+              MonitoringFilterScope.scaleText(context, snapshot.activePackages),
+              Icons.card_membership,
+              Colors.blue,
+            ),
+            (
+              l10n.packagesExpiringSoon,
+              MonitoringFilterScope.scaleText(context, snapshot.packagesExpiringSoon),
+              Icons.event_busy,
+              Colors.orange,
+            ),
+            (
+              l10n.renewalsToday,
+              MonitoringFilterScope.scaleText(context, snapshot.renewalsToday),
+              Icons.autorenew,
+              scheme.tertiary,
+            ),
             (l10n.avgRevenuePerDoctor, monitoring.avgRevenuePerDoctorLabel(), Icons.medical_services, Colors.indigo),
             (l10n.advertisementRevenue, monitoring.advertisementRevenueLabel(), Icons.campaign, Colors.purple),
           ].map((e) => (label: e.$1, value: e.$2, icon: e.$3, color: e.$4)).toList(),
@@ -702,7 +650,7 @@ class OwnerReportsSection extends StatelessWidget {
               ),
         ),
         const SizedBox(height: 8),
-        _AnalyticsRangeFilters(monitoring: monitoring),
+        AnalyticsRangeFilters(monitoring: monitoring, syncGlobalFilter: true),
         const SizedBox(height: 12),
         Wrap(
           spacing: 8,
@@ -729,15 +677,39 @@ class OwnerReportsSection extends StatelessWidget {
     );
   }
 
-  void _export(
+  Future<void> _export(
     BuildContext context,
     SystemMonitoringService monitoring,
     ReportExportFormat format,
     String label,
-  ) {
+  ) async {
     final l10n = AppLocalizations.of(context);
     final payload = monitoring.exportMonitoringReport(format);
-    Clipboard.setData(ClipboardData(text: payload));
+    if (payload.isEmpty) return;
+
+    final result = await DashboardReportExporter.export(
+      content: payload,
+      format: format,
+    );
+
+    if (!context.mounted) return;
+
+    if (result.message == 'clipboard' && result.content != null) {
+      await Clipboard.setData(ClipboardData(text: result.content!));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.reportExported(label))),
+      );
+      return;
+    }
+
+    if (result.success && result.filePath != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.reportSavedToFile(result.filePath!))),
+      );
+      return;
+    }
+
+    await Clipboard.setData(ClipboardData(text: payload));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(l10n.reportExported(label))),
     );

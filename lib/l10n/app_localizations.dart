@@ -3491,6 +3491,18 @@ abstract class AppLocalizations {
   /// **'Reports & analytics'**
   String get reportsAnalytics;
 
+  /// No description provided for @analyticsDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics dashboard'**
+  String get analyticsDashboard;
+
+  /// No description provided for @reportSavedToFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Report saved to {path}'**
+  String reportSavedToFile(String path);
+
   /// No description provided for @systemHealth.
   ///
   /// In en, this message translates to:
