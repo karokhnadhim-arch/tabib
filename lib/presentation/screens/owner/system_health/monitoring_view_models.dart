@@ -24,6 +24,7 @@ class Phase1MonitoringViewModel {
     required this.avgApiResponseMs,
     required this.backgroundTasks,
     required this.cacheHitRate,
+    required this.slowQueries,
     required this.showingCached,
     required this.isOffline,
     required this.isLiveDataAvailable,
@@ -59,6 +60,7 @@ class Phase1MonitoringViewModel {
       avgApiResponseMs: snapshot.avgApiResponseMs,
       backgroundTasks: snapshot.backgroundTasks,
       cacheHitRate: snapshot.cacheHitRate,
+      slowQueries: snapshot.slowQueries,
       showingCached: showingCached || snapshot.isFromCache,
       isOffline: isOffline,
       isLiveDataAvailable: snapshot.isLiveDataAvailable,
@@ -85,6 +87,7 @@ class Phase1MonitoringViewModel {
   final int avgApiResponseMs;
   final int backgroundTasks;
   final int cacheHitRate;
+  final int slowQueries;
   final bool showingCached;
   final bool isOffline;
   final bool isLiveDataAvailable;
@@ -112,6 +115,7 @@ class Phase1MonitoringViewModel {
         avgApiResponseMs == other.avgApiResponseMs &&
         backgroundTasks == other.backgroundTasks &&
         cacheHitRate == other.cacheHitRate &&
+        slowQueries == other.slowQueries &&
         showingCached == other.showingCached &&
         isOffline == other.isOffline &&
         isLiveDataAvailable == other.isLiveDataAvailable &&

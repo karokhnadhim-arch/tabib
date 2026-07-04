@@ -1018,6 +1018,35 @@
   "alertStorageHigh": "بەکارهێنانی هەڵگرتن لە {percent}%",
   "alertSlowResponse": "کاتی وەڵامی API بەرز دۆزرایەوە",
   "alertHighErrorRate": "ڕێژەی بەرزی هەڵە دۆزرایەوە",
+  "alertPackageExpiresToday": "پاکێجی بەشداریکردن ئەمڕۆ یان بەم نزیکانە بەسەردەچێت",
+  "alertNotificationServiceFailed": "خزمەتگوزاری ئاگادارکردنەوە سەرکەوتوو نەبوو",
+  "systemHealthCardTitle": "تەندروستی سیستەم",
+  "autoRefreshInterval": "نوێکردنەوەی خۆکار",
+  "autoRefreshSeconds": "هەر {seconds} چ",
+  "@autoRefreshSeconds": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "firebaseUsageWarningsTitle": "ئاگاداری بەکارهێنانی Firebase",
+  "firebaseUsageWarningReads": "خوێندنەوەی Firestore بەرزە ({count}) — پێوانەی کۆکراو بەکاربهێنە",
+  "@firebaseUsageWarningReads": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "firebaseUsageWarningWrites": "نووسینی Firestore بەرزە ({count}) — نوێکردنەوەکان کۆبکەرەوە",
+  "@firebaseUsageWarningWrites": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "firebaseUsageWarningStorage": "بەکارهێنانی کۆگا {percent}% — پاککردنەوە یان بەرزکردنەوە",
+  "@firebaseUsageWarningStorage": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
   "monitoringPhase2Hint": "ئامارە ڕاستەوخۆکانی پلاتفۆرم — هەر 60 چرکە جارێک لە ئامارە کۆکراوەکان نوێدەبێتەوە",
   "activityFilterLastHour": "کاتژمێری ڕابردوو",
   "activityFilterAll": "هەموو",

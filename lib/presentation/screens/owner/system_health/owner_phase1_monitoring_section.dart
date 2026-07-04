@@ -58,11 +58,16 @@ class OwnerPhase1MonitoringSection extends StatelessWidget {
           cachedLabel: l10n.dashboardCachedData,
           unavailableLabel: l10n.dashboardLiveDataUnavailable,
         ),
-        SystemHealthStatusBanner(
-          label: _healthLabel(l10n, vm.healthLevel),
-          level: vm.healthLevel.name,
-          updatedAt: vm.updatedAt,
+        OwnerSystemHealthCard(
+          healthLabel: _healthLabel(l10n, vm.healthLevel),
+          healthLevel: vm.healthLevel,
+          firebaseConnected: vm.firebaseConnected,
+          firebaseConfigured: vm.firebaseConfigured,
+          lastSync: vm.lastSuccessfulSync ?? vm.lastSync,
+          avgResponseMs: vm.avgApiResponseMs,
+          isRefreshing: vm.isRefreshing,
         ),
+        const SizedBox(height: 12),
         MonitoringSectionHeader(
           title: l10n.ownerSmartAlerts,
           icon: Icons.notifications_active_outlined,
@@ -75,6 +80,11 @@ class OwnerPhase1MonitoringSection extends StatelessWidget {
         MonitoringSectionHeader(
           title: l10n.firebaseMonitoring,
           icon: Icons.cloud_outlined,
+        ),
+        FirebaseUsageWarningsPanel(
+          reads: vm.firestoreReads,
+          writes: vm.firestoreWrites,
+          storageUsagePercent: vm.storageUsagePercent,
         ),
         MonitoringPanelCard(
           child: Column(
@@ -89,10 +99,12 @@ class OwnerPhase1MonitoringSection extends StatelessWidget {
               MonitoringInfoRow(
                 label: l10n.firestoreReads,
                 value: '${vm.firestoreReads}',
+                warning: vm.firestoreReads >= FirebaseUsageLimits.readWarning,
               ),
               MonitoringInfoRow(
                 label: l10n.firestoreWrites,
                 value: '${vm.firestoreWrites}',
+                warning: vm.firestoreWrites >= FirebaseUsageLimits.writeWarning,
               ),
               MonitoringInfoRow(
                 label: l10n.storageUsage,
@@ -163,6 +175,12 @@ class OwnerPhase1MonitoringSection extends StatelessWidget {
               icon: Icons.cached,
               color: AppTheme.medicalGreen,
             ),
+            (
+              label: l10n.slowQueries,
+              value: '${vm.slowQueries}',
+              icon: Icons.query_stats_outlined,
+              color: vm.slowQueries > 0 ? Colors.orange.shade800 : Colors.blueGrey,
+            ),
           ],
         ),
       ],
@@ -202,6 +220,8 @@ class OwnerPhase1MonitoringSection extends StatelessWidget {
         ),
       OwnerAlertType.slowPerformance => l10n.alertSlowResponse,
       OwnerAlertType.highErrorRate => l10n.alertHighErrorRate,
+      OwnerAlertType.packageExpiresToday => l10n.alertPackageExpiresToday,
+      OwnerAlertType.pushServiceFailed => l10n.alertNotificationServiceFailed,
       _ => alert.message,
     };
   }

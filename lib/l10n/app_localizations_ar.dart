@@ -2888,6 +2888,41 @@ class AppLocalizationsAr extends AppLocalizations {
   String get alertHighErrorRate => 'تم رصد معدل أخطاء مرتفع';
 
   @override
+  String get alertPackageExpiresToday => 'باقة اشتراك تنتهي اليوم أو قريباً';
+
+  @override
+  String get alertNotificationServiceFailed => 'فشل في خدمة الإشعارات';
+
+  @override
+  String get systemHealthCardTitle => 'صحة النظام';
+
+  @override
+  String get autoRefreshInterval => 'تحديث تلقائي';
+
+  @override
+  String autoRefreshSeconds(int seconds) {
+    return 'كل $seconds ث';
+  }
+
+  @override
+  String get firebaseUsageWarningsTitle => 'تحذيرات استخدام Firebase';
+
+  @override
+  String firebaseUsageWarningReads(int count) {
+    return 'قراءات Firestore مرتفعة ($count) — استخدم المقاييس المجمّعة';
+  }
+
+  @override
+  String firebaseUsageWarningWrites(int count) {
+    return 'كتابات Firestore مرتفعة ($count) — دمج التحديثات حيث أمكن';
+  }
+
+  @override
+  String firebaseUsageWarningStorage(int percent) {
+    return 'استخدام التخزين $percent% — فكّر في التنظيف أو الترقية';
+  }
+
+  @override
   String get monitoringPhase2Hint => 'إحصائيات المنصة المباشرة — تُحدَّث تلقائياً كل 60 ثانية من مقاييس مجمّعة';
 
   @override

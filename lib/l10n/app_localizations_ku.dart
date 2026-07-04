@@ -2888,6 +2888,41 @@ class AppLocalizationsKu extends AppLocalizations {
   String get alertHighErrorRate => 'ڕێژەی بەرزی هەڵە دۆزرایەوە';
 
   @override
+  String get alertPackageExpiresToday => 'پاکێجی بەشداریکردن ئەمڕۆ یان بەم نزیکانە بەسەردەچێت';
+
+  @override
+  String get alertNotificationServiceFailed => 'خزمەتگوزاری ئاگادارکردنەوە سەرکەوتوو نەبوو';
+
+  @override
+  String get systemHealthCardTitle => 'تەندروستی سیستەم';
+
+  @override
+  String get autoRefreshInterval => 'نوێکردنەوەی خۆکار';
+
+  @override
+  String autoRefreshSeconds(int seconds) {
+    return 'هەر $seconds چ';
+  }
+
+  @override
+  String get firebaseUsageWarningsTitle => 'ئاگاداری بەکارهێنانی Firebase';
+
+  @override
+  String firebaseUsageWarningReads(int count) {
+    return 'خوێندنەوەی Firestore بەرزە ($count) — پێوانەی کۆکراو بەکاربهێنە';
+  }
+
+  @override
+  String firebaseUsageWarningWrites(int count) {
+    return 'نووسینی Firestore بەرزە ($count) — نوێکردنەوەکان کۆبکەرەوە';
+  }
+
+  @override
+  String firebaseUsageWarningStorage(int percent) {
+    return 'بەکارهێنانی کۆگا $percent% — پاککردنەوە یان بەرزکردنەوە';
+  }
+
+  @override
   String get monitoringPhase2Hint => 'ئامارە ڕاستەوخۆکانی پلاتفۆرم — هەر 60 چرکە جارێک لە ئامارە کۆکراوەکان نوێدەبێتەوە';
 
   @override

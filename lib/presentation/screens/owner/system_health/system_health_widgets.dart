@@ -1,8 +1,289 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../models/system_monitoring.dart';
+import '../../../../services/system_monitoring_service.dart';
 import '../../../widgets/owner_metric_card.dart';
+
+/// Consolidated system health card — status, Firebase, sync, and response time.
+class OwnerSystemHealthCard extends StatelessWidget {
+  const OwnerSystemHealthCard({
+    super.key,
+    required this.healthLabel,
+    required this.healthLevel,
+    required this.firebaseConnected,
+    required this.firebaseConfigured,
+    required this.lastSync,
+    required this.avgResponseMs,
+    required this.isRefreshing,
+  });
+
+  final String healthLabel;
+  final SystemHealthLevel healthLevel;
+  final bool firebaseConnected;
+  final bool firebaseConfigured;
+  final DateTime? lastSync;
+  final int avgResponseMs;
+  final bool isRefreshing;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final scheme = Theme.of(context).colorScheme;
+    final color = switch (healthLevel) {
+      SystemHealthLevel.critical => scheme.error,
+      SystemHealthLevel.warning => const Color(0xFFF9A825),
+      SystemHealthLevel.healthy => AppTheme.medicalGreen,
+    };
+
+    final syncLabel = lastSync != null
+        ? DateFormat.yMMMd().add_jm().format(lastSync!.toLocal())
+        : '—';
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 350),
+      curve: Curves.easeOutCubic,
+      child: Card(
+        elevation: 0,
+        color: color.withOpacity(
+          scheme.brightness == Brightness.dark ? 0.18 : 0.1,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: color.withOpacity(0.35)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: color.withOpacity(0.15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      switch (healthLevel) {
+                        SystemHealthLevel.critical => Icons.error_outline,
+                        SystemHealthLevel.warning => Icons.warning_amber_rounded,
+                        SystemHealthLevel.healthy => Icons.check_circle_outline,
+                      },
+                      color: color,
+                      size: 32,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.systemHealthCardTitle,
+                          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                color: scheme.onSurfaceVariant,
+                              ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          healthLabel,
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: color,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (isRefreshing)
+                    const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  else
+                    Icon(Icons.autorenew, size: 20, color: scheme.onSurfaceVariant),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 12,
+                runSpacing: 8,
+                children: [
+                  _HealthChip(
+                    icon: Icons.cloud_outlined,
+                    label: l10n.firebaseStatus,
+                    value: firebaseConnected
+                        ? l10n.statusConnected
+                        : l10n.statusDemoOrOffline,
+                    warning: firebaseConfigured && !firebaseConnected,
+                  ),
+                  _HealthChip(
+                    icon: Icons.sync_outlined,
+                    label: l10n.lastSynchronization,
+                    value: syncLabel,
+                  ),
+                  _HealthChip(
+                    icon: Icons.speed_outlined,
+                    label: l10n.avgApiResponse,
+                    value: '$avgResponseMs ms',
+                    warning: avgResponseMs >= 1200,
+                  ),
+                  _HealthChip(
+                    icon: Icons.timer_outlined,
+                    label: l10n.autoRefreshInterval,
+                    value: l10n.autoRefreshSeconds(
+                      SystemMonitoringService.healthRefreshInterval.inSeconds,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HealthChip extends StatelessWidget {
+  const _HealthChip({
+    required this.icon,
+    required this.label,
+    required this.value,
+    this.warning = false,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+  final bool warning;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final accent = warning ? const Color(0xFFF9A825) : scheme.primary;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerHighest.withOpacity(0.6),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: warning ? accent.withOpacity(0.4) : scheme.outlineVariant,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: accent),
+          const SizedBox(width: 8),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: scheme.onSurfaceVariant,
+                ),
+              ),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: warning ? accent : scheme.onSurface,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Inline warnings when aggregated Firebase usage nears soft limits.
+class FirebaseUsageWarningsPanel extends StatelessWidget {
+  const FirebaseUsageWarningsPanel({
+    super.key,
+    required this.reads,
+    required this.writes,
+    required this.storageUsagePercent,
+  });
+
+  final int reads;
+  final int writes;
+  final int storageUsagePercent;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final warnings = <String>[];
+    if (reads >= FirebaseUsageLimits.readWarning) {
+      warnings.add(l10n.firebaseUsageWarningReads(reads));
+    }
+    if (writes >= FirebaseUsageLimits.writeWarning) {
+      warnings.add(l10n.firebaseUsageWarningWrites(writes));
+    }
+    if (storageUsagePercent >= FirebaseUsageLimits.storageWarningPercent) {
+      warnings.add(l10n.firebaseUsageWarningStorage(storageUsagePercent));
+    }
+    if (warnings.isEmpty) return const SizedBox.shrink();
+
+    final scheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Card(
+        elevation: 0,
+        color: const Color(0xFFF9A825).withOpacity(
+          scheme.brightness == Brightness.dark ? 0.14 : 0.08,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(
+            color: const Color(0xFFF9A825).withOpacity(0.35),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.warning_amber_rounded, color: Color(0xFFF9A825)),
+                  const SizedBox(width: 8),
+                  Text(
+                    l10n.firebaseUsageWarningsTitle,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              for (final w in warnings)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Text(
+                    '• $w',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class SystemHealthStatusBanner extends StatelessWidget {
   const SystemHealthStatusBanner({
@@ -293,7 +574,7 @@ class _LazyDashboardSectionState extends State<LazyDashboardSection> {
         child: const Center(child: CircularProgressIndicator()),
       );
     }
-    return widget.builder(context    );
+    return widget.builder(context);
   }
 }
 

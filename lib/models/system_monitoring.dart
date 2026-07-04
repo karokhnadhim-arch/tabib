@@ -46,11 +46,20 @@ extension OwnerAlertPhase on OwnerAlertType {
         OwnerAlertType.backupFailed ||
         OwnerAlertType.storageWarning ||
         OwnerAlertType.storageCritical ||
+        OwnerAlertType.packageExpiresToday ||
         OwnerAlertType.slowPerformance ||
-        OwnerAlertType.highErrorRate =>
+        OwnerAlertType.highErrorRate ||
+        OwnerAlertType.pushServiceFailed =>
           true,
         _ => false,
       };
+}
+
+/// Soft limits for owner-dashboard Firebase usage warnings (aggregated metrics only).
+abstract final class FirebaseUsageLimits {
+  static const readWarning = 5000;
+  static const writeWarning = 10000;
+  static const storageWarningPercent = 80;
 }
 
 class OwnerAlert {

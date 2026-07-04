@@ -5753,6 +5753,60 @@ abstract class AppLocalizations {
   /// **'High application error rate detected'**
   String get alertHighErrorRate;
 
+  /// No description provided for @alertPackageExpiresToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription package expires today or soon'**
+  String get alertPackageExpiresToday;
+
+  /// No description provided for @alertNotificationServiceFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Push notification service failure detected'**
+  String get alertNotificationServiceFailed;
+
+  /// No description provided for @systemHealthCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'System health'**
+  String get systemHealthCardTitle;
+
+  /// No description provided for @autoRefreshInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto refresh'**
+  String get autoRefreshInterval;
+
+  /// No description provided for @autoRefreshSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'Every {seconds}s'**
+  String autoRefreshSeconds(int seconds);
+
+  /// No description provided for @firebaseUsageWarningsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Firebase usage warnings'**
+  String get firebaseUsageWarningsTitle;
+
+  /// No description provided for @firebaseUsageWarningReads.
+  ///
+  /// In en, this message translates to:
+  /// **'Firestore reads are high ({count}) — prefer aggregated metrics'**
+  String firebaseUsageWarningReads(int count);
+
+  /// No description provided for @firebaseUsageWarningWrites.
+  ///
+  /// In en, this message translates to:
+  /// **'Firestore writes are high ({count}) — batch updates where possible'**
+  String firebaseUsageWarningWrites(int count);
+
+  /// No description provided for @firebaseUsageWarningStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage usage at {percent}% — consider cleanup or upgrade'**
+  String firebaseUsageWarningStorage(int percent);
+
   /// No description provided for @monitoringPhase2Hint.
   ///
   /// In en, this message translates to:

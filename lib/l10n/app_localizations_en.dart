@@ -2888,6 +2888,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String get alertHighErrorRate => 'High application error rate detected';
 
   @override
+  String get alertPackageExpiresToday => 'Subscription package expires today or soon';
+
+  @override
+  String get alertNotificationServiceFailed => 'Push notification service failure detected';
+
+  @override
+  String get systemHealthCardTitle => 'System health';
+
+  @override
+  String get autoRefreshInterval => 'Auto refresh';
+
+  @override
+  String autoRefreshSeconds(int seconds) {
+    return 'Every ${seconds}s';
+  }
+
+  @override
+  String get firebaseUsageWarningsTitle => 'Firebase usage warnings';
+
+  @override
+  String firebaseUsageWarningReads(int count) {
+    return 'Firestore reads are high ($count) — prefer aggregated metrics';
+  }
+
+  @override
+  String firebaseUsageWarningWrites(int count) {
+    return 'Firestore writes are high ($count) — batch updates where possible';
+  }
+
+  @override
+  String firebaseUsageWarningStorage(int percent) {
+    return 'Storage usage at $percent% — consider cleanup or upgrade';
+  }
+
+  @override
   String get monitoringPhase2Hint => 'Live platform statistics — auto-refreshes every 60 seconds from aggregated metrics';
 
   @override

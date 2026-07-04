@@ -1092,6 +1092,35 @@
   },
   "alertSlowResponse": "High API response time detected",
   "alertHighErrorRate": "High application error rate detected",
+  "alertPackageExpiresToday": "Subscription package expires today or soon",
+  "alertNotificationServiceFailed": "Push notification service failure detected",
+  "systemHealthCardTitle": "System health",
+  "autoRefreshInterval": "Auto refresh",
+  "autoRefreshSeconds": "Every {seconds}s",
+  "@autoRefreshSeconds": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "firebaseUsageWarningsTitle": "Firebase usage warnings",
+  "firebaseUsageWarningReads": "Firestore reads are high ({count}) — prefer aggregated metrics",
+  "@firebaseUsageWarningReads": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "firebaseUsageWarningWrites": "Firestore writes are high ({count}) — batch updates where possible",
+  "@firebaseUsageWarningWrites": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "firebaseUsageWarningStorage": "Storage usage at {percent}% — consider cleanup or upgrade",
+  "@firebaseUsageWarningStorage": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
   "monitoringPhase2Hint": "Live platform statistics — auto-refreshes every 60 seconds from aggregated metrics",
   "activityFilterLastHour": "Last hour",
   "activityFilterAll": "All",

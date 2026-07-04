@@ -41,7 +41,8 @@ class SystemMonitoringService extends ChangeNotifier {
     _errorLog.addListener(_onCriticalSignalsChanged);
   }
 
-  static const statisticsInterval = Duration(seconds: 60);
+  static const healthRefreshInterval = Duration(seconds: 30);
+  static const statisticsInterval = healthRefreshInterval;
   static const criticalInterval = Duration(seconds: 10);
   static const sessionPageSize = 5;
   static const activityPageSize = 10;

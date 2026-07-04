@@ -1018,6 +1018,35 @@
   "alertStorageHigh": "استخدام التخزين عند {percent}%",
   "alertSlowResponse": "تم رصد زمن استجابة API مرتفع",
   "alertHighErrorRate": "تم رصد معدل أخطاء مرتفع",
+  "alertPackageExpiresToday": "باقة اشتراك تنتهي اليوم أو قريباً",
+  "alertNotificationServiceFailed": "فشل في خدمة الإشعارات",
+  "systemHealthCardTitle": "صحة النظام",
+  "autoRefreshInterval": "تحديث تلقائي",
+  "autoRefreshSeconds": "كل {seconds} ث",
+  "@autoRefreshSeconds": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "firebaseUsageWarningsTitle": "تحذيرات استخدام Firebase",
+  "firebaseUsageWarningReads": "قراءات Firestore مرتفعة ({count}) — استخدم المقاييس المجمّعة",
+  "@firebaseUsageWarningReads": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "firebaseUsageWarningWrites": "كتابات Firestore مرتفعة ({count}) — دمج التحديثات حيث أمكن",
+  "@firebaseUsageWarningWrites": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "firebaseUsageWarningStorage": "استخدام التخزين {percent}% — فكّر في التنظيف أو الترقية",
+  "@firebaseUsageWarningStorage": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
   "monitoringPhase2Hint": "إحصائيات المنصة المباشرة — تُحدَّث تلقائياً كل 60 ثانية من مقاييس مجمّعة",
   "activityFilterLastHour": "آخر ساعة",
   "activityFilterAll": "الكل",

@@ -211,6 +211,26 @@ class SystemActivityFeedService extends ChangeNotifier {
         timestamp: now.subtract(const Duration(minutes: 48)),
         actorName: 'System Owner',
       ),
+      ActivityFeedEntry(
+        id: 'act_secretary',
+        type: ActivityEventType.secretaryAdded,
+        title: 'Secretary account added',
+        timestamp: now.subtract(const Duration(minutes: 15)),
+        actorName: 'Clinic Admin',
+      ),
+      ActivityFeedEntry(
+        id: 'act_queue_cancel',
+        type: ActivityEventType.queueCancelled,
+        title: 'Queue entry cancelled',
+        timestamp: now.subtract(const Duration(minutes: 18)),
+      ),
+      ActivityFeedEntry(
+        id: 'act_logout',
+        type: ActivityEventType.logout,
+        title: 'Staff logout',
+        timestamp: now.subtract(const Duration(minutes: 55)),
+        actorName: 'Secretary',
+      ),
     ]);
     _entries.sort((a, b) => b.timestamp.compareTo(a.timestamp));
   }
