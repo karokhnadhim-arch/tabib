@@ -658,6 +658,8 @@
   "cacheEfficiency": "كفاءة التخزين المؤقت",
   "highCostOperationWarning": "راجع هذه العملية قبل المتابعة — قد تزيد تكاليف Firebase",
   "maintenanceAllowOwnerAdmin": "يمكن للمالك والمسؤول الوصول إلى المنصة أثناء الصيانة",
+  "dashboardSectionNavigator": "الانتقال إلى قسم",
+  "viewFullMonitoringCenter": "فتح مركز المراقبة الكامل",
   "reportSavedToFile": "تم حفظ التقرير في {path}",
   "@reportSavedToFile": {
     "placeholders": {

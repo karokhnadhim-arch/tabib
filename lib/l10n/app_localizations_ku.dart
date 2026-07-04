@@ -1834,6 +1834,12 @@ class AppLocalizationsKu extends AppLocalizations {
   String get maintenanceAllowOwnerAdmin => 'خاوەن و بەڕێوەبەر دەتوانن لە کاتی چاکسازی دەستگەیشتن بە پلاتفۆرم بکەن';
 
   @override
+  String get dashboardSectionNavigator => 'بچۆ بۆ بەش';
+
+  @override
+  String get viewFullMonitoringCenter => 'ناوەندی چاودێری تەواو بکەرەوە';
+
+  @override
   String reportSavedToFile(String path) {
     return 'ڕاپۆرت پاشەکەوت کرا لە $path';
   }

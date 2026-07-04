@@ -3665,6 +3665,18 @@ abstract class AppLocalizations {
   /// **'Owner and admin accounts can still access the platform during maintenance'**
   String get maintenanceAllowOwnerAdmin;
 
+  /// No description provided for @dashboardSectionNavigator.
+  ///
+  /// In en, this message translates to:
+  /// **'Jump to section'**
+  String get dashboardSectionNavigator;
+
+  /// No description provided for @viewFullMonitoringCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Open full monitoring center'**
+  String get viewFullMonitoringCenter;
+
   /// No description provided for @reportSavedToFile.
   ///
   /// In en, this message translates to:

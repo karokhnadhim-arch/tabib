@@ -15,6 +15,7 @@ import '../../../services/clinic_data_service.dart';
 import '../../../services/staff_data_service.dart';
 import '../../../utils/localization_utils.dart';
 import '../../../services/auth_service.dart';
+import '../../../services/owner_dashboard_navigation_service.dart';
 
 /// System Owner home — summary cards and live platform metrics.
 class SystemOwnerOverviewScreen extends StatefulWidget {
@@ -184,8 +185,11 @@ class _SystemOwnerOverviewScreenState extends State<SystemOwnerOverviewScreen> {
                   value: metrics.revenueEstimateLabel,
                   icon: Icons.payments_outlined,
                   color: Colors.teal.shade700,
-                  onTap: () =>
-                      context.go(SystemOwnerNavSection.payments.routePath),
+                  onTap: () => context.go(
+                    OwnerDashboardNavigationService.routeFor(
+                      MonitoringDashboardSection.revenue,
+                    ),
+                  ),
                 ),
                 OwnerMetricCard(
                   label: l10n.newRegistrations,
@@ -205,7 +209,18 @@ class _SystemOwnerOverviewScreenState extends State<SystemOwnerOverviewScreen> {
                   ),
                   icon: Icons.queue_outlined,
                   color: AppTheme.medicalBlue,
-                  onTap: () => context.go('${AdminRoutes.platformPrefix}/reports'),
+                  onTap: () => context.go(
+                    SystemOwnerNavSection.systemHealth.routePath,
+                  ),
+                ),
+                OwnerMetricCard(
+                  label: l10n.monitoringCenterTitle,
+                  value: l10n.systemHealth,
+                  icon: Icons.monitor_heart_outlined,
+                  color: Colors.deepPurple,
+                  onTap: () => context.go(
+                    SystemOwnerNavSection.systemHealth.routePath,
+                  ),
                 ),
               ],
             ),
@@ -240,10 +255,19 @@ class _SystemOwnerOverviewScreenState extends State<SystemOwnerOverviewScreen> {
                       context.go(SystemOwnerNavSection.subscriptions.routePath),
                 ),
                 _QuickActionChip(
+                  icon: Icons.monitor_heart_outlined,
+                  label: l10n.monitoringCenterTitle,
+                  onTap: () =>
+                      context.go(SystemOwnerNavSection.systemHealth.routePath),
+                ),
+                _QuickActionChip(
                   icon: Icons.history_outlined,
                   label: l10n.auditLog,
-                  onTap: () =>
-                      context.go(SystemOwnerNavSection.auditLog.routePath),
+                  onTap: () => context.go(
+                    OwnerDashboardNavigationService.routeFor(
+                      MonitoringDashboardSection.auditLog,
+                    ),
+                  ),
                 ),
               ],
             ),

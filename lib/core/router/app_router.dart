@@ -20,9 +20,10 @@ import '../../presentation/screens/owner/system_owner_overview_screen.dart';
 import '../../presentation/screens/owner/owner_business_types_screen.dart';
 import '../../presentation/screens/owner/owner_business_management_screen.dart';
 import '../../presentation/screens/owner/owner_subscriptions_packages_screen.dart';
-import '../../presentation/screens/owner/owner_audit_log_screen.dart';
 import '../../presentation/screens/owner/owner_system_health_screen.dart';
+import '../../presentation/screens/owner/system_health/owner_monitoring_focused_screen.dart';
 import '../../presentation/screens/owner/system_health/owner_monitoring_settings_screen.dart';
+import '../../services/owner_dashboard_navigation_service.dart';
 import '../../presentation/screens/owner/owner_notification_config_screen.dart';
 import '../../presentation/screens/owner/owner_hub_screens.dart';
 import '../../presentation/screens/owner/system_owner_module_placeholder_screen.dart';
@@ -248,7 +249,7 @@ class AppRouter {
               ),
               GoRoute(
                 path: 'reports',
-                builder: (_, __) => const OwnerReportsAnalyticsScreen(),
+                builder: (_, __) => const OwnerMonitoringReportsScreen(),
               ),
               GoRoute(
                 path: 'analytics',
@@ -295,16 +296,35 @@ class AppRouter {
                 ],
               ),
               GoRoute(
+                path: 'errors',
+                builder: (context, __) => OwnerMonitoringFocusedScreen(
+                  section: MonitoringDashboardSection.errorMonitoring,
+                  title: AppLocalizations.of(context).errorMonitoring,
+                ),
+              ),
+              GoRoute(
                 path: 'audit-log',
-                builder: (_, __) => const OwnerAuditLogScreen(),
+                builder: (context, __) => OwnerMonitoringFocusedScreen(
+                  section: MonitoringDashboardSection.auditLog,
+                  title: AppLocalizations.of(context).auditLog,
+                ),
               ),
               GoRoute(
                 path: 'security',
-                builder: (_, __) => const OwnerSecurityCenterScreen(),
+                builder: (context, __) => OwnerMonitoringFocusedScreen(
+                  section: MonitoringDashboardSection.security,
+                  title: AppLocalizations.of(context).securityCenter,
+                  extraSections: const [
+                    MonitoringDashboardSection.sessionManager,
+                  ],
+                ),
               ),
               GoRoute(
                 path: 'backup',
-                builder: (_, __) => const OwnerBackupRestoreScreen(),
+                builder: (context, __) => OwnerMonitoringFocusedScreen(
+                  section: MonitoringDashboardSection.backup,
+                  title: AppLocalizations.of(context).backupRestore,
+                ),
               ),
               GoRoute(
                 path: 'organization-settings',

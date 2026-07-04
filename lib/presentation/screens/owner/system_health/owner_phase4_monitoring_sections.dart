@@ -9,7 +9,9 @@ import '../../../../models/owner_monitoring_phase4.dart';
 import '../../../../services/firebase_cost_optimizer_service.dart';
 import '../../../../services/owner_dashboard_appearance_service.dart';
 import '../../../../services/owner_dashboard_filter_service.dart';
+import '../../../../services/owner_dashboard_navigation_service.dart';
 import '../../../../services/owner_dashboard_search_service.dart';
+import 'owner_dashboard_navigation.dart';
 import '../../../../services/owner_forecast_service.dart';
 import '../../../../services/owner_insights_service.dart';
 import '../../../../services/smart_owner_notification_service.dart';
@@ -61,6 +63,13 @@ class OwnerGlobalSearchBar extends StatelessWidget {
                   leading: Icon(_searchIcon(r.category)),
                   title: Text(r.title),
                   subtitle: Text(r.subtitle),
+                  onTap: () {
+                    search.clear();
+                    final section = searchCategorySection(r.category);
+                    if (section != null) {
+                      context.read<OwnerDashboardNavigationService>().requestScroll(section);
+                    }
+                  },
                 );
               },
             ),

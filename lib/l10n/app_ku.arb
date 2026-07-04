@@ -658,6 +658,8 @@
   "cacheEfficiency": "کارایی کاش",
   "highCostOperationWarning": "پێش بەردەوامبوون ئەم کارە بپشکنە — لەوانەیە تێچووی Firebase زیاد بکات",
   "maintenanceAllowOwnerAdmin": "خاوەن و بەڕێوەبەر دەتوانن لە کاتی چاکسازی دەستگەیشتن بە پلاتفۆرم بکەن",
+  "dashboardSectionNavigator": "بچۆ بۆ بەش",
+  "viewFullMonitoringCenter": "ناوەندی چاودێری تەواو بکەرەوە",
   "reportSavedToFile": "ڕاپۆرت پاشەکەوت کرا لە {path}",
   "@reportSavedToFile": {
     "placeholders": {

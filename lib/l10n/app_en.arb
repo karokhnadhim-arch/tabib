@@ -714,6 +714,8 @@
   "cacheEfficiency": "Cache efficiency",
   "highCostOperationWarning": "Review this operation before proceeding — it may increase Firebase costs",
   "maintenanceAllowOwnerAdmin": "Owner and admin accounts can still access the platform during maintenance",
+  "dashboardSectionNavigator": "Jump to section",
+  "viewFullMonitoringCenter": "Open full monitoring center",
   "reportSavedToFile": "Report saved to {path}",
   "@reportSavedToFile": {
     "placeholders": {

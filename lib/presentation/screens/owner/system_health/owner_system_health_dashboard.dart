@@ -5,11 +5,13 @@ import 'package:provider/provider.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../services/owner_dashboard_appearance_service.dart';
 import '../../../../services/owner_dashboard_filter_service.dart';
+import '../../../../services/owner_dashboard_navigation_service.dart';
 import '../../../../services/system_activity_feed_service.dart';
 import '../../../../services/system_monitoring_service.dart';
 import '../../../widgets/system_owner_guard.dart';
 import 'monitoring_filter_scope.dart';
 import 'owner_dashboard_filter_sync.dart';
+import 'owner_dashboard_navigation.dart';
 import 'owner_monitoring_theme.dart';
 import 'owner_phase1_monitoring_section.dart';
 import 'owner_phase2_monitoring_sections.dart';
@@ -30,12 +32,20 @@ class OwnerSystemHealthDashboard extends StatefulWidget {
 class _OwnerSystemHealthDashboardState extends State<OwnerSystemHealthDashboard> {
   SystemMonitoringService? _monitoring;
   SystemActivityFeedService? _activity;
+  OwnerDashboardNavigationService? _navigation;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _monitoring ??= context.read<SystemMonitoringService>()..activate();
     _activity ??= context.read<SystemActivityFeedService>()..activate();
+    _navigation ??= context.read<OwnerDashboardNavigationService>();
+
+    final sectionParam = GoRouterState.of(context).uri.queryParameters['section'];
+    final section = _navigation!.sectionFromQuery(sectionParam);
+    if (section != null) {
+      _navigation!.requestScroll(section);
+    }
   }
 
   @override
@@ -56,9 +66,20 @@ class _OwnerSystemHealthDashboardState extends State<OwnerSystemHealthDashboard>
     final monitoring = context.watch<SystemMonitoringService>();
     final filters = context.watch<OwnerDashboardFilterService>();
     final appearance = context.watch<OwnerDashboardAppearanceService>();
+    final navigation = context.watch<OwnerDashboardNavigationService>();
     final hasSnapshot = monitoring.snapshot != null;
     final isRefreshing =
         monitoring.isRefreshingPhase1 || monitoring.isRefreshingPhase2;
+
+    if (hasSnapshot && navigation.pendingSection != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_navigation?.consumePendingScroll() != true) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _navigation?.consumePendingScroll();
+          });
+        }
+      });
+    }
 
     return SystemOwnerGuard(
       child: OwnerMonitoringTheme(
@@ -108,30 +129,97 @@ class _OwnerSystemHealthDashboardState extends State<OwnerSystemHealthDashboard>
                               const OwnerGlobalSearchBar(),
                               SizedBox(height: appearance.sectionSpacing),
                               const OwnerGlobalFilterBar(),
+                              SizedBox(height: appearance.sectionSpacing),
+                              const OwnerDashboardSectionNavigator(),
                               SizedBox(height: appearance.sectionSpacing * 1.25),
-                              const OwnerPhase1MonitoringSection(),
-                              const OwnerLiveStatisticsSection(),
-                              const OwnerActivityFeedSection(),
-                              SizedBox(height: appearance.sectionSpacing * 0.5),
-                              const OwnerStep4AiInsightsSection(),
-                              const OwnerStep4ForecastSection(),
-                              const OwnerSmartNotificationsSection(),
-                              const OwnerStep4FirebaseCostSection(),
-                              const OwnerAdvertisementMonitoringSection(),
-                              const OwnerNotificationMonitoringSection(),
-                              const OwnerQueueAnalyticsSection(),
-                              const OwnerAppointmentAnalyticsSection(),
-                              const OwnerPackageAnalyticsSection(),
-                              const OwnerPhase3AnalyticsSection(),
-                              const OwnerRevenueDashboardSection(),
-                              const OwnerSecurityCenterSection(),
-                              const OwnerSessionManagerSection(),
-                              const OwnerErrorMonitoringSection(),
-                              const OwnerBackupCenterSection(),
-                              const OwnerAuditLogSection(),
-                              const OwnerReportsSection(),
-                              const OwnerMaintenanceModeSection(),
-                              const OwnerAppearanceSection(),
+                              OwnerDashboardSectionAnchor(
+                                section: MonitoringDashboardSection.systemHealth,
+                                child: const OwnerPhase1MonitoringSection(),
+                              ),
+                              OwnerDashboardSectionAnchor(
+                                section: MonitoringDashboardSection.liveStatistics,
+                                child: const OwnerLiveStatisticsSection(),
+                              ),
+                              OwnerDashboardSectionAnchor(
+                                section: MonitoringDashboardSection.activityFeed,
+                                child: const OwnerActivityFeedSection(),
+                              ),
+                              OwnerDashboardSectionAnchor(
+                                section: MonitoringDashboardSection.aiInsights,
+                                child: const OwnerStep4AiInsightsSection(),
+                              ),
+                              OwnerDashboardSectionAnchor(
+                                section: MonitoringDashboardSection.forecast,
+                                child: const OwnerStep4ForecastSection(),
+                              ),
+                              OwnerDashboardSectionAnchor(
+                                section: MonitoringDashboardSection.smartNotifications,
+                                child: const OwnerSmartNotificationsSection(),
+                              ),
+                              OwnerDashboardSectionAnchor(
+                                section: MonitoringDashboardSection.firebaseCost,
+                                child: const OwnerStep4FirebaseCostSection(),
+                              ),
+                              OwnerDashboardSectionAnchor(
+                                section: MonitoringDashboardSection.advertisementMonitoring,
+                                child: const OwnerAdvertisementMonitoringSection(),
+                              ),
+                              OwnerDashboardSectionAnchor(
+                                section: MonitoringDashboardSection.notificationMonitoring,
+                                child: const OwnerNotificationMonitoringSection(),
+                              ),
+                              OwnerDashboardSectionAnchor(
+                                section: MonitoringDashboardSection.queueAnalytics,
+                                child: const OwnerQueueAnalyticsSection(),
+                              ),
+                              OwnerDashboardSectionAnchor(
+                                section: MonitoringDashboardSection.appointmentAnalytics,
+                                child: const OwnerAppointmentAnalyticsSection(),
+                              ),
+                              OwnerDashboardSectionAnchor(
+                                section: MonitoringDashboardSection.packageAnalytics,
+                                child: const OwnerPackageAnalyticsSection(),
+                              ),
+                              OwnerDashboardSectionAnchor(
+                                section: MonitoringDashboardSection.analyticsCharts,
+                                child: const OwnerPhase3AnalyticsSection(),
+                              ),
+                              OwnerDashboardSectionAnchor(
+                                section: MonitoringDashboardSection.revenue,
+                                child: const OwnerRevenueDashboardSection(),
+                              ),
+                              OwnerDashboardSectionAnchor(
+                                section: MonitoringDashboardSection.security,
+                                child: const OwnerSecurityCenterSection(),
+                              ),
+                              OwnerDashboardSectionAnchor(
+                                section: MonitoringDashboardSection.sessionManager,
+                                child: const OwnerSessionManagerSection(),
+                              ),
+                              OwnerDashboardSectionAnchor(
+                                section: MonitoringDashboardSection.errorMonitoring,
+                                child: const OwnerErrorMonitoringSection(),
+                              ),
+                              OwnerDashboardSectionAnchor(
+                                section: MonitoringDashboardSection.backup,
+                                child: const OwnerBackupCenterSection(),
+                              ),
+                              OwnerDashboardSectionAnchor(
+                                section: MonitoringDashboardSection.auditLog,
+                                child: const OwnerAuditLogSection(),
+                              ),
+                              OwnerDashboardSectionAnchor(
+                                section: MonitoringDashboardSection.reports,
+                                child: const OwnerReportsSection(),
+                              ),
+                              OwnerDashboardSectionAnchor(
+                                section: MonitoringDashboardSection.maintenance,
+                                child: const OwnerMaintenanceModeSection(),
+                              ),
+                              OwnerDashboardSectionAnchor(
+                                section: MonitoringDashboardSection.appearance,
+                                child: const OwnerAppearanceSection(),
+                              ),
                               SizedBox(height: appearance.sectionSpacing * 1.5),
                             ],
                           ),

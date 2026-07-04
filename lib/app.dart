@@ -43,6 +43,7 @@ import 'services/user_preferences_service.dart';
 import 'services/dashboard_summary_repository.dart';
 import 'services/owner_dashboard_appearance_service.dart';
 import 'services/owner_dashboard_filter_service.dart';
+import 'services/owner_dashboard_navigation_service.dart';
 import 'services/owner_dashboard_search_service.dart';
 import 'services/owner_forecast_service.dart';
 import 'services/owner_insights_service.dart';
@@ -136,6 +137,7 @@ class _TabibAppState extends State<TabibApp> {
   late final SmartOwnerNotificationService _smartOwnerNotificationService;
   late final OwnerDashboardSearchService _ownerDashboardSearchService;
   late final OwnerDashboardFilterService _ownerDashboardFilterService;
+  late final OwnerDashboardNavigationService _ownerDashboardNavigationService;
   late final OwnerDashboardAppearanceService _ownerDashboardAppearanceService;
   late final FirebaseCostOptimizerService _firebaseCostOptimizerService;
   late final OwnerMonitoringSettingsService _ownerMonitoringSettingsService;
@@ -245,6 +247,7 @@ class _TabibAppState extends State<TabibApp> {
     _ownerDashboardFilterService = OwnerDashboardFilterService(
       clinicData: _dataService,
     );
+    _ownerDashboardNavigationService = OwnerDashboardNavigationService();
     _ownerDashboardAppearanceService = OwnerDashboardAppearanceService()..load();
     _firebaseCostOptimizerService = FirebaseCostOptimizerService();
     _ownerMonitoringSettingsService = OwnerMonitoringSettingsService(
@@ -378,6 +381,7 @@ class _TabibAppState extends State<TabibApp> {
         ChangeNotifierProvider.value(value: _smartOwnerNotificationService),
         ChangeNotifierProvider.value(value: _ownerDashboardSearchService),
         ChangeNotifierProvider.value(value: _ownerDashboardFilterService),
+        ChangeNotifierProvider.value(value: _ownerDashboardNavigationService),
         ChangeNotifierProvider.value(value: _ownerDashboardAppearanceService),
         ChangeNotifierProvider.value(value: _firebaseCostOptimizerService),
         ChangeNotifierProvider.value(value: _ownerMonitoringSettingsService),

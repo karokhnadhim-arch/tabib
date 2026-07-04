@@ -1834,6 +1834,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get maintenanceAllowOwnerAdmin => 'Owner and admin accounts can still access the platform during maintenance';
 
   @override
+  String get dashboardSectionNavigator => 'Jump to section';
+
+  @override
+  String get viewFullMonitoringCenter => 'Open full monitoring center';
+
+  @override
   String reportSavedToFile(String path) {
     return 'Report saved to $path';
   }

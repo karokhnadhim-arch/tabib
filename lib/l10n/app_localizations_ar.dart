@@ -1834,6 +1834,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get maintenanceAllowOwnerAdmin => 'يمكن للمالك والمسؤول الوصول إلى المنصة أثناء الصيانة';
 
   @override
+  String get dashboardSectionNavigator => 'الانتقال إلى قسم';
+
+  @override
+  String get viewFullMonitoringCenter => 'فتح مركز المراقبة الكامل';
+
+  @override
   String reportSavedToFile(String path) {
     return 'تم حفظ التقرير في $path';
   }

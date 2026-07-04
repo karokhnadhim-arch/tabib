@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/auth/admin_routes.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../presentation/widgets/admin_guard.dart';
+import '../../../services/owner_dashboard_navigation_service.dart';
 import 'owner_module_hub_screen.dart';
 
 class OwnerPaymentsBillingScreen extends StatelessWidget {
@@ -115,7 +116,9 @@ class OwnerNotificationsCenterScreen extends StatelessWidget {
             icon: Icons.build_circle_outlined,
             title: l10n.maintenanceAnnouncements,
             subtitle: l10n.maintenanceAnnouncementsHint,
-            comingSoon: true,
+            route: OwnerDashboardNavigationService.routeFor(
+              MonitoringDashboardSection.maintenance,
+            ),
           ),
         ],
       ),
@@ -129,58 +132,65 @@ class OwnerReportsAnalyticsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final monitoring = OwnerDashboardNavigationService.routeFor;
     return AdminGuard(
       child: OwnerModuleHubScreen(
         title: l10n.reportsAnalytics,
         header: l10n.reportsAnalyticsHint,
         items: [
           OwnerHubItem(
+            icon: Icons.insights_outlined,
+            title: l10n.analyticsDashboard,
+            subtitle: l10n.monitoringPhase3AnalyticsHint,
+            route: monitoring(MonitoringDashboardSection.analyticsCharts),
+          ),
+          OwnerHubItem(
+            icon: Icons.payments_outlined,
+            title: l10n.revenueDashboard,
+            subtitle: l10n.revenueStatisticsHint,
+            route: monitoring(MonitoringDashboardSection.revenue),
+          ),
+          OwnerHubItem(
+            icon: Icons.summarize_outlined,
+            title: l10n.generateReports,
+            subtitle: l10n.reportsFilterHint,
+            route: monitoring(MonitoringDashboardSection.reports),
+          ),
+          OwnerHubItem(
             icon: Icons.today_outlined,
             title: l10n.reportDaily,
             subtitle: l10n.reportDailyHint,
-            route: '${AdminRoutes.platformPrefix}/analytics?period=daily',
+            route: monitoring(MonitoringDashboardSection.analyticsCharts),
           ),
           OwnerHubItem(
             icon: Icons.date_range_outlined,
             title: l10n.reportWeekly,
             subtitle: l10n.reportWeeklyHint,
-            route: '${AdminRoutes.platformPrefix}/analytics?period=weekly',
+            route: monitoring(MonitoringDashboardSection.analyticsCharts),
           ),
           OwnerHubItem(
             icon: Icons.calendar_month_outlined,
             title: l10n.reportMonthly,
             subtitle: l10n.reportMonthlyHint,
-            route: '${AdminRoutes.platformPrefix}/analytics?period=monthly',
-          ),
-          OwnerHubItem(
-            icon: Icons.calendar_today_outlined,
-            title: l10n.reportYearly,
-            subtitle: l10n.reportYearlyHint,
-            route: '${AdminRoutes.platformPrefix}/analytics?period=yearly',
+            route: monitoring(MonitoringDashboardSection.analyticsCharts),
           ),
           OwnerHubItem(
             icon: Icons.queue_outlined,
             title: l10n.queueStatistics,
             subtitle: l10n.queueStatisticsHint,
-            route: '${AdminRoutes.platformPrefix}/stats',
+            route: monitoring(MonitoringDashboardSection.queueAnalytics),
           ),
           OwnerHubItem(
             icon: Icons.event_note_outlined,
             title: l10n.appointmentStatistics,
             subtitle: l10n.appointmentStatisticsHint,
-            route: '${AdminRoutes.platformPrefix}/stats',
-          ),
-          OwnerHubItem(
-            icon: Icons.payments_outlined,
-            title: l10n.revenueStatistics,
-            subtitle: l10n.revenueStatisticsHint,
-            comingSoon: true,
+            route: monitoring(MonitoringDashboardSection.appointmentAnalytics),
           ),
           OwnerHubItem(
             icon: Icons.trending_up_outlined,
             title: l10n.userGrowth,
             subtitle: l10n.userGrowthHint,
-            route: '${AdminRoutes.platformPrefix}/stats',
+            route: monitoring(MonitoringDashboardSection.analyticsCharts),
           ),
         ],
       ),
@@ -194,28 +204,41 @@ class OwnerSecurityCenterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final route = OwnerDashboardNavigationService.routeFor;
     return AdminGuard(
       child: OwnerModuleHubScreen(
         title: l10n.securityCenter,
         header: l10n.securityCenterHint,
         items: [
           OwnerHubItem(
+            icon: Icons.shield_outlined,
+            title: l10n.securityCenter,
+            subtitle: l10n.viewFullMonitoringCenter,
+            route: route(MonitoringDashboardSection.security),
+          ),
+          OwnerHubItem(
             icon: Icons.login_outlined,
             title: l10n.loginHistory,
             subtitle: l10n.loginHistoryHint,
-            route: AdminRoutes.platformPrefix + '/audit-log',
+            route: route(MonitoringDashboardSection.auditLog),
           ),
           OwnerHubItem(
             icon: Icons.devices_outlined,
             title: l10n.activeSessions,
             subtitle: l10n.activeSessionsHint,
-            comingSoon: true,
+            route: route(MonitoringDashboardSection.sessionManager),
+          ),
+          OwnerHubItem(
+            icon: Icons.bug_report_outlined,
+            title: l10n.errorMonitoring,
+            subtitle: l10n.viewFullMonitoringCenter,
+            route: route(MonitoringDashboardSection.errorMonitoring),
           ),
           OwnerHubItem(
             icon: Icons.block_outlined,
             title: l10n.failedLoginAttempts,
             subtitle: l10n.failedLoginAttemptsHint,
-            comingSoon: true,
+            route: route(MonitoringDashboardSection.security),
           ),
           OwnerHubItem(
             icon: Icons.no_accounts_outlined,
@@ -227,7 +250,7 @@ class OwnerSecurityCenterScreen extends StatelessWidget {
             icon: Icons.password_outlined,
             title: l10n.passwordResetLogs,
             subtitle: l10n.passwordResetLogsHint,
-            comingSoon: true,
+            route: route(MonitoringDashboardSection.auditLog),
           ),
         ],
       ),
@@ -241,28 +264,37 @@ class OwnerBackupRestoreScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final route = OwnerDashboardNavigationService.routeFor(
+      MonitoringDashboardSection.backup,
+    );
     return AdminGuard(
       child: OwnerModuleHubScreen(
         title: l10n.backupRestore,
         header: l10n.backupRestoreHint,
         items: [
           OwnerHubItem(
+            icon: Icons.backup_outlined,
+            title: l10n.backupRestore,
+            subtitle: l10n.viewFullMonitoringCenter,
+            route: route,
+          ),
+          OwnerHubItem(
             icon: Icons.save_alt_outlined,
             title: l10n.manualBackup,
             subtitle: l10n.manualBackupHint,
-            comingSoon: true,
+            route: route,
           ),
           OwnerHubItem(
             icon: Icons.schedule_outlined,
             title: l10n.automaticBackup,
             subtitle: l10n.automaticBackupHint,
-            comingSoon: true,
+            route: route,
           ),
           OwnerHubItem(
             icon: Icons.restore_outlined,
             title: l10n.restoreData,
             subtitle: l10n.restoreDataHint,
-            comingSoon: true,
+            route: route,
           ),
         ],
       ),
@@ -309,7 +341,9 @@ class OwnerSystemSettingsScreen extends StatelessWidget {
             icon: Icons.build_outlined,
             title: l10n.maintenanceMode,
             subtitle: l10n.maintenanceModeHint,
-            comingSoon: true,
+            route: OwnerDashboardNavigationService.routeFor(
+              MonitoringDashboardSection.maintenance,
+            ),
           ),
           OwnerHubItem(
             icon: Icons.local_hospital_outlined,
