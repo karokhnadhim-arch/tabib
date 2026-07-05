@@ -10,6 +10,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../models/user_account.dart';
 import '../../../presentation/widgets/owner_metric_card.dart';
 import '../../../presentation/widgets/system_owner_guard.dart';
+import '../../../presentation/screens/owner/system_health/owner_dashboard_ui.dart';
 import '../../../services/backend/clinic_backend.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../services/staff_data_service.dart';
@@ -75,9 +76,9 @@ class _SystemOwnerOverviewScreenState extends State<SystemOwnerOverviewScreen> {
 
     return SystemOwnerGuard(
       child: ColoredBox(
-        color: const Color(0xFFF4F6F9),
+        color: Theme.of(context).colorScheme.surfaceContainerLowest,
         child: ListView(
-          padding: EdgeInsets.fromLTRB(isWide ? 28 : 16, isWide ? 24 : 8, 16, 24),
+          padding: EdgeInsets.fromLTRB(isWide ? 32 : 18, isWide ? 28 : 12, 18, 28),
           children: [
             if (isWide) ...[
               Row(
@@ -224,15 +225,15 @@ class _SystemOwnerOverviewScreenState extends State<SystemOwnerOverviewScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 28),
             Text(
               l10n.quickActions,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.primaryDark,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.1,
                   ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             Wrap(
               spacing: 10,
               runSpacing: 10,
@@ -289,24 +290,24 @@ class _MetricsGrid extends StatelessWidget {
   final bool isWide;
   final List<Widget> children;
 
-  double _childAspectRatio() {
-    if (isWide) return 1.22;
-    if (width < 380) return 0.74;
-    if (width < 600) return 0.84;
-    return 0.92;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final crossAxisCount = isWide ? 5 : 2;
-    return GridView.count(
-      crossAxisCount: crossAxisCount,
+    final crossAxisCount = isWide
+        ? 5
+        : width >= 560
+            ? 2
+            : 1;
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+        crossAxisSpacing: OwnerDashboardTokens.gridGap,
+        mainAxisSpacing: OwnerDashboardTokens.gridGap,
+        mainAxisExtent: OwnerDashboardTokens.metricTileHeight,
+      ),
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      mainAxisSpacing: 12,
-      crossAxisSpacing: 12,
-      childAspectRatio: _childAspectRatio(),
-      children: children,
+      itemCount: children.length,
+      itemBuilder: (context, index) => children[index],
     );
   }
 }
@@ -324,14 +325,16 @@ class _QuickActionChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ActionChip(
-      avatar: Icon(icon, size: 18, color: AppTheme.primaryDark),
+    final scheme = Theme.of(context).colorScheme;
+    return FilterChip(
+      avatar: Icon(icon, size: 18, color: scheme.primary),
       label: Text(
         label,
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
       ),
-      onPressed: onTap,
+      showCheckmark: false,
+      onSelected: (_) => onTap(),
     );
   }
 }

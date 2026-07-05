@@ -71,9 +71,10 @@ class _OwnerMonitoringFocusedScreenState extends State<OwnerMonitoringFocusedScr
                 onPressed: () => context.go(
                   OwnerDashboardNavigationService.routeFor(widget.section),
                 ),
-                icon: const Icon(Icons.open_in_full, size: 20),
+                icon: const Icon(Icons.open_in_full_rounded, size: 20),
                 label: Text(l10n.viewFullMonitoringCenter),
               ),
+              const SizedBox(width: 8),
             ],
           ),
           body: !hasSnapshot

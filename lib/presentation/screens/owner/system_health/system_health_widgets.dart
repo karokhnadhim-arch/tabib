@@ -6,6 +6,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../../models/system_monitoring.dart';
 import '../../../../services/system_monitoring_service.dart';
 import '../../../widgets/owner_metric_card.dart';
+import 'owner_dashboard_ui.dart';
 
 /// Consolidated system health card — status, Firebase, sync, and response time.
 class OwnerSystemHealthCard extends StatelessWidget {
@@ -51,7 +52,7 @@ class OwnerSystemHealthCard extends StatelessWidget {
           scheme.brightness == Brightness.dark ? 0.18 : 0.1,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: OwnerDashboardTokens.cardShape,
           side: BorderSide(color: color.withOpacity(0.35)),
         ),
         child: Padding(
@@ -366,30 +367,55 @@ class MonitoringSectionHeader extends StatelessWidget {
     required this.title,
     this.icon,
     this.trailing,
+    this.subtitle,
   });
 
   final String title;
   final IconData? icon;
   final Widget? trailing;
+  final String? subtitle;
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     return Padding(
-      padding: const EdgeInsets.only(top: 20, bottom: 10),
+      padding: const EdgeInsets.only(top: 8, bottom: 14),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (icon != null) ...[
-            Icon(icon, color: scheme.primary, size: 22),
-            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: scheme.primaryContainer.withOpacity(0.55),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: scheme.primary, size: 20),
+            ),
+            const SizedBox(width: 12),
           ],
           Expanded(
-            child: Text(
-              title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: scheme.onSurface,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.1,
                   ),
+                ),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 3),
+                  Text(
+                    subtitle!,
+                    style: textTheme.bodySmall?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
           if (trailing != null) trailing!,
@@ -411,19 +437,21 @@ class MonitoringMetricGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final crossAxisCount = constraints.maxWidth >= 900
+        final crossAxisCount = constraints.maxWidth >= 1200
             ? 4
-            : constraints.maxWidth >= 600
+            : constraints.maxWidth >= 900
                 ? 3
-                : 2;
+                : constraints.maxWidth >= 560
+                    ? 2
+                    : 1;
         return GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: crossAxisCount,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-            childAspectRatio: 1.35,
+            crossAxisSpacing: OwnerDashboardTokens.gridGap,
+            mainAxisSpacing: OwnerDashboardTokens.gridGap,
+            mainAxisExtent: OwnerDashboardTokens.metricTileHeight,
           ),
           itemCount: items.length,
           itemBuilder: (context, index) {
@@ -591,20 +619,14 @@ class MonitoringPanelCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Card(
-      elevation: 0,
-      color: scheme.surfaceContainerLow,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (leading != null) ...[leading!, const SizedBox(height: 8)],
-            child,
-          ],
-        ),
+    return OwnerDashboardSurfaceCard(
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (leading != null) ...[leading!, const SizedBox(height: 12)],
+          child,
+        ],
       ),
     );
   }

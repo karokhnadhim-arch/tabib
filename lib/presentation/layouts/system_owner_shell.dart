@@ -26,7 +26,7 @@ class SystemOwnerShell extends StatelessWidget {
           final isWide = constraints.maxWidth >= _breakpoint;
           if (isWide) {
             return Scaffold(
-              backgroundColor: const Color(0xFFF4F6F9),
+              backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
               body: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -42,7 +42,7 @@ class SystemOwnerShell extends StatelessWidget {
           final path = GoRouterState.of(context).matchedLocation;
           final isOverview = path == AdminRoutes.ownerHome;
           return Scaffold(
-            backgroundColor: const Color(0xFFF4F6F9),
+            backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
             drawer: Drawer(
               width: _navWidth,
               child: _OwnerSideNav(extended: true),

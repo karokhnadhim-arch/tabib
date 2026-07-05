@@ -19,6 +19,7 @@ import '../../../../services/theme_service.dart';
 import 'analytics_range_filters.dart';
 import 'monitoring_filter_scope.dart';
 import 'monitoring_interactive_chart.dart';
+import 'owner_dashboard_ui.dart';
 import 'system_health_widgets.dart';
 
 // ─── Global search bar ───────────────────────────────────────────────────────
@@ -35,32 +36,40 @@ class OwnerGlobalSearchBar extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SearchBar(
-          hintText: l10n.globalSearchHint,
-          leading: const Icon(Icons.search),
-          trailing: search.query.isNotEmpty
-              ? [
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: search.clear,
-                  ),
-                ]
-              : null,
-          onChanged: search.setQuery,
+        OwnerDashboardSurfaceCard(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: SearchBar(
+            hintText: l10n.globalSearchHint,
+            leading: Icon(Icons.search_rounded, color: Theme.of(context).colorScheme.primary),
+            trailing: search.query.isNotEmpty
+                ? [
+                    IconButton(
+                      icon: const Icon(Icons.close_rounded),
+                      onPressed: search.clear,
+                    ),
+                  ]
+                : null,
+            onChanged: search.setQuery,
+          ),
         ),
         if (results.isNotEmpty)
-          Card(
-            elevation: 0,
-            margin: const EdgeInsets.only(top: 4),
-            child: ListView.builder(
+          OwnerDashboardSurfaceCard(
+            margin: const EdgeInsets.only(top: 8),
+            padding: EdgeInsets.zero,
+            child: ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: results.length.clamp(0, 8),
+              separatorBuilder: (_, __) => const Divider(height: 1),
               itemBuilder: (context, index) {
                 final r = results[index];
                 return ListTile(
-                  dense: true,
-                  leading: Icon(_searchIcon(r.category)),
+                  leading: CircleAvatar(
+                    radius: 18,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.primaryContainer.withOpacity(0.65),
+                    child: Icon(_searchIcon(r.category), size: 18),
+                  ),
                   title: Text(r.title),
                   subtitle: Text(r.subtitle),
                   onTap: () {
@@ -93,81 +102,172 @@ class OwnerGlobalSearchBar extends StatelessWidget {
 
 // ─── Global filters ──────────────────────────────────────────────────────────
 
-class OwnerGlobalFilterBar extends StatelessWidget {
+class OwnerGlobalFilterBar extends StatefulWidget {
   const OwnerGlobalFilterBar({super.key});
+
+  @override
+  State<OwnerGlobalFilterBar> createState() => _OwnerGlobalFilterBarState();
+}
+
+class _OwnerGlobalFilterBarState extends State<OwnerGlobalFilterBar> {
+  bool _expanded = false;
+
+  int _activeFilterCount(OwnerDashboardFilter filter) {
+    var count = 0;
+    if (filter.city != null) count++;
+    if (filter.businessId != null) count++;
+    if (filter.doctorId != null) count++;
+    if (filter.status != DashboardStatusFilter.all) count++;
+    if (filter.dateRange != null) count++;
+    return count;
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final filters = context.watch<OwnerDashboardFilterService>();
     final f = filters.filter;
+    final scheme = Theme.of(context).colorScheme;
+    final activeCount = _activeFilterCount(f);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        MonitoringSectionHeader(
-          title: l10n.globalDashboardFilters,
-          icon: Icons.filter_list,
-          trailing: f.isActive
-              ? TextButton(onPressed: filters.clearFilters, child: Text(l10n.clearFilters))
-              : null,
-        ),
-        Wrap(
-          spacing: 8,
-          runSpacing: 4,
-          children: [
-            _FilterMenu<String?>(
-              label: l10n.filterByCity,
-              value: f.city,
-              items: [
-                (null, l10n.activityFilterAll),
-                ...filters.availableCities.map((c) => (c, c)),
-              ],
-              onSelected: (v) => filters.setFilter(f.copyWith(city: v, clearCity: v == null)),
-            ),
-            _FilterMenu<String?>(
-              label: l10n.filterByBusiness,
-              value: f.businessId,
-              items: [
-                (null, l10n.activityFilterAll),
-                ...filters.availableBusinesses.map((b) => (b.id, b.label)),
-              ],
-              onSelected: (v) =>
-                  filters.setFilter(f.copyWith(businessId: v, clearBusiness: v == null)),
-            ),
-            _FilterMenu<String?>(
-              label: l10n.filterByDoctor,
-              value: f.doctorId,
-              items: [
-                (null, l10n.activityFilterAll),
-                ...filters.availableDoctors.map((d) => (d.id, d.label)),
-              ],
-              onSelected: (v) =>
-                  filters.setFilter(f.copyWith(doctorId: v, clearDoctor: v == null)),
-            ),
-            _FilterMenu<DashboardStatusFilter>(
-              label: l10n.filterByStatus,
-              value: f.status,
-              items: [
-                (DashboardStatusFilter.all, l10n.activityFilterAll),
-                (DashboardStatusFilter.active, l10n.statusActive),
-                (DashboardStatusFilter.suspended, l10n.statusSuspended),
-              ],
-              onSelected: (v) => filters.setFilter(f.copyWith(status: v)),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        const DashboardDatePresetFilters(),
-        if (f.isActive)
-          Padding(
-            padding: const EdgeInsets.only(top: 6),
-            child: Text(
-              l10n.filterScaleHint('${(filters.scaleFactor * 100).round()}'),
-              style: Theme.of(context).textTheme.bodySmall,
+    return OwnerDashboardSurfaceCard(
+      padding: EdgeInsets.zero,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          InkWell(
+            borderRadius: OwnerDashboardTokens.cardShape,
+            onTap: () => setState(() => _expanded = !_expanded),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: scheme.primaryContainer.withOpacity(0.55),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(Icons.tune_rounded, color: scheme.primary, size: 20),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.globalDashboardFilters,
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                        if (!_expanded && activeCount > 0)
+                          Text(
+                            l10n.filterScaleHint('$activeCount'),
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: scheme.onSurfaceVariant,
+                                ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  if (f.isActive)
+                    TextButton(
+                      onPressed: filters.clearFilters,
+                      child: Text(l10n.clearFilters),
+                    ),
+                  AnimatedRotation(
+                    turns: _expanded ? 0.5 : 0,
+                    duration: const Duration(milliseconds: 220),
+                    child: Icon(
+                      Icons.expand_more_rounded,
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-      ],
+          AnimatedCrossFade(
+            firstCurve: Curves.easeOutCubic,
+            secondCurve: Curves.easeOutCubic,
+            sizeCurve: Curves.easeOutCubic,
+            crossFadeState:
+                _expanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+            duration: const Duration(milliseconds: 260),
+            firstChild: const SizedBox.shrink(),
+            secondChild: Padding(
+              padding: const EdgeInsets.fromLTRB(18, 0, 18, 18),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Divider(height: 1),
+                  const SizedBox(height: 16),
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: [
+                      _FilterMenu<String?>(
+                        label: l10n.filterByCity,
+                        value: f.city,
+                        items: [
+                          (null, l10n.activityFilterAll),
+                          ...filters.availableCities.map((c) => (c, c)),
+                        ],
+                        onSelected: (v) =>
+                            filters.setFilter(f.copyWith(city: v, clearCity: v == null)),
+                      ),
+                      _FilterMenu<String?>(
+                        label: l10n.filterByBusiness,
+                        value: f.businessId,
+                        items: [
+                          (null, l10n.activityFilterAll),
+                          ...filters.availableBusinesses.map((b) => (b.id, b.label)),
+                        ],
+                        onSelected: (v) => filters.setFilter(
+                          f.copyWith(businessId: v, clearBusiness: v == null),
+                        ),
+                      ),
+                      _FilterMenu<String?>(
+                        label: l10n.filterByDoctor,
+                        value: f.doctorId,
+                        items: [
+                          (null, l10n.activityFilterAll),
+                          ...filters.availableDoctors.map((d) => (d.id, d.label)),
+                        ],
+                        onSelected: (v) =>
+                            filters.setFilter(f.copyWith(doctorId: v, clearDoctor: v == null)),
+                      ),
+                      _FilterMenu<DashboardStatusFilter>(
+                        label: l10n.filterByStatus,
+                        value: f.status,
+                        items: [
+                          (DashboardStatusFilter.all, l10n.activityFilterAll),
+                          (DashboardStatusFilter.active, l10n.statusActive),
+                          (DashboardStatusFilter.suspended, l10n.statusSuspended),
+                        ],
+                        onSelected: (v) => filters.setFilter(f.copyWith(status: v)),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  const DashboardDatePresetFilters(),
+                  if (f.isActive)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: Text(
+                        l10n.filterScaleHint('${(filters.scaleFactor * 100).round()}'),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: scheme.onSurfaceVariant,
+                            ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -188,12 +288,17 @@ class _FilterMenu<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selected = items.where((e) => e.$1 == value).map((e) => e.$2).firstOrNull ?? label;
+    final scheme = Theme.of(context).colorScheme;
     return PopupMenuButton<T>(
       onSelected: onSelected,
       itemBuilder: (context) => items
           .map((e) => PopupMenuItem(value: e.$1, child: Text(e.$2)))
           .toList(),
-      child: Chip(label: Text('$label: $selected')),
+      child: InputChip(
+        avatar: Icon(Icons.filter_alt_outlined, size: 16, color: scheme.primary),
+        label: Text('$label: $selected'),
+        side: BorderSide(color: scheme.outlineVariant.withOpacity(0.55)),
+      ),
     );
   }
 }

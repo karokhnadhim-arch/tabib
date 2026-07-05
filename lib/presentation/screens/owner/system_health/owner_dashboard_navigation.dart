@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../models/owner_monitoring_phase4.dart';
 import '../../../../services/owner_dashboard_navigation_service.dart';
+import 'owner_dashboard_ui.dart';
 
 /// Wraps a dashboard section with a [GlobalKey] for scroll-to navigation.
 class OwnerDashboardSectionAnchor extends StatelessWidget {
@@ -22,7 +23,7 @@ class OwnerDashboardSectionAnchor extends StatelessWidget {
     return KeyedSubtree(
       key: key,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 20),
+        padding: const EdgeInsets.only(bottom: OwnerDashboardTokens.innerGap),
         child: child,
       ),
     );
@@ -64,39 +65,49 @@ class OwnerDashboardSectionNavigator extends StatelessWidget {
       (MonitoringDashboardSection.appearance, l10n.appearance),
     ];
 
-    return Card(
-      elevation: 0,
-      color: scheme.surfaceContainerLow,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              l10n.dashboardSectionNavigator,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
-            const SizedBox(height: 8),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: sections.map((entry) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: ActionChip(
-                      avatar: Icon(_iconFor(entry.$1), size: 18),
-                      label: Text(entry.$2),
-                      onPressed: () => nav.requestScroll(entry.$1),
-                    ),
-                  );
-                }).toList(),
+    return OwnerDashboardSurfaceCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: scheme.primaryContainer.withOpacity(0.55),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(Icons.apps_rounded, color: scheme.primary, size: 20),
               ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  l10n.dashboardSectionNavigator,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: sections.map((entry) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: FilterChip(
+                    avatar: Icon(_iconFor(entry.$1), size: 18),
+                    label: Text(entry.$2),
+                    showCheckmark: false,
+                    onSelected: (_) => nav.requestScroll(entry.$1),
+                  ),
+                );
+              }).toList(),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

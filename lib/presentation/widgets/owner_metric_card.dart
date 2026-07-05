@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_theme.dart';
+import '../screens/owner/system_health/owner_dashboard_ui.dart';
 
 /// Metric summary tile for the System Owner overview dashboard.
 class OwnerMetricCard extends StatelessWidget {
@@ -25,107 +26,118 @@ class OwnerMetricCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    final scheme = Theme.of(context).colorScheme;
+    final isDark = scheme.brightness == Brightness.dark;
+
+    return Material(
+      color: scheme.surface,
       elevation: 0,
+      shadowColor: Colors.black.withOpacity(isDark ? 0.35 : 0.08),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-        side: BorderSide(color: Colors.grey.shade200),
+        borderRadius: OwnerDashboardTokens.cardShape,
+        side: BorderSide(
+          color: scheme.outlineVariant.withOpacity(isDark ? 0.35 : 0.55),
+        ),
       ),
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
-        borderRadius: BorderRadius.circular(14),
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(12),
+        child: Ink(
+          decoration: BoxDecoration(
+            boxShadow: OwnerDashboardTokens.cardShadow(context),
+          ),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final compact = constraints.maxHeight < 118;
+              final compact = constraints.maxHeight < 136;
+              final padding = compact ? 12.0 : 16.0;
+              final valueSize = compact ? 22.0 : 26.0;
+              final iconBox = compact ? 8.0 : 10.0;
+              final iconSize = compact ? 20.0 : 22.0;
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(compact ? 6 : 8),
-                        decoration: BoxDecoration(
-                          color: color.withOpacity(0.12),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Icon(
-                          icon,
-                          color: color,
-                          size: compact ? 20 : 22,
-                        ),
-                      ),
-                      const Spacer(),
-                      if (onTap != null)
-                        Icon(
-                          Icons.chevron_right,
-                          color: Colors.grey.shade400,
-                          size: compact ? 18 : 24,
-                        ),
-                    ],
-                  ),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.bottomLeft,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: Alignment.bottomLeft,
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxWidth: constraints.maxWidth,
+              return Padding(
+                padding: EdgeInsets.all(padding),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(iconBox),
+                          decoration: BoxDecoration(
+                            color: color.withOpacity(isDark ? 0.22 : 0.12),
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                value,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineSmall
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: color,
-                                      fontSize: compact ? 22 : null,
-                                    ),
-                              ),
-                              SizedBox(height: compact ? 2 : 4),
-                              Text(
-                                label,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: compact ? 11.5 : 12.5,
-                                  color: Colors.grey.shade700,
-                                  fontWeight: FontWeight.w500,
-                                  height: 1.2,
-                                ),
-                              ),
-                              if (subtitleContent != null) ...[
-                                SizedBox(height: compact ? 2 : 4),
-                                subtitleContent!,
-                              ] else if (subtitle != null) ...[
-                                SizedBox(height: compact ? 2 : 4),
+                          child: Icon(icon, color: color, size: iconSize),
+                        ),
+                        const Spacer(),
+                        if (onTap != null)
+                          Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            color: scheme.onSurfaceVariant.withOpacity(0.55),
+                            size: 14,
+                          ),
+                      ],
+                    ),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.bottomLeft,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.bottomLeft,
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(maxWidth: constraints.maxWidth),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
                                 Text(
-                                  subtitle!,
+                                  value,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineSmall
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w700,
+                                        color: color,
+                                        fontSize: valueSize,
+                                        height: 1.05,
+                                      ),
+                                ),
+                                SizedBox(height: compact ? 4 : 6),
+                                Text(
+                                  label,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: compact ? 10 : 11,
-                                    color: Colors.grey.shade500,
-                                    height: 1.2,
-                                  ),
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        fontWeight: FontWeight.w500,
+                                        color: scheme.onSurfaceVariant,
+                                        height: 1.2,
+                                        fontSize: compact ? 12.5 : null,
+                                      ),
                                 ),
+                                if (subtitleContent != null) ...[
+                                  SizedBox(height: compact ? 4 : 6),
+                                  subtitleContent!,
+                                ] else if (subtitle != null) ...[
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    subtitle!,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                          color: scheme.onSurfaceVariant.withOpacity(0.85),
+                                        ),
+                                  ),
+                                ],
                               ],
-                            ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               );
             },
           ),
@@ -171,18 +183,26 @@ class _QueueStatChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: AppTheme.medicalBlue.withOpacity(0.08),
+        color: AppTheme.medicalBlue.withOpacity(
+          scheme.brightness == Brightness.dark ? 0.18 : 0.08,
+        ),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppTheme.medicalBlue.withOpacity(0.15)),
+        border: Border.all(
+          color: AppTheme.medicalBlue.withOpacity(0.2),
+        ),
       ),
       child: RichText(
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
         text: TextSpan(
-          style: TextStyle(fontSize: 10.5, color: Colors.grey.shade700),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+                fontSize: 10.5,
+              ),
           children: [
             TextSpan(
               text: '$label: ',

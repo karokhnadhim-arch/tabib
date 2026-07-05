@@ -12,6 +12,7 @@ import '../../../widgets/system_owner_guard.dart';
 import 'monitoring_filter_scope.dart';
 import 'owner_dashboard_filter_sync.dart';
 import 'owner_dashboard_navigation.dart';
+import 'owner_dashboard_ui.dart';
 import 'owner_monitoring_theme.dart';
 import 'owner_phase1_monitoring_section.dart';
 import 'owner_phase2_monitoring_sections.dart';
@@ -20,7 +21,7 @@ import 'owner_step3_operations_sections.dart';
 import 'owner_step4_final_sections.dart';
 import 'owner_phase4_monitoring_sections.dart';
 
-/// Owner monitoring center — Phases 1–4 complete.
+/// Owner monitoring center — enterprise Material 3 layout.
 class OwnerSystemHealthDashboard extends StatefulWidget {
   const OwnerSystemHealthDashboard({super.key});
 
@@ -60,6 +61,10 @@ class _OwnerSystemHealthDashboardState extends State<OwnerSystemHealthDashboard>
     await _monitoring?.refreshPhase3(force: true);
   }
 
+  Widget _anchor(MonitoringDashboardSection section, Widget child) {
+    return OwnerDashboardSectionAnchor(section: section, child: child);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -70,6 +75,7 @@ class _OwnerSystemHealthDashboardState extends State<OwnerSystemHealthDashboard>
     final hasSnapshot = monitoring.snapshot != null;
     final isRefreshing =
         monitoring.isRefreshingPhase1 || monitoring.isRefreshingPhase2;
+    final groupGap = SizedBox(height: appearance.sectionSpacing + 4);
 
     if (hasSnapshot && navigation.pendingSection != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -86,11 +92,23 @@ class _OwnerSystemHealthDashboardState extends State<OwnerSystemHealthDashboard>
         child: Scaffold(
           backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
           appBar: AppBar(
-            title: Text(l10n.monitoringCenterTitle),
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.monitoringCenterTitle),
+                Text(
+                  l10n.monitoringCenterHint,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w400,
+                      ),
+                ),
+              ],
+            ),
             actions: [
               IconButton(
                 tooltip: l10n.advancedSystemSettings,
-                icon: const Icon(Icons.tune_outlined),
+                icon: const Icon(Icons.tune_rounded),
                 onPressed: () => context.push('/owner/console/system-health/settings'),
               ),
               if (isRefreshing)
@@ -106,7 +124,7 @@ class _OwnerSystemHealthDashboardState extends State<OwnerSystemHealthDashboard>
                 IconButton(
                   tooltip: l10n.dashboardRefreshNow,
                   onPressed: _refreshAll,
-                  icon: const Icon(Icons.refresh),
+                  icon: const Icon(Icons.refresh_rounded),
                 ),
             ],
           ),
@@ -119,7 +137,8 @@ class _OwnerSystemHealthDashboardState extends State<OwnerSystemHealthDashboard>
                       scaleFactor: filters.scaleFactor,
                       child: OwnerDashboardResponsiveShell(
                         child: AnimatedPadding(
-                          duration: const Duration(milliseconds: 250),
+                          duration: const Duration(milliseconds: 280),
+                          curve: Curves.easeOutCubic,
                           padding: EdgeInsets.symmetric(
                             horizontal: appearance.horizontalPadding,
                             vertical: appearance.cardPadding,
@@ -131,94 +150,148 @@ class _OwnerSystemHealthDashboardState extends State<OwnerSystemHealthDashboard>
                               const OwnerGlobalFilterBar(),
                               SizedBox(height: appearance.sectionSpacing),
                               const OwnerDashboardSectionNavigator(),
-                              SizedBox(height: appearance.sectionSpacing * 1.25),
-                              OwnerDashboardSectionAnchor(
-                                section: MonitoringDashboardSection.systemHealth,
-                                child: const OwnerPhase1MonitoringSection(),
+                              groupGap,
+                              OwnerDashboardGroup(
+                                title: l10n.systemHealth,
+                                subtitle: l10n.monitoringPhase1Hint,
+                                icon: Icons.monitor_heart_outlined,
+                                children: [
+                                  _anchor(
+                                    MonitoringDashboardSection.systemHealth,
+                                    const OwnerPhase1MonitoringSection(),
+                                  ),
+                                ],
                               ),
-                              OwnerDashboardSectionAnchor(
-                                section: MonitoringDashboardSection.liveStatistics,
-                                child: const OwnerLiveStatisticsSection(),
+                              groupGap,
+                              OwnerDashboardGroup(
+                                title: l10n.liveStatistics,
+                                subtitle: l10n.monitoringPhase2Hint,
+                                icon: Icons.insights_outlined,
+                                children: [
+                                  _anchor(
+                                    MonitoringDashboardSection.liveStatistics,
+                                    const OwnerLiveStatisticsSection(),
+                                  ),
+                                ],
                               ),
-                              OwnerDashboardSectionAnchor(
-                                section: MonitoringDashboardSection.activityFeed,
-                                child: const OwnerActivityFeedSection(),
+                              groupGap,
+                              OwnerDashboardGroup(
+                                title: l10n.liveActivityFeed,
+                                icon: Icons.timeline_outlined,
+                                children: [
+                                  _anchor(
+                                    MonitoringDashboardSection.activityFeed,
+                                    const OwnerActivityFeedSection(),
+                                  ),
+                                ],
                               ),
-                              OwnerDashboardSectionAnchor(
-                                section: MonitoringDashboardSection.aiInsights,
-                                child: const OwnerStep4AiInsightsSection(),
+                              groupGap,
+                              OwnerDashboardGroup(
+                                title: l10n.ownerSmartAlerts,
+                                subtitle: l10n.smartOwnerNotifications,
+                                icon: Icons.notifications_active_outlined,
+                                children: [
+                                  _anchor(
+                                    MonitoringDashboardSection.aiInsights,
+                                    const OwnerStep4AiInsightsSection(),
+                                  ),
+                                  _anchor(
+                                    MonitoringDashboardSection.forecast,
+                                    const OwnerStep4ForecastSection(),
+                                  ),
+                                  _anchor(
+                                    MonitoringDashboardSection.smartNotifications,
+                                    const OwnerSmartNotificationsSection(),
+                                  ),
+                                  _anchor(
+                                    MonitoringDashboardSection.firebaseCost,
+                                    const OwnerStep4FirebaseCostSection(),
+                                  ),
+                                ],
                               ),
-                              OwnerDashboardSectionAnchor(
-                                section: MonitoringDashboardSection.forecast,
-                                child: const OwnerStep4ForecastSection(),
+                              groupGap,
+                              OwnerDashboardGroup(
+                                title: l10n.analyticsDashboard,
+                                subtitle: l10n.monitoringPhase3AnalyticsHint,
+                                icon: Icons.analytics_outlined,
+                                children: [
+                                  _anchor(
+                                    MonitoringDashboardSection.advertisementMonitoring,
+                                    const OwnerAdvertisementMonitoringSection(),
+                                  ),
+                                  _anchor(
+                                    MonitoringDashboardSection.notificationMonitoring,
+                                    const OwnerNotificationMonitoringSection(),
+                                  ),
+                                  _anchor(
+                                    MonitoringDashboardSection.queueAnalytics,
+                                    const OwnerQueueAnalyticsSection(),
+                                  ),
+                                  _anchor(
+                                    MonitoringDashboardSection.appointmentAnalytics,
+                                    const OwnerAppointmentAnalyticsSection(),
+                                  ),
+                                  _anchor(
+                                    MonitoringDashboardSection.packageAnalytics,
+                                    const OwnerPackageAnalyticsSection(),
+                                  ),
+                                  _anchor(
+                                    MonitoringDashboardSection.analyticsCharts,
+                                    const OwnerPhase3AnalyticsSection(),
+                                  ),
+                                  _anchor(
+                                    MonitoringDashboardSection.revenue,
+                                    const OwnerRevenueDashboardSection(),
+                                  ),
+                                  _anchor(
+                                    MonitoringDashboardSection.reports,
+                                    const OwnerReportsSection(),
+                                  ),
+                                ],
                               ),
-                              OwnerDashboardSectionAnchor(
-                                section: MonitoringDashboardSection.smartNotifications,
-                                child: const OwnerSmartNotificationsSection(),
+                              groupGap,
+                              OwnerDashboardGroup(
+                                title: l10n.securityCenter,
+                                subtitle: l10n.securityCenterHint,
+                                icon: Icons.shield_outlined,
+                                children: [
+                                  _anchor(
+                                    MonitoringDashboardSection.security,
+                                    const OwnerSecurityCenterSection(),
+                                  ),
+                                  _anchor(
+                                    MonitoringDashboardSection.sessionManager,
+                                    const OwnerSessionManagerSection(),
+                                  ),
+                                  _anchor(
+                                    MonitoringDashboardSection.errorMonitoring,
+                                    const OwnerErrorMonitoringSection(),
+                                  ),
+                                  _anchor(
+                                    MonitoringDashboardSection.auditLog,
+                                    const OwnerAuditLogSection(),
+                                  ),
+                                ],
                               ),
-                              OwnerDashboardSectionAnchor(
-                                section: MonitoringDashboardSection.firebaseCost,
-                                child: const OwnerStep4FirebaseCostSection(),
-                              ),
-                              OwnerDashboardSectionAnchor(
-                                section: MonitoringDashboardSection.advertisementMonitoring,
-                                child: const OwnerAdvertisementMonitoringSection(),
-                              ),
-                              OwnerDashboardSectionAnchor(
-                                section: MonitoringDashboardSection.notificationMonitoring,
-                                child: const OwnerNotificationMonitoringSection(),
-                              ),
-                              OwnerDashboardSectionAnchor(
-                                section: MonitoringDashboardSection.queueAnalytics,
-                                child: const OwnerQueueAnalyticsSection(),
-                              ),
-                              OwnerDashboardSectionAnchor(
-                                section: MonitoringDashboardSection.appointmentAnalytics,
-                                child: const OwnerAppointmentAnalyticsSection(),
-                              ),
-                              OwnerDashboardSectionAnchor(
-                                section: MonitoringDashboardSection.packageAnalytics,
-                                child: const OwnerPackageAnalyticsSection(),
-                              ),
-                              OwnerDashboardSectionAnchor(
-                                section: MonitoringDashboardSection.analyticsCharts,
-                                child: const OwnerPhase3AnalyticsSection(),
-                              ),
-                              OwnerDashboardSectionAnchor(
-                                section: MonitoringDashboardSection.revenue,
-                                child: const OwnerRevenueDashboardSection(),
-                              ),
-                              OwnerDashboardSectionAnchor(
-                                section: MonitoringDashboardSection.security,
-                                child: const OwnerSecurityCenterSection(),
-                              ),
-                              OwnerDashboardSectionAnchor(
-                                section: MonitoringDashboardSection.sessionManager,
-                                child: const OwnerSessionManagerSection(),
-                              ),
-                              OwnerDashboardSectionAnchor(
-                                section: MonitoringDashboardSection.errorMonitoring,
-                                child: const OwnerErrorMonitoringSection(),
-                              ),
-                              OwnerDashboardSectionAnchor(
-                                section: MonitoringDashboardSection.backup,
-                                child: const OwnerBackupCenterSection(),
-                              ),
-                              OwnerDashboardSectionAnchor(
-                                section: MonitoringDashboardSection.auditLog,
-                                child: const OwnerAuditLogSection(),
-                              ),
-                              OwnerDashboardSectionAnchor(
-                                section: MonitoringDashboardSection.reports,
-                                child: const OwnerReportsSection(),
-                              ),
-                              OwnerDashboardSectionAnchor(
-                                section: MonitoringDashboardSection.maintenance,
-                                child: const OwnerMaintenanceModeSection(),
-                              ),
-                              OwnerDashboardSectionAnchor(
-                                section: MonitoringDashboardSection.appearance,
-                                child: const OwnerAppearanceSection(),
+                              groupGap,
+                              OwnerDashboardGroup(
+                                title: l10n.backupRestore,
+                                subtitle: l10n.backupRestoreHint,
+                                icon: Icons.cloud_upload_outlined,
+                                children: [
+                                  _anchor(
+                                    MonitoringDashboardSection.backup,
+                                    const OwnerBackupCenterSection(),
+                                  ),
+                                  _anchor(
+                                    MonitoringDashboardSection.maintenance,
+                                    const OwnerMaintenanceModeSection(),
+                                  ),
+                                  _anchor(
+                                    MonitoringDashboardSection.appearance,
+                                    const OwnerAppearanceSection(),
+                                  ),
+                                ],
                               ),
                               SizedBox(height: appearance.sectionSpacing * 1.5),
                             ],

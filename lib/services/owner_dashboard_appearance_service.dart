@@ -16,25 +16,25 @@ class OwnerDashboardAppearanceService extends ChangeNotifier {
   ThemeMode get dashboardThemeMode => _dashboardThemeMode;
 
   double get cardPadding => switch (_density) {
-        DashboardDensity.compact => 8,
-        DashboardDensity.comfortable => 16,
+        DashboardDensity.compact => 12,
+        DashboardDensity.comfortable => 20,
       };
 
   double get sectionSpacing => switch (_density) {
-        DashboardDensity.compact => 8,
-        DashboardDensity.comfortable => 16,
+        DashboardDensity.compact => 16,
+        DashboardDensity.comfortable => 28,
       };
 
   double get horizontalPadding => switch (_layout) {
-        DashboardLayout.standard => cardPadding,
-        DashboardLayout.wide => 24,
-        DashboardLayout.focused => cardPadding * 1.5,
+        DashboardLayout.standard => 20,
+        DashboardLayout.wide => 32,
+        DashboardLayout.focused => 24,
       };
 
   double get contentMaxWidth => switch (_layout) {
-        DashboardLayout.standard => 960,
-        DashboardLayout.wide => 1280,
-        DashboardLayout.focused => 720,
+        DashboardLayout.standard => 1120,
+        DashboardLayout.wide => 1440,
+        DashboardLayout.focused => 840,
       };
 
   int get gridCrossAxisCountMultiplier => switch (_layout) {
