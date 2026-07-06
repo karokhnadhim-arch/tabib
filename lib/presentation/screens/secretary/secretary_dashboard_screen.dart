@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/utils/responsive.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/responsive_scaffold.dart';
 import '../../../l10n/app_localizations.dart';
@@ -15,6 +16,8 @@ import '../../../core/utils/account_code_resolver.dart';
 import '../../../presentation/widgets/account_code_badge.dart';
 import '../../../utils/localization_utils.dart';
 import '../../../utils/provider_labels.dart';
+import '../../layouts/clinical_workspace_shell.dart';
+import '../../widgets/desktop/clinical_shortcuts.dart';
 import '../../providers/app_providers.dart';
 import 'daily_schedule_screen.dart';
 import 'register_patient_screen.dart';
@@ -34,6 +37,7 @@ class _SecretaryDashboardScreenState extends State<SecretaryDashboardScreen> {
   bool _scheduleOnlyMode = false;
   String? _watchedDoctorId;
   QueueService? _queueService;
+  final _searchFocusNode = FocusNode();
 
   String? get _linkedDoctorId =>
       context.read<AuthService>().currentUser?.linkedDoctorId;
@@ -65,6 +69,7 @@ class _SecretaryDashboardScreenState extends State<SecretaryDashboardScreen> {
 
   @override
   void dispose() {
+    _searchFocusNode.dispose();
     if (_watchedDoctorId != null) {
       _queueService?.stopWatchingDoctorQueue(_watchedDoctorId);
     }
@@ -99,6 +104,93 @@ class _SecretaryDashboardScreenState extends State<SecretaryDashboardScreen> {
           _tab = 2;
         }),
         onRenewed: () => setState(() => _scheduleOnlyMode = false),
+      );
+    }
+
+    final desktop = isClinicalDesktop(context);
+    final destinations = [
+      ClinicalNavDestination(
+        icon: Icons.queue_play_next_outlined,
+        selectedIcon: Icons.queue_play_next,
+        label: l10n.queueManagement,
+      ),
+      ClinicalNavDestination(
+        icon: Icons.person_add_outlined,
+        selectedIcon: Icons.person_add,
+        label: l10n.registerPatient,
+      ),
+      ClinicalNavDestination(
+        icon: Icons.calendar_month_outlined,
+        selectedIcon: Icons.calendar_month,
+        label: l10n.dailySchedule,
+      ),
+    ];
+
+    Widget tabContent;
+    if (_tab == 0) {
+      tabContent = linkedDoctorId != null && linkedDoctorId.isNotEmpty
+          ? SecretaryQueueManagementTab(
+              doctorId: linkedDoctorId,
+              clinicId: clinicId,
+              expanded: desktop,
+              searchFocusNode: _searchFocusNode,
+            )
+          : Padding(
+              padding: const EdgeInsets.symmetric(vertical: 32),
+              child: Center(child: Text(l10n.noAssignedDoctor)),
+            );
+    } else if (_tab == 1) {
+      tabContent = linkedDoctorId != null && linkedDoctorId.isNotEmpty
+          ? RegisterPatientScreen(
+              clinicId: clinicId,
+              doctorId: linkedDoctorId,
+            )
+          : Padding(
+              padding: const EdgeInsets.symmetric(vertical: 32),
+              child: Center(child: Text(l10n.noAssignedDoctor)),
+            );
+    } else {
+      tabContent = linkedDoctorId != null && linkedDoctorId.isNotEmpty
+          ? DailyScheduleScreen(
+              clinicId: clinicId,
+              doctorId: linkedDoctorId,
+              embedded: true,
+            )
+          : Padding(
+              padding: const EdgeInsets.symmetric(vertical: 32),
+              child: Center(child: Text(l10n.noAssignedDoctor)),
+            );
+    }
+
+    if (desktop) {
+      return ClinicalShortcutScope(
+        shortcuts: ClinicalShortcuts.secretaryMap(),
+        onAction: (index) {
+          if (index == 0) {
+            setState(() => _tab = 0);
+            _searchFocusNode.requestFocus();
+          } else if (index >= 1 && index <= 3) {
+            setState(() => _tab = index - 1);
+          }
+        },
+        child: ClinicalWorkspaceShell(
+          title: l10n.secretaryDashboard,
+          accentColor: AppTheme.secretaryColor,
+          selectedIndex: _tab,
+          destinations: destinations,
+          onDestinationSelected: (i) => setState(() => _tab = i),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.settings_outlined, color: Colors.white),
+              tooltip: l10n.settings,
+              onPressed: () => context.push('/settings'),
+            ),
+          ],
+          body: Padding(
+            padding: const EdgeInsets.all(16),
+            child: SizedBox.expand(child: tabContent),
+          ),
+        ),
       );
     }
 

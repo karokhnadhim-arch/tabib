@@ -11,6 +11,7 @@ import '../../../models/prescription.dart';
 import '../../../models/investigation_request_item.dart';
 import '../../../models/queue_entry.dart';
 import '../../../services/auth_service.dart';
+import '../../../services/clinic_data_service.dart';
 import '../../../utils/localization_utils.dart';
 import '../../../utils/queue_status_utils.dart';
 import '../../providers/app_providers.dart';
@@ -19,6 +20,7 @@ import 'doctor_consultation_session.dart';
 import 'doctor_consultation_widgets.dart';
 import 'doctor_visit_notes_store.dart';
 import 'investigation/doctor_investigation_composer.dart';
+import 'investigation/investigation_print_sheet.dart';
 import 'prescription/doctor_prescription_composer.dart';
 import 'prescription/prescription_print_sheet.dart';
 
@@ -30,12 +32,14 @@ class DoctorConsultationWorkspace extends StatefulWidget {
     required this.doctorId,
     required this.doctorName,
     required this.session,
+    this.hidePatientSummary = false,
   });
 
   final QueueEntry entry;
   final String doctorId;
   final String doctorName;
   final DoctorConsultationSession session;
+  final bool hidePatientSummary;
 
   @override
   State<DoctorConsultationWorkspace> createState() =>
@@ -250,10 +254,19 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
             a.doctorId == widget.doctorId)
         .toList()
       ..sort((a, b) => b.dateTime.compareTo(a.dateTime));
+    final clinicData = context.watch<ClinicDataService>();
+    final doctor = clinicData.doctorById(widget.doctorId);
+    final clinic = doctor != null ? clinicData.clinicById(doctor.clinicId) : null;
+    final clinicName = doctor?.effectiveClinicName.localized(context) ??
+        clinic?.name.localized(context);
+    final clinicAddress = clinic?.address.localized(context);
+    final clinicPhone = doctor?.effectiveContactPhone ?? clinic?.phone;
+    final doctorSpecialty = doctor?.specialty.name.localized(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        if (!widget.hidePatientSummary) ...[
         Text(
           l10n.patientInformation,
           style: Theme.of(context).textTheme.labelLarge?.copyWith(
@@ -325,6 +338,7 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
                   : null,
         ),
         const SizedBox(height: 14),
+        ],
         DoctorConsultationSectionTile(
           icon: Icons.history_rounded,
           title: l10n.medicalHistory,
@@ -391,6 +405,10 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
                       notes: notes.clinicalNotes.trim().isEmpty
                           ? null
                           : notes.clinicalNotes.trim(),
+                      clinicName: clinicName,
+                      clinicAddress: clinicAddress,
+                      clinicPhone: clinicPhone,
+                      doctorSpecialty: doctorSpecialty,
                     ),
           ),
         ),
@@ -406,6 +424,27 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
             onItemsChanged: _onInvestigationItemsChanged,
           ),
         ),
+        if (notes.investigationItems.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(bottom: DoctorConsultationTokens.sectionGap),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: OutlinedButton.icon(
+                onPressed: () => showInvestigationPrintSheet(
+                  context: context,
+                  patientName: widget.entry.patientName,
+                  doctorName: widget.doctorName,
+                  items: notes.investigationItems,
+                  clinicName: clinicName,
+                  clinicAddress: clinicAddress,
+                  clinicPhone: clinicPhone,
+                  doctorSpecialty: doctorSpecialty,
+                ),
+                icon: const Icon(Icons.print_outlined, size: 18),
+                label: Text(l10n.printInvestigationRequest),
+              ),
+            ),
+          ),
         DoctorConsultationSectionTile(
           icon: Icons.notes_outlined,
           title: l10n.clinicalNotes,

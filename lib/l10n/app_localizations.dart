@@ -7324,6 +7324,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pending'**
   String get pending;
+
+  /// No description provided for @patientSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient summary'**
+  String get patientSummary;
+
+  /// No description provided for @printDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Print'**
+  String get printDocument;
+
+  /// No description provided for @printInvestigationRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Print investigation request'**
+  String get printInvestigationRequest;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

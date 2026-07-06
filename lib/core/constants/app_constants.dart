@@ -7,4 +7,11 @@ class AppConstants {
   static const Duration splashDuration = Duration(seconds: 2);
   static const double mobileBreakpoint = 600;
   static const double tabletBreakpoint = 900;
+  /// Side navigation + multi-pane clinical workspace (Full HD+).
+  static const double clinicalDesktopBreakpoint = 1100;
+  /// Doctor 3-pane: queue | consultation | patient summary.
+  static const double threePaneBreakpoint = 1280;
+  /// Clinical side navigation rail width.
+  static const double clinicalNavWidth = 72;
+  static const double clinicalNavExtendedWidth = 240;
 }

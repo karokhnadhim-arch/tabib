@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/constants/app_constants.dart';
+import '../../../core/utils/responsive.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/queue_entry.dart';
 import '../../../services/clinic_data_service.dart';
@@ -11,6 +13,7 @@ import '../../../services/queue_service.dart';
 import '../../../utils/localization_utils.dart';
 import '../../../utils/queue_status_utils.dart';
 import '../../providers/app_providers.dart';
+import '../../widgets/doctor_patient_summary_panel.dart';
 import 'doctor_consultation_session.dart';
 import 'doctor_consultation_workspace.dart';
 import 'doctor_today_queue.dart';
@@ -164,6 +167,7 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
+        final threePane = constraints.maxWidth >= AppConstants.threePaneBreakpoint;
         final wide = constraints.maxWidth >= 880;
         final list = _QueueList(
           entries: _todayQueue,
@@ -181,50 +185,82 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
                 doctorId: widget.doctorId,
                 doctorName: doctorName,
                 session: _session,
+                hidePatientSummary: threePane,
+              );
+
+        final summaryPanel = selected == null
+            ? const SizedBox.shrink()
+            : DoctorPatientSummaryPanel(
+                entry: selected,
+                doctorId: widget.doctorId,
+                doctorName: doctorName,
+                notesStore: _notesStore,
+                storageKey: DoctorVisitNotesStore.storageKey(
+                  doctorId: widget.doctorId,
+                  queueEntryId: selected.id,
+                ),
               );
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _QueueHintBanner(message: l10n.doctorQueueViewOnlyHint),
-            const SizedBox(height: 12),
-            Text(
-              l10n.todaysQueue,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-            ),
-            const SizedBox(height: 10),
+            if (!isClinicalDesktop(context))
+              _QueueHintBanner(message: l10n.doctorQueueViewOnlyHint),
+            if (!isClinicalDesktop(context)) const SizedBox(height: 12),
+            if (!isClinicalDesktop(context))
+              Text(
+                l10n.todaysQueue,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+            if (!isClinicalDesktop(context)) const SizedBox(height: 10),
             Expanded(
-              child: wide
+              child: threePane
                   ? Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Expanded(flex: 4, child: list),
+                        SizedBox(width: 280, child: list),
                         const SizedBox(width: 16),
                         Expanded(
-                          flex: 6,
                           child: SingleChildScrollView(
                             physics: const ClampingScrollPhysics(),
                             child: workspace,
                           ),
                         ),
+                        const SizedBox(width: 16),
+                        SizedBox(width: 300, child: summaryPanel),
                       ],
                     )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Flexible(
-                          flex: selected == null ? 0 : 5,
-                          child: SingleChildScrollView(
-                            physics: const ClampingScrollPhysics(),
-                            child: workspace,
-                          ),
+                  : wide
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(flex: 4, child: list),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              flex: 6,
+                              child: SingleChildScrollView(
+                                physics: const ClampingScrollPhysics(),
+                                child: workspace,
+                              ),
+                            ),
+                          ],
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Flexible(
+                              flex: selected == null ? 0 : 5,
+                              child: SingleChildScrollView(
+                                physics: const ClampingScrollPhysics(),
+                                child: workspace,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Expanded(flex: 4, child: list),
+                          ],
                         ),
-                        const SizedBox(height: 10),
-                        Expanded(flex: 4, child: list),
-                      ],
-                    ),
             ),
           ],
         );

@@ -1346,5 +1346,8 @@
   "noInvestigationsYet": "لا توجد فحوصات بعد",
   "downloadPdf": "تحميل PDF",
   "all": "الكل",
-  "pending": "معلق"
+  "pending": "معلق",
+  "patientSummary": "ملخص المريض",
+  "printDocument": "طباعة",
+  "printInvestigationRequest": "طباعة طلب الفحص"
 }

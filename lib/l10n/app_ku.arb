@@ -1346,5 +1346,8 @@
   "noInvestigationsYet": "هێشتا پشکنین نییە",
   "downloadPdf": "داگرتنی PDF",
   "all": "هەموو",
-  "pending": "چاوەڕوان"
+  "pending": "چاوەڕوان",
+  "patientSummary": "پوختەی نەخۆش",
+  "printDocument": "چاپکردن",
+  "printInvestigationRequest": "چاپکردنی داواکاری پشکنین"
 }

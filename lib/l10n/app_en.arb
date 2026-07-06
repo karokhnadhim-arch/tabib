@@ -1437,5 +1437,8 @@
   "noInvestigationsYet": "No investigations yet",
   "downloadPdf": "Download PDF",
   "all": "All",
-  "pending": "Pending"
+  "pending": "Pending",
+  "patientSummary": "Patient summary",
+  "printDocument": "Print",
+  "printInvestigationRequest": "Print investigation request"
 }

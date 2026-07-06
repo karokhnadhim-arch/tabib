@@ -3726,4 +3726,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get pending => 'معلق';
+
+  @override
+  String get patientSummary => 'ملخص المريض';
+
+  @override
+  String get printDocument => 'طباعة';
+
+  @override
+  String get printInvestigationRequest => 'طباعة طلب الفحص';
 }

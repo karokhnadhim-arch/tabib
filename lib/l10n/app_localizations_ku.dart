@@ -3726,4 +3726,13 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get pending => 'چاوەڕوان';
+
+  @override
+  String get patientSummary => 'پوختەی نەخۆش';
+
+  @override
+  String get printDocument => 'چاپکردن';
+
+  @override
+  String get printInvestigationRequest => 'چاپکردنی داواکاری پشکنین';
 }

@@ -23,10 +23,14 @@ class SecretaryQueueManagementTab extends StatefulWidget {
     super.key,
     required this.doctorId,
     required this.clinicId,
+    this.expanded = false,
+    this.searchFocusNode,
   });
 
   final String doctorId;
   final String clinicId;
+  final bool expanded;
+  final FocusNode? searchFocusNode;
 
   @override
   State<SecretaryQueueManagementTab> createState() =>
@@ -87,6 +91,7 @@ class _SecretaryQueueManagementTabState extends State<SecretaryQueueManagementTa
         ),
         const SizedBox(height: 12),
         SearchBar(
+          focusNode: widget.searchFocusNode,
           controller: _searchController,
           hintText: l10n.searchPatientsHint,
           leading: const Icon(Icons.search_rounded),
@@ -138,31 +143,57 @@ class _SecretaryQueueManagementTabState extends State<SecretaryQueueManagementTa
             child: Center(child: Text(l10n.noSearchResults)),
           )
         else
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: filtered.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
-            itemBuilder: (context, index) {
-              final entry = filtered[index];
-              return RepaintBoundary(
-                child: _SecretaryQueueTile(
-                  entry: entry,
-                  doctorId: widget.doctorId,
-                  doctorName: doctorName,
-                  clinicId: widget.clinicId,
-                  appointment: SecretaryQueueActions.appointmentFor(
-                    appointments.appointments,
-                    entry,
-                    widget.doctorId,
+          widget.expanded
+              ? Expanded(
+                  child: ListView.separated(
+                    itemCount: filtered.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (context, index) {
+                      final entry = filtered[index];
+                      return RepaintBoundary(
+                        child: _SecretaryQueueTile(
+                          entry: entry,
+                          doctorId: widget.doctorId,
+                          doctorName: doctorName,
+                          clinicId: widget.clinicId,
+                          appointment: SecretaryQueueActions.appointmentFor(
+                            appointments.appointments,
+                            entry,
+                            widget.doctorId,
+                          ),
+                          investigationRequest:
+                              investigations.requestForQueueEntry(entry.id),
+                          l10n: l10n,
+                        ),
+                      );
+                    },
                   ),
-                  investigationRequest:
-                      investigations.requestForQueueEntry(entry.id),
-                  l10n: l10n,
+                )
+              : ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: filtered.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 8),
+                  itemBuilder: (context, index) {
+                    final entry = filtered[index];
+                    return RepaintBoundary(
+                      child: _SecretaryQueueTile(
+                        entry: entry,
+                        doctorId: widget.doctorId,
+                        doctorName: doctorName,
+                        clinicId: widget.clinicId,
+                        appointment: SecretaryQueueActions.appointmentFor(
+                          appointments.appointments,
+                          entry,
+                          widget.doctorId,
+                        ),
+                        investigationRequest:
+                            investigations.requestForQueueEntry(entry.id),
+                        l10n: l10n,
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
       ],
     );
   }

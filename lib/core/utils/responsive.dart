@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/app_constants.dart';
@@ -11,10 +12,39 @@ ScreenSize screenSizeOf(BuildContext context) {
   return ScreenSize.mobile;
 }
 
+/// Wide clinical workstation layout (doctor / secretary desktop).
+bool isClinicalDesktop(BuildContext context) {
+  return MediaQuery.sizeOf(context).width >= AppConstants.clinicalDesktopBreakpoint;
+}
+
+/// Three-pane doctor workspace (queue | consultation | summary).
+bool isThreePaneDoctorLayout(BuildContext context) {
+  return MediaQuery.sizeOf(context).width >= AppConstants.threePaneBreakpoint;
+}
+
+/// True on Windows, macOS, Linux, or web on a wide viewport.
+bool isDesktopPlatform(BuildContext context) {
+  if (kIsWeb) return isClinicalDesktop(context);
+  return switch (defaultTargetPlatform) {
+    TargetPlatform.windows ||
+    TargetPlatform.macOS ||
+    TargetPlatform.linux =>
+      true,
+    _ => false,
+  };
+}
+
+/// Prefer instant transitions on desktop clinical apps.
+Duration clinicalPageTransitionDuration(BuildContext context) {
+  return isDesktopPlatform(context)
+      ? Duration.zero
+      : const Duration(milliseconds: 300);
+}
+
 double responsivePadding(BuildContext context) {
   switch (screenSizeOf(context)) {
     case ScreenSize.desktop:
-      return 32;
+      return isClinicalDesktop(context) ? 20 : 32;
     case ScreenSize.tablet:
       return 24;
     case ScreenSize.mobile:

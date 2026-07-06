@@ -3726,4 +3726,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pending => 'Pending';
+
+  @override
+  String get patientSummary => 'Patient summary';
+
+  @override
+  String get printDocument => 'Print';
+
+  @override
+  String get printInvestigationRequest => 'Print investigation request';
 }

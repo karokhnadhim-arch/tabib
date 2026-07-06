@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/responsive.dart';
 import '../../../core/widgets/responsive_scaffold.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/appointment.dart';
@@ -20,6 +21,8 @@ import '../../../utils/provider_labels.dart';
 import '../../../utils/schedule_utils.dart';
 import '../../../widgets/language_picker.dart';
 import '../../widgets/staff_patient_contact_bar.dart';
+import '../../layouts/clinical_workspace_shell.dart';
+import '../../widgets/desktop/clinical_shortcuts.dart';
 import '../../providers/app_providers.dart';
 import '../../widgets/doctor_avatar.dart';
 import '../../widgets/doctor_schedule_view.dart';
@@ -36,17 +39,15 @@ class DoctorDashboardScreen extends StatefulWidget {
 class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
   int _tab = 0;
   bool _recordsOnlyMode = false;
-
-  Clinic? _clinicForUser(ClinicDataService data, AuthService auth) {
-    final clinicId = auth.currentUser?.clinicId;
-    if (clinicId == null || clinicId.isEmpty) return null;
-    return data.clinicById(clinicId);
-  }
+  final _searchFocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (isClinicalDesktop(context)) {
+        setState(() => _tab = 2);
+      }
       final auth = context.read<AuthService>();
       final data = context.read<ClinicDataService>();
       data.ensureCatalogLoaded();
@@ -63,8 +64,15 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
     });
   }
 
+  Clinic? _clinicForUser(ClinicDataService data, AuthService auth) {
+    final clinicId = auth.currentUser?.clinicId;
+    if (clinicId == null || clinicId.isEmpty) return null;
+    return data.clinicById(clinicId);
+  }
+
   @override
   void dispose() {
+    _searchFocusNode.dispose();
     final auth = context.read<AuthService>();
     final doctorId = auth.currentUser?.doctorId;
     if (doctorId != null && doctorId.isNotEmpty) {
@@ -106,6 +114,99 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
     final accepted = appointments.appointments
         .where((a) => a.isAccepted && a.doctorId == doctorId)
         .toList();
+    final desktop = isClinicalDesktop(context);
+
+    Widget tabBody;
+    if (_tab == 0) {
+      tabBody = _AppointmentList(
+        appointments: pending,
+        showActions: true,
+        doctorId: doctorId,
+      );
+    } else if (_tab == 1) {
+      tabBody = _AppointmentList(
+        appointments: accepted,
+        showActions: false,
+        doctorId: doctorId,
+      );
+    } else if (_tab == 2) {
+      tabBody = DoctorQueueTab(doctorId: doctorId);
+    } else {
+      tabBody = const PatientRecordsScreen();
+    }
+
+    final destinations = [
+      ClinicalNavDestination(
+        icon: Icons.pending_actions_outlined,
+        selectedIcon: Icons.pending_actions,
+        label: l10n.pendingRequests,
+      ),
+      ClinicalNavDestination(
+        icon: Icons.event_available_outlined,
+        selectedIcon: Icons.event_available,
+        label: l10n.acceptedAppointments,
+      ),
+      ClinicalNavDestination(
+        icon: Icons.people_outline,
+        selectedIcon: Icons.people,
+        label: l10n.todaysQueue,
+      ),
+      ClinicalNavDestination(
+        icon: Icons.folder_shared_outlined,
+        selectedIcon: Icons.folder_shared,
+        label: l10n.patientRecords,
+      ),
+    ];
+
+    final appBarActions = [
+      if (auth.canAccessAdminPanel && !auth.isSystemOwner)
+        IconButton(
+          icon: const Icon(Icons.admin_panel_settings_outlined, color: Colors.white),
+          tooltip: l10n.adminControlPanel,
+          onPressed: () => context.push('/owner/console'),
+        ),
+      IconButton(
+        icon: const Icon(Icons.edit_outlined, color: Colors.white),
+        tooltip: ProviderLabels.editProfileTitle(l10n, doctor),
+        onPressed: () => context.push('/doctor/profile'),
+      ),
+      IconButton(
+        icon: const Icon(Icons.settings_outlined, color: Colors.white),
+        tooltip: l10n.settings,
+        onPressed: () => context.push('/settings'),
+      ),
+      IconButton(
+        icon: const Icon(Icons.logout, color: Colors.white),
+        onPressed: () async {
+          await auth.logout();
+          if (!context.mounted) return;
+          context.go('/login');
+        },
+      ),
+    ];
+
+    if (desktop) {
+      return ClinicalShortcutScope(
+        shortcuts: ClinicalShortcuts.doctorMap(),
+        onAction: (index) {
+          if (index >= 1 && index <= 4) {
+            setState(() => _tab = index - 1);
+          }
+        },
+        child: ClinicalWorkspaceShell(
+          title: ProviderLabels.dashboardTitle(l10n, doctor),
+          accentColor: AppTheme.doctorColor,
+          selectedIndex: _tab,
+          destinations: destinations,
+          onDestinationSelected: (i) => setState(() => _tab = i),
+          actions: appBarActions,
+          body: Padding(
+            padding: const EdgeInsets.all(16),
+            child: SizedBox.expand(child: tabBody),
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -378,21 +479,7 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
             ),
             SliverFillRemaining(
               hasScrollBody: true,
-              child: _tab == 0
-                  ? _AppointmentList(
-                      appointments: pending,
-                      showActions: true,
-                      doctorId: doctorId,
-                    )
-                  : _tab == 1
-                      ? _AppointmentList(
-                          appointments: accepted,
-                          showActions: false,
-                          doctorId: doctorId,
-                        )
-                      : _tab == 2
-                          ? DoctorQueueTab(doctorId: doctorId)
-                          : const PatientRecordsScreen(),
+              child: tabBody,
             ),
           ],
         ),
