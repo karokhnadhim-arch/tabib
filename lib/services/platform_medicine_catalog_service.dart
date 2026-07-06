@@ -10,14 +10,18 @@ import '../models/audit_module.dart';
 import 'audit_logger.dart';
 import 'owner_audit_service.dart';
 import '../models/medicine.dart';
+import 'firebase_bootstrap.dart';
 
 /// Owner-managed medicine catalog — merges with built-in catalog for doctors.
 class PlatformMedicineCatalogService extends ChangeNotifier {
   PlatformMedicineCatalogService({FirebaseFirestore? firestore, bool? useFirestore})
-      : _db = firestore ?? FirebaseFirestore.instance,
-        _useFirestore = useFirestore ?? false;
+      : _useFirestore = useFirestore ?? false,
+        _db = FirebaseBootstrap.firestoreOrNull(
+          enabled: useFirestore ?? false,
+          override: firestore,
+        );
 
-  final FirebaseFirestore _db;
+  final FirebaseFirestore? _db;
   final bool _useFirestore;
   final List<Medicine> _custom = [];
   bool _loaded = false;
@@ -51,7 +55,7 @@ class PlatformMedicineCatalogService extends ChangeNotifier {
   Future<void> load() async {
     if (_loaded) return;
     if (_useFirestore) {
-      final snap = await _db.collection('platform_medicines').get();
+      final snap = await _db!.collection('platform_medicines').get();
       _custom
         ..clear()
         ..addAll(
@@ -129,10 +133,10 @@ class PlatformMedicineCatalogService extends ChangeNotifier {
 
   Future<void> _persist() async {
     if (_useFirestore) {
-      final batch = _db.batch();
+      final batch = _db!.batch();
       for (final m in _custom) {
         batch.set(
-          _db.collection('platform_medicines').doc(m.id),
+          _db!.collection('platform_medicines').doc(m.id),
           m.toMap(),
           SetOptions(merge: true),
         );

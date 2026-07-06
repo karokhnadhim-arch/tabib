@@ -49,4 +49,13 @@ class FirebaseBootstrap {
       cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
     );
   }
+
+  /// Firestore handle for production mode only — never touches the instance in demo mode.
+  static FirebaseFirestore? firestoreOrNull({
+    required bool enabled,
+    FirebaseFirestore? override,
+  }) {
+    if (!enabled || !initialized) return null;
+    return override ?? FirebaseFirestore.instance;
+  }
 }

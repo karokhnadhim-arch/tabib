@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +15,7 @@ import '../../../utils/localization_utils.dart';
 import '../../../utils/queue_status_utils.dart';
 import '../../providers/app_providers.dart';
 import '../../widgets/doctor_patient_summary_panel.dart';
+import '../../../services/firebase_bootstrap.dart';
 import 'doctor_consultation_session.dart';
 import 'doctor_consultation_workspace.dart';
 import 'doctor_today_queue.dart';
@@ -33,7 +35,11 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
   final _notesStore = DoctorVisitNotesStore();
   late final DoctorConsultationSession _session =
       DoctorConsultationSession(_notesStore);
-  final _aggregator = DoctorTodayQueueAggregator();
+  final _aggregator = DoctorTodayQueueAggregator(
+    firestore: FirebaseBootstrap.initialized
+        ? FirebaseFirestore.instance
+        : null,
+  );
   String? _selectedEntryId;
   Stream<List<QueueEntry>>? _todayStream;
   StreamSubscription<List<QueueEntry>>? _streamSub;

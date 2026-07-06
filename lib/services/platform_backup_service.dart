@@ -16,6 +16,7 @@ import '../models/user_account.dart';
 import 'audit_logger.dart';
 import 'auth_service.dart';
 import 'backend/clinic_backend.dart';
+import 'firebase_bootstrap.dart';
 import 'owner_audit_service.dart';
 import 'smart_owner_notification_service.dart';
 
@@ -26,11 +27,14 @@ class PlatformBackupService extends ChangeNotifier {
     FirebaseFirestore? firestore,
     bool? useFirestore,
   })  : _backend = backend,
-        _db = firestore ?? FirebaseFirestore.instance,
-        _useFirestore = useFirestore ?? false;
+        _useFirestore = useFirestore ?? false,
+        _db = FirebaseBootstrap.firestoreOrNull(
+          enabled: useFirestore ?? false,
+          override: firestore,
+        );
 
   final ClinicBackend _backend;
-  final FirebaseFirestore _db;
+  final FirebaseFirestore? _db;
   final bool _useFirestore;
   static const _uuid = Uuid();
 
@@ -118,7 +122,7 @@ class PlatformBackupService extends ChangeNotifier {
     _lastWeeklyRun = _readDate(prefs.getString(_lastWeeklyKey));
 
     if (_useFirestore) {
-      final snap = await _db
+      final snap = await _db!
           .collection('platform_backups')
           .orderBy('createdAt', descending: true)
           .limit(100)
@@ -566,7 +570,7 @@ class PlatformBackupService extends ChangeNotifier {
   Future<String?> _loadPayload(String backupId) async {
     if (_payloads.containsKey(backupId)) return _payloads[backupId];
     if (_useFirestore) {
-      final doc = await _db.collection('platform_backups').doc(backupId).get();
+      final doc = await _db!.collection('platform_backups').doc(backupId).get();
       final payload = doc.data()?['payload'] as String?;
       if (payload != null) _payloads[backupId] = payload;
       return payload;
@@ -580,7 +584,7 @@ class PlatformBackupService extends ChangeNotifier {
     String? payload,
   ) async {
     if (_useFirestore) {
-      await _db.collection('platform_backups').doc(record.id).set({
+      await _db!.collection('platform_backups').doc(record.id).set({
         ...record.toMap(),
         if (payload != null) 'payload': payload,
       });

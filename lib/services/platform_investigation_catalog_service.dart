@@ -11,16 +11,20 @@ import 'audit_logger.dart';
 import 'owner_audit_service.dart';
 import '../models/investigation_catalog_item.dart';
 import '../models/investigation_category.dart';
+import 'firebase_bootstrap.dart';
 
 /// Owner-managed investigation catalog — merges with built-in for doctors.
 class PlatformInvestigationCatalogService extends ChangeNotifier {
   PlatformInvestigationCatalogService({
     FirebaseFirestore? firestore,
     bool? useFirestore,
-  })  : _db = firestore ?? FirebaseFirestore.instance,
-        _useFirestore = useFirestore ?? false;
+  })  : _useFirestore = useFirestore ?? false,
+        _db = FirebaseBootstrap.firestoreOrNull(
+          enabled: useFirestore ?? false,
+          override: firestore,
+        );
 
-  final FirebaseFirestore _db;
+  final FirebaseFirestore? _db;
   final bool _useFirestore;
   final List<InvestigationCatalogItem> _custom = [];
   bool _loaded = false;
@@ -47,7 +51,7 @@ class PlatformInvestigationCatalogService extends ChangeNotifier {
   Future<void> load() async {
     if (_loaded) return;
     if (_useFirestore) {
-      final snap = await _db.collection('platform_investigations').get();
+      final snap = await _db!.collection('platform_investigations').get();
       _custom
         ..clear()
         ..addAll(
@@ -119,10 +123,10 @@ class PlatformInvestigationCatalogService extends ChangeNotifier {
 
   Future<void> _persist() async {
     if (_useFirestore) {
-      final batch = _db.batch();
+      final batch = _db!.batch();
       for (final item in _custom) {
         batch.set(
-          _db.collection('platform_investigations').doc(item.id),
+          _db!.collection('platform_investigations').doc(item.id),
           item.toMap(),
           SetOptions(merge: true),
         );

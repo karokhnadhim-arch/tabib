@@ -7,18 +7,22 @@ import '../models/audit_module.dart';
 import '../models/user_account.dart';
 import 'audit_device_context.dart';
 import 'audit_log_exporter.dart';
+import 'firebase_bootstrap.dart';
 
 /// Append-only audit trail — immutable, owner-only visibility.
 class OwnerAuditService extends ChangeNotifier {
   OwnerAuditService({
     FirebaseFirestore? firestore,
     bool? useFirestore,
-  })  : _db = firestore ?? FirebaseFirestore.instance,
-        _useFirestore = useFirestore ?? false {
+  })  : _useFirestore = useFirestore ?? false,
+        _db = FirebaseBootstrap.firestoreOrNull(
+          enabled: useFirestore ?? false,
+          override: firestore,
+        ) {
     if (!_useFirestore) _seedDemoEntries();
   }
 
-  final FirebaseFirestore _db;
+  final FirebaseFirestore? _db;
   final bool _useFirestore;
   static const _uuid = Uuid();
   static const _collection = 'audit_logs';
@@ -153,7 +157,7 @@ class OwnerAuditService extends ChangeNotifier {
       _hasMore = true;
     }
     try {
-      Query<Map<String, dynamic>> query = _db
+      Query<Map<String, dynamic>> query = _db!
           .collection(_collection)
           .orderBy('timestamp', descending: true)
           .limit(_pageSize);
@@ -238,7 +242,7 @@ class OwnerAuditService extends ChangeNotifier {
 
   Future<void> _persistEntry(AuditLogEntry entry) async {
     try {
-      await _db.collection(_collection).doc(entry.id).set(entry.toMap());
+      await _db!.collection(_collection).doc(entry.id).set(entry.toMap());
     } catch (e) {
       debugPrint('Audit persist failed: $e');
     }

@@ -6,19 +6,28 @@ import '../../../models/queue_entry.dart';
 
 /// Merges secretary/active queue entries with today's completed patients (read-only).
 class DoctorTodayQueueAggregator {
-  DoctorTodayQueueAggregator({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+  DoctorTodayQueueAggregator({FirebaseFirestore? firestore}) : _firestore = firestore;
 
-  final FirebaseFirestore _firestore;
+  final FirebaseFirestore? _firestore;
 
   Stream<List<QueueEntry>> watchTodayQueue({
     required Stream<List<QueueEntry>> secretaryStream,
     required String doctorId,
   }) {
+    if (_firestore == null) {
+      return secretaryStream.map(
+        (secretary) => mergeLists(
+          secretary: secretary,
+          completed: const [],
+          forDate: DateTime.now(),
+        ),
+      );
+    }
+
     final today = QueueEntry.dateKey(DateTime.now());
 
     Stream<List<QueueEntry>> completedStream() {
-      return _firestore
+      return _firestore!
           .collection('queue_entries')
           .where('doctorId', isEqualTo: doctorId)
           .where('status', isEqualTo: QueueStatus.completed.name)
