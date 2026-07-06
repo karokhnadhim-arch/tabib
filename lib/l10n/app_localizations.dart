@@ -7126,6 +7126,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Returned for review — investigation results ready'**
   String get patientReturnedForReview;
+
+  /// No description provided for @inDoctorRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'In doctor room'**
+  String get inDoctorRoom;
+
+  /// No description provided for @callToDoctorRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Call in'**
+  String get callToDoctorRoom;
+
+  /// No description provided for @markAsWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark waiting'**
+  String get markAsWaiting;
+
+  /// No description provided for @editPatientInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit patient'**
+  String get editPatientInfo;
+
+  /// No description provided for @patientInfoUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient information updated'**
+  String get patientInfoUpdated;
+
+  /// No description provided for @patientsInQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} in queue'**
+  String patientsInQueue(int count);
+
+  /// No description provided for @addToQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to queue'**
+  String get addToQueue;
+
+  /// No description provided for @addToQueueAfterRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to today\'s queue automatically'**
+  String get addToQueueAfterRegister;
+
+  /// No description provided for @searchExistingPatients.
+  ///
+  /// In en, this message translates to:
+  /// **'Existing patients'**
+  String get searchExistingPatients;
+
+  /// No description provided for @alreadyInQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient is already in today\'s queue'**
+  String get alreadyInQueue;
+
+  /// No description provided for @addedToQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to queue'**
+  String get addedToQueue;
+
+  /// No description provided for @noSearchResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching patients'**
+  String get noSearchResults;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

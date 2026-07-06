@@ -3625,4 +3625,42 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get patientReturnedForReview => 'گەڕاوەتەوە بۆ پێداچوونەوە — ئەنجامی پشکنین ئامادەیە';
+
+  @override
+  String get inDoctorRoom => 'لە ژووری دکتۆر';
+
+  @override
+  String get callToDoctorRoom => 'بانگکردن';
+
+  @override
+  String get markAsWaiting => 'نیشانکردن بە چاوەڕوان';
+
+  @override
+  String get editPatientInfo => 'دەستکاری نەخۆش';
+
+  @override
+  String get patientInfoUpdated => 'زانیاری نەخۆش نوێکرایەوە';
+
+  @override
+  String patientsInQueue(int count) {
+    return '$count لە ڕیز';
+  }
+
+  @override
+  String get addToQueue => 'زیادکردن بۆ ڕیز';
+
+  @override
+  String get addToQueueAfterRegister => 'خۆکار زیاد بکە بۆ ڕیزی ئەمڕۆ';
+
+  @override
+  String get searchExistingPatients => 'نەخۆشە تۆمارکراوەکان';
+
+  @override
+  String get alreadyInQueue => 'نەخۆش پێشتر لە ڕیزی ئەمڕۆیە';
+
+  @override
+  String get addedToQueue => 'زیادکرا بۆ ڕیز';
+
+  @override
+  String get noSearchResults => 'هیچ ئەنجامێک نییە';
 }

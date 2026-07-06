@@ -11,6 +11,7 @@ import '../models/localized_text.dart';
 import '../models/doctor.dart';
 import '../models/service_provider_type.dart';
 import '../models/clinic.dart';
+import '../models/secretary_patient_registration_result.dart';
 import '../models/user_account.dart';
 import '../core/config/super_owner_config.dart';
 import '../core/config/system_owner_config.dart';
@@ -421,14 +422,27 @@ class AuthService extends ChangeNotifier {
     }
   }
 
-  Future<String?> registerPatientBySecretary({
+  Future<SecretaryPatientRegistrationResult> registerPatientBySecretary({
     required String name,
     required String phone,
     required String clinicId,
   }) async {
-    if (phone.length < 10) return 'invalid_phone';
+    if (phone.length < 10) {
+      return const SecretaryPatientRegistrationResult(errorKey: 'invalid_phone');
+    }
 
-    if (_demoMode) return null;
+    if (_demoMode) {
+      final id = 'demo_patient_${DateTime.now().millisecondsSinceEpoch}';
+      final account = UserAccount(
+        id: id,
+        name: LocalizedText(ku: name, ar: name, en: name),
+        role: UserRole.patient,
+        phone: phone,
+        clinicId: clinicId,
+      );
+      await _backend.upsertStaff(account);
+      return SecretaryPatientRegistrationResult(patientId: id);
+    }
 
     try {
       final cred = await _firebaseAuth!.signInAnonymously();
@@ -444,9 +458,51 @@ class AuthService extends ChangeNotifier {
           .collection('users')
           .doc(uid)
           .set(account.toMap());
-      return null;
+      return SecretaryPatientRegistrationResult(patientId: uid);
     } on FirebaseAuthException catch (e) {
-      return e.message ?? e.code;
+      return SecretaryPatientRegistrationResult(errorKey: e.message ?? e.code);
+    } on FirebaseException catch (e) {
+      return SecretaryPatientRegistrationResult(errorKey: e.message ?? e.code);
+    }
+  }
+
+  /// Secretary or doctor updates a patient's basic profile.
+  Future<String?> updatePatientByStaff({
+    required String patientId,
+    required String name,
+    required String phone,
+  }) async {
+    final actor = _currentUser;
+    if (actor == null ||
+        (actor.role != UserRole.secretary && actor.role != UserRole.doctor)) {
+      return 'unauthorized';
+    }
+    if (name.trim().length < 2) return 'invalid_name';
+    if (phone.trim().length < 10) return 'invalid_phone';
+
+    final localized = LocalizedText(ku: name, ar: name, en: name);
+
+    if (_useDemoAuth) {
+      final staff = await _backend.fetchStaff();
+      final index = staff.indexWhere((s) => s.id == patientId);
+      if (index < 0) return 'not_found';
+      final updated = staff[index].copyWith(
+        name: localized,
+        phone: phone.trim(),
+      );
+      await _backend.upsertStaff(updated);
+      return null;
+    }
+
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(patientId).set(
+        {
+          'name': localized.toMap(),
+          'phone': phone.trim(),
+        },
+        SetOptions(merge: true),
+      );
+      return null;
     } on FirebaseException catch (e) {
       return e.message ?? e.code;
     }

@@ -3625,4 +3625,42 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get patientReturnedForReview => 'عاد للمراجعة — نتائج الفحوصات جاهزة';
+
+  @override
+  String get inDoctorRoom => 'في غرفة الطبيب';
+
+  @override
+  String get callToDoctorRoom => 'استدعاء';
+
+  @override
+  String get markAsWaiting => 'وضع في الانتظار';
+
+  @override
+  String get editPatientInfo => 'تعديل المريض';
+
+  @override
+  String get patientInfoUpdated => 'تم تحديث بيانات المريض';
+
+  @override
+  String patientsInQueue(int count) {
+    return '$count في القائمة';
+  }
+
+  @override
+  String get addToQueue => 'إضافة للقائمة';
+
+  @override
+  String get addToQueueAfterRegister => 'إضافة تلقائية لقائمة اليوم';
+
+  @override
+  String get searchExistingPatients => 'مرضى مسجلون';
+
+  @override
+  String get alreadyInQueue => 'المريض موجود بالفعل في قائمة اليوم';
+
+  @override
+  String get addedToQueue => 'تمت الإضافة للقائمة';
+
+  @override
+  String get noSearchResults => 'لا توجد نتائج';
 }

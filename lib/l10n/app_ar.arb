@@ -1306,5 +1306,24 @@
       }
     }
   },
-  "patientReturnedForReview": "عاد للمراجعة — نتائج الفحوصات جاهزة"
+  "patientReturnedForReview": "عاد للمراجعة — نتائج الفحوصات جاهزة",
+  "inDoctorRoom": "في غرفة الطبيب",
+  "callToDoctorRoom": "استدعاء",
+  "markAsWaiting": "وضع في الانتظار",
+  "editPatientInfo": "تعديل المريض",
+  "patientInfoUpdated": "تم تحديث بيانات المريض",
+  "patientsInQueue": "{count} في القائمة",
+  "@patientsInQueue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addToQueue": "إضافة للقائمة",
+  "addToQueueAfterRegister": "إضافة تلقائية لقائمة اليوم",
+  "searchExistingPatients": "مرضى مسجلون",
+  "alreadyInQueue": "المريض موجود بالفعل في قائمة اليوم",
+  "addedToQueue": "تمت الإضافة للقائمة",
+  "noSearchResults": "لا توجد نتائج"
 }

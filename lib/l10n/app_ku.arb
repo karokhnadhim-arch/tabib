@@ -1306,5 +1306,24 @@
       }
     }
   },
-  "patientReturnedForReview": "گەڕاوەتەوە بۆ پێداچوونەوە — ئەنجامی پشکنین ئامادەیە"
+  "patientReturnedForReview": "گەڕاوەتەوە بۆ پێداچوونەوە — ئەنجامی پشکنین ئامادەیە",
+  "inDoctorRoom": "لە ژووری دکتۆر",
+  "callToDoctorRoom": "بانگکردن",
+  "markAsWaiting": "نیشانکردن بە چاوەڕوان",
+  "editPatientInfo": "دەستکاری نەخۆش",
+  "patientInfoUpdated": "زانیاری نەخۆش نوێکرایەوە",
+  "patientsInQueue": "{count} لە ڕیز",
+  "@patientsInQueue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addToQueue": "زیادکردن بۆ ڕیز",
+  "addToQueueAfterRegister": "خۆکار زیاد بکە بۆ ڕیزی ئەمڕۆ",
+  "searchExistingPatients": "نەخۆشە تۆمارکراوەکان",
+  "alreadyInQueue": "نەخۆش پێشتر لە ڕیزی ئەمڕۆیە",
+  "addedToQueue": "زیادکرا بۆ ڕیز",
+  "noSearchResults": "هیچ ئەنجامێک نییە"
 }

@@ -729,6 +729,19 @@ class FirestoreClinicBackend implements ClinicBackend {
     await batch.commit();
   }
 
+  @override
+  Future<void> updateQueueEntryContact(
+    String entryId,
+    String doctorId, {
+    required String patientName,
+    required String patientPhone,
+  }) async {
+    await _queues.doc(entryId).update({
+      'patientName': patientName,
+      'patientPhone': patientPhone,
+    });
+  }
+
   Future<void> _reindexDoctorQueue(
     String doctorId, {
     String? queueDate,

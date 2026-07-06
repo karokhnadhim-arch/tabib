@@ -237,6 +237,19 @@ class QueueService extends ChangeNotifier {
   Future<void> returnToReview(String entryId, String doctorId) =>
       _backend.returnToReview(entryId, doctorId);
 
+  Future<void> updateQueueEntryContact(
+    String entryId,
+    String doctorId, {
+    required String patientName,
+    required String patientPhone,
+  }) =>
+      _backend.updateQueueEntryContact(
+        entryId,
+        doctorId,
+        patientName: patientName,
+        patientPhone: patientPhone,
+      );
+
   Future<void> syncPatientQueueStatus({
     required String patientId,
     required String doctorId,

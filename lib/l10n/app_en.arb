@@ -1397,5 +1397,24 @@
       }
     }
   },
-  "patientReturnedForReview": "Returned for review — investigation results ready"
+  "patientReturnedForReview": "Returned for review — investigation results ready",
+  "inDoctorRoom": "In doctor room",
+  "callToDoctorRoom": "Call in",
+  "markAsWaiting": "Mark waiting",
+  "editPatientInfo": "Edit patient",
+  "patientInfoUpdated": "Patient information updated",
+  "patientsInQueue": "{count} in queue",
+  "@patientsInQueue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addToQueue": "Add to queue",
+  "addToQueueAfterRegister": "Add to today's queue automatically",
+  "searchExistingPatients": "Existing patients",
+  "alreadyInQueue": "Patient is already in today's queue",
+  "addedToQueue": "Added to queue",
+  "noSearchResults": "No matching patients"
 }

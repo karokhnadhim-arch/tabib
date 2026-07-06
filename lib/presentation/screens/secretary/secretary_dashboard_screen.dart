@@ -146,9 +146,10 @@ class _SecretaryDashboardScreenState extends State<SecretaryDashboardScreen> {
                     ),
                   ),
                 Card(
-                  elevation: 1,
+                  elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(color: Colors.grey.shade200),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(14),
@@ -256,7 +257,15 @@ class _SecretaryDashboardScreenState extends State<SecretaryDashboardScreen> {
                           child: Center(child: Text(l10n.noAssignedDoctor)),
                         )
                 else if (_tab == 1)
-                  RegisterPatientScreen(clinicId: clinicId)
+                  linkedDoctorId != null && linkedDoctorId.isNotEmpty
+                      ? RegisterPatientScreen(
+                          clinicId: clinicId,
+                          doctorId: linkedDoctorId,
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 32),
+                          child: Center(child: Text(l10n.noAssignedDoctor)),
+                        )
                 else
                   linkedDoctorId != null && linkedDoctorId.isNotEmpty
                       ? DailyScheduleScreen(

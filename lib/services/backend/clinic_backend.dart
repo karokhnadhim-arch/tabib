@@ -83,6 +83,14 @@ abstract class ClinicBackend {
   Future<void> sendToExamination(String entryId, String doctorId);
   Future<void> returnToReview(String entryId, String doctorId);
 
+  /// Updates display contact on a queue entry (secretary patient edit).
+  Future<void> updateQueueEntryContact(
+    String entryId,
+    String doctorId, {
+    required String patientName,
+    required String patientPhone,
+  });
+
   Future<void> upsertSpecialty(Specialty specialty);
   Future<void> deleteSpecialty(String id);
   Future<void> upsertClinic(Clinic clinic);

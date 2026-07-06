@@ -464,6 +464,34 @@ class InMemoryClinicBackend implements ClinicBackend {
     _notify();
   }
 
+  @override
+  Future<void> updateQueueEntryContact(
+    String entryId,
+    String doctorId, {
+    required String patientName,
+    required String patientPhone,
+  }) async {
+    final entry = _queues.where((q) => q.id == entryId).firstOrNull;
+    if (entry == null || entry.doctorId != doctorId) return;
+    final updated = QueueEntry(
+      id: entry.id,
+      patientId: entry.patientId,
+      patientName: patientName,
+      patientPhone: patientPhone,
+      doctorId: entry.doctorId,
+      position: entry.position,
+      status: entry.status,
+      bookedAt: entry.bookedAt,
+      estimatedWaitMinutes: entry.estimatedWaitMinutes,
+      queueDate: entry.queueDate,
+      slotStart: entry.slotStart,
+      slotEnd: entry.slotEnd,
+    );
+    final index = _queues.indexWhere((q) => q.id == entryId);
+    if (index >= 0) _queues[index] = updated;
+    _notify();
+  }
+
   void _reindexDoctorQueue(
     String doctorId, {
     String? queueDate,

@@ -3625,4 +3625,42 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get patientReturnedForReview => 'Returned for review — investigation results ready';
+
+  @override
+  String get inDoctorRoom => 'In doctor room';
+
+  @override
+  String get callToDoctorRoom => 'Call in';
+
+  @override
+  String get markAsWaiting => 'Mark waiting';
+
+  @override
+  String get editPatientInfo => 'Edit patient';
+
+  @override
+  String get patientInfoUpdated => 'Patient information updated';
+
+  @override
+  String patientsInQueue(int count) {
+    return '$count in queue';
+  }
+
+  @override
+  String get addToQueue => 'Add to queue';
+
+  @override
+  String get addToQueueAfterRegister => 'Add to today\'s queue automatically';
+
+  @override
+  String get searchExistingPatients => 'Existing patients';
+
+  @override
+  String get alreadyInQueue => 'Patient is already in today\'s queue';
+
+  @override
+  String get addedToQueue => 'Added to queue';
+
+  @override
+  String get noSearchResults => 'No matching patients';
 }
