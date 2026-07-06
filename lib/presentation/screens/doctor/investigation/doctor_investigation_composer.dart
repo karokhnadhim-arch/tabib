@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -8,6 +9,7 @@ import '../../../../models/investigation_catalog_item.dart';
 import '../../../../models/investigation_category.dart';
 import '../../../../models/investigation_request_item.dart';
 import '../../../../services/investigation_search_service.dart';
+import '../../../../services/platform_investigation_catalog_service.dart';
 import '../../../../utils/investigation_category_utils.dart';
 import '../doctor_consultation_widgets.dart';
 
@@ -31,9 +33,15 @@ class DoctorInvestigationComposer extends StatefulWidget {
 
 class _DoctorInvestigationComposerState extends State<DoctorInvestigationComposer> {
   final _searchController = TextEditingController();
-  final _searchService = InvestigationSearchService();
   Timer? _searchDebounce;
   Map<InvestigationCategory, List<InvestigationCatalogItem>> _grouped = {};
+
+  InvestigationSearchService _searchService(BuildContext context) {
+    final platform = context.read<PlatformInvestigationCatalogService>();
+    return InvestigationSearchService(
+      additionalItems: platform.activeCustom,
+    );
+  }
 
   @override
   void initState() {
@@ -58,7 +66,8 @@ class _DoctorInvestigationComposerState extends State<DoctorInvestigationCompose
 
   void _refreshSuggestions() {
     setState(() {
-      _grouped = _searchService.grouped(query: _searchController.text);
+      _grouped =
+          _searchService(context).grouped(query: _searchController.text);
     });
   }
 

@@ -69,6 +69,10 @@ import 'services/offline/offline_profile_cache_service.dart';
 import 'services/offline/offline_queue_cache_service.dart';
 import 'services/offline/offline_recent_chats_service.dart';
 import 'services/offline/offline_sync_coordinator.dart';
+import 'services/platform_clinical_settings_service.dart';
+import 'services/platform_investigation_catalog_service.dart';
+import 'services/platform_medicine_catalog_service.dart';
+import 'services/clinic_structure_service.dart';
 import 'core/widgets/maintenance_mode_gate.dart';
 
 /// Root widget for Tabib — medical appointment platform.
@@ -149,6 +153,10 @@ class _TabibAppState extends State<TabibApp> {
   late final OrganizationService _organizationService;
   late final TenantContextService _tenantContextService;
   late final OrganizationBillingService _organizationBillingService;
+  late final PlatformMedicineCatalogService _platformMedicineCatalog;
+  late final PlatformInvestigationCatalogService _platformInvestigationCatalog;
+  late final PlatformClinicalSettingsService _platformClinicalSettings;
+  late final ClinicStructureService _clinicStructureService;
   QueueNotificationMonitor? _queueNotificationMonitor;
   late final GoRouter _router;
   String? _activePatientQueueId;
@@ -271,6 +279,14 @@ class _TabibAppState extends State<TabibApp> {
     _organizationBillingService = OrganizationBillingService(
       organizations: _organizationService,
     );
+    _platformMedicineCatalog = PlatformMedicineCatalogService(
+      useFirestore: !_demoMode,
+    )..load();
+    _platformInvestigationCatalog = PlatformInvestigationCatalogService(
+      useFirestore: !_demoMode,
+    )..load();
+    _platformClinicalSettings = PlatformClinicalSettingsService()..load();
+    _clinicStructureService = ClinicStructureService()..load();
     _systemMonitoringService = SystemMonitoringService(
       backend: _backend,
       clinicData: _dataService,
@@ -403,6 +419,10 @@ class _TabibAppState extends State<TabibApp> {
         ChangeNotifierProvider.value(value: _organizationService),
         ChangeNotifierProvider.value(value: _tenantContextService),
         ChangeNotifierProvider.value(value: _organizationBillingService),
+        ChangeNotifierProvider.value(value: _platformMedicineCatalog),
+        ChangeNotifierProvider.value(value: _platformInvestigationCatalog),
+        ChangeNotifierProvider.value(value: _platformClinicalSettings),
+        ChangeNotifierProvider.value(value: _clinicStructureService),
         ChangeNotifierProvider.value(value: _connectivityService),
         ChangeNotifierProvider.value(value: _offlineQueueCacheService),
         ChangeNotifierProvider.value(value: _offlineAppointmentCacheService),

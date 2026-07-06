@@ -93,6 +93,7 @@ class SystemOwnerShell extends StatelessWidget {
         SystemOwnerNavSection.businesses => l10n.businessManagement,
         SystemOwnerNavSection.secretaries => l10n.secretaryManagement,
         SystemOwnerNavSection.patients => l10n.patientManagement,
+        SystemOwnerNavSection.clinicalAdmin => l10n.clinicalAdministration,
         SystemOwnerNavSection.admins => l10n.manageAdmins,
         SystemOwnerNavSection.subscriptions => l10n.ownerNavSubscriptionsPackages,
         SystemOwnerNavSection.payments => l10n.paymentsBilling,

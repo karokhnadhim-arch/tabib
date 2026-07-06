@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -6,6 +7,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../models/clinic.dart';
 import '../../../models/localized_text.dart';
 import '../../../core/auth/admin_permissions.dart';
+import '../../../core/auth/admin_routes.dart';
 import '../../../presentation/widgets/admin_guard.dart';
 import '../../../presentation/widgets/owner_module_app_bar.dart';
 import '../../../services/auth_service.dart';
@@ -133,9 +135,21 @@ class _OwnerClinicsScreenState extends State<OwnerClinicsScreen> {
               child: ListTile(
                 title: Text(c.name.localized(context)),
                 subtitle: Text(c.address.localized(context)),
-                trailing: IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: () => _showForm(existing: c),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.apartment_outlined),
+                      tooltip: l10n.clinicStructure,
+                      onPressed: () => context.push(
+                        '${AdminRoutes.platformPrefix}/clinics/${c.id}/structure',
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.edit),
+                      onPressed: () => _showForm(existing: c),
+                    ),
+                  ],
                 ),
               ),
             );

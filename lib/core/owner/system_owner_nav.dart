@@ -9,6 +9,7 @@ enum SystemOwnerNavSection {
   businesses,
   secretaries,
   patients,
+  clinicalAdmin,
   admins,
   subscriptions,
   payments,
@@ -32,6 +33,8 @@ enum SystemOwnerNavSection {
           '${AdminRoutes.platformPrefix}/secretaries',
         SystemOwnerNavSection.patients =>
           '${AdminRoutes.platformPrefix}/patients',
+        SystemOwnerNavSection.clinicalAdmin =>
+          '${AdminRoutes.platformPrefix}/clinical-admin',
         SystemOwnerNavSection.admins => '${AdminRoutes.platformPrefix}/admins',
         SystemOwnerNavSection.subscriptions =>
           '${AdminRoutes.platformPrefix}/subscriptions-packages',
@@ -65,6 +68,7 @@ enum SystemOwnerNavSection {
         SystemOwnerNavSection.businesses => Icons.storefront_outlined,
         SystemOwnerNavSection.secretaries => Icons.support_agent_outlined,
         SystemOwnerNavSection.patients => Icons.people_alt_outlined,
+        SystemOwnerNavSection.clinicalAdmin => Icons.medical_information_outlined,
         SystemOwnerNavSection.admins => Icons.security_outlined,
         SystemOwnerNavSection.subscriptions => Icons.card_membership_outlined,
         SystemOwnerNavSection.payments => Icons.payments_outlined,

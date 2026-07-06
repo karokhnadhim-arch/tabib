@@ -129,10 +129,17 @@ class OwnerPlatformScreen extends StatelessWidget {
               ),
             if (AdminPermissions.canManagePatients(auth))
               _PlatformTile(
-                title: l10n.managePatients,
+                title: l10n.patientManagement,
                 subtitle: l10n.managePatientsHint,
                 icon: Icons.people_alt_outlined,
                 onTap: () => context.push('${AdminRoutes.platformPrefix}/patients'),
+              ),
+            if (AdminPermissions.canManageClinics(auth))
+              _PlatformTile(
+                title: l10n.clinicalAdministration,
+                subtitle: l10n.clinicalAdministrationHint,
+                icon: Icons.medical_information_outlined,
+                onTap: () => context.push('${AdminRoutes.platformPrefix}/clinical-admin'),
               ),
             if (AdminPermissions.canManageSubscriptions(auth))
               _PlatformTile(

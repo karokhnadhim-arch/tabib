@@ -4,20 +4,35 @@ import '../models/investigation_category.dart';
 
 /// Fast in-memory investigation search — results grouped by category.
 class InvestigationSearchService {
-  InvestigationSearchService({InvestigationCatalog? catalog})
-      : _catalog = catalog ?? InvestigationCatalog.instance;
+  InvestigationSearchService({
+    InvestigationCatalog? catalog,
+    Iterable<InvestigationCatalogItem>? additionalItems,
+  })  : _catalog = catalog ?? InvestigationCatalog.instance,
+        _additional = List<InvestigationCatalogItem>.unmodifiable(
+          additionalItems ?? const <InvestigationCatalogItem>[],
+        );
 
   final InvestigationCatalog _catalog;
+  final List<InvestigationCatalogItem> _additional;
+
+  List<InvestigationCatalogItem> get _allItems {
+    final builtIn = _catalog.all;
+    final ids = builtIn.map((i) => i.id).toSet();
+    return [
+      ...builtIn,
+      ..._additional.where((i) => !i.archived && !ids.contains(i.id)),
+    ];
+  }
 
   List<InvestigationCatalogItem> search({
     required String query,
     int limit = 24,
   }) {
     final q = query.trim().toLowerCase();
-    if (q.isEmpty) return _catalog.all.take(limit).toList();
+    if (q.isEmpty) return _allItems.take(limit).toList();
 
     final results = <InvestigationCatalogItem>[];
-    for (final item in _catalog.all) {
+    for (final item in _allItems) {
       if (item.containsQuery(q)) results.add(item);
       if (results.length >= limit) break;
     }

@@ -3735,4 +3735,160 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get printInvestigationRequest => 'چاپکردنی داواکاری پشکنین';
+
+  @override
+  String get clinicalAdministration => 'بەڕێوەبردنی پزیشکی';
+
+  @override
+  String get clinicalAdministrationHint => 'داتابەیسی دەرمان و پشکنین، یاساکانی ڕیز، و قاڵبی ڕەچەتە';
+
+  @override
+  String get medicineDatabase => 'داتابەیسی دەرمان';
+
+  @override
+  String get medicineDatabaseHint => 'دروستکردن، دەستکاری، و ئەرشیفکردنی دەرمان بۆ ڕەچەتە';
+
+  @override
+  String get investigationDatabase => 'داتابەیسی پشکنین';
+
+  @override
+  String get investigationDatabaseHint => 'بەڕێوەبردنی پشکنینی تاقیگە و تیشک';
+
+  @override
+  String get prescriptionSettings => 'ڕێکخستنی ڕەچەتە';
+
+  @override
+  String get prescriptionSettingsHint => 'سەرپەڕ، پێنووس، و قاڵبی چاپی ڕەچەتە';
+
+  @override
+  String get queueSettingsHint => 'ژمارەکردنی ڕیز، ماوەی ڕاوێژ، و یاساکانی پیشاندان';
+
+  @override
+  String get genericName => 'ناوی گشتی';
+
+  @override
+  String get brandNames => 'ناوی بازرگانی (بە کۆما جیاکراوە)';
+
+  @override
+  String get strength => 'توندی';
+
+  @override
+  String get dosageForm => 'شێوەی دۆز';
+
+  @override
+  String get category => 'پۆل';
+
+  @override
+  String get archiveItem => 'ئەرشیف';
+
+  @override
+  String get restoreItem => 'گەڕاندنەوە';
+
+  @override
+  String get showArchived => 'ئەرشیفکراو پیشان بدە';
+
+  @override
+  String get activeOnly => 'تەنها چالاک';
+
+  @override
+  String get noMedicinesInDatabase => 'هێشتا دەرمانی تایبەت نییە. + بکە بۆ زیادکردن.';
+
+  @override
+  String get noInvestigationsInDatabase => 'هێشتا پشکنینی تایبەت نییە. + بکە بۆ زیادکردن.';
+
+  @override
+  String get addInvestigation => 'پشکنین زیاد بکە';
+
+  @override
+  String get investigationName => 'ناوی پشکنین';
+
+  @override
+  String get searchInvestigations => 'گەڕان لە پشکنین';
+
+  @override
+  String get consultationDurationDefault => 'ماوەی بنەڕەتی ڕاوێژ';
+
+  @override
+  String get autoAssignQueueNumbers => 'ژمارەی ڕیز خۆکار دابنێ';
+
+  @override
+  String get autoAssignQueueNumbersHint => 'ڕیز خۆکار ژمارەی داهاتوو وەردەگرێت';
+
+  @override
+  String get queueStartNumber => 'ژمارەی دەستپێکی ڕیز';
+
+  @override
+  String get showCompletedInQueue => 'تەواوکراوەکان لە ڕیزی سکرتێر پیشان بدە';
+
+  @override
+  String get prescriptionHeaderClinicName => 'سەرپەڕی ڕەچەتە — ناوی کلینیک';
+
+  @override
+  String get prescriptionHeaderAddress => 'سەرپەڕی ڕەچەتە — ناونیشان';
+
+  @override
+  String get prescriptionHeaderPhone => 'سەرپەڕی ڕەچەتە — تەلەفۆن';
+
+  @override
+  String get prescriptionFooterNote => 'تێبینی پێنووسی ڕەچەتە';
+
+  @override
+  String get prescriptionShowDiagnosis => 'دەستنیشانکردن لە ڕەچەتەی چاپکراودا پیشان بدە';
+
+  @override
+  String get departments => 'بەشەکان';
+
+  @override
+  String get consultationRooms => 'ژووری ڕاوێژ';
+
+  @override
+  String get addDepartment => 'بەش زیاد بکە';
+
+  @override
+  String get addRoom => 'ژوور زیاد بکە';
+
+  @override
+  String get clinicStructure => 'بەش و ژووری ڕاوێژ';
+
+  @override
+  String get mergePatients => 'یەکخستنی نەخۆش';
+
+  @override
+  String get mergePatientsHint => 'هەژماری دووبارە ناچالاک دەکرێت. تۆمارە پزیشکییەکان بە دەست پشکنین بکە.';
+
+  @override
+  String get selectPrimaryPatient => 'ئەم نەخۆشە بهێڵەوە';
+
+  @override
+  String get selectDuplicatePatient => 'یەکبخە و دووبارە ناچالاک بکە';
+
+  @override
+  String get patientsMerged => 'نەخۆشی دووبارە ناچالاک کرا';
+
+  @override
+  String get searchPatients => 'گەڕان بە ناو، تەلەفۆن، یان ئیمەیڵ';
+
+  @override
+  String get activePatients => 'چالاک';
+
+  @override
+  String get disabledPatients => 'ناچالاک';
+
+  @override
+  String get noPatientsFound => 'هیچ نەخۆشێک نەدۆزرایەوە';
+
+  @override
+  String get firebaseConfiguration => 'ڕێکخستنی Firebase';
+
+  @override
+  String get firebaseConfigurationHint => 'چاودێری بەکارهێنان و تەندروستی پەیوەندی Firebase';
+
+  @override
+  String get printerSettings => 'ڕێکخستنی چاپکەر';
+
+  @override
+  String get printerSettingsHint => 'سەرپەڕ و شێوازی چاپی ڕەچەتە';
+
+  @override
+  String get backupSettings => 'ڕێکخستنی پاشەکەوت';
 }

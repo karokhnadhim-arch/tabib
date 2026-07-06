@@ -3735,4 +3735,160 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get printInvestigationRequest => 'طباعة طلب الفحص';
+
+  @override
+  String get clinicalAdministration => 'الإدارة السريرية';
+
+  @override
+  String get clinicalAdministrationHint => 'قواعد الأدوية والفحوصات والطابور وقوالب الوصفات';
+
+  @override
+  String get medicineDatabase => 'قاعدة الأدوية';
+
+  @override
+  String get medicineDatabaseHint => 'إنشاء وتعديل وأرشفة الأدوية للوصفات';
+
+  @override
+  String get investigationDatabase => 'قاعدة الفحوصات';
+
+  @override
+  String get investigationDatabaseHint => 'إدارة فحوصات المختبر والأشعة';
+
+  @override
+  String get prescriptionSettings => 'إعدادات الوصفة';
+
+  @override
+  String get prescriptionSettingsHint => 'رأس وتذييل الوصفة وقوالب الطباعة';
+
+  @override
+  String get queueSettingsHint => 'ترقيم الطابور ومدة الاستشارة وقواعد العرض';
+
+  @override
+  String get genericName => 'الاسم العلمي';
+
+  @override
+  String get brandNames => 'الأسماء التجارية (مفصولة بفاصلة)';
+
+  @override
+  String get strength => 'التركيز';
+
+  @override
+  String get dosageForm => 'شكل الجرعة';
+
+  @override
+  String get category => 'الفئة';
+
+  @override
+  String get archiveItem => 'أرشفة';
+
+  @override
+  String get restoreItem => 'استعادة';
+
+  @override
+  String get showArchived => 'عرض المؤرشف';
+
+  @override
+  String get activeOnly => 'النشط فقط';
+
+  @override
+  String get noMedicinesInDatabase => 'لا توجد أدوية مخصصة بعد. اضغط + للإضافة.';
+
+  @override
+  String get noInvestigationsInDatabase => 'لا توجد فحوصات مخصصة بعد. اضغط + للإضافة.';
+
+  @override
+  String get addInvestigation => 'إضافة فحص';
+
+  @override
+  String get investigationName => 'اسم الفحص';
+
+  @override
+  String get searchInvestigations => 'بحث في الفحوصات';
+
+  @override
+  String get consultationDurationDefault => 'مدة الاستشارة الافتراضية';
+
+  @override
+  String get autoAssignQueueNumbers => 'تعيين أرقام الطابور تلقائياً';
+
+  @override
+  String get autoAssignQueueNumbersHint => 'يحصل الطابور على الرقم التالي تلقائياً';
+
+  @override
+  String get queueStartNumber => 'رقم بداية الطابور';
+
+  @override
+  String get showCompletedInQueue => 'إظهار المكتملين في طابور السكرتير';
+
+  @override
+  String get prescriptionHeaderClinicName => 'رأس الوصفة — اسم العيادة';
+
+  @override
+  String get prescriptionHeaderAddress => 'رأس الوصفة — العنوان';
+
+  @override
+  String get prescriptionHeaderPhone => 'رأس الوصفة — الهاتف';
+
+  @override
+  String get prescriptionFooterNote => 'ملاحظة تذييل الوصفة';
+
+  @override
+  String get prescriptionShowDiagnosis => 'إظهار التشخيص في الوصفة المطبوعة';
+
+  @override
+  String get departments => 'الأقسام';
+
+  @override
+  String get consultationRooms => 'غرف الاستشارة';
+
+  @override
+  String get addDepartment => 'إضافة قسم';
+
+  @override
+  String get addRoom => 'إضافة غرفة';
+
+  @override
+  String get clinicStructure => 'الأقسام وغرف الاستشارة';
+
+  @override
+  String get mergePatients => 'دمج المرضى';
+
+  @override
+  String get mergePatientsHint => 'تعطيل الحساب المكرر. راجع السجلات الطبية يدوياً إذا لزم.';
+
+  @override
+  String get selectPrimaryPatient => 'الإبقاء على هذا المريض';
+
+  @override
+  String get selectDuplicatePatient => 'دمج وتعطيل المكرر';
+
+  @override
+  String get patientsMerged => 'تم تعطيل المريض المكرر';
+
+  @override
+  String get searchPatients => 'بحث بالاسم أو الهاتف أو البريد';
+
+  @override
+  String get activePatients => 'نشط';
+
+  @override
+  String get disabledPatients => 'معطل';
+
+  @override
+  String get noPatientsFound => 'لا يوجد مرضى مطابقون';
+
+  @override
+  String get firebaseConfiguration => 'إعدادات Firebase';
+
+  @override
+  String get firebaseConfigurationHint => 'مراقبة استخدام Firebase وصحة الاتصال';
+
+  @override
+  String get printerSettings => 'إعدادات الطابعة';
+
+  @override
+  String get printerSettingsHint => 'رأس وتخطيط طباعة الوصفة';
+
+  @override
+  String get backupSettings => 'إعدادات النسخ الاحتياطي';
 }

@@ -26,13 +26,19 @@ import '../../presentation/screens/owner/system_health/owner_monitoring_settings
 import '../../services/owner_dashboard_navigation_service.dart';
 import '../../presentation/screens/owner/owner_notification_config_screen.dart';
 import '../../presentation/screens/owner/owner_hub_screens.dart';
+import '../../presentation/screens/owner/owner_clinical_admin_screen.dart';
+import '../../presentation/screens/owner/owner_medicine_database_screen.dart';
+import '../../presentation/screens/owner/owner_investigation_database_screen.dart';
+import '../../presentation/screens/owner/owner_queue_settings_screen.dart';
+import '../../presentation/screens/owner/owner_prescription_settings_screen.dart';
+import '../../presentation/screens/owner/owner_clinic_structure_route_screen.dart';
+import '../../presentation/screens/owner/owner_patient_management_screen.dart';
 import '../../presentation/screens/owner/system_owner_module_placeholder_screen.dart';
 import '../../presentation/screens/doctor/owner_staff_list_screen.dart';
 import '../../presentation/screens/doctor/owner_stats_screen.dart';
 import '../../presentation/screens/doctor/owner_subscriptions_screen.dart';
 import '../../presentation/screens/doctor/owner_users_screen.dart';
 import '../../presentation/screens/doctor/owner_admins_screen.dart';
-import '../../presentation/screens/doctor/owner_patients_screen.dart';
 import '../../presentation/screens/doctor/write_prescription_screen.dart';
 import '../../presentation/screens/patient/appointment_booking_screen.dart';
 import '../../presentation/screens/patient/doctor_detail_screen.dart';
@@ -215,7 +221,7 @@ class AppRouter {
               ),
               GoRoute(
                 path: 'patients',
-                builder: (_, __) => const OwnerPatientsScreen(),
+                builder: (_, __) => const OwnerPatientManagementScreen(),
               ),
               GoRoute(
                 path: 'admins',
@@ -355,6 +361,32 @@ class AppRouter {
               GoRoute(
                 path: 'organization-billing',
                 builder: (_, __) => const OrganizationBillingScreen(),
+              ),
+              GoRoute(
+                path: 'clinical-admin',
+                builder: (_, __) => const OwnerClinicalAdminScreen(),
+              ),
+              GoRoute(
+                path: 'medicine-database',
+                builder: (_, __) => const OwnerMedicineDatabaseScreen(),
+              ),
+              GoRoute(
+                path: 'investigation-database',
+                builder: (_, __) => const OwnerInvestigationDatabaseScreen(),
+              ),
+              GoRoute(
+                path: 'queue-settings',
+                builder: (_, __) => const OwnerQueueSettingsScreen(),
+              ),
+              GoRoute(
+                path: 'prescription-settings',
+                builder: (_, __) => const OwnerPrescriptionSettingsScreen(),
+              ),
+              GoRoute(
+                path: 'clinics/:clinicId/structure',
+                builder: (_, state) => OwnerClinicStructureRouteScreen(
+                  clinicId: state.pathParameters['clinicId']!,
+                ),
               ),
               GoRoute(
                 path: 'system-settings',

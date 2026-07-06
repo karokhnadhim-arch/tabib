@@ -351,6 +351,32 @@ class OwnerSystemSettingsScreen extends StatelessWidget {
             subtitle: l10n.manageClinics,
             route: '${AdminRoutes.platformPrefix}/clinics',
           ),
+          OwnerHubItem(
+            icon: Icons.medical_information_outlined,
+            title: l10n.clinicalAdministration,
+            subtitle: l10n.clinicalAdministrationHint,
+            route: '${AdminRoutes.platformPrefix}/clinical-admin',
+          ),
+          OwnerHubItem(
+            icon: Icons.cloud_outlined,
+            title: l10n.firebaseConfiguration,
+            subtitle: l10n.firebaseConfigurationHint,
+            route: OwnerDashboardNavigationService.routeFor(
+              MonitoringDashboardSection.systemHealth,
+            ),
+          ),
+          OwnerHubItem(
+            icon: Icons.print_outlined,
+            title: l10n.printerSettings,
+            subtitle: l10n.printerSettingsHint,
+            route: '${AdminRoutes.platformPrefix}/prescription-settings',
+          ),
+          OwnerHubItem(
+            icon: Icons.backup_outlined,
+            title: l10n.backupSettings,
+            subtitle: l10n.backupRestoreHint,
+            route: '${AdminRoutes.platformPrefix}/backup',
+          ),
         ],
       ),
     );

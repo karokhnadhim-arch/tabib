@@ -7342,6 +7342,318 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Print investigation request'**
   String get printInvestigationRequest;
+
+  /// No description provided for @clinicalAdministration.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinical administration'**
+  String get clinicalAdministration;
+
+  /// No description provided for @clinicalAdministrationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine and investigation catalogs, queue rules, and prescription templates'**
+  String get clinicalAdministrationHint;
+
+  /// No description provided for @medicineDatabase.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine database'**
+  String get medicineDatabase;
+
+  /// No description provided for @medicineDatabaseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Create, edit, and archive medicines for doctor prescriptions'**
+  String get medicineDatabaseHint;
+
+  /// No description provided for @investigationDatabase.
+  ///
+  /// In en, this message translates to:
+  /// **'Investigation database'**
+  String get investigationDatabase;
+
+  /// No description provided for @investigationDatabaseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage laboratory and radiology investigation catalogs'**
+  String get investigationDatabaseHint;
+
+  /// No description provided for @prescriptionSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription settings'**
+  String get prescriptionSettings;
+
+  /// No description provided for @prescriptionSettingsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic header, footer, and print template defaults'**
+  String get prescriptionSettingsHint;
+
+  /// No description provided for @queueSettingsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue numbering, consultation duration, and display rules'**
+  String get queueSettingsHint;
+
+  /// No description provided for @genericName.
+  ///
+  /// In en, this message translates to:
+  /// **'Generic name'**
+  String get genericName;
+
+  /// No description provided for @brandNames.
+  ///
+  /// In en, this message translates to:
+  /// **'Brand names (comma separated)'**
+  String get brandNames;
+
+  /// No description provided for @strength.
+  ///
+  /// In en, this message translates to:
+  /// **'Strength'**
+  String get strength;
+
+  /// No description provided for @dosageForm.
+  ///
+  /// In en, this message translates to:
+  /// **'Dosage form'**
+  String get dosageForm;
+
+  /// No description provided for @category.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get category;
+
+  /// No description provided for @archiveItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get archiveItem;
+
+  /// No description provided for @restoreItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get restoreItem;
+
+  /// No description provided for @showArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Show archived'**
+  String get showArchived;
+
+  /// No description provided for @activeOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Active only'**
+  String get activeOnly;
+
+  /// No description provided for @noMedicinesInDatabase.
+  ///
+  /// In en, this message translates to:
+  /// **'No custom medicines yet. Tap + to add.'**
+  String get noMedicinesInDatabase;
+
+  /// No description provided for @noInvestigationsInDatabase.
+  ///
+  /// In en, this message translates to:
+  /// **'No custom investigations yet. Tap + to add.'**
+  String get noInvestigationsInDatabase;
+
+  /// No description provided for @addInvestigation.
+  ///
+  /// In en, this message translates to:
+  /// **'Add investigation'**
+  String get addInvestigation;
+
+  /// No description provided for @investigationName.
+  ///
+  /// In en, this message translates to:
+  /// **'Investigation name'**
+  String get investigationName;
+
+  /// No description provided for @searchInvestigations.
+  ///
+  /// In en, this message translates to:
+  /// **'Search investigations'**
+  String get searchInvestigations;
+
+  /// No description provided for @consultationDurationDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Default consultation duration'**
+  String get consultationDurationDefault;
+
+  /// No description provided for @autoAssignQueueNumbers.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-assign queue numbers'**
+  String get autoAssignQueueNumbers;
+
+  /// No description provided for @autoAssignQueueNumbersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Secretary queue receives the next number automatically'**
+  String get autoAssignQueueNumbersHint;
+
+  /// No description provided for @queueStartNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue start number'**
+  String get queueStartNumber;
+
+  /// No description provided for @showCompletedInQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'Show completed patients in secretary queue'**
+  String get showCompletedInQueue;
+
+  /// No description provided for @prescriptionHeaderClinicName.
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription header — clinic name'**
+  String get prescriptionHeaderClinicName;
+
+  /// No description provided for @prescriptionHeaderAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription header — address'**
+  String get prescriptionHeaderAddress;
+
+  /// No description provided for @prescriptionHeaderPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription header — phone'**
+  String get prescriptionHeaderPhone;
+
+  /// No description provided for @prescriptionFooterNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription footer note'**
+  String get prescriptionFooterNote;
+
+  /// No description provided for @prescriptionShowDiagnosis.
+  ///
+  /// In en, this message translates to:
+  /// **'Show diagnosis on printed prescription'**
+  String get prescriptionShowDiagnosis;
+
+  /// No description provided for @departments.
+  ///
+  /// In en, this message translates to:
+  /// **'Departments'**
+  String get departments;
+
+  /// No description provided for @consultationRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Consultation rooms'**
+  String get consultationRooms;
+
+  /// No description provided for @addDepartment.
+  ///
+  /// In en, this message translates to:
+  /// **'Add department'**
+  String get addDepartment;
+
+  /// No description provided for @addRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Add room'**
+  String get addRoom;
+
+  /// No description provided for @clinicStructure.
+  ///
+  /// In en, this message translates to:
+  /// **'Departments and consultation rooms'**
+  String get clinicStructure;
+
+  /// No description provided for @mergePatients.
+  ///
+  /// In en, this message translates to:
+  /// **'Merge patients'**
+  String get mergePatients;
+
+  /// No description provided for @mergePatientsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable the duplicate account. Review medical records manually if needed.'**
+  String get mergePatientsHint;
+
+  /// No description provided for @selectPrimaryPatient.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep this patient'**
+  String get selectPrimaryPatient;
+
+  /// No description provided for @selectDuplicatePatient.
+  ///
+  /// In en, this message translates to:
+  /// **'Merge and disable duplicate'**
+  String get selectDuplicatePatient;
+
+  /// No description provided for @patientsMerged.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate patient disabled'**
+  String get patientsMerged;
+
+  /// No description provided for @searchPatients.
+  ///
+  /// In en, this message translates to:
+  /// **'Search patients by name, phone, or email'**
+  String get searchPatients;
+
+  /// No description provided for @activePatients.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get activePatients;
+
+  /// No description provided for @disabledPatients.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled'**
+  String get disabledPatients;
+
+  /// No description provided for @noPatientsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No patients match your search'**
+  String get noPatientsFound;
+
+  /// No description provided for @firebaseConfiguration.
+  ///
+  /// In en, this message translates to:
+  /// **'Firebase configuration'**
+  String get firebaseConfiguration;
+
+  /// No description provided for @firebaseConfigurationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor Firebase usage and connection health'**
+  String get firebaseConfigurationHint;
+
+  /// No description provided for @printerSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Printer settings'**
+  String get printerSettings;
+
+  /// No description provided for @printerSettingsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription print header and layout defaults'**
+  String get printerSettingsHint;
+
+  /// No description provided for @backupSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup settings'**
+  String get backupSettings;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

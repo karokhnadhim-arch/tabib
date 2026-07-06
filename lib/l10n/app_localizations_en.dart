@@ -3735,4 +3735,160 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get printInvestigationRequest => 'Print investigation request';
+
+  @override
+  String get clinicalAdministration => 'Clinical administration';
+
+  @override
+  String get clinicalAdministrationHint => 'Medicine and investigation catalogs, queue rules, and prescription templates';
+
+  @override
+  String get medicineDatabase => 'Medicine database';
+
+  @override
+  String get medicineDatabaseHint => 'Create, edit, and archive medicines for doctor prescriptions';
+
+  @override
+  String get investigationDatabase => 'Investigation database';
+
+  @override
+  String get investigationDatabaseHint => 'Manage laboratory and radiology investigation catalogs';
+
+  @override
+  String get prescriptionSettings => 'Prescription settings';
+
+  @override
+  String get prescriptionSettingsHint => 'Clinic header, footer, and print template defaults';
+
+  @override
+  String get queueSettingsHint => 'Queue numbering, consultation duration, and display rules';
+
+  @override
+  String get genericName => 'Generic name';
+
+  @override
+  String get brandNames => 'Brand names (comma separated)';
+
+  @override
+  String get strength => 'Strength';
+
+  @override
+  String get dosageForm => 'Dosage form';
+
+  @override
+  String get category => 'Category';
+
+  @override
+  String get archiveItem => 'Archive';
+
+  @override
+  String get restoreItem => 'Restore';
+
+  @override
+  String get showArchived => 'Show archived';
+
+  @override
+  String get activeOnly => 'Active only';
+
+  @override
+  String get noMedicinesInDatabase => 'No custom medicines yet. Tap + to add.';
+
+  @override
+  String get noInvestigationsInDatabase => 'No custom investigations yet. Tap + to add.';
+
+  @override
+  String get addInvestigation => 'Add investigation';
+
+  @override
+  String get investigationName => 'Investigation name';
+
+  @override
+  String get searchInvestigations => 'Search investigations';
+
+  @override
+  String get consultationDurationDefault => 'Default consultation duration';
+
+  @override
+  String get autoAssignQueueNumbers => 'Auto-assign queue numbers';
+
+  @override
+  String get autoAssignQueueNumbersHint => 'Secretary queue receives the next number automatically';
+
+  @override
+  String get queueStartNumber => 'Queue start number';
+
+  @override
+  String get showCompletedInQueue => 'Show completed patients in secretary queue';
+
+  @override
+  String get prescriptionHeaderClinicName => 'Prescription header — clinic name';
+
+  @override
+  String get prescriptionHeaderAddress => 'Prescription header — address';
+
+  @override
+  String get prescriptionHeaderPhone => 'Prescription header — phone';
+
+  @override
+  String get prescriptionFooterNote => 'Prescription footer note';
+
+  @override
+  String get prescriptionShowDiagnosis => 'Show diagnosis on printed prescription';
+
+  @override
+  String get departments => 'Departments';
+
+  @override
+  String get consultationRooms => 'Consultation rooms';
+
+  @override
+  String get addDepartment => 'Add department';
+
+  @override
+  String get addRoom => 'Add room';
+
+  @override
+  String get clinicStructure => 'Departments and consultation rooms';
+
+  @override
+  String get mergePatients => 'Merge patients';
+
+  @override
+  String get mergePatientsHint => 'Disable the duplicate account. Review medical records manually if needed.';
+
+  @override
+  String get selectPrimaryPatient => 'Keep this patient';
+
+  @override
+  String get selectDuplicatePatient => 'Merge and disable duplicate';
+
+  @override
+  String get patientsMerged => 'Duplicate patient disabled';
+
+  @override
+  String get searchPatients => 'Search patients by name, phone, or email';
+
+  @override
+  String get activePatients => 'Active';
+
+  @override
+  String get disabledPatients => 'Disabled';
+
+  @override
+  String get noPatientsFound => 'No patients match your search';
+
+  @override
+  String get firebaseConfiguration => 'Firebase configuration';
+
+  @override
+  String get firebaseConfigurationHint => 'Monitor Firebase usage and connection health';
+
+  @override
+  String get printerSettings => 'Printer settings';
+
+  @override
+  String get printerSettingsHint => 'Prescription print header and layout defaults';
+
+  @override
+  String get backupSettings => 'Backup settings';
 }

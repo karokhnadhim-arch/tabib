@@ -9,6 +9,7 @@ import '../../../../models/medicine.dart';
 import '../../../../models/prescription_line_item.dart';
 import '../../../../services/doctor_medicine_favorites_service.dart';
 import '../../../../services/medicine_search_service.dart';
+import '../../../../services/platform_medicine_catalog_service.dart';
 import '../doctor_consultation_widgets.dart';
 
 /// Fast medicine search + structured prescription lines — Material 3.
@@ -91,8 +92,10 @@ class _DoctorPrescriptionComposerState extends State<DoctorPrescriptionComposer>
   }
 
   MedicineSearchService _searchService(BuildContext context) {
+    final platform = context.read<PlatformMedicineCatalogService>();
     return MedicineSearchService(
       favorites: context.read<DoctorMedicineFavoritesService>(),
+      additionalMedicines: platform.activeCustom,
     );
   }
 
