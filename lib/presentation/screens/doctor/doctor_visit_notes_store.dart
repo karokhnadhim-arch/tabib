@@ -124,6 +124,13 @@ class DoctorVisitNotesStore extends ChangeNotifier {
     });
   }
 
+  /// Immediate disk persist — call before switching patients.
+  Future<void> flushPersist(String storageKey) async {
+    _debouncers[storageKey]?.cancel();
+    _debouncers.remove(storageKey);
+    await _persist(storageKey);
+  }
+
   Future<void> markPrescriptionSynced(String storageKey) async {
     final current = _cache[storageKey] ?? const DoctorVisitNotes();
     _cache[storageKey] = current.copyWith(

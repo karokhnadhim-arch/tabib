@@ -581,6 +581,36 @@ abstract class AppLocalizations {
   /// **'This visit is completed. Notes are read-only.'**
   String get visitCompletedReadOnly;
 
+  /// No description provided for @patientInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient information'**
+  String get patientInformation;
+
+  /// No description provided for @medicalHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical history'**
+  String get medicalHistory;
+
+  /// No description provided for @noMedicalHistoryYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No prior records for this patient'**
+  String get noMedicalHistoryYet;
+
+  /// No description provided for @medicalHistoryEntryCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} prior prescription(s)'**
+  String medicalHistoryEntryCount(int count);
+
+  /// No description provided for @recentVisits.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent visits'**
+  String get recentVisits;
+
   /// No description provided for @currentPatient.
   ///
   /// In en, this message translates to:

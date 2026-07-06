@@ -258,6 +258,23 @@ class AppLocalizationsAr extends AppLocalizations {
   String get visitCompletedReadOnly => 'اكتملت هذه الزيارة. الملاحظات للقراءة فقط.';
 
   @override
+  String get patientInformation => 'معلومات المريض';
+
+  @override
+  String get medicalHistory => 'السجل الطبي';
+
+  @override
+  String get noMedicalHistoryYet => 'لا توجد سجلات سابقة لهذا المريض';
+
+  @override
+  String medicalHistoryEntryCount(int count) {
+    return '$count وصفة سابقة';
+  }
+
+  @override
+  String get recentVisits => 'الزيارات الأخيرة';
+
+  @override
   String get currentPatient => 'المريض الحالي';
 
   @override

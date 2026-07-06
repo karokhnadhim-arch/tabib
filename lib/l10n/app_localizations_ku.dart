@@ -258,6 +258,23 @@ class AppLocalizationsKu extends AppLocalizations {
   String get visitCompletedReadOnly => 'سەردانەکە تەواو بوو. تێبینییەکان تەنها بۆ خوێندنەوە.';
 
   @override
+  String get patientInformation => 'زانیاری نەخۆش';
+
+  @override
+  String get medicalHistory => 'مێژووی پزیشکی';
+
+  @override
+  String get noMedicalHistoryYet => 'هیچ تۆمارێکی پێشوو بۆ ئەم نەخۆشە نییە';
+
+  @override
+  String medicalHistoryEntryCount(int count) {
+    return '$count ڕەچەتەی پێشوو';
+  }
+
+  @override
+  String get recentVisits => 'سەردانە نوێیەکان';
+
+  @override
   String get currentPatient => 'نەخۆشی ئێستا';
 
   @override

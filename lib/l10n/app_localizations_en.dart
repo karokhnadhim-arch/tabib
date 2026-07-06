@@ -258,6 +258,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get visitCompletedReadOnly => 'This visit is completed. Notes are read-only.';
 
   @override
+  String get patientInformation => 'Patient information';
+
+  @override
+  String get medicalHistory => 'Medical history';
+
+  @override
+  String get noMedicalHistoryYet => 'No prior records for this patient';
+
+  @override
+  String medicalHistoryEntryCount(int count) {
+    return '$count prior prescription(s)';
+  }
+
+  @override
+  String get recentVisits => 'Recent visits';
+
+  @override
   String get currentPatient => 'Current patient';
 
   @override

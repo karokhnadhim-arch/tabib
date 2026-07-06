@@ -106,6 +106,18 @@
   "selectPatientFromQueue": "Select a patient from today's queue to view details and write notes.",
   "doctorQueueViewOnlyHint": "Queue order and status are managed by your secretary. You can view patients and write clinical notes only.",
   "visitCompletedReadOnly": "This visit is completed. Notes are read-only.",
+  "patientInformation": "Patient information",
+  "medicalHistory": "Medical history",
+  "noMedicalHistoryYet": "No prior records for this patient",
+  "medicalHistoryEntryCount": "{count} prior prescription(s)",
+  "@medicalHistoryEntryCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "recentVisits": "Recent visits",
   "currentPatient": "Current patient",
   "completeVisit": "Complete visit",
   "callNext": "Call next",
