@@ -1418,5 +1418,22 @@
   "exportExcel": "تصدير Excel",
   "exportCsv": "تصدير CSV",
   "role": "الدور",
-  "action": "الإجراء"
+  "action": "الإجراء",
+  "totalBackupCount": "إجمالي النسخ الاحتياطية",
+  "storageUsage": "استخدام التخزين",
+  "latestRestoreDate": "آخر استعادة",
+  "openBackupDashboard": "فتح لوحة النسخ الاحتياطي",
+  "noBackupsYet": "لا توجد نسخ احتياطية بعد.",
+  "backupFailed": "فشل النسخ الاحتياطي",
+  "backupType": "نوع النسخة",
+  "createdBy": "أنشأه",
+  "downloadBackup": "تنزيل النسخة",
+  "backupDownloaded": "تم تنزيل النسخة",
+  "backupCorrupted": "النسخة تالفة أو غير متوافقة",
+  "confirmRestoreTitle": "تأكيد الاستعادة",
+  "confirmRestoreMessage": "استعادة النسخة ({size})؟ يتطلب موافقة المالك.",
+  "restoreCompleted": "اكتملت الاستعادة بنجاح",
+  "restoreFailed": "فشلت الاستعادة",
+  "restoreInProgress": "الاستعادة قيد التنفيذ",
+  "recoverLatestBackup": "الاستعادة من آخر نسخة سليمة"
 }

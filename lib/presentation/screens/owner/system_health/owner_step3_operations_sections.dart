@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../core/auth/admin_routes.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../models/system_monitoring.dart';
 import '../../../../services/dashboard_report_exporter.dart';
-import '../../../../services/owner_audit_service.dart';
+import '../../../../services/platform_backup_service.dart';
 import '../../../../services/system_error_log_service.dart';
 import '../../../../services/system_monitoring_service.dart';
+import '../../../../presentation/widgets/owner_audit_log_panel.dart';
 import 'monitoring_filter_scope.dart';
 import 'system_health_widgets.dart';
-import '../../../../presentation/widgets/owner_audit_log_panel.dart';
 
 // ─── Security Center ─────────────────────────────────────────────────────────
 
@@ -685,11 +687,9 @@ class OwnerBackupCenterSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final monitoring = context.watch<SystemMonitoringService>();
-    final backup = monitoring.backup;
-    final history = monitoring.backupHistory;
-    final scheme = Theme.of(context).colorScheme;
-    final inProgress = monitoring.backupInProgress;
+    final backup = context.watch<PlatformBackupService>();
+    final metrics = backup.dashboard;
+    final dateFmt = DateFormat.yMMMd().add_jm();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -697,45 +697,45 @@ class OwnerBackupCenterSection extends StatelessWidget {
         MonitoringSectionHeader(
           title: l10n.backupRestore,
           icon: Icons.backup_outlined,
+          trailing: TextButton(
+            onPressed: () => context.push('${AdminRoutes.platformPrefix}/backup'),
+            child: Text(l10n.openBackupDashboard),
+          ),
         ),
         MonitoringPanelCard(
           child: Column(
             children: [
               MonitoringInfoRow(
                 label: l10n.lastBackup,
-                value: backup.lastBackup != null
-                    ? DateFormat.yMMMd().add_jm().format(backup.lastBackup!)
+                value: metrics.lastBackup != null
+                    ? dateFmt.format(metrics.lastBackup!)
                     : '—',
               ),
-              MonitoringInfoRow(label: l10n.backupStatus, value: backup.status),
-              MonitoringInfoRow(label: l10n.backupSize, value: backup.sizeLabel),
+              MonitoringInfoRow(
+                label: l10n.backupStatus,
+                value: metrics.statusLabel,
+              ),
+              MonitoringInfoRow(
+                label: l10n.storageUsage,
+                value: metrics.storageUsageLabel,
+              ),
               MonitoringInfoRow(
                 label: l10n.nextScheduledBackup,
-                value: backup.nextScheduled != null
-                    ? DateFormat.yMMMd().add_jm().format(backup.nextScheduled!)
+                value: metrics.nextScheduledBackup != null
+                    ? dateFmt.format(metrics.nextScheduledBackup!)
                     : '—',
               ),
             ],
           ),
         ),
-        if (inProgress) ...[
+        if (backup.backupInProgress || backup.restoreInProgress) ...[
           const SizedBox(height: 12),
-          Text(l10n.backupInProgress),
-          const SizedBox(height: 6),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: LinearProgressIndicator(
-              value: monitoring.backupProgress,
-              minHeight: 8,
+          LinearProgressIndicator(value: backup.progress),
+          if (backup.progressLabel.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(backup.progressLabel),
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            '${(monitoring.backupProgress * 100).round()}%',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                ),
-          ),
         ],
         const SizedBox(height: 12),
         Wrap(
@@ -743,84 +743,28 @@ class OwnerBackupCenterSection extends StatelessWidget {
           runSpacing: 8,
           children: [
             FilledButton.icon(
-              onPressed: inProgress ? null : () async {
-                await monitoring.runManualBackup();
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.backupCompleted)),
-                  );
-                }
-              },
+              onPressed: backup.backupInProgress || backup.restoreInProgress
+                  ? null
+                  : () async {
+                      await backup.runManualBackup();
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l10n.backupCompleted)),
+                        );
+                      }
+                    },
               icon: const Icon(Icons.backup),
               label: Text(l10n.runManualBackup),
             ),
             OutlinedButton.icon(
-              onPressed: inProgress
-                  ? null
-                  : () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(l10n.restoreBackupHint)),
-                      );
-                    },
-              icon: const Icon(Icons.restore),
-              label: Text(l10n.restoreBackup),
-            ),
-            OutlinedButton.icon(
-              onPressed: () => _downloadBackupReport(context, monitoring),
-              icon: const Icon(Icons.download),
-              label: Text(l10n.downloadBackupReport),
+              onPressed: () =>
+                  context.push('${AdminRoutes.platformPrefix}/backup'),
+              icon: const Icon(Icons.open_in_new),
+              label: Text(l10n.openBackupDashboard),
             ),
           ],
         ),
-        if (history.isNotEmpty) ...[
-          const SizedBox(height: 16),
-          Text(
-            l10n.backupHistory,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-          ),
-          const SizedBox(height: 8),
-          ...history.take(8).map(
-                (entry) => Card(
-                  elevation: 0,
-                  margin: const EdgeInsets.only(bottom: 8),
-                  color: scheme.surfaceContainerLow,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: ListTile(
-                    leading: Icon(Icons.history, color: scheme.primary),
-                    title: Text('${entry.status} · ${entry.sizeLabel}'),
-                    subtitle: Text(
-                      '${DateFormat.yMMMd().add_jm().format(entry.timestamp)} · ${entry.trigger}',
-                    ),
-                  ),
-                ),
-              ),
-        ],
       ],
-    );
-  }
-
-  Future<void> _downloadBackupReport(
-    BuildContext context,
-    SystemMonitoringService monitoring,
-  ) async {
-    final l10n = AppLocalizations.of(context);
-    final payload = monitoring.exportBackupReport();
-    final result = await DashboardReportExporter.export(
-      content: payload,
-      format: ReportExportFormat.csv,
-    );
-    if (!context.mounted) return;
-    if (result.message == 'clipboard' && result.content != null) {
-      await Clipboard.setData(ClipboardData(text: result.content!));
-    } else if (result.filePath == null) {
-      await Clipboard.setData(ClipboardData(text: payload));
-    }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.backupReportDownloaded)),
     );
   }
 }

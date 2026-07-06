@@ -1418,5 +1418,22 @@
   "exportExcel": "هەناردەی Excel",
   "exportCsv": "هەناردەی CSV",
   "role": "ڕۆڵ",
-  "action": "کردار"
+  "action": "کردار",
+  "totalBackupCount": "کۆی پاشەکەوت",
+  "storageUsage": "بەکارهێنانی بیرگە",
+  "latestRestoreDate": "دوایین گەڕاندنەوە",
+  "openBackupDashboard": "کردنەوەی داشبۆردی پاشەکەوت",
+  "noBackupsYet": "هێشتا پاشەکەوت نییە.",
+  "backupFailed": "پاشەکەوت سەرنەکەوت",
+  "backupType": "جۆری پاشەکەوت",
+  "createdBy": "دروستکراوە لەلایەن",
+  "downloadBackup": "داگرتنی پاشەکەوت",
+  "backupDownloaded": "پاشەکەوت داونلود کرا",
+  "backupCorrupted": "پاشەکەوت تێکچووە یان ناگونجێت",
+  "confirmRestoreTitle": "دڵنیاکردنەوەی گەڕاندنەوە",
+  "confirmRestoreMessage": "گەڕاندنەوەی پاشەکەوت ({size})؟ پێویست بە ڕەزامەندی خاوەنە.",
+  "restoreCompleted": "گەڕاندنەوە تەواو بوو",
+  "restoreFailed": "گەڕاندنەوە سەرنەکەوت",
+  "restoreInProgress": "گەڕاندنەوە لە جێبەجێکردندایە",
+  "recoverLatestBackup": "گەڕاندنەوە لە کۆتا پاشەکەوتی تەندروست"
 }

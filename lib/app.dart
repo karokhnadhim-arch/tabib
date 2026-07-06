@@ -73,6 +73,7 @@ import 'services/platform_clinical_settings_service.dart';
 import 'services/platform_investigation_catalog_service.dart';
 import 'services/platform_medicine_catalog_service.dart';
 import 'services/clinic_structure_service.dart';
+import 'services/platform_backup_service.dart';
 import 'core/widgets/maintenance_mode_gate.dart';
 
 /// Root widget for Tabib — medical appointment platform.
@@ -157,6 +158,7 @@ class _TabibAppState extends State<TabibApp> {
   late final PlatformInvestigationCatalogService _platformInvestigationCatalog;
   late final PlatformClinicalSettingsService _platformClinicalSettings;
   late final ClinicStructureService _clinicStructureService;
+  late final PlatformBackupService _platformBackupService;
   QueueNotificationMonitor? _queueNotificationMonitor;
   late final GoRouter _router;
   String? _activePatientQueueId;
@@ -287,6 +289,10 @@ class _TabibAppState extends State<TabibApp> {
     )..load();
     _platformClinicalSettings = PlatformClinicalSettingsService()..load();
     _clinicStructureService = ClinicStructureService()..load();
+    _platformBackupService = PlatformBackupService(
+      backend: _backend,
+      useFirestore: !_demoMode,
+    )..load();
     _authService.attachAudit(_ownerAuditService);
     _queueService.attachAudit(
       audit: _ownerAuditService,
@@ -295,6 +301,11 @@ class _TabibAppState extends State<TabibApp> {
     _platformMedicineCatalog.attachAudit(_ownerAuditService);
     _platformInvestigationCatalog.attachAudit(_ownerAuditService);
     _platformClinicalSettings.attachAudit(_ownerAuditService);
+    _platformBackupService.attachAudit(
+      audit: _ownerAuditService,
+      auth: _authService,
+    );
+    _platformBackupService.attachNotifications(_smartOwnerNotificationService);
     _prescriptionProvider.attachAudit(
       audit: _ownerAuditService,
       auth: _authService,
@@ -439,6 +450,7 @@ class _TabibAppState extends State<TabibApp> {
         ChangeNotifierProvider.value(value: _platformInvestigationCatalog),
         ChangeNotifierProvider.value(value: _platformClinicalSettings),
         ChangeNotifierProvider.value(value: _clinicStructureService),
+        ChangeNotifierProvider.value(value: _platformBackupService),
         ChangeNotifierProvider.value(value: _connectivityService),
         ChangeNotifierProvider.value(value: _offlineQueueCacheService),
         ChangeNotifierProvider.value(value: _offlineAppointmentCacheService),

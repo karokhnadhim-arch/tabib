@@ -7756,6 +7756,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Action'**
   String get action;
+
+  /// No description provided for @totalBackupCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Total backups'**
+  String get totalBackupCount;
+
+  /// No description provided for @latestRestoreDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest restore'**
+  String get latestRestoreDate;
+
+  /// No description provided for @openBackupDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Open backup dashboard'**
+  String get openBackupDashboard;
+
+  /// No description provided for @noBackupsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No backups yet. Run a manual backup to get started.'**
+  String get noBackupsYet;
+
+  /// No description provided for @backupFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup failed'**
+  String get backupFailed;
+
+  /// No description provided for @backupType.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup type'**
+  String get backupType;
+
+  /// No description provided for @createdBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Created by'**
+  String get createdBy;
+
+  /// No description provided for @downloadBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Download backup'**
+  String get downloadBackup;
+
+  /// No description provided for @backupDownloaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup downloaded'**
+  String get backupDownloaded;
+
+  /// No description provided for @backupCorrupted.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup is corrupted or incompatible'**
+  String get backupCorrupted;
+
+  /// No description provided for @confirmRestoreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm restore'**
+  String get confirmRestoreTitle;
+
+  /// No description provided for @confirmRestoreMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore backup ({size})? Owner approval is required. Clinic operations continue during restore.'**
+  String confirmRestoreMessage(String size);
+
+  /// No description provided for @restoreCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore completed successfully'**
+  String get restoreCompleted;
+
+  /// No description provided for @restoreFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore failed — backup may be corrupted or incompatible'**
+  String get restoreFailed;
+
+  /// No description provided for @restoreInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore in progress'**
+  String get restoreInProgress;
+
+  /// No description provided for @recoverLatestBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Recover from latest healthy backup'**
+  String get recoverLatestBackup;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

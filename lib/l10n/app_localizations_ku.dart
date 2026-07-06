@@ -2116,7 +2116,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get statusDemoOrOffline => 'دۆخی دیمۆ یان ڕێکنەخراو';
 
   @override
-  String get storageUsage => 'بەکارهێنانی کۆگا';
+  String get storageUsage => 'بەکارهێنانی بیرگە';
 
   @override
   String get databaseUsage => 'بەکارهێنانی داتابەیس';
@@ -3942,4 +3942,54 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get action => 'کردار';
+
+  @override
+  String get totalBackupCount => 'کۆی پاشەکەوت';
+
+  @override
+  String get latestRestoreDate => 'دوایین گەڕاندنەوە';
+
+  @override
+  String get openBackupDashboard => 'کردنەوەی داشبۆردی پاشەکەوت';
+
+  @override
+  String get noBackupsYet => 'هێشتا پاشەکەوت نییە.';
+
+  @override
+  String get backupFailed => 'پاشەکەوت سەرنەکەوت';
+
+  @override
+  String get backupType => 'جۆری پاشەکەوت';
+
+  @override
+  String get createdBy => 'دروستکراوە لەلایەن';
+
+  @override
+  String get downloadBackup => 'داگرتنی پاشەکەوت';
+
+  @override
+  String get backupDownloaded => 'پاشەکەوت داونلود کرا';
+
+  @override
+  String get backupCorrupted => 'پاشەکەوت تێکچووە یان ناگونجێت';
+
+  @override
+  String get confirmRestoreTitle => 'دڵنیاکردنەوەی گەڕاندنەوە';
+
+  @override
+  String confirmRestoreMessage(String size) {
+    return 'گەڕاندنەوەی پاشەکەوت ($size)؟ پێویست بە ڕەزامەندی خاوەنە.';
+  }
+
+  @override
+  String get restoreCompleted => 'گەڕاندنەوە تەواو بوو';
+
+  @override
+  String get restoreFailed => 'گەڕاندنەوە سەرنەکەوت';
+
+  @override
+  String get restoreInProgress => 'گەڕاندنەوە لە جێبەجێکردندایە';
+
+  @override
+  String get recoverLatestBackup => 'گەڕاندنەوە لە کۆتا پاشەکەوتی تەندروست';
 }

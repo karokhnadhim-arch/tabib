@@ -3942,4 +3942,54 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get action => 'الإجراء';
+
+  @override
+  String get totalBackupCount => 'إجمالي النسخ الاحتياطية';
+
+  @override
+  String get latestRestoreDate => 'آخر استعادة';
+
+  @override
+  String get openBackupDashboard => 'فتح لوحة النسخ الاحتياطي';
+
+  @override
+  String get noBackupsYet => 'لا توجد نسخ احتياطية بعد.';
+
+  @override
+  String get backupFailed => 'فشل النسخ الاحتياطي';
+
+  @override
+  String get backupType => 'نوع النسخة';
+
+  @override
+  String get createdBy => 'أنشأه';
+
+  @override
+  String get downloadBackup => 'تنزيل النسخة';
+
+  @override
+  String get backupDownloaded => 'تم تنزيل النسخة';
+
+  @override
+  String get backupCorrupted => 'النسخة تالفة أو غير متوافقة';
+
+  @override
+  String get confirmRestoreTitle => 'تأكيد الاستعادة';
+
+  @override
+  String confirmRestoreMessage(String size) {
+    return 'استعادة النسخة ($size)؟ يتطلب موافقة المالك.';
+  }
+
+  @override
+  String get restoreCompleted => 'اكتملت الاستعادة بنجاح';
+
+  @override
+  String get restoreFailed => 'فشلت الاستعادة';
+
+  @override
+  String get restoreInProgress => 'الاستعادة قيد التنفيذ';
+
+  @override
+  String get recoverLatestBackup => 'الاستعادة من آخر نسخة سليمة';
 }

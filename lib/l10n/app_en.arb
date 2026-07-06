@@ -1509,5 +1509,27 @@
   "exportExcel": "Export Excel",
   "exportCsv": "Export CSV",
   "role": "Role",
-  "action": "Action"
+  "action": "Action",
+  "totalBackupCount": "Total backups",
+  "storageUsage": "Storage usage",
+  "latestRestoreDate": "Latest restore",
+  "openBackupDashboard": "Open backup dashboard",
+  "noBackupsYet": "No backups yet. Run a manual backup to get started.",
+  "backupFailed": "Backup failed",
+  "backupType": "Backup type",
+  "createdBy": "Created by",
+  "downloadBackup": "Download backup",
+  "backupDownloaded": "Backup downloaded",
+  "backupCorrupted": "Backup is corrupted or incompatible",
+  "confirmRestoreTitle": "Confirm restore",
+  "confirmRestoreMessage": "Restore backup ({size})? Owner approval is required. Clinic operations continue during restore.",
+  "@confirmRestoreMessage": {
+    "placeholders": {
+      "size": {"type": "String"}
+    }
+  },
+  "restoreCompleted": "Restore completed successfully",
+  "restoreFailed": "Restore failed — backup may be corrupted or incompatible",
+  "restoreInProgress": "Restore in progress",
+  "recoverLatestBackup": "Recover from latest healthy backup"
 }

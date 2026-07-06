@@ -141,6 +141,30 @@ class SmartOwnerNotificationService extends ChangeNotifier {
 
   void archive(String id) => _update(id, (n) => n.copyWith(isArchived: true));
 
+  void notifyBackupFailed({required String message}) {
+    _upsert(
+      id: 'backup_failed',
+      type: SmartNotificationType.backupFailed,
+      title: 'Backup failed',
+      message: message,
+      active: true,
+      timestamp: DateTime.now(),
+    );
+    notifyListeners();
+  }
+
+  void clearBackupFailed() {
+    _upsert(
+      id: 'backup_failed',
+      type: SmartNotificationType.backupFailed,
+      title: 'Backup failed',
+      message: '',
+      active: false,
+      timestamp: DateTime.now(),
+    );
+    notifyListeners();
+  }
+
   void delete(String id) {
     _items.removeWhere((n) => n.id == id);
     notifyListeners();

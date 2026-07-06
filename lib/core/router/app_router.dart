@@ -25,6 +25,7 @@ import '../../presentation/screens/owner/system_health/owner_monitoring_focused_
 import '../../presentation/screens/owner/system_health/owner_monitoring_settings_screen.dart';
 import '../../services/owner_dashboard_navigation_service.dart';
 import '../../presentation/screens/owner/owner_audit_log_screen.dart';
+import '../../presentation/screens/owner/owner_backup_dashboard_screen.dart';
 import '../../presentation/screens/owner/owner_notification_config_screen.dart';
 import '../../presentation/screens/owner/owner_hub_screens.dart';
 import '../../presentation/screens/owner/owner_clinical_admin_screen.dart';
@@ -347,10 +348,7 @@ class AppRouter {
               ),
               GoRoute(
                 path: 'backup',
-                builder: (context, __) => OwnerMonitoringFocusedScreen(
-                  section: MonitoringDashboardSection.backup,
-                  title: AppLocalizations.of(context).backupRestore,
-                ),
+                builder: (_, __) => const OwnerBackupDashboardScreen(),
               ),
               GoRoute(
                 path: 'organization-settings',

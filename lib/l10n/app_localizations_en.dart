@@ -3942,4 +3942,54 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get action => 'Action';
+
+  @override
+  String get totalBackupCount => 'Total backups';
+
+  @override
+  String get latestRestoreDate => 'Latest restore';
+
+  @override
+  String get openBackupDashboard => 'Open backup dashboard';
+
+  @override
+  String get noBackupsYet => 'No backups yet. Run a manual backup to get started.';
+
+  @override
+  String get backupFailed => 'Backup failed';
+
+  @override
+  String get backupType => 'Backup type';
+
+  @override
+  String get createdBy => 'Created by';
+
+  @override
+  String get downloadBackup => 'Download backup';
+
+  @override
+  String get backupDownloaded => 'Backup downloaded';
+
+  @override
+  String get backupCorrupted => 'Backup is corrupted or incompatible';
+
+  @override
+  String get confirmRestoreTitle => 'Confirm restore';
+
+  @override
+  String confirmRestoreMessage(String size) {
+    return 'Restore backup ($size)? Owner approval is required. Clinic operations continue during restore.';
+  }
+
+  @override
+  String get restoreCompleted => 'Restore completed successfully';
+
+  @override
+  String get restoreFailed => 'Restore failed — backup may be corrupted or incompatible';
+
+  @override
+  String get restoreInProgress => 'Restore in progress';
+
+  @override
+  String get recoverLatestBackup => 'Recover from latest healthy backup';
 }
