@@ -629,11 +629,12 @@ class PlatformBackupService extends ChangeNotifier {
   }
 
   static String _checksum(String data) {
-    var hash = 0xcbf29ce484222325;
+    var hash = BigInt.parse('cbf29ce484222325', radix: 16);
+    final prime = BigInt.parse('100000001b3', radix: 16);
+    final mask = BigInt.parse('FFFFFFFFFFFFFFFF', radix: 16);
     for (final unit in data.codeUnits) {
-      hash ^= unit;
-      hash *= 0x100000001b3;
-      hash &= 0xFFFFFFFFFFFFFFFF;
+      hash = (hash ^ BigInt.from(unit)) & mask;
+      hash = (hash * prime) & mask;
     }
     return hash.toRadixString(16).padLeft(16, '0');
   }
