@@ -75,7 +75,20 @@ class FirestoreInvestigationRequestRepository
     };
 
     if (existing.exists) {
+      final existingData = existing.data();
+      final hadPending = _countPending(existingData);
       await ref.set(data, SetOptions(merge: true));
+      final hasPending = items.where((i) => i.isPending).length;
+      if (hadPending > 0 && hasPending < hadPending) {
+        await _db.collection('notifications').add({
+          'userId': patientId,
+          'title': 'Investigation result available',
+          'body': 'Dr. $doctorName — your investigation results are ready',
+          'createdAt': Timestamp.now(),
+          'read': false,
+          'type': AppNotificationType.general.name,
+        });
+      }
     } else {
       await ref.set({
         ...data,
@@ -90,5 +103,18 @@ class FirestoreInvestigationRequestRepository
         'type': AppNotificationType.general.name,
       });
     }
+  }
+
+  int _countPending(Map<String, dynamic>? data) {
+    if (data == null) return 0;
+    final rawItems = data['items'];
+    if (rawItems is! List) return 0;
+    var count = 0;
+    for (final raw in rawItems) {
+      if (raw is Map && (raw['status'] as String? ?? 'pending') == 'pending') {
+        count++;
+      }
+    }
+    return count;
   }
 }

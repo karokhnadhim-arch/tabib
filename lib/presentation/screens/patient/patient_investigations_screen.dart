@@ -8,11 +8,15 @@ import '../../../l10n/app_localizations.dart';
 import '../../../models/investigation_request.dart';
 import '../../../services/auth_service.dart';
 import '../../providers/app_providers.dart';
-import '../../widgets/pending_investigations_panel.dart';
+import '../../widgets/investigation_status_list.dart';
 
-/// Patient-facing pending investigations — always available in the app.
+enum _InvestigationTab { all, pending, completed }
+
+/// Patient-facing investigations — pending and completed.
 class PatientInvestigationsScreen extends StatefulWidget {
-  const PatientInvestigationsScreen({super.key});
+  const PatientInvestigationsScreen({super.key, this.initialTab});
+
+  final String? initialTab;
 
   @override
   State<PatientInvestigationsScreen> createState() =>
@@ -20,9 +24,12 @@ class PatientInvestigationsScreen extends StatefulWidget {
 }
 
 class _PatientInvestigationsScreenState extends State<PatientInvestigationsScreen> {
+  late _InvestigationTab _tab;
+
   @override
   void initState() {
     super.initState();
+    _tab = _parseTab(widget.initialTab);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final patientId = context.read<AuthService>().patientId;
       if (patientId.isNotEmpty) {
@@ -31,34 +38,84 @@ class _PatientInvestigationsScreenState extends State<PatientInvestigationsScree
     });
   }
 
+  _InvestigationTab _parseTab(String? raw) {
+    return switch (raw) {
+      'pending' => _InvestigationTab.pending,
+      'completed' => _InvestigationTab.completed,
+      _ => _InvestigationTab.all,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final provider = context.watch<InvestigationRequestProvider>();
-    final requests = provider.requests.where((r) => r.hasPending).toList();
+    final requests = provider.requests;
     final dateFmt = DateFormat.yMMMd();
+
+    final filtered = switch (_tab) {
+      _InvestigationTab.pending =>
+        requests.where((r) => r.hasPending).toList(),
+      _InvestigationTab.completed => requests
+          .where((r) => r.items.any((i) => !i.isPending))
+          .toList(),
+      _InvestigationTab.all => requests,
+    };
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.myInvestigations),
         backgroundColor: AppTheme.medicalBlue,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(48),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: SegmentedButton<_InvestigationTab>(
+              segments: [
+                ButtonSegment(
+                  value: _InvestigationTab.all,
+                  label: Text(l10n.all),
+                ),
+                ButtonSegment(
+                  value: _InvestigationTab.pending,
+                  label: Text(l10n.pending),
+                ),
+                ButtonSegment(
+                  value: _InvestigationTab.completed,
+                  label: Text(l10n.completed),
+                ),
+              ],
+              selected: {_tab},
+              onSelectionChanged: (s) => setState(() => _tab = s.first),
+            ),
+          ),
+        ),
       ),
       body: ScrollableResponsiveBody(
-        child: provider.isLoading && provider.requests.isEmpty
+        child: provider.isLoading && requests.isEmpty
             ? const Center(child: CircularProgressIndicator())
-            : requests.isEmpty
-                ? _EmptyState(message: l10n.noPendingInvestigations)
+            : filtered.isEmpty
+                ? _EmptyState(
+                    message: switch (_tab) {
+                      _InvestigationTab.pending =>
+                        l10n.noPendingInvestigations,
+                      _InvestigationTab.completed =>
+                        l10n.noCompletedInvestigations,
+                      _ => l10n.noInvestigationsYet,
+                    },
+                  )
                 : ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: requests.length,
+                    itemCount: filtered.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
-                      final request = requests[index];
+                      final request = filtered[index];
                       return _InvestigationRequestCard(
                         request: request,
                         dateLabel: dateFmt.format(request.updatedAt.toLocal()),
-                        l10n: l10n,
+                        showPending: _tab != _InvestigationTab.completed,
+                        showCompleted: _tab != _InvestigationTab.pending,
                       );
                     },
                   ),
@@ -98,12 +155,14 @@ class _InvestigationRequestCard extends StatelessWidget {
   const _InvestigationRequestCard({
     required this.request,
     required this.dateLabel,
-    required this.l10n,
+    required this.showPending,
+    required this.showCompleted,
   });
 
   final InvestigationRequest request;
   final String dateLabel;
-  final AppLocalizations l10n;
+  final bool showPending;
+  final bool showCompleted;
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +198,11 @@ class _InvestigationRequestCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            PendingInvestigationsPanel(requests: [request]),
+            InvestigationStatusList(
+              requests: [request],
+              showPending: showPending,
+              showCompleted: showCompleted,
+            ),
           ],
         ),
       ),

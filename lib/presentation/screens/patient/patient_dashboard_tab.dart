@@ -19,10 +19,14 @@ import '../../../services/patient_profile_service.dart';
 import '../../../services/queue_service.dart';
 import '../../../utils/localization_utils.dart';
 import '../../../utils/provider_labels.dart';
+import '../../providers/app_providers.dart';
 import '../../widgets/advertisement_carousel.dart';
 import '../../widgets/doctor_avatar.dart';
 import '../../widgets/patient_active_queue_card.dart';
+import '../../widgets/patient_medical_records_hub.dart';
+import '../../widgets/patient_notifications_strip.dart';
 import '../../widgets/patient_queue_utils.dart';
+import '../../widgets/patient_today_summary_card.dart';
 
 /// Premium patient home: ads, search, queue cards, favorites, nearby, recommended.
 class PatientDashboardTab extends StatefulWidget {
@@ -131,6 +135,10 @@ class _PatientDashboardTabState extends State<PatientDashboardTab> {
     final favorites = context.watch<FavoritesService>();
     final ads = context.watch<AdvertisementService>().advertisements;
     final patientCity = context.watch<PatientProfileService>().profile.city;
+    final appointments = context.watch<AppointmentProvider>();
+    final prescriptions = context.watch<PrescriptionProvider>();
+    final investigations = context.watch<InvestigationRequestProvider>();
+    final notifications = context.watch<NotificationProvider>();
 
     if (patientCity != _lastWatchedCity) {
       _lastWatchedCity = patientCity;
@@ -146,6 +154,40 @@ class _PatientDashboardTabState extends State<PatientDashboardTab> {
       queueService: queue,
     );
     _syncDoctorWatches(activeQueues);
+
+    final primaryQueue = activeQueues.isNotEmpty ? activeQueues.first : null;
+    final primaryDoctor = primaryQueue != null
+        ? data.doctorById(primaryQueue.doctorId)
+        : null;
+
+    final todayAppointment = appointments.appointments
+        .where(
+          (a) =>
+              PatientTodaySummaryCard.isToday(a.dateTime) &&
+              (a.isPending || a.isAccepted),
+        )
+        .toList()
+      ..sort((a, b) => a.dateTime.compareTo(b.dateTime));
+    final nextTodayAppointment =
+        todayAppointment.isNotEmpty ? todayAppointment.first : null;
+
+    final diagnosisCount = prescriptions.prescriptions
+        .where((p) => p.diagnosis.trim().isNotEmpty)
+        .length;
+    final sharedNotesCount = prescriptions.prescriptions
+        .where((p) => p.notes != null && p.notes!.trim().isNotEmpty)
+        .length;
+    var pendingInvestigationCount = 0;
+    var completedInvestigationCount = 0;
+    for (final request in investigations.requests) {
+      for (final item in request.items) {
+        if (item.isPending) {
+          pendingInvestigationCount++;
+        } else {
+          completedInvestigationCount++;
+        }
+      }
+    }
 
     final favoriteDoctors = favorites.favoriteDoctorIds
         .map(data.doctorById)
@@ -213,20 +255,47 @@ class _PatientDashboardTabState extends State<PatientDashboardTab> {
           padding: EdgeInsets.fromLTRB(16, ads.isNotEmpty ? 16 : 12, 16, 0),
           sliver: SliverToBoxAdapter(child: _SearchBar(l10n: l10n)),
         ),
-        if (activeQueues.isNotEmpty) ...[
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          sliver: SliverToBoxAdapter(
+            child: PatientTodaySummaryCard(
+              todayAppointment: nextTodayAppointment,
+              primaryQueue: primaryQueue,
+              doctor: primaryDoctor,
+              queueService: queue,
+            ),
+          ),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+          sliver: SliverToBoxAdapter(
+            child: PatientMedicalRecordsHub(
+              prescriptionCount: prescriptions.prescriptions.length,
+              pendingInvestigationCount: pendingInvestigationCount,
+              completedInvestigationCount: completedInvestigationCount,
+              diagnosisCount: diagnosisCount,
+              sharedNotesCount: sharedNotesCount,
+            ),
+          ),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+          sliver: SliverToBoxAdapter(
+            child: PatientNotificationsStrip(
+              notifications: notifications.notifications,
+            ),
+          ),
+        ),
+        if (activeQueues.length > 1) ...[
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
               child: SectionHeader(
-                title: activeQueues.length > 1
-                    ? l10n.activeQueues
-                    : l10n.myQueue,
-                action: activeQueues.length > 1
-                    ? TextButton(
-                        onPressed: widget.onQueuesTap,
-                        child: Text(l10n.viewAll),
-                      )
-                    : null,
+                title: l10n.activeQueues,
+                action: TextButton(
+                  onPressed: widget.onQueuesTap,
+                  child: Text(l10n.viewAll),
+                ),
               ),
             ),
           ),

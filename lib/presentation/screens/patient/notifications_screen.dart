@@ -112,6 +112,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     if (name.contains('appointment')) return Icons.event;
     if (name.contains('prescription')) return Icons.medication;
     if (name.contains('queue')) return Icons.queue;
+    if (name.contains('investigation')) return Icons.biotech_outlined;
     return Icons.notifications;
   }
 

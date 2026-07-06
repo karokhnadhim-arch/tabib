@@ -3663,4 +3663,67 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noSearchResults => 'No matching patients';
+
+  @override
+  String get todayVisit => 'Today\'s visit';
+
+  @override
+  String get todayAppointment => 'Today\'s appointment';
+
+  @override
+  String get noVisitToday => 'No visit scheduled for today';
+
+  @override
+  String get viewQueueDetails => 'View queue details';
+
+  @override
+  String get medicalRecords => 'Medical records';
+
+  @override
+  String get medicalRecordsHint => 'Your prescriptions, tests, and notes from your doctor';
+
+  @override
+  String get currentPrescription => 'Current prescription';
+
+  @override
+  String get previousPrescriptions => 'Previous prescriptions';
+
+  @override
+  String get diagnosisHistory => 'Diagnosis history';
+
+  @override
+  String get investigationRequests => 'Investigation requests';
+
+  @override
+  String get investigationResults => 'Investigation results';
+
+  @override
+  String get sharedClinicalNotes => 'Clinical notes';
+
+  @override
+  String get noDiagnosisHistory => 'No diagnosis history yet';
+
+  @override
+  String get noClinicalNotesShared => 'No clinical notes shared by your doctor';
+
+  @override
+  String get investigationStatusPending => 'Pending';
+
+  @override
+  String get investigationStatusCompleted => 'Completed';
+
+  @override
+  String get noCompletedInvestigations => 'No completed investigations yet';
+
+  @override
+  String get noInvestigationsYet => 'No investigations yet';
+
+  @override
+  String get downloadPdf => 'Download PDF';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get pending => 'Pending';
 }

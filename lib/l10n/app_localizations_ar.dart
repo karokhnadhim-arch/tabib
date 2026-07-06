@@ -3663,4 +3663,67 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noSearchResults => 'لا توجد نتائج';
+
+  @override
+  String get todayVisit => 'زيارة اليوم';
+
+  @override
+  String get todayAppointment => 'موعد اليوم';
+
+  @override
+  String get noVisitToday => 'لا توجد زيارة مجدولة لليوم';
+
+  @override
+  String get viewQueueDetails => 'عرض تفاصيل القائمة';
+
+  @override
+  String get medicalRecords => 'السجلات الطبية';
+
+  @override
+  String get medicalRecordsHint => 'وصفاتك وفحوصاتك وملاحظات طبيبك';
+
+  @override
+  String get currentPrescription => 'الوصفة الحالية';
+
+  @override
+  String get previousPrescriptions => 'الوصفات السابقة';
+
+  @override
+  String get diagnosisHistory => 'سجل التشخيص';
+
+  @override
+  String get investigationRequests => 'طلبات الفحص';
+
+  @override
+  String get investigationResults => 'نتائج الفحص';
+
+  @override
+  String get sharedClinicalNotes => 'ملاحظات سريرية';
+
+  @override
+  String get noDiagnosisHistory => 'لا يوجد سجل تشخيص بعد';
+
+  @override
+  String get noClinicalNotesShared => 'لم يشارك طبيبك ملاحظات سريرية';
+
+  @override
+  String get investigationStatusPending => 'معلق';
+
+  @override
+  String get investigationStatusCompleted => 'مكتمل';
+
+  @override
+  String get noCompletedInvestigations => 'لا توجد فحوصات مكتملة بعد';
+
+  @override
+  String get noInvestigationsYet => 'لا توجد فحوصات بعد';
+
+  @override
+  String get downloadPdf => 'تحميل PDF';
+
+  @override
+  String get all => 'الكل';
+
+  @override
+  String get pending => 'معلق';
 }

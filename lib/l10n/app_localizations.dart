@@ -7198,6 +7198,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No matching patients'**
   String get noSearchResults;
+
+  /// No description provided for @todayVisit.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s visit'**
+  String get todayVisit;
+
+  /// No description provided for @todayAppointment.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s appointment'**
+  String get todayAppointment;
+
+  /// No description provided for @noVisitToday.
+  ///
+  /// In en, this message translates to:
+  /// **'No visit scheduled for today'**
+  String get noVisitToday;
+
+  /// No description provided for @viewQueueDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View queue details'**
+  String get viewQueueDetails;
+
+  /// No description provided for @medicalRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical records'**
+  String get medicalRecords;
+
+  /// No description provided for @medicalRecordsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your prescriptions, tests, and notes from your doctor'**
+  String get medicalRecordsHint;
+
+  /// No description provided for @currentPrescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Current prescription'**
+  String get currentPrescription;
+
+  /// No description provided for @previousPrescriptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous prescriptions'**
+  String get previousPrescriptions;
+
+  /// No description provided for @diagnosisHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagnosis history'**
+  String get diagnosisHistory;
+
+  /// No description provided for @investigationRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Investigation requests'**
+  String get investigationRequests;
+
+  /// No description provided for @investigationResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Investigation results'**
+  String get investigationResults;
+
+  /// No description provided for @sharedClinicalNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinical notes'**
+  String get sharedClinicalNotes;
+
+  /// No description provided for @noDiagnosisHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'No diagnosis history yet'**
+  String get noDiagnosisHistory;
+
+  /// No description provided for @noClinicalNotesShared.
+  ///
+  /// In en, this message translates to:
+  /// **'No clinical notes shared by your doctor'**
+  String get noClinicalNotesShared;
+
+  /// No description provided for @investigationStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get investigationStatusPending;
+
+  /// No description provided for @investigationStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get investigationStatusCompleted;
+
+  /// No description provided for @noCompletedInvestigations.
+  ///
+  /// In en, this message translates to:
+  /// **'No completed investigations yet'**
+  String get noCompletedInvestigations;
+
+  /// No description provided for @noInvestigationsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No investigations yet'**
+  String get noInvestigationsYet;
+
+  /// No description provided for @downloadPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Download PDF'**
+  String get downloadPdf;
+
+  /// No description provided for @all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// No description provided for @pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get pending;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -36,6 +36,9 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
       staffData.startRealtime();
       context.read<NotificationProvider>().watch(auth.patientId);
       context.read<QueueService>().watchPatientQueues(auth.patientId);
+      context.read<AppointmentProvider>().watchPatient(auth.patientId);
+      context.read<PrescriptionProvider>().watchPatient(auth.patientId);
+      context.read<InvestigationRequestProvider>().watchPatient(auth.patientId);
       await context.read<PatientProfileService>().bindUser(auth.patientId);
       await context.read<RecentlyVisitedService>().bindUser(auth.patientId);
       await data.ensureCatalogLoaded();

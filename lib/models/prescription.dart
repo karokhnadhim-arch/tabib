@@ -14,6 +14,7 @@ class Prescription {
     required this.createdAt,
     this.notes,
     this.items = const [],
+    this.pdfUrl,
   });
 
   final String id;
@@ -26,6 +27,7 @@ class Prescription {
   final DateTime createdAt;
   final String? notes;
   final List<PrescriptionLineItem> items;
+  final String? pdfUrl;
 
   Map<String, dynamic> toMap() => {
         'patientId': patientId,
@@ -37,6 +39,7 @@ class Prescription {
         'createdAt': Timestamp.fromDate(createdAt),
         if (notes != null) 'notes': notes,
         if (items.isNotEmpty) 'items': items.map((e) => e.toMap()).toList(),
+        if (pdfUrl != null) 'pdfUrl': pdfUrl,
       };
 
   factory Prescription.fromFirestore(String id, Map<String, dynamic> data) {
@@ -60,6 +63,7 @@ class Prescription {
       createdAt: _parseDate(data['createdAt']),
       notes: data['notes'] as String?,
       items: items,
+      pdfUrl: data['pdfUrl'] as String?,
     );
   }
 

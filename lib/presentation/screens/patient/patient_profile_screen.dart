@@ -583,6 +583,21 @@ class _PatientProfileScreenState extends State<PatientProfileScreen> {
                               ],
                             ),
                           ],
+                          const SizedBox(height: _sectionSpacing),
+                          OutlinedButton.icon(
+                            onPressed: () async {
+                              await auth.logout();
+                              if (!context.mounted) return;
+                              context.go('/login');
+                            },
+                            icon: const Icon(Icons.logout),
+                            label: Text(l10n.logout),
+                            style: OutlinedButton.styleFrom(
+                              minimumSize: const Size.fromHeight(48),
+                              foregroundColor: Colors.red.shade700,
+                              side: BorderSide(color: Colors.red.shade200),
+                            ),
+                          ),
                         ],
                       ),
                     ),

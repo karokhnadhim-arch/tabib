@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/responsive_scaffold.dart';
@@ -9,6 +10,7 @@ import '../../../models/prescription.dart';
 import '../../../models/prescription_line_item.dart';
 import '../../../services/auth_service.dart';
 import '../../providers/app_providers.dart';
+import '../doctor/prescription/prescription_print_sheet.dart';
 
 /// Patient-facing prescription history — always available in the app.
 class PatientPrescriptionsScreen extends StatefulWidget {
@@ -59,6 +61,7 @@ class _PatientPrescriptionsScreenState extends State<PatientPrescriptionsScreen>
                         prescription: rx,
                         dateLabel: dateFmt.format(rx.createdAt.toLocal()),
                         l10n: l10n,
+                        isCurrent: index == 0,
                       );
                     },
                   ),
@@ -99,11 +102,13 @@ class _PrescriptionCard extends StatelessWidget {
     required this.prescription,
     required this.dateLabel,
     required this.l10n,
+    this.isCurrent = false,
   });
 
   final Prescription prescription;
   final String dateLabel;
   final AppLocalizations l10n;
+  final bool isCurrent;
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +121,12 @@ class _PrescriptionCard extends StatelessWidget {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: scheme.outlineVariant.withOpacity(0.5)),
+        side: BorderSide(
+          color: isCurrent
+              ? AppTheme.medicalGreen.withOpacity(0.5)
+              : scheme.outlineVariant.withOpacity(0.5),
+          width: isCurrent ? 1.5 : 1,
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -128,11 +138,29 @@ class _PrescriptionCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     prescription.doctorName,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w700,
                         ),
                   ),
                 ),
+                if (isCurrent)
+                  Container(
+                    margin: const EdgeInsets.only(right: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: AppTheme.medicalGreen.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      l10n.currentPrescription,
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.medicalGreen,
+                      ),
+                    ),
+                  ),
                 Text(
                   dateLabel,
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
@@ -142,7 +170,7 @@ class _PrescriptionCard extends StatelessWidget {
               ],
             ),
             if (prescription.diagnosis.isNotEmpty) ...[
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
               Text(
                 l10n.diagnosis,
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
@@ -151,30 +179,44 @@ class _PrescriptionCard extends StatelessWidget {
               ),
               Text(
                 prescription.diagnosis,
-                style: const TextStyle(fontWeight: FontWeight.w600),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
               ),
             ],
             if (lines.isNotEmpty) ...[
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
               Text(
                 l10n.medications,
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
                       color: scheme.onSurfaceVariant,
                     ),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 8),
               for (var i = 0; i < lines.length; i++)
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 6),
+                  padding: const EdgeInsets.only(bottom: 8),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('${i + 1}. '),
+                      Text(
+                        '${i + 1}.',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           lines[i] is PrescriptionLineItem
                               ? (lines[i] as PrescriptionLineItem).formatLine()
                               : lines[i] as String,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            height: 1.35,
+                          ),
                         ),
                       ),
                     ],
@@ -186,14 +228,69 @@ class _PrescriptionCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 '${l10n.notesOptional}: ${prescription.notes!.trim()}',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: scheme.onSurfaceVariant,
                     ),
               ),
             ],
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                OutlinedButton.icon(
+                  onPressed: () => _openPrintSheet(context),
+                  icon: const Icon(Icons.print_outlined, size: 18),
+                  label: Text(l10n.printPrescription),
+                ),
+                if (prescription.pdfUrl != null &&
+                    prescription.pdfUrl!.trim().isNotEmpty)
+                  FilledButton.tonalIcon(
+                    onPressed: () => _openPdf(prescription.pdfUrl!),
+                    icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
+                    label: Text(l10n.downloadPdf),
+                  ),
+              ],
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _openPdf(String url) async {
+    final uri = Uri.tryParse(url);
+    if (uri == null) return;
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  void _openPrintSheet(BuildContext context) {
+    final items = prescription.items.isNotEmpty
+        ? prescription.items
+        : _legacyLines(prescription.medications)
+            .map(
+              (s) => PrescriptionLineItem(
+                medicineId: '',
+                genericName: s as String,
+                brandName: '',
+                strength: '',
+                form: '',
+                dosage: '',
+                frequency: '',
+                duration: '',
+              ),
+            )
+            .toList();
+
+    showPrescriptionPrintSheet(
+      context: context,
+      patientName: prescription.patientName,
+      doctorName: prescription.doctorName,
+      diagnosis: prescription.diagnosis,
+      items: items,
+      notes: prescription.notes,
     );
   }
 

@@ -41,6 +41,8 @@ import '../../presentation/screens/patient/notifications_screen.dart';
 import '../../presentation/screens/patient/advertisement_detail_screen.dart';
 import '../../presentation/screens/patient/my_queues_screen.dart';
 import '../../presentation/screens/patient/patient_investigations_screen.dart';
+import '../../presentation/screens/patient/patient_clinical_notes_screen.dart';
+import '../../presentation/screens/patient/patient_diagnosis_history_screen.dart';
 import '../../presentation/screens/patient/patient_prescriptions_screen.dart';
 import '../../presentation/screens/patient/patient_profile_screen.dart';
 import '../../presentation/screens/patient/patient_home_screen.dart';
@@ -136,7 +138,17 @@ class AppRouter {
           ),
           GoRoute(
             path: '/investigations',
-            builder: (_, __) => const PatientInvestigationsScreen(),
+            builder: (_, state) => PatientInvestigationsScreen(
+              initialTab: state.uri.queryParameters['tab'],
+            ),
+          ),
+          GoRoute(
+            path: '/diagnosis-history',
+            builder: (_, __) => const PatientDiagnosisHistoryScreen(),
+          ),
+          GoRoute(
+            path: '/clinical-notes',
+            builder: (_, __) => const PatientClinicalNotesScreen(),
           ),
           GoRoute(
             path: '/notifications',

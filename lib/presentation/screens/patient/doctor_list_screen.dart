@@ -9,6 +9,8 @@ import '../../../l10n/app_localizations.dart';
 import '../../../models/appointment.dart';
 import '../../../models/doctor.dart';
 import '../../../models/provider_catalog_mode.dart';
+import '../../../services/auth_service.dart';
+import '../../providers/app_providers.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../services/staff_data_service.dart';
 import '../../../utils/localization_utils.dart';
@@ -388,7 +390,7 @@ class _TabibDoctorListScreenState extends State<TabibDoctorListScreen> {
   }
 }
 
-class AppointmentHistoryScreen extends StatelessWidget {
+class AppointmentHistoryScreen extends StatefulWidget {
   const AppointmentHistoryScreen({
     super.key,
     this.embedded = false,
@@ -399,9 +401,29 @@ class AppointmentHistoryScreen extends StatelessWidget {
   final List<Appointment>? appointments;
 
   @override
+  State<AppointmentHistoryScreen> createState() =>
+      _AppointmentHistoryScreenState();
+}
+
+class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.appointments == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final patientId = context.read<AuthService>().patientId;
+        if (patientId.isNotEmpty) {
+          context.read<AppointmentProvider>().watchPatient(patientId);
+        }
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final list = appointments ?? [];
+    final list = widget.appointments ??
+        context.watch<AppointmentProvider>().appointments;
 
     final content = list.isEmpty
         ? Center(child: Text(l10n.noAppointmentsYet))
@@ -451,7 +473,7 @@ class AppointmentHistoryScreen extends StatelessWidget {
             },
           );
 
-    if (embedded) return content;
+    if (widget.embedded) return content;
 
     return Scaffold(
       appBar: AppBar(

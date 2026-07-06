@@ -3663,4 +3663,67 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get noSearchResults => 'هیچ ئەنجامێک نییە';
+
+  @override
+  String get todayVisit => 'سەردانی ئەمڕۆ';
+
+  @override
+  String get todayAppointment => 'چاوپێکەوتنی ئەمڕۆ';
+
+  @override
+  String get noVisitToday => 'هیچ سەردانێک بۆ ئەمڕۆ دانەنراوە';
+
+  @override
+  String get viewQueueDetails => 'وردەکاری ڕیز ببینە';
+
+  @override
+  String get medicalRecords => 'تۆمارە پزیشکییەکان';
+
+  @override
+  String get medicalRecordsHint => 'ڕەچەتە و پشکنین و تێبینی دکتۆرەکەت';
+
+  @override
+  String get currentPrescription => 'ڕەچەتەی ئێستا';
+
+  @override
+  String get previousPrescriptions => 'ڕەچەتەی پێشوو';
+
+  @override
+  String get diagnosisHistory => 'مێژووی دەستنیشانکردن';
+
+  @override
+  String get investigationRequests => 'داواکاری پشکنین';
+
+  @override
+  String get investigationResults => 'ئەنجامی پشکنین';
+
+  @override
+  String get sharedClinicalNotes => 'تێبینییە پزیشکییەکان';
+
+  @override
+  String get noDiagnosisHistory => 'هێشتا مێژووی دەستنیشانکردن نییە';
+
+  @override
+  String get noClinicalNotesShared => 'دکتۆرەکەت هیچ تێبینییەکی پزیشکی بڵاونەکردووەتەوە';
+
+  @override
+  String get investigationStatusPending => 'چاوەڕوان';
+
+  @override
+  String get investigationStatusCompleted => 'تەواو';
+
+  @override
+  String get noCompletedInvestigations => 'هێشتا پشکنینی تەواوکراو نییە';
+
+  @override
+  String get noInvestigationsYet => 'هێشتا پشکنین نییە';
+
+  @override
+  String get downloadPdf => 'داگرتنی PDF';
+
+  @override
+  String get all => 'هەموو';
+
+  @override
+  String get pending => 'چاوەڕوان';
 }
