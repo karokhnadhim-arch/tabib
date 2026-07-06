@@ -1268,5 +1268,43 @@
       }
     }
   },
-  "date": "بەروار"
+  "date": "بەروار",
+  "requestInvestigation": "داواکردنی پشکنین",
+  "searchInvestigation": "گەڕان بۆ پشکنینی تاقیگە یان وێنەگرتن",
+  "requestedInvestigations": "پشکنینە داواکراوەکان",
+  "investigationNote": "تێبینی",
+  "investigationNoteHint": "تێبینی ئارەزوومەندانە بۆ ئەم پشکنینە",
+  "investigationCategoryLaboratory": "تاقیگە",
+  "investigationCategoryRadiology": "تیشک",
+  "investigationCategoryCardiology": "دڵ",
+  "investigationCategoryUltrasound": "ئەلتراساوند",
+  "investigationCategoryOther": "هیتر",
+  "pendingInvestigations": "پشکنینە چاوەڕوانەکان",
+  "andMoreInvestigations": "+{count} زیاتر",
+  "@andMoreInvestigations": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "myInvestigations": "پشکنینەکانم",
+  "noPendingInvestigations": "هیچ پشکنینێکی چاوەڕوان نییە",
+  "investigationRequestCount": "{count, plural, =1{1 پشکنین} other{{count} پشکنین}}",
+  "@investigationRequestCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pendingInvestigationCount": "{count, plural, =1{1 پشکنینی چاوەڕوان} other{{count} پشکنینی چاوەڕوان}}",
+  "@pendingInvestigationCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "patientReturnedForReview": "گەڕاوەتەوە بۆ پێداچوونەوە — ئەنجامی پشکنین ئامادەیە"
 }

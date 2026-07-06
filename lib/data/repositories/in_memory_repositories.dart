@@ -4,6 +4,8 @@ import '../../models/appointment.dart';
 import '../../models/chat_message.dart';
 import '../../models/notification.dart';
 import '../../models/notification_channel.dart';
+import '../../models/investigation_request.dart';
+import '../../models/investigation_request_item.dart';
 import '../../models/prescription.dart';
 import '../../models/prescription_line_item.dart';
 import '../../models/visit_status.dart';
@@ -343,6 +345,97 @@ class InMemoryPrescriptionRepository implements PrescriptionRepository {
       body: 'Dr. $doctorName wrote a prescription for you',
       type: AppNotificationType.prescription.name,
     );
+  }
+}
+
+class InMemoryInvestigationRequestRepository
+    implements InvestigationRequestRepository {
+  final Map<String, InvestigationRequest> _byQueueEntry = {};
+  final _change = StreamController<void>.broadcast();
+  final InMemoryNotificationRepository? _notifications;
+
+  InMemoryInvestigationRequestRepository({InMemoryNotificationRepository? notifications})
+      : _notifications = notifications;
+
+  void _notify() => _change.add(null);
+
+  List<InvestigationRequest> _patientList(String patientId) => _byQueueEntry.values
+      .where((r) => r.patientId == patientId)
+      .toList()
+    ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+
+  List<InvestigationRequest> _doctorList(String doctorId) => _byQueueEntry.values
+      .where((r) => r.doctorId == doctorId)
+      .toList()
+    ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+
+  @override
+  Stream<List<InvestigationRequest>> watchPatientRequests(String patientId) async* {
+    yield _patientList(patientId);
+    await for (final _ in _change.stream) {
+      yield _patientList(patientId);
+    }
+  }
+
+  @override
+  Stream<List<InvestigationRequest>> watchDoctorRequests(String doctorId) async* {
+    yield _doctorList(doctorId);
+    await for (final _ in _change.stream) {
+      yield _doctorList(doctorId);
+    }
+  }
+
+  @override
+  Future<void> upsertVisitRequest({
+    required String queueEntryId,
+    required String patientId,
+    required String patientName,
+    required String doctorId,
+    required String doctorName,
+    required List<InvestigationRequestItem> items,
+  }) async {
+    final now = DateTime.now();
+    final existing = _byQueueEntry[queueEntryId];
+    if (items.isEmpty) {
+      if (existing != null) {
+        _byQueueEntry[queueEntryId] = InvestigationRequest(
+          id: queueEntryId,
+          patientId: existing.patientId,
+          patientName: existing.patientName,
+          doctorId: existing.doctorId,
+          doctorName: existing.doctorName,
+          queueEntryId: queueEntryId,
+          items: const [],
+          createdAt: existing.createdAt,
+          updatedAt: now,
+        );
+        _notify();
+      }
+      return;
+    }
+
+    final isNew = existing == null;
+    _byQueueEntry[queueEntryId] = InvestigationRequest(
+      id: queueEntryId,
+      patientId: patientId,
+      patientName: patientName,
+      doctorId: doctorId,
+      doctorName: doctorName,
+      queueEntryId: queueEntryId,
+      items: items,
+      createdAt: existing?.createdAt ?? now,
+      updatedAt: now,
+    );
+    _notify();
+
+    if (isNew) {
+      await _notifications?.sendNotification(
+        userId: patientId,
+        title: 'Investigation requested',
+        body: 'Dr. $doctorName requested investigations for you',
+        type: AppNotificationType.general.name,
+      );
+    }
   }
 }
 

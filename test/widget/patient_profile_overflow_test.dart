@@ -31,6 +31,7 @@ void main() {
   late RecentlyVisitedService recentlyVisitedService;
   late AppointmentProvider appointmentProvider;
   late PrescriptionProvider prescriptionProvider;
+  late InvestigationRequestProvider investigationRequestProvider;
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
@@ -57,6 +58,9 @@ void main() {
     );
     prescriptionProvider = PrescriptionProvider(
       repository: InMemoryPrescriptionRepository(),
+    );
+    investigationRequestProvider = InvestigationRequestProvider(
+      repository: InMemoryInvestigationRequestRepository(),
     );
   });
 
@@ -85,6 +89,9 @@ void main() {
         ),
         ChangeNotifierProvider<PrescriptionProvider>.value(
           value: prescriptionProvider,
+        ),
+        ChangeNotifierProvider<InvestigationRequestProvider>.value(
+          value: investigationRequestProvider,
         ),
       ],
       child: MaterialApp(

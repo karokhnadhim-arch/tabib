@@ -3556,4 +3556,73 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get date => 'بەروار';
+
+  @override
+  String get requestInvestigation => 'داواکردنی پشکنین';
+
+  @override
+  String get searchInvestigation => 'گەڕان بۆ پشکنینی تاقیگە یان وێنەگرتن';
+
+  @override
+  String get requestedInvestigations => 'پشکنینە داواکراوەکان';
+
+  @override
+  String get investigationNote => 'تێبینی';
+
+  @override
+  String get investigationNoteHint => 'تێبینی ئارەزوومەندانە بۆ ئەم پشکنینە';
+
+  @override
+  String get investigationCategoryLaboratory => 'تاقیگە';
+
+  @override
+  String get investigationCategoryRadiology => 'تیشک';
+
+  @override
+  String get investigationCategoryCardiology => 'دڵ';
+
+  @override
+  String get investigationCategoryUltrasound => 'ئەلتراساوند';
+
+  @override
+  String get investigationCategoryOther => 'هیتر';
+
+  @override
+  String get pendingInvestigations => 'پشکنینە چاوەڕوانەکان';
+
+  @override
+  String andMoreInvestigations(int count) {
+    return '+$count زیاتر';
+  }
+
+  @override
+  String get myInvestigations => 'پشکنینەکانم';
+
+  @override
+  String get noPendingInvestigations => 'هیچ پشکنینێکی چاوەڕوان نییە';
+
+  @override
+  String investigationRequestCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count پشکنین',
+      one: '1 پشکنین',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String pendingInvestigationCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count پشکنینی چاوەڕوان',
+      one: '1 پشکنینی چاوەڕوان',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get patientReturnedForReview => 'گەڕاوەتەوە بۆ پێداچوونەوە — ئەنجامی پشکنین ئامادەیە';
 }

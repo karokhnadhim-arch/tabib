@@ -8,6 +8,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/appointment.dart';
 import '../../../models/prescription.dart';
+import '../../../models/investigation_request_item.dart';
 import '../../../models/queue_entry.dart';
 import '../../../services/auth_service.dart';
 import '../../../utils/localization_utils.dart';
@@ -17,6 +18,7 @@ import '../../widgets/staff_patient_contact_bar.dart';
 import 'doctor_consultation_session.dart';
 import 'doctor_consultation_widgets.dart';
 import 'doctor_visit_notes_store.dart';
+import 'investigation/doctor_investigation_composer.dart';
 import 'prescription/doctor_prescription_composer.dart';
 import 'prescription/prescription_print_sheet.dart';
 
@@ -43,7 +45,9 @@ class DoctorConsultationWorkspace extends StatefulWidget {
 class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspace> {
   ConsultationFocusSection _focused = ConsultationFocusSection.diagnosis;
   Timer? _prescriptionSyncTimer;
+  Timer? _investigationSyncTimer;
   bool _syncingPrescription = false;
+  bool _syncingInvestigation = false;
   String? _watchedPatientId;
 
   String get _storageKey => DoctorVisitNotesStore.storageKey(
@@ -69,21 +73,79 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
     await widget.session.activate(_storageKey);
     if (!mounted) return;
     _watchPatientHistory(widget.entry.patientId);
+    _hydrateInvestigationsFromRemote();
     if (widget.entry.status == QueueStatus.inProgress) {
       setState(() => _focused = ConsultationFocusSection.diagnosis);
     }
+  }
+
+  void _hydrateInvestigationsFromRemote() {
+    final remote = context
+        .read<InvestigationRequestProvider>()
+        .requestForQueueEntry(widget.entry.id);
+    if (remote == null || remote.items.isEmpty) return;
+    final notes = widget.session.notesStore.notesFor(_storageKey);
+    if (notes.investigationItems.isNotEmpty) return;
+    widget.session.notesStore.scheduleSave(
+      _storageKey,
+      investigationItems: remote.items,
+    );
   }
 
   void _watchPatientHistory(String patientId) {
     if (_watchedPatientId == patientId) return;
     _watchedPatientId = patientId;
     context.read<PrescriptionProvider>().watchPatient(patientId);
+    context.read<InvestigationRequestProvider>().watchDoctor(widget.doctorId);
   }
 
   void _onFieldChanged() {
     widget.session.onFieldChanged(_storageKey);
     _schedulePrescriptionSync();
     setState(() {});
+  }
+
+  void _onInvestigationItemsChanged(List<InvestigationRequestItem> items) {
+    widget.session.onInvestigationItemsChanged(_storageKey, items);
+    _scheduleInvestigationSync();
+    setState(() {});
+  }
+
+  void _scheduleInvestigationSync() {
+    _investigationSyncTimer?.cancel();
+    _investigationSyncTimer =
+        Timer(const Duration(milliseconds: 900), _maybeSyncInvestigations);
+  }
+
+  Future<void> _maybeSyncInvestigations() async {
+    if (!mounted || _syncingInvestigation) return;
+    final notes = widget.session.notesStore.notesFor(_storageKey);
+    if (notes.investigationSynced) return;
+
+    _syncingInvestigation = true;
+    final auth = context.read<AuthService>();
+    final user = auth.currentUser;
+    if (user == null) {
+      _syncingInvestigation = false;
+      return;
+    }
+
+    try {
+      await context.read<InvestigationRequestProvider>().upsertVisitRequest(
+            queueEntryId: widget.entry.id,
+            patientId: widget.entry.patientId,
+            patientName: widget.entry.patientName,
+            doctorId: widget.doctorId,
+            doctorName: user.name.localized(context),
+            items: notes.investigationItems,
+          );
+      await widget.session.notesStore.markInvestigationSynced(_storageKey);
+      if (mounted) setState(() {});
+    } catch (_) {
+      // Retry on next edit.
+    } finally {
+      _syncingInvestigation = false;
+    }
   }
 
   void _schedulePrescriptionSync() {
@@ -138,9 +200,15 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
     return text.isEmpty ? null : text;
   }
 
+  String? _investigationSubtitle(DoctorVisitNotes notes, AppLocalizations l10n) {
+    if (notes.investigationItems.isEmpty) return null;
+    return l10n.investigationRequestCount(notes.investigationItems.length);
+  }
+
   @override
   void dispose() {
     _prescriptionSyncTimer?.cancel();
+    _investigationSyncTimer?.cancel();
     super.dispose();
   }
 
@@ -229,7 +297,32 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
                     ],
                   ),
                 )
-              : null,
+              : widget.entry.status == QueueStatus.review
+                  ? Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.orange.shade200),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.replay_rounded,
+                              color: Colors.orange.shade800, size: 20),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              l10n.patientReturnedForReview,
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : null,
         ),
         const SizedBox(height: 14),
         DoctorConsultationSectionTile(
@@ -299,6 +392,18 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
                           ? null
                           : notes.clinicalNotes.trim(),
                     ),
+          ),
+        ),
+        DoctorConsultationSectionTile(
+          icon: Icons.biotech_outlined,
+          title: l10n.requestInvestigation,
+          subtitle: _investigationSubtitle(notes, l10n),
+          expanded: _focused == ConsultationFocusSection.investigations,
+          onTap: () => _focusSection(ConsultationFocusSection.investigations),
+          child: DoctorInvestigationComposer(
+            items: notes.investigationItems,
+            readOnly: isCompleted,
+            onItemsChanged: _onInvestigationItemsChanged,
           ),
         ),
         DoctorConsultationSectionTile(

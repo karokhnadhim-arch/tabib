@@ -3556,4 +3556,73 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get date => 'التاريخ';
+
+  @override
+  String get requestInvestigation => 'طلب فحص';
+
+  @override
+  String get searchInvestigation => 'ابحث عن فحوصات مخبرية أو تصوير';
+
+  @override
+  String get requestedInvestigations => 'الفحوصات المطلوبة';
+
+  @override
+  String get investigationNote => 'ملاحظة';
+
+  @override
+  String get investigationNoteHint => 'ملاحظة اختيارية لهذا الفحص';
+
+  @override
+  String get investigationCategoryLaboratory => 'مختبر';
+
+  @override
+  String get investigationCategoryRadiology => 'أشعة';
+
+  @override
+  String get investigationCategoryCardiology => 'قلب';
+
+  @override
+  String get investigationCategoryUltrasound => 'موجات فوق صوتية';
+
+  @override
+  String get investigationCategoryOther => 'أخرى';
+
+  @override
+  String get pendingInvestigations => 'فحوصات قيد الانتظار';
+
+  @override
+  String andMoreInvestigations(int count) {
+    return '+$count أخرى';
+  }
+
+  @override
+  String get myInvestigations => 'فحوصاتي';
+
+  @override
+  String get noPendingInvestigations => 'لا توجد فحوصات معلقة';
+
+  @override
+  String investigationRequestCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count فحوصات',
+      one: 'فحص واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String pendingInvestigationCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count فحوصات معلقة',
+      one: 'فحص واحد معلق',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get patientReturnedForReview => 'عاد للمراجعة — نتائج الفحوصات جاهزة';
 }

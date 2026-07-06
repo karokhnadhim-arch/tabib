@@ -1268,5 +1268,43 @@
       }
     }
   },
-  "date": "التاريخ"
+  "date": "التاريخ",
+  "requestInvestigation": "طلب فحص",
+  "searchInvestigation": "ابحث عن فحوصات مخبرية أو تصوير",
+  "requestedInvestigations": "الفحوصات المطلوبة",
+  "investigationNote": "ملاحظة",
+  "investigationNoteHint": "ملاحظة اختيارية لهذا الفحص",
+  "investigationCategoryLaboratory": "مختبر",
+  "investigationCategoryRadiology": "أشعة",
+  "investigationCategoryCardiology": "قلب",
+  "investigationCategoryUltrasound": "موجات فوق صوتية",
+  "investigationCategoryOther": "أخرى",
+  "pendingInvestigations": "فحوصات قيد الانتظار",
+  "andMoreInvestigations": "+{count} أخرى",
+  "@andMoreInvestigations": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "myInvestigations": "فحوصاتي",
+  "noPendingInvestigations": "لا توجد فحوصات معلقة",
+  "investigationRequestCount": "{count, plural, =1{فحص واحد} other{{count} فحوصات}}",
+  "@investigationRequestCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pendingInvestigationCount": "{count, plural, =1{فحص واحد معلق} other{{count} فحوصات معلقة}}",
+  "@pendingInvestigationCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "patientReturnedForReview": "عاد للمراجعة — نتائج الفحوصات جاهزة"
 }

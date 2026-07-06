@@ -7,12 +7,14 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/medical_ui.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/appointment.dart';
+import '../../../models/investigation_request.dart';
 import '../../../models/queue_entry.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../services/queue_service.dart';
 import '../../../services/smart_notification_service.dart';
 import '../../../utils/localization_utils.dart';
 import '../../widgets/staff_patient_contact_bar.dart';
+import '../../widgets/pending_investigations_panel.dart';
 import '../../../utils/queue_status_utils.dart';
 import '../../providers/app_providers.dart';
 
@@ -58,6 +60,7 @@ class SecretaryQueueManagementTab extends StatelessWidget {
     final clinicData = context.watch<ClinicDataService>();
     final doctor = clinicData.doctorById(doctorId);
     final queue = queueService.secretaryQueueForDoctor(doctorId);
+    final investigations = context.watch<InvestigationRequestProvider>();
 
     if (doctor == null) {
       return Padding(
@@ -86,6 +89,8 @@ class SecretaryQueueManagementTab extends StatelessWidget {
           _SecretaryQueueRow(
             entry: entry,
             appointment: _appointmentFor(appointments.appointments, entry),
+            investigationRequest:
+                investigations.requestForQueueEntry(entry.id),
             clinicId: clinicId,
             doctorId: doctorId,
             doctorName: doctor.name.localized(context),
@@ -316,6 +321,7 @@ class _SecretaryQueueRow extends StatelessWidget {
   const _SecretaryQueueRow({
     required this.entry,
     required this.appointment,
+    required this.investigationRequest,
     required this.clinicId,
     required this.doctorId,
     required this.doctorName,
@@ -331,6 +337,7 @@ class _SecretaryQueueRow extends StatelessWidget {
 
   final QueueEntry entry;
   final Appointment? appointment;
+  final InvestigationRequest? investigationRequest;
   final String clinicId;
   final String doctorId;
   final String doctorName;
@@ -363,6 +370,7 @@ class _SecretaryQueueRow extends StatelessWidget {
           statusColor: statusColor,
           timeLabel: timeLabel,
           l10n: l10n,
+          investigationRequest: investigationRequest,
           doctorId: doctorId,
           doctorName: doctorName,
           onMarkEntered: onMarkEntered,
@@ -569,6 +577,7 @@ class _QueueRowLayout extends StatelessWidget {
     required this.statusColor,
     required this.timeLabel,
     required this.l10n,
+    required this.investigationRequest,
     required this.doctorId,
     required this.doctorName,
     required this.onMarkEntered,
@@ -586,6 +595,7 @@ class _QueueRowLayout extends StatelessWidget {
   final Color statusColor;
   final String timeLabel;
   final AppLocalizations l10n;
+  final InvestigationRequest? investigationRequest;
   final String doctorId;
   final String doctorName;
   final VoidCallback onMarkEntered;
@@ -632,6 +642,14 @@ class _QueueRowLayout extends StatelessWidget {
               patientId: entry.patientId,
               compact: true,
             ),
+            if (investigationRequest != null &&
+                investigationRequest!.hasPending) ...[
+              const SizedBox(height: 10),
+              PendingInvestigationsPanel(
+                requests: [investigationRequest!],
+                compact: true,
+              ),
+            ],
           ],
         );
 

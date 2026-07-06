@@ -11,6 +11,8 @@ import '../../models/visit_status.dart';
 import '../../models/notification.dart';
 import '../../models/notification_channel.dart';
 import '../../models/appointment.dart';
+import '../../models/investigation_request.dart';
+import '../../models/investigation_request_item.dart';
 import '../../models/prescription_line_item.dart';
 import '../../services/smart_notification_service.dart';
 
@@ -336,6 +338,92 @@ class PrescriptionProvider extends ChangeNotifier {
         diagnosis: diagnosis,
         medications: medications,
         notes: notes,
+        items: items,
+      );
+}
+
+class InvestigationRequestProvider extends ChangeNotifier {
+  InvestigationRequestProvider({required InvestigationRequestRepository repository})
+      : _repository = repository;
+
+  final InvestigationRequestRepository _repository;
+  final SubscriptionManager _subscriptions = SubscriptionManager();
+
+  List<InvestigationRequest> _requests = [];
+  bool _loading = false;
+  String? _watchKey;
+
+  List<InvestigationRequest> get requests => List.unmodifiable(_requests);
+  bool get isLoading => _loading;
+
+  InvestigationRequest? requestForQueueEntry(String queueEntryId) {
+    for (final r in _requests) {
+      if (r.queueEntryId == queueEntryId) return r;
+    }
+    return null;
+  }
+
+  List<InvestigationRequest> pendingForPatient(String patientId) =>
+      _requests.where((r) => r.patientId == patientId && r.hasPending).toList();
+
+  void watchPatient(String patientId) {
+    if (_watchKey == 'patient:$patientId') return;
+    _watchKey = 'patient:$patientId';
+    _loading = true;
+    _subscriptions.replace(
+      'investigations',
+      _repository.watchPatientRequests(patientId),
+      (list) {
+        _requests = list;
+        _loading = false;
+        notifyListeners();
+      },
+      onError: (_) {
+        _loading = false;
+        notifyListeners();
+      },
+    );
+  }
+
+  void watchDoctor(String doctorId) {
+    if (_watchKey == 'doctor:$doctorId') return;
+    _watchKey = 'doctor:$doctorId';
+    _loading = true;
+    _subscriptions.replace(
+      'investigations',
+      _repository.watchDoctorRequests(doctorId),
+      (list) {
+        _requests = list;
+        _loading = false;
+        notifyListeners();
+      },
+      onError: (_) {
+        _loading = false;
+        notifyListeners();
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _subscriptions.cancelAll();
+    super.dispose();
+  }
+
+  Future<void> upsertVisitRequest({
+    required String queueEntryId,
+    required String patientId,
+    required String patientName,
+    required String doctorId,
+    required String doctorName,
+    required List<InvestigationRequestItem> items,
+  }) =>
+      _repository.upsertVisitRequest(
+        queueEntryId: queueEntryId,
+        patientId: patientId,
+        patientName: patientName,
+        doctorId: doctorId,
+        doctorName: doctorName,
         items: items,
       );
 }

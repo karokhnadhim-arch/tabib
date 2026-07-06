@@ -68,6 +68,7 @@ class _PatientProfileScreenState extends State<PatientProfileScreen> {
     _queueService!.watchPatientQueues(patientId);
     context.read<AppointmentProvider>().watchPatient(patientId);
     context.read<PrescriptionProvider>().watchPatient(patientId);
+    context.read<InvestigationRequestProvider>().watchPatient(patientId);
     await context.read<FavoritesService>().bindUser(patientId);
     await context.read<RecentlyVisitedService>().bindUser(patientId);
 
@@ -253,6 +254,7 @@ class _PatientProfileScreenState extends State<PatientProfileScreen> {
     final recentlyVisited = context.watch<RecentlyVisitedService>();
     final appointments = context.watch<AppointmentProvider>();
     final prescriptions = context.watch<PrescriptionProvider>();
+    final investigationRequests = context.watch<InvestigationRequestProvider>();
     final ads = context.watch<AdvertisementService>().advertisements;
 
     final patientId = auth.patientId;
@@ -376,6 +378,41 @@ class _PatientProfileScreenState extends State<PatientProfileScreen> {
                               ),
                               trailing: const Icon(Icons.chevron_right_rounded),
                               onTap: () => context.push('/prescriptions'),
+                            ),
+                          ),
+                          const SizedBox(height: _sectionSpacing),
+                          _SectionTitle(title: l10n.myInvestigations),
+                          const SizedBox(height: 12),
+                          Card(
+                            elevation: 0,
+                            margin: EdgeInsets.zero,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              side: BorderSide(color: Colors.grey.shade200),
+                            ),
+                            child: ListTile(
+                              leading: Icon(
+                                Icons.biotech_outlined,
+                                color: AppTheme.medicalBlue,
+                              ),
+                              title: Text(l10n.myInvestigations),
+                              subtitle: Text(
+                                investigationRequests.requests
+                                        .where((r) => r.hasPending)
+                                        .isEmpty
+                                    ? l10n.noPendingInvestigations
+                                    : l10n.pendingInvestigationCount(
+                                        investigationRequests.requests
+                                            .where((r) => r.hasPending)
+                                            .fold<int>(
+                                              0,
+                                              (sum, r) =>
+                                                  sum + r.pendingItems.length,
+                                            ),
+                                      ),
+                              ),
+                              trailing: const Icon(Icons.chevron_right_rounded),
+                              onTap: () => context.push('/investigations'),
                             ),
                           ),
                           const SizedBox(height: _sectionSpacing),

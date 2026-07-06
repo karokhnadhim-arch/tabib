@@ -1359,5 +1359,43 @@
       }
     }
   },
-  "date": "Date"
+  "date": "Date",
+  "requestInvestigation": "Request investigation",
+  "searchInvestigation": "Search laboratory or imaging tests",
+  "requestedInvestigations": "Requested investigations",
+  "investigationNote": "Note",
+  "investigationNoteHint": "Optional note for this investigation",
+  "investigationCategoryLaboratory": "Laboratory",
+  "investigationCategoryRadiology": "Radiology",
+  "investigationCategoryCardiology": "Cardiology",
+  "investigationCategoryUltrasound": "Ultrasound",
+  "investigationCategoryOther": "Other",
+  "pendingInvestigations": "Pending investigations",
+  "andMoreInvestigations": "+{count} more",
+  "@andMoreInvestigations": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "myInvestigations": "My investigations",
+  "noPendingInvestigations": "No pending investigations",
+  "investigationRequestCount": "{count, plural, =1{1 investigation} other{{count} investigations}}",
+  "@investigationRequestCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pendingInvestigationCount": "{count, plural, =1{1 pending test} other{{count} pending tests}}",
+  "@pendingInvestigationCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "patientReturnedForReview": "Returned for review — investigation results ready"
 }

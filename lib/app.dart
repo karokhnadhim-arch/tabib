@@ -10,6 +10,7 @@ import 'core/widgets/demo_mode_banner.dart';
 import 'data/repositories/appointment_repository_impl.dart';
 import 'data/repositories/chat_repository_impl.dart';
 import 'data/repositories/in_memory_repositories.dart';
+import 'data/repositories/investigation_request_repository_impl.dart';
 import 'data/repositories/notification_repository_impl.dart';
 import 'data/repositories/prescription_repository_impl.dart';
 import 'domain/repositories/repositories.dart';
@@ -109,6 +110,7 @@ class _TabibAppState extends State<TabibApp> {
   late final BusinessTypeUsageService _businessTypeUsageService;
   late final AppointmentRepository _appointmentRepository;
   late final PrescriptionRepository _prescriptionRepository;
+  late final InvestigationRequestRepository _investigationRequestRepository;
   late final NotificationRepository _notificationRepository;
   late final ChatRepository _baseChatRepository;
   late final OfflineChatRepository _offlineChatRepository;
@@ -122,6 +124,7 @@ class _TabibAppState extends State<TabibApp> {
   late final OfflineSyncCoordinator _offlineSyncCoordinator;
   late final AppointmentProvider _appointmentProvider;
   late final PrescriptionProvider _prescriptionProvider;
+  late final InvestigationRequestProvider _investigationRequestProvider;
   late final NotificationProvider _notificationProvider;
   late final ChatProvider _chatProvider;
   late final OwnerAuditService _ownerAuditService;
@@ -166,6 +169,9 @@ class _TabibAppState extends State<TabibApp> {
       _prescriptionRepository = InMemoryPrescriptionRepository(
         notifications: inMemoryNotifications,
       );
+      _investigationRequestRepository = InMemoryInvestigationRequestRepository(
+        notifications: inMemoryNotifications,
+      );
       _baseChatRepository = InMemoryChatRepository();
       _appointmentService = AppointmentService(demoMode: true);
     } else {
@@ -173,6 +179,7 @@ class _TabibAppState extends State<TabibApp> {
       _authService = AuthService(backend: _backend)..setFirebaseReady(true);
       _appointmentRepository = FirestoreAppointmentRepository();
       _prescriptionRepository = FirestorePrescriptionRepository();
+      _investigationRequestRepository = FirestoreInvestigationRequestRepository();
       _notificationRepository = FirestoreNotificationRepository();
       _baseChatRepository = FirestoreChatRepository();
       _appointmentService = AppointmentService();
@@ -229,6 +236,9 @@ class _TabibAppState extends State<TabibApp> {
       smartNotifications: _smartNotificationService,
     );
     _prescriptionProvider = PrescriptionProvider(repository: _prescriptionRepository);
+    _investigationRequestProvider = InvestigationRequestProvider(
+      repository: _investigationRequestRepository,
+    );
     _notificationProvider = NotificationProvider(repository: _notificationRepository);
     _chatProvider = ChatProvider(repository: _offlineChatRepository);
     _ownerAuditService = OwnerAuditService();
@@ -372,6 +382,7 @@ class _TabibAppState extends State<TabibApp> {
         ChangeNotifierProvider.value(value: _businessTypeUsageService),
         ChangeNotifierProvider.value(value: _appointmentProvider),
         ChangeNotifierProvider.value(value: _prescriptionProvider),
+        ChangeNotifierProvider.value(value: _investigationRequestProvider),
         ChangeNotifierProvider.value(value: _notificationProvider),
         ChangeNotifierProvider.value(value: _chatProvider),
         ChangeNotifierProvider.value(value: _ownerAuditService),

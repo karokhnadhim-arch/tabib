@@ -16,6 +16,7 @@ import '../../../services/queue_service.dart';
 import '../../../services/offline/connectivity_service.dart';
 import '../../../services/offline/offline_queue_cache_service.dart';
 import '../../widgets/offline_indicator_banner.dart';
+import '../../widgets/pending_investigations_panel.dart';
 import '../../widgets/premium_queue_dashboard.dart';
 
 
@@ -61,6 +62,8 @@ class _QueueTrackingScreenState extends State<QueueTrackingScreen>
     _alertService = QueueAlertService();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final auth = context.read<AuthService>();
+      context.read<InvestigationRequestProvider>().watchPatient(auth.patientId);
       _alertService = QueueAlertService(
         smartNotifications: context.read<SmartNotificationService>(),
       );
@@ -137,6 +140,7 @@ class _QueueTrackingScreenState extends State<QueueTrackingScreen>
     final auth = context.watch<AuthService>();
     final queue = context.watch<QueueService>();
     final data = context.watch<ClinicDataService>();
+    final investigations = context.watch<InvestigationRequestProvider>();
     final offlineQueue = context.watch<OfflineQueueCacheService>();
     final connectivity = context.watch<ConnectivityService>();
     QueueEntry? entry = widget.entryId != null
@@ -254,6 +258,14 @@ class _QueueTrackingScreenState extends State<QueueTrackingScreen>
               ),
             ),
           ),
+          if (investigations.requestForQueueEntry(activeEntry.id) != null &&
+              investigations.requestForQueueEntry(activeEntry.id)!.hasPending)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: PendingInvestigationsPanel(
+                requests: [investigations.requestForQueueEntry(activeEntry.id)!],
+              ),
+            ),
           SafeArea(
             top: false,
             child: Padding(

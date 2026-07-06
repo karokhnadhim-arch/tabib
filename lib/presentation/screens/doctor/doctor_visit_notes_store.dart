@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../models/investigation_request_item.dart';
 import '../../../models/prescription_line_item.dart';
 import 'prescription/prescription_formatter.dart';
 
@@ -14,7 +15,9 @@ class DoctorVisitNotes {
     this.medications = '',
     this.clinicalNotes = '',
     this.prescriptionItems = const [],
+    this.investigationItems = const [],
     this.prescriptionSynced = false,
+    this.investigationSynced = false,
     this.updatedAt,
   });
 
@@ -22,7 +25,9 @@ class DoctorVisitNotes {
   final String medications;
   final String clinicalNotes;
   final List<PrescriptionLineItem> prescriptionItems;
+  final List<InvestigationRequestItem> investigationItems;
   final bool prescriptionSynced;
+  final bool investigationSynced;
   final DateTime? updatedAt;
 
   DoctorVisitNotes copyWith({
@@ -30,7 +35,9 @@ class DoctorVisitNotes {
     String? medications,
     String? clinicalNotes,
     List<PrescriptionLineItem>? prescriptionItems,
+    List<InvestigationRequestItem>? investigationItems,
     bool? prescriptionSynced,
+    bool? investigationSynced,
     DateTime? updatedAt,
   }) {
     return DoctorVisitNotes(
@@ -38,7 +45,9 @@ class DoctorVisitNotes {
       medications: medications ?? this.medications,
       clinicalNotes: clinicalNotes ?? this.clinicalNotes,
       prescriptionItems: prescriptionItems ?? this.prescriptionItems,
+      investigationItems: investigationItems ?? this.investigationItems,
       prescriptionSynced: prescriptionSynced ?? this.prescriptionSynced,
+      investigationSynced: investigationSynced ?? this.investigationSynced,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
@@ -49,7 +58,10 @@ class DoctorVisitNotes {
         'clinicalNotes': clinicalNotes,
         'prescriptionItems':
             prescriptionItems.map((e) => e.toMap()).toList(),
+        'investigationItems':
+            investigationItems.map((e) => e.toMap()).toList(),
         'prescriptionSynced': prescriptionSynced,
+        'investigationSynced': investigationSynced,
         'updatedAt': updatedAt?.toUtc().millisecondsSinceEpoch,
       };
 
@@ -59,12 +71,23 @@ class DoctorVisitNotes {
         ? PrescriptionFormatter.parseItems(rawItems)
         : const <PrescriptionLineItem>[];
 
+    final invItems = json['investigationItems'];
+    final investigations = invItems is List
+        ? invItems
+            .whereType<Map>()
+            .map((e) =>
+                InvestigationRequestItem.fromMap(Map<String, dynamic>.from(e)))
+            .toList()
+        : const <InvestigationRequestItem>[];
+
     return DoctorVisitNotes(
       diagnosis: json['diagnosis'] as String? ?? '',
       medications: json['medications'] as String? ?? '',
       clinicalNotes: json['clinicalNotes'] as String? ?? '',
       prescriptionItems: items,
+      investigationItems: investigations,
       prescriptionSynced: json['prescriptionSynced'] as bool? ?? false,
+      investigationSynced: json['investigationSynced'] as bool? ?? false,
       updatedAt: json['updatedAt'] != null
           ? DateTime.fromMillisecondsSinceEpoch(
               (json['updatedAt'] as num).toInt(),
@@ -126,24 +149,31 @@ class DoctorVisitNotesStore extends ChangeNotifier {
     String? medications,
     String? clinicalNotes,
     List<PrescriptionLineItem>? prescriptionItems,
+    List<InvestigationRequestItem>? investigationItems,
   }) {
     final current = _cache[storageKey] ?? const DoctorVisitNotes();
     final items = prescriptionItems ?? current.prescriptionItems;
+    final investigations = investigationItems ?? current.investigationItems;
     final meds = medications ??
         (items.isNotEmpty
             ? PrescriptionFormatter.formatItems(items)
             : current.medications);
+
+    final resetPrescriptionSync = diagnosis != null ||
+        medications != null ||
+        prescriptionItems != null;
+    final resetInvestigationSync = investigationItems != null;
 
     _cache[storageKey] = current.copyWith(
       diagnosis: diagnosis ?? current.diagnosis,
       medications: meds,
       clinicalNotes: clinicalNotes ?? current.clinicalNotes,
       prescriptionItems: items,
-      prescriptionSynced: (diagnosis != null ||
-              medications != null ||
-              prescriptionItems != null)
-          ? false
-          : current.prescriptionSynced,
+      investigationItems: investigations,
+      prescriptionSynced:
+          resetPrescriptionSync ? false : current.prescriptionSynced,
+      investigationSynced:
+          resetInvestigationSync ? false : current.investigationSynced,
     );
     notifyListeners();
 
@@ -158,6 +188,16 @@ class DoctorVisitNotesStore extends ChangeNotifier {
     _debouncers[storageKey]?.cancel();
     _debouncers.remove(storageKey);
     await _persist(storageKey);
+  }
+
+  Future<void> markInvestigationSynced(String storageKey) async {
+    final current = _cache[storageKey] ?? const DoctorVisitNotes();
+    _cache[storageKey] = current.copyWith(
+      investigationSynced: true,
+      updatedAt: DateTime.now(),
+    );
+    await _persist(storageKey);
+    notifyListeners();
   }
 
   Future<void> markPrescriptionSynced(String storageKey) async {

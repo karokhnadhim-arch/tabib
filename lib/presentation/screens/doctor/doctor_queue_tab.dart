@@ -10,6 +10,7 @@ import '../../../services/clinic_data_service.dart';
 import '../../../services/queue_service.dart';
 import '../../../utils/localization_utils.dart';
 import '../../../utils/queue_status_utils.dart';
+import '../../providers/app_providers.dart';
 import 'doctor_consultation_session.dart';
 import 'doctor_consultation_workspace.dart';
 import 'doctor_today_queue.dart';
@@ -44,6 +45,7 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
 
   void _attachStream() {
     final queueService = context.read<QueueService>();
+    context.read<InvestigationRequestProvider>().watchDoctor(widget.doctorId);
     final secretaryStream = Stream<List<QueueEntry>>.multi((multi) {
       void emit() => multi.add(queueService.secretaryQueueForDoctor(widget.doctorId));
       emit();
@@ -167,6 +169,7 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
           entries: _todayQueue,
           selectedId: _selectedEntryId,
           roomPatientId: roomPatient?.id,
+          investigationProvider: context.watch<InvestigationRequestProvider>(),
           onSelect: _selectPatient,
         );
 
@@ -297,12 +300,14 @@ class _QueueList extends StatelessWidget {
     required this.entries,
     required this.selectedId,
     required this.roomPatientId,
+    required this.investigationProvider,
     required this.onSelect,
   });
 
   final List<QueueEntry> entries;
   final String? selectedId;
   final String? roomPatientId;
+  final InvestigationRequestProvider investigationProvider;
   final ValueChanged<String> onSelect;
 
   @override
@@ -319,6 +324,11 @@ class _QueueList extends StatelessWidget {
               entry: entry,
               isSelected: entry.id == selectedId,
               isInRoom: entry.id == roomPatientId,
+              pendingInvestigationCount: investigationProvider
+                      .requestForQueueEntry(entry.id)
+                      ?.pendingItems
+                      .length ??
+                  0,
               onTap: () => onSelect(entry.id),
             ),
           ),
@@ -333,12 +343,14 @@ class _QueueListTile extends StatelessWidget {
     required this.entry,
     required this.isSelected,
     required this.isInRoom,
+    required this.pendingInvestigationCount,
     required this.onTap,
   });
 
   final QueueEntry entry;
   final bool isSelected;
   final bool isInRoom;
+  final int pendingInvestigationCount;
   final VoidCallback onTap;
 
   @override
@@ -346,12 +358,15 @@ class _QueueListTile extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
     final isCompleted = entry.status == QueueStatus.completed;
+    final isReturned = entry.status == QueueStatus.review;
     final statusColor = entry.status.color();
 
     final background = isSelected
         ? AppTheme.doctorColor.withOpacity(0.1)
         : isInRoom
             ? AppTheme.medicalGreen.withOpacity(0.07)
+            : isReturned
+                ? Colors.orange.shade50.withOpacity(0.65)
             : isCompleted
                 ? scheme.surfaceContainerHighest.withOpacity(0.5)
                 : scheme.surface;
@@ -360,6 +375,8 @@ class _QueueListTile extends StatelessWidget {
         ? AppTheme.doctorColor
         : isInRoom
             ? AppTheme.medicalGreen.withOpacity(0.5)
+            : isReturned
+                ? Colors.orange.shade400
             : scheme.outlineVariant.withOpacity(0.4);
 
     return Material(
@@ -407,11 +424,24 @@ class _QueueListTile extends StatelessWidget {
                         color: statusColor,
                       ),
                     ),
+                    if (pendingInvestigationCount > 0) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        l10n.investigationRequestCount(pendingInvestigationCount),
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: AppTheme.medicalBlue,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
               if (isCompleted)
                 const Icon(Icons.check_circle, color: AppTheme.medicalGreen, size: 20)
+              else if (isReturned)
+                Icon(Icons.replay_rounded, color: Colors.orange.shade700, size: 20)
               else if (isInRoom)
                 Icon(Icons.meeting_room_outlined,
                     color: AppTheme.medicalGreen, size: 20),

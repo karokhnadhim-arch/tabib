@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../../models/prescription_line_item.dart';
+import '../../../models/investigation_request_item.dart';
 import 'doctor_visit_notes_store.dart';
 
 /// Per-patient text controllers — preserved when switching queue patients.
@@ -76,6 +77,14 @@ class DoctorConsultationSession extends ChangeNotifier {
     onFieldChanged(storageKey);
   }
 
+  void onInvestigationItemsChanged(
+    String storageKey,
+    List<InvestigationRequestItem> items,
+  ) {
+    notesStore.scheduleSave(storageKey, investigationItems: items);
+    onFieldChanged(storageKey);
+  }
+
   @override
   void dispose() {
     _prescriptionDebounce?.cancel();
@@ -107,5 +116,6 @@ enum ConsultationFocusSection {
   medicalHistory,
   diagnosis,
   prescription,
+  investigations,
   clinicalNotes,
 }

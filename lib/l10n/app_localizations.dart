@@ -7024,6 +7024,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Date'**
   String get date;
+
+  /// No description provided for @requestInvestigation.
+  ///
+  /// In en, this message translates to:
+  /// **'Request investigation'**
+  String get requestInvestigation;
+
+  /// No description provided for @searchInvestigation.
+  ///
+  /// In en, this message translates to:
+  /// **'Search laboratory or imaging tests'**
+  String get searchInvestigation;
+
+  /// No description provided for @requestedInvestigations.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested investigations'**
+  String get requestedInvestigations;
+
+  /// No description provided for @investigationNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get investigationNote;
+
+  /// No description provided for @investigationNoteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional note for this investigation'**
+  String get investigationNoteHint;
+
+  /// No description provided for @investigationCategoryLaboratory.
+  ///
+  /// In en, this message translates to:
+  /// **'Laboratory'**
+  String get investigationCategoryLaboratory;
+
+  /// No description provided for @investigationCategoryRadiology.
+  ///
+  /// In en, this message translates to:
+  /// **'Radiology'**
+  String get investigationCategoryRadiology;
+
+  /// No description provided for @investigationCategoryCardiology.
+  ///
+  /// In en, this message translates to:
+  /// **'Cardiology'**
+  String get investigationCategoryCardiology;
+
+  /// No description provided for @investigationCategoryUltrasound.
+  ///
+  /// In en, this message translates to:
+  /// **'Ultrasound'**
+  String get investigationCategoryUltrasound;
+
+  /// No description provided for @investigationCategoryOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get investigationCategoryOther;
+
+  /// No description provided for @pendingInvestigations.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending investigations'**
+  String get pendingInvestigations;
+
+  /// No description provided for @andMoreInvestigations.
+  ///
+  /// In en, this message translates to:
+  /// **'+{count} more'**
+  String andMoreInvestigations(int count);
+
+  /// No description provided for @myInvestigations.
+  ///
+  /// In en, this message translates to:
+  /// **'My investigations'**
+  String get myInvestigations;
+
+  /// No description provided for @noPendingInvestigations.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending investigations'**
+  String get noPendingInvestigations;
+
+  /// No description provided for @investigationRequestCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 investigation} other{{count} investigations}}'**
+  String investigationRequestCount(int count);
+
+  /// No description provided for @pendingInvestigationCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 pending test} other{{count} pending tests}}'**
+  String pendingInvestigationCount(int count);
+
+  /// No description provided for @patientReturnedForReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Returned for review — investigation results ready'**
+  String get patientReturnedForReview;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

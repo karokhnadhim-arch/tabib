@@ -2,8 +2,12 @@ import '../../models/appointment.dart';
 import '../../models/chat_message.dart';
 import '../../models/visit_status.dart';
 import '../../models/doctor.dart';
+import '../../models/investigation_request.dart';
+import '../../models/investigation_request_item.dart';
 import '../../models/notification.dart';
 import '../../models/notification_channel.dart';
+import '../../models/investigation_request.dart';
+import '../../models/investigation_request_item.dart';
 import '../../models/prescription_line_item.dart';
 import '../../models/prescription.dart';
 import '../../models/queue_entry.dart';
@@ -138,6 +142,20 @@ abstract class PrescriptionRepository {
     required String medications,
     String? notes,
     List<PrescriptionLineItem> items = const [],
+  });
+}
+
+abstract class InvestigationRequestRepository {
+  Stream<List<InvestigationRequest>> watchPatientRequests(String patientId);
+  Stream<List<InvestigationRequest>> watchDoctorRequests(String doctorId);
+
+  Future<void> upsertVisitRequest({
+    required String queueEntryId,
+    required String patientId,
+    required String patientName,
+    required String doctorId,
+    required String doctorName,
+    required List<InvestigationRequestItem> items,
   });
 }
 

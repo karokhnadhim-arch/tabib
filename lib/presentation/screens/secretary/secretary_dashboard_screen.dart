@@ -55,6 +55,7 @@ class _SecretaryDashboardScreenState extends State<SecretaryDashboardScreen> {
     _queueService = context.read<QueueService>();
     _queueService!.watchSecretaryQueue(doctorId);
     context.read<AppointmentProvider>().watchDoctor(doctorId);
+    context.read<InvestigationRequestProvider>().watchDoctor(doctorId);
     final userId = context.read<AuthService>().currentUser?.id;
     if (userId != null && userId.isNotEmpty) {
       context.read<NotificationProvider>().watch(userId);

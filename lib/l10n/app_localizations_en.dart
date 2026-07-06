@@ -3556,4 +3556,73 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get date => 'Date';
+
+  @override
+  String get requestInvestigation => 'Request investigation';
+
+  @override
+  String get searchInvestigation => 'Search laboratory or imaging tests';
+
+  @override
+  String get requestedInvestigations => 'Requested investigations';
+
+  @override
+  String get investigationNote => 'Note';
+
+  @override
+  String get investigationNoteHint => 'Optional note for this investigation';
+
+  @override
+  String get investigationCategoryLaboratory => 'Laboratory';
+
+  @override
+  String get investigationCategoryRadiology => 'Radiology';
+
+  @override
+  String get investigationCategoryCardiology => 'Cardiology';
+
+  @override
+  String get investigationCategoryUltrasound => 'Ultrasound';
+
+  @override
+  String get investigationCategoryOther => 'Other';
+
+  @override
+  String get pendingInvestigations => 'Pending investigations';
+
+  @override
+  String andMoreInvestigations(int count) {
+    return '+$count more';
+  }
+
+  @override
+  String get myInvestigations => 'My investigations';
+
+  @override
+  String get noPendingInvestigations => 'No pending investigations';
+
+  @override
+  String investigationRequestCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count investigations',
+      one: '1 investigation',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String pendingInvestigationCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count pending tests',
+      one: '1 pending test',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get patientReturnedForReview => 'Returned for review — investigation results ready';
 }
