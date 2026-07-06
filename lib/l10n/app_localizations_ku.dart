@@ -3891,4 +3891,55 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get backupSettings => 'ڕێکخستنی پاشەکەوت';
+
+  @override
+  String get auditLogHint => 'مێژووی چالاکی نەگۆڕدراو — تەنها بۆ ژمارداری و ئاسایش.';
+
+  @override
+  String get auditTotalEvents => 'کۆی ڕووداوەکان';
+
+  @override
+  String get auditToday => 'ئەمڕۆ';
+
+  @override
+  String get auditLastSevenDays => '7 ڕۆژی ڕابردوو';
+
+  @override
+  String get auditModule => 'مۆدیول';
+
+  @override
+  String get auditModuleAuth => 'دڵنیاکردنەوە';
+
+  @override
+  String get auditModuleOwner => 'خاوەن';
+
+  @override
+  String get auditModuleSecretary => 'سکرتێر';
+
+  @override
+  String get auditModuleDoctor => 'دکتۆر';
+
+  @override
+  String get auditModulePatient => 'نەخۆش';
+
+  @override
+  String get auditModuleSystem => 'سیستەم';
+
+  @override
+  String get filterByDate => 'مەودای بەروار';
+
+  @override
+  String get exportPdf => 'هەناردەی PDF';
+
+  @override
+  String get exportExcel => 'هەناردەی Excel';
+
+  @override
+  String get exportCsv => 'هەناردەی CSV';
+
+  @override
+  String get role => 'ڕۆڵ';
+
+  @override
+  String get action => 'کردار';
 }

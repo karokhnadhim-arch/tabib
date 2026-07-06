@@ -249,7 +249,7 @@ class _TabibAppState extends State<TabibApp> {
     );
     _notificationProvider = NotificationProvider(repository: _notificationRepository);
     _chatProvider = ChatProvider(repository: _offlineChatRepository);
-    _ownerAuditService = OwnerAuditService();
+    _ownerAuditService = OwnerAuditService(useFirestore: !_demoMode);
     _systemErrorLogService = SystemErrorLogService();
     final dashboardSummaryRepo = DashboardSummaryRepository(backend: _backend);
     _systemActivityFeedService = SystemActivityFeedService(
@@ -287,6 +287,22 @@ class _TabibAppState extends State<TabibApp> {
     )..load();
     _platformClinicalSettings = PlatformClinicalSettingsService()..load();
     _clinicStructureService = ClinicStructureService()..load();
+    _authService.attachAudit(_ownerAuditService);
+    _queueService.attachAudit(
+      audit: _ownerAuditService,
+      auth: _authService,
+    );
+    _platformMedicineCatalog.attachAudit(_ownerAuditService);
+    _platformInvestigationCatalog.attachAudit(_ownerAuditService);
+    _platformClinicalSettings.attachAudit(_ownerAuditService);
+    _prescriptionProvider.attachAudit(
+      audit: _ownerAuditService,
+      auth: _authService,
+    );
+    _investigationRequestProvider.attachAudit(
+      audit: _ownerAuditService,
+      auth: _authService,
+    );
     _systemMonitoringService = SystemMonitoringService(
       backend: _backend,
       clinicData: _dataService,

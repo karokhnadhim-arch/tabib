@@ -1492,5 +1492,22 @@
   "firebaseConfigurationHint": "Monitor Firebase usage and connection health",
   "printerSettings": "Printer settings",
   "printerSettingsHint": "Prescription print header and layout defaults",
-  "backupSettings": "Backup settings"
+  "backupSettings": "Backup settings",
+  "auditLogHint": "Immutable activity history — append-only records for accountability and security.",
+  "auditTotalEvents": "Total events",
+  "auditToday": "Today",
+  "auditLastSevenDays": "Last 7 days",
+  "auditModule": "Module",
+  "auditModuleAuth": "Authentication",
+  "auditModuleOwner": "Owner",
+  "auditModuleSecretary": "Secretary",
+  "auditModuleDoctor": "Doctor",
+  "auditModulePatient": "Patient",
+  "auditModuleSystem": "System",
+  "filterByDate": "Date range",
+  "exportPdf": "Export PDF",
+  "exportExcel": "Export Excel",
+  "exportCsv": "Export CSV",
+  "role": "Role",
+  "action": "Action"
 }

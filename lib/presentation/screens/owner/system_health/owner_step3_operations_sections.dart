@@ -12,6 +12,7 @@ import '../../../../services/system_error_log_service.dart';
 import '../../../../services/system_monitoring_service.dart';
 import 'monitoring_filter_scope.dart';
 import 'system_health_widgets.dart';
+import '../../../../presentation/widgets/owner_audit_log_panel.dart';
 
 // ─── Security Center ─────────────────────────────────────────────────────────
 
@@ -826,159 +827,21 @@ class OwnerBackupCenterSection extends StatelessWidget {
 
 // ─── Audit Log ─────────────────────────────────────────────────────────────────
 
-class OwnerAuditLogSection extends StatefulWidget {
+class OwnerAuditLogSection extends StatelessWidget {
   const OwnerAuditLogSection({super.key});
-
-  @override
-  State<OwnerAuditLogSection> createState() => _OwnerAuditLogSectionState();
-}
-
-class _OwnerAuditLogSectionState extends State<OwnerAuditLogSection> {
-  final _searchController = TextEditingController();
-  int _visibleCount = 15;
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final audit = context.watch<OwnerAuditService>();
-    final entries = audit.filteredEntries;
-    final scheme = Theme.of(context).colorScheme;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         MonitoringSectionHeader(
           title: l10n.auditLog,
           icon: Icons.history,
-          trailing: IconButton(
-            tooltip: l10n.exportAuditLog,
-            icon: const Icon(Icons.download_outlined),
-            onPressed: () => _exportAudit(context, audit),
-          ),
         ),
-        TextField(
-          controller: _searchController,
-          decoration: InputDecoration(
-            hintText: l10n.auditSearchHint,
-            prefixIcon: const Icon(Icons.search),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-            isDense: true,
-          ),
-          onChanged: (value) {
-            audit.setSearchQuery(value);
-            setState(() => _visibleCount = 15);
-          },
-        ),
-        const SizedBox(height: 8),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: AuditLogFilter.values.map((filter) {
-              return Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: FilterChip(
-                  label: Text(_auditFilterLabel(l10n, filter)),
-                  selected: audit.filter == filter,
-                  showCheckmark: false,
-                  onSelected: (_) {
-                    audit.setFilter(filter);
-                    setState(() => _visibleCount = 15);
-                  },
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-        const SizedBox(height: 12),
-        ...entries.take(_visibleCount).map(
-              (entry) {
-                final ts = entry.timestamp.toLocal();
-                return Card(
-                  elevation: 0,
-                  margin: const EdgeInsets.only(bottom: 8),
-                  color: scheme.surfaceContainerLow,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: scheme.primaryContainer,
-                      child: Icon(
-                        Icons.history,
-                        color: scheme.onPrimaryContainer,
-                        size: 20,
-                      ),
-                    ),
-                    title: Text(entry.action),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('${l10n.user}: ${entry.userName}'),
-                        Text(
-                          '${DateFormat.yMMMd().format(ts)} · ${DateFormat.jm().format(ts)}',
-                        ),
-                        if (entry.device != null)
-                          Text('${l10n.device}: ${entry.device}'),
-                        if (entry.ipAddress != null &&
-                            entry.ipAddress!.isNotEmpty &&
-                            entry.ipAddress != '—')
-                          Text('${l10n.ipAddress}: ${entry.ipAddress}'),
-                      ],
-                    ),
-                    isThreeLine: true,
-                  ),
-                );
-              },
-            ),
-        if (entries.length > _visibleCount)
-          Align(
-            alignment: Alignment.centerLeft,
-            child: TextButton(
-              onPressed: () => setState(() => _visibleCount += 15),
-              child: Text(l10n.loadMore),
-            ),
-          ),
-        if (entries.isEmpty)
-          Text(
-            l10n.noAuditEntries,
-            style: TextStyle(color: scheme.onSurfaceVariant),
-          ),
+        const OwnerAuditLogPanel(compact: true),
       ],
     );
   }
-
-  Future<void> _exportAudit(BuildContext context, OwnerAuditService audit) async {
-    final l10n = AppLocalizations.of(context);
-    final payload = audit.exportCsv();
-    final result = await DashboardReportExporter.export(
-      content: payload,
-      format: ReportExportFormat.csv,
-    );
-    if (!context.mounted) return;
-    if (result.message == 'clipboard' && result.content != null) {
-      await Clipboard.setData(ClipboardData(text: result.content!));
-    } else if (result.filePath == null) {
-      await Clipboard.setData(ClipboardData(text: payload));
-    }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.auditLogExported)),
-    );
-  }
-
-  String _auditFilterLabel(AppLocalizations l10n, AuditLogFilter filter) =>
-      switch (filter) {
-        AuditLogFilter.all => l10n.activityFilterAll,
-        AuditLogFilter.login => l10n.activityEventLogin,
-        AuditLogFilter.userManagement => l10n.usersSection,
-        AuditLogFilter.packages => l10n.activePackages,
-        AuditLogFilter.ads => l10n.advertisementMonitoring,
-        AuditLogFilter.backup => l10n.backupRestore,
-        AuditLogFilter.settings => l10n.systemSettings,
-      };
 }

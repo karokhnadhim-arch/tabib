@@ -1401,5 +1401,22 @@
   "firebaseConfigurationHint": "مراقبة استخدام Firebase وصحة الاتصال",
   "printerSettings": "إعدادات الطابعة",
   "printerSettingsHint": "رأس وتخطيط طباعة الوصفة",
-  "backupSettings": "إعدادات النسخ الاحتياطي"
+  "backupSettings": "إعدادات النسخ الاحتياطي",
+  "auditLogHint": "سجل نشاط غير قابل للتعديل — للمساءلة والأمان.",
+  "auditTotalEvents": "إجمالي الأحداث",
+  "auditToday": "اليوم",
+  "auditLastSevenDays": "آخر 7 أيام",
+  "auditModule": "الوحدة",
+  "auditModuleAuth": "المصادقة",
+  "auditModuleOwner": "المالك",
+  "auditModuleSecretary": "السكرتير",
+  "auditModuleDoctor": "الطبيب",
+  "auditModulePatient": "المريض",
+  "auditModuleSystem": "النظام",
+  "filterByDate": "نطاق التاريخ",
+  "exportPdf": "تصدير PDF",
+  "exportExcel": "تصدير Excel",
+  "exportCsv": "تصدير CSV",
+  "role": "الدور",
+  "action": "الإجراء"
 }

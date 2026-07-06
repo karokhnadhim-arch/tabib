@@ -3,17 +3,47 @@ import 'package:flutter/foundation.dart';
 import '../core/utils/subscription_manager.dart';
 import '../models/queue_entry.dart';
 import 'backend/clinic_backend.dart';
+import 'owner_audit_service.dart';
+import 'audit_logger.dart';
+import '../models/audit_module.dart';
+import 'auth_service.dart';
 
 class QueueService extends ChangeNotifier {
   QueueService({required ClinicBackend backend}) : _backend = backend;
 
   final ClinicBackend _backend;
+  AuditLogger? _audit;
+  AuthService? _auth;
   final SubscriptionManager _subscriptions = SubscriptionManager();
   final Map<String, List<QueueEntry>> _queuesByDoctor = {};
   final Map<String, List<QueueEntry>> _secretaryQueuesByDoctor = {};
   final Set<String> _patientAutoDoctorWatches = {};
   List<QueueEntry> _patientQueues = [];
   QueueEntry? _patientQueue;
+
+  void attachAudit({
+    required OwnerAuditService audit,
+    required AuthService auth,
+  }) {
+    _audit = AuditLogger(audit);
+    _auth = auth;
+  }
+
+  void _logQueue(
+    AuditActionType type,
+    String action, {
+    String? description,
+    String? clinicId,
+  }) {
+    _audit?.log(
+      actor: _auth?.currentUser,
+      module: AuditModule.secretary,
+      actionType: type,
+      action: action,
+      description: description,
+      clinicId: clinicId,
+    );
+  }
 
   List<QueueEntry> activeQueuesForPatient(String patientId) =>
       List.unmodifiable(_patientQueues);
@@ -189,8 +219,8 @@ class QueueService extends ChangeNotifier {
     required String queueDate,
     required String slotStart,
     required String slotEnd,
-  }) {
-    return _backend.bookQueue(
+  }) async {
+    final entry = await _backend.bookQueue(
       doctorId: doctorId,
       patientId: patientId,
       patientName: patientName,
@@ -199,56 +229,105 @@ class QueueService extends ChangeNotifier {
       slotStart: slotStart,
       slotEnd: slotEnd,
     );
+    if (entry != null) {
+      _logQueue(
+        AuditActionType.queueCreated,
+        'Queue entry created',
+        description: '$patientName · #${entry.position}',
+      );
+    }
+    return entry;
   }
 
-  Future<void> cancelEntry(String entryId, String doctorId) =>
-      _backend.cancelEntry(entryId, doctorId);
+  Future<void> cancelEntry(String entryId, String doctorId) async {
+    await _backend.cancelEntry(entryId, doctorId);
+    _logQueue(
+      AuditActionType.patientCancelled,
+      'Queue entry cancelled',
+      description: entryId,
+    );
+  }
 
-  Future<void> moveUp(String entryId, String doctorId) =>
-      _backend.moveUp(entryId, doctorId);
+  Future<void> moveUp(String entryId, String doctorId) async {
+    await _backend.moveUp(entryId, doctorId);
+    _logQueue(AuditActionType.queueModified, 'Queue position moved up', description: entryId);
+  }
 
-  Future<void> moveDown(String entryId, String doctorId) =>
-      _backend.moveDown(entryId, doctorId);
+  Future<void> moveDown(String entryId, String doctorId) async {
+    await _backend.moveDown(entryId, doctorId);
+    _logQueue(AuditActionType.queueModified, 'Queue position moved down', description: entryId);
+  }
 
-  Future<void> moveToEnd(String entryId, String doctorId) =>
-      _backend.moveToEnd(entryId, doctorId);
+  Future<void> moveToEnd(String entryId, String doctorId) async {
+    await _backend.moveToEnd(entryId, doctorId);
+    _logQueue(AuditActionType.queueModified, 'Queue entry moved to end', description: entryId);
+  }
 
-  Future<void> recallPatient(String entryId, String doctorId) =>
-      _backend.recallPatient(entryId, doctorId);
+  Future<void> recallPatient(String entryId, String doctorId) async {
+    await _backend.recallPatient(entryId, doctorId);
+    _logQueue(AuditActionType.queueModified, 'Patient recalled', description: entryId);
+  }
 
-  Future<void> callNext(String doctorId) => _backend.callNext(doctorId);
+  Future<void> callNext(String doctorId) async {
+    await _backend.callNext(doctorId);
+    _logQueue(AuditActionType.patientSentToDoctor, 'Next patient called');
+  }
 
-  Future<void> completeCurrent(String doctorId) =>
-      _backend.completeCurrent(doctorId);
+  Future<void> completeCurrent(String doctorId) async {
+    await _backend.completeCurrent(doctorId);
+    _logQueue(AuditActionType.patientCompleted, 'Consultation completed');
+  }
 
   Future<void> updateEntryStatus(
     String entryId,
     String doctorId,
     QueueStatus status,
-  ) =>
-      _backend.updateEntryStatus(entryId, doctorId, status);
+  ) async {
+    await _backend.updateEntryStatus(entryId, doctorId, status);
+    _logQueue(
+      AuditActionType.queueModified,
+      'Queue status updated',
+      description: '${status.name} · $entryId',
+    );
+  }
 
-  Future<void> enterDoctorRoom(String entryId, String doctorId) =>
-      _backend.enterDoctorRoom(entryId, doctorId);
+  Future<void> enterDoctorRoom(String entryId, String doctorId) async {
+    await _backend.enterDoctorRoom(entryId, doctorId);
+    _logQueue(
+      AuditActionType.patientSentToDoctor,
+      'Patient sent to doctor',
+      description: entryId,
+    );
+  }
 
-  Future<void> sendToExamination(String entryId, String doctorId) =>
-      _backend.sendToExamination(entryId, doctorId);
+  Future<void> sendToExamination(String entryId, String doctorId) async {
+    await _backend.sendToExamination(entryId, doctorId);
+    _logQueue(AuditActionType.queueModified, 'Patient sent to examination', description: entryId);
+  }
 
-  Future<void> returnToReview(String entryId, String doctorId) =>
-      _backend.returnToReview(entryId, doctorId);
+  Future<void> returnToReview(String entryId, String doctorId) async {
+    await _backend.returnToReview(entryId, doctorId);
+    _logQueue(AuditActionType.queueModified, 'Patient returned for review', description: entryId);
+  }
 
   Future<void> updateQueueEntryContact(
     String entryId,
     String doctorId, {
     required String patientName,
     required String patientPhone,
-  }) =>
-      _backend.updateQueueEntryContact(
-        entryId,
-        doctorId,
-        patientName: patientName,
-        patientPhone: patientPhone,
-      );
+  }) async {
+    await _backend.updateQueueEntryContact(
+      entryId,
+      doctorId,
+      patientName: patientName,
+      patientPhone: patientPhone,
+    );
+    _logQueue(
+      AuditActionType.queueModified,
+      'Queue contact updated',
+      description: patientName,
+    );
+  }
 
   Future<void> syncPatientQueueStatus({
     required String patientId,

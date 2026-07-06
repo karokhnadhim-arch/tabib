@@ -15,6 +15,10 @@ import '../../models/investigation_request.dart';
 import '../../models/investigation_request_item.dart';
 import '../../models/prescription_line_item.dart';
 import '../../services/smart_notification_service.dart';
+import '../../services/audit_logger.dart';
+import '../../services/auth_service.dart';
+import '../../services/owner_audit_service.dart';
+import '../../models/audit_module.dart';
 
 class AppointmentProvider extends ChangeNotifier {
   AppointmentProvider({
@@ -268,6 +272,9 @@ class PrescriptionProvider extends ChangeNotifier {
 
   final PrescriptionRepository _repository;
   final SubscriptionManager _subscriptions = SubscriptionManager();
+  AuditLogger? _audit;
+  AuthService? _auth;
+  final Set<String> _patientViewLogged = {};
 
   List<Prescription> _prescriptions = [];
   bool _loading = false;
@@ -276,10 +283,27 @@ class PrescriptionProvider extends ChangeNotifier {
   List<Prescription> get prescriptions => List.unmodifiable(_prescriptions);
   bool get isLoading => _loading;
 
+  void attachAudit({
+    required OwnerAuditService audit,
+    required AuthService auth,
+  }) {
+    _audit = AuditLogger(audit);
+    _auth = auth;
+  }
+
   void watchPatient(String patientId) {
     if (_watchKey == 'patient:$patientId') return;
     _watchKey = 'patient:$patientId';
     _loading = true;
+    if (_patientViewLogged.add('rx:$patientId')) {
+      _audit?.log(
+        actor: _auth?.currentUser,
+        module: AuditModule.patient,
+        actionType: AuditActionType.prescriptionViewed,
+        action: 'Prescriptions viewed',
+        description: patientId,
+      );
+    }
     _subscriptions.replace(
       'prescriptions',
       _repository.watchPatientPrescriptions(patientId),
@@ -329,17 +353,47 @@ class PrescriptionProvider extends ChangeNotifier {
     required String medications,
     String? notes,
     List<PrescriptionLineItem> items = const [],
-  }) =>
-      _repository.writePrescription(
-        patientId: patientId,
-        patientName: patientName,
-        doctorId: doctorId,
-        doctorName: doctorName,
-        diagnosis: diagnosis,
-        medications: medications,
-        notes: notes,
-        items: items,
+  }) async {
+    await _repository.writePrescription(
+      patientId: patientId,
+      patientName: patientName,
+      doctorId: doctorId,
+      doctorName: doctorName,
+      diagnosis: diagnosis,
+      medications: medications,
+      notes: notes,
+      items: items,
+    );
+    _audit?.log(
+      actor: _auth?.currentUser,
+      module: AuditModule.doctor,
+      actionType: diagnosis.isNotEmpty
+          ? AuditActionType.prescriptionCreated
+          : AuditActionType.prescriptionModified,
+      action: 'Prescription saved',
+      description: patientName,
+      details: patientId,
+    );
+    if (diagnosis.trim().isNotEmpty) {
+      _audit?.log(
+        actor: _auth?.currentUser,
+        module: AuditModule.doctor,
+        actionType: AuditActionType.diagnosisCreated,
+        action: 'Diagnosis recorded',
+        description: diagnosis,
+        details: patientId,
       );
+    }
+    if (notes != null && notes.trim().isNotEmpty) {
+      _audit?.log(
+        actor: _auth?.currentUser,
+        module: AuditModule.doctor,
+        actionType: AuditActionType.clinicalNoteAdded,
+        action: 'Clinical note added',
+        description: patientName,
+      );
+    }
+  }
 }
 
 class InvestigationRequestProvider extends ChangeNotifier {
@@ -348,6 +402,9 @@ class InvestigationRequestProvider extends ChangeNotifier {
 
   final InvestigationRequestRepository _repository;
   final SubscriptionManager _subscriptions = SubscriptionManager();
+  AuditLogger? _audit;
+  AuthService? _auth;
+  final Set<String> _patientViewLogged = {};
 
   List<InvestigationRequest> _requests = [];
   bool _loading = false;
@@ -355,6 +412,14 @@ class InvestigationRequestProvider extends ChangeNotifier {
 
   List<InvestigationRequest> get requests => List.unmodifiable(_requests);
   bool get isLoading => _loading;
+
+  void attachAudit({
+    required OwnerAuditService audit,
+    required AuthService auth,
+  }) {
+    _audit = AuditLogger(audit);
+    _auth = auth;
+  }
 
   InvestigationRequest? requestForQueueEntry(String queueEntryId) {
     for (final r in _requests) {
@@ -370,6 +435,15 @@ class InvestigationRequestProvider extends ChangeNotifier {
     if (_watchKey == 'patient:$patientId') return;
     _watchKey = 'patient:$patientId';
     _loading = true;
+    if (_patientViewLogged.add('inv:$patientId')) {
+      _audit?.log(
+        actor: _auth?.currentUser,
+        module: AuditModule.patient,
+        actionType: AuditActionType.investigationViewed,
+        action: 'Investigations viewed',
+        description: patientId,
+      );
+    }
     _subscriptions.replace(
       'investigations',
       _repository.watchPatientRequests(patientId),
@@ -417,15 +491,24 @@ class InvestigationRequestProvider extends ChangeNotifier {
     required String doctorId,
     required String doctorName,
     required List<InvestigationRequestItem> items,
-  }) =>
-      _repository.upsertVisitRequest(
-        queueEntryId: queueEntryId,
-        patientId: patientId,
-        patientName: patientName,
-        doctorId: doctorId,
-        doctorName: doctorName,
-        items: items,
-      );
+  }) async {
+    await _repository.upsertVisitRequest(
+      queueEntryId: queueEntryId,
+      patientId: patientId,
+      patientName: patientName,
+      doctorId: doctorId,
+      doctorName: doctorName,
+      items: items,
+    );
+    _audit?.log(
+      actor: _auth?.currentUser,
+      module: AuditModule.doctor,
+      actionType: AuditActionType.investigationRequested,
+      action: 'Investigation requested',
+      description: patientName,
+      details: '${items.length} item(s)',
+    );
+  }
 }
 
 class ChatProvider extends ChangeNotifier {

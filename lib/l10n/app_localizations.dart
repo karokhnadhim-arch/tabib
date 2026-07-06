@@ -7654,6 +7654,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Backup settings'**
   String get backupSettings;
+
+  /// No description provided for @auditLogHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Immutable activity history — append-only records for accountability and security.'**
+  String get auditLogHint;
+
+  /// No description provided for @auditTotalEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Total events'**
+  String get auditTotalEvents;
+
+  /// No description provided for @auditToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get auditToday;
+
+  /// No description provided for @auditLastSevenDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 days'**
+  String get auditLastSevenDays;
+
+  /// No description provided for @auditModule.
+  ///
+  /// In en, this message translates to:
+  /// **'Module'**
+  String get auditModule;
+
+  /// No description provided for @auditModuleAuth.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication'**
+  String get auditModuleAuth;
+
+  /// No description provided for @auditModuleOwner.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner'**
+  String get auditModuleOwner;
+
+  /// No description provided for @auditModuleSecretary.
+  ///
+  /// In en, this message translates to:
+  /// **'Secretary'**
+  String get auditModuleSecretary;
+
+  /// No description provided for @auditModuleDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor'**
+  String get auditModuleDoctor;
+
+  /// No description provided for @auditModulePatient.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient'**
+  String get auditModulePatient;
+
+  /// No description provided for @auditModuleSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get auditModuleSystem;
+
+  /// No description provided for @filterByDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date range'**
+  String get filterByDate;
+
+  /// No description provided for @exportPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Export PDF'**
+  String get exportPdf;
+
+  /// No description provided for @exportExcel.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Excel'**
+  String get exportExcel;
+
+  /// No description provided for @exportCsv.
+  ///
+  /// In en, this message translates to:
+  /// **'Export CSV'**
+  String get exportCsv;
+
+  /// No description provided for @role.
+  ///
+  /// In en, this message translates to:
+  /// **'Role'**
+  String get role;
+
+  /// No description provided for @action.
+  ///
+  /// In en, this message translates to:
+  /// **'Action'**
+  String get action;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

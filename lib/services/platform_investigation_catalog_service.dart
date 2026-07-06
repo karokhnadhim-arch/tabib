@@ -6,6 +6,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 import '../data/investigation_catalog.dart';
+import '../models/audit_module.dart';
+import 'audit_logger.dart';
+import 'owner_audit_service.dart';
 import '../models/investigation_catalog_item.dart';
 import '../models/investigation_category.dart';
 
@@ -21,6 +24,7 @@ class PlatformInvestigationCatalogService extends ChangeNotifier {
   final bool _useFirestore;
   final List<InvestigationCatalogItem> _custom = [];
   bool _loaded = false;
+  AuditLogger? _audit;
 
   List<InvestigationCatalogItem> get customItems =>
       List.unmodifiable(_custom);
@@ -37,6 +41,8 @@ class PlatformInvestigationCatalogService extends ChangeNotifier {
       ...customActive.where((i) => !ids.contains(i.id)),
     ];
   }
+
+  void attachAudit(OwnerAuditService audit) => _audit = AuditLogger(audit);
 
   Future<void> load() async {
     if (_loaded) return;
@@ -87,6 +93,13 @@ class PlatformInvestigationCatalogService extends ChangeNotifier {
       _custom.add(item);
     }
     await _persist();
+    _audit?.log(
+      module: AuditModule.owner,
+      actionType: AuditActionType.investigationChanged,
+      action: id == null ? 'Investigation created' : 'Investigation updated',
+      description: name,
+      details: itemId,
+    );
     notifyListeners();
   }
 
@@ -95,6 +108,12 @@ class PlatformInvestigationCatalogService extends ChangeNotifier {
     if (index < 0) return;
     _custom[index] = _custom[index].copyWith(archived: archived);
     await _persist();
+    _audit?.log(
+      module: AuditModule.owner,
+      actionType: AuditActionType.investigationChanged,
+      action: archived ? 'Investigation archived' : 'Investigation restored',
+      details: id,
+    );
     notifyListeners();
   }
 

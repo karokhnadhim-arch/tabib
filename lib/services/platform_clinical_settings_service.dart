@@ -4,12 +4,18 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/platform_clinical_settings.dart';
+import '../models/audit_module.dart';
+import 'audit_logger.dart';
+import 'owner_audit_service.dart';
 
 /// Owner queue and prescription platform settings.
 class PlatformClinicalSettingsService extends ChangeNotifier {
   PlatformClinicalSettings _settings = PlatformClinicalSettings.defaults;
+  AuditLogger? _audit;
 
   PlatformClinicalSettings get settings => _settings;
+
+  void attachAudit(OwnerAuditService audit) => _audit = AuditLogger(audit);
 
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
@@ -27,6 +33,11 @@ class PlatformClinicalSettingsService extends ChangeNotifier {
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_storageKey, jsonEncode(settings.toMap()));
+    _audit?.log(
+      module: AuditModule.owner,
+      actionType: AuditActionType.settingsChanged,
+      action: 'Clinical settings updated',
+    );
   }
 
   Future<void> updateField(

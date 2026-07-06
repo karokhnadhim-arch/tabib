@@ -3891,4 +3891,55 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get backupSettings => 'إعدادات النسخ الاحتياطي';
+
+  @override
+  String get auditLogHint => 'سجل نشاط غير قابل للتعديل — للمساءلة والأمان.';
+
+  @override
+  String get auditTotalEvents => 'إجمالي الأحداث';
+
+  @override
+  String get auditToday => 'اليوم';
+
+  @override
+  String get auditLastSevenDays => 'آخر 7 أيام';
+
+  @override
+  String get auditModule => 'الوحدة';
+
+  @override
+  String get auditModuleAuth => 'المصادقة';
+
+  @override
+  String get auditModuleOwner => 'المالك';
+
+  @override
+  String get auditModuleSecretary => 'السكرتير';
+
+  @override
+  String get auditModuleDoctor => 'الطبيب';
+
+  @override
+  String get auditModulePatient => 'المريض';
+
+  @override
+  String get auditModuleSystem => 'النظام';
+
+  @override
+  String get filterByDate => 'نطاق التاريخ';
+
+  @override
+  String get exportPdf => 'تصدير PDF';
+
+  @override
+  String get exportExcel => 'تصدير Excel';
+
+  @override
+  String get exportCsv => 'تصدير CSV';
+
+  @override
+  String get role => 'الدور';
+
+  @override
+  String get action => 'الإجراء';
 }

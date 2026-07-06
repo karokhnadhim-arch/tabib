@@ -3891,4 +3891,55 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backupSettings => 'Backup settings';
+
+  @override
+  String get auditLogHint => 'Immutable activity history — append-only records for accountability and security.';
+
+  @override
+  String get auditTotalEvents => 'Total events';
+
+  @override
+  String get auditToday => 'Today';
+
+  @override
+  String get auditLastSevenDays => 'Last 7 days';
+
+  @override
+  String get auditModule => 'Module';
+
+  @override
+  String get auditModuleAuth => 'Authentication';
+
+  @override
+  String get auditModuleOwner => 'Owner';
+
+  @override
+  String get auditModuleSecretary => 'Secretary';
+
+  @override
+  String get auditModuleDoctor => 'Doctor';
+
+  @override
+  String get auditModulePatient => 'Patient';
+
+  @override
+  String get auditModuleSystem => 'System';
+
+  @override
+  String get filterByDate => 'Date range';
+
+  @override
+  String get exportPdf => 'Export PDF';
+
+  @override
+  String get exportExcel => 'Export Excel';
+
+  @override
+  String get exportCsv => 'Export CSV';
+
+  @override
+  String get role => 'Role';
+
+  @override
+  String get action => 'Action';
 }

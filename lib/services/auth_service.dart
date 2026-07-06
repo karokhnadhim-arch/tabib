@@ -23,6 +23,9 @@ import '../firebase_options.dart';
 import 'backend/clinic_backend.dart';
 import 'firebase_auth_service.dart';
 import 'firebase_bootstrap.dart';
+import 'owner_audit_service.dart';
+import 'audit_logger.dart';
+import '../models/audit_module.dart';
 
 class AuthService extends ChangeNotifier {
   AuthService({
@@ -39,11 +42,88 @@ class AuthService extends ChangeNotifier {
   UserAccount? _currentUser;
   bool _firebaseReady = false;
   final bool _demoMode;
+  AuditLogger? _audit;
 
   UserAccount? get currentUser => _currentUser;
   bool get isLoggedIn => _currentUser != null;
   bool get firebaseReady => _firebaseReady;
   bool get demoMode => _demoMode;
+
+  void attachAudit(OwnerAuditService audit) {
+    _audit = AuditLogger(audit);
+  }
+
+  void _logAuth(
+    AuditActionType type,
+    String action, {
+    UserAccount? actor,
+    String? userId,
+    String? userName,
+    UserRole? role,
+    String? description,
+    String? clinicId,
+  }) {
+    _audit?.log(
+      actor: actor ?? _currentUser,
+      userId: userId,
+      userName: userName,
+      userRole: role,
+      module: AuditModule.authentication,
+      actionType: type,
+      action: action,
+      description: description,
+      clinicId: clinicId,
+    );
+  }
+
+  void _logOwner(
+    AuditActionType type,
+    String action, {
+    String? description,
+    String? clinicId,
+    String? details,
+  }) {
+    _audit?.log(
+      actor: _currentUser,
+      module: AuditModule.owner,
+      actionType: type,
+      action: action,
+      description: description,
+      clinicId: clinicId,
+      details: details,
+    );
+  }
+
+  void _logSecretary(
+    AuditActionType type,
+    String action, {
+    String? description,
+    String? clinicId,
+  }) {
+    _audit?.log(
+      actor: _currentUser,
+      module: AuditModule.secretary,
+      actionType: type,
+      action: action,
+      description: description,
+      clinicId: clinicId,
+    );
+  }
+
+  void _logPatient(
+    AuditActionType type,
+    String action, {
+    UserAccount? actor,
+    String? description,
+  }) {
+    _audit?.log(
+      actor: actor ?? _currentUser,
+      module: AuditModule.patient,
+      actionType: type,
+      action: action,
+      description: description,
+    );
+  }
 
   /// Demo staff accounts when Firebase is not configured.
   static const demoAdminEmail = 'admin@tabib.demo';
@@ -308,6 +388,7 @@ class AuthService extends ChangeNotifier {
         phone: phone,
       );
       notifyListeners();
+      _logPatient(AuditActionType.login, 'Patient login', actor: _currentUser);
       return await _rejectBlockedAccount();
     }
 
@@ -332,7 +413,11 @@ class AuthService extends ChangeNotifier {
         _currentUser = account;
       }
       notifyListeners();
-      return await _rejectBlockedAccount();
+      final block = await _rejectBlockedAccount();
+      if (block == null) {
+        _logPatient(AuditActionType.login, 'Patient login');
+      }
+      return block;
     } on FirebaseAuthException catch (e) {
       return e.message ?? e.code;
     } on FirebaseException catch (e) {
@@ -350,8 +435,16 @@ class AuthService extends ChangeNotifier {
 
     if (_useDemoAuth) {
       final err = await _demoStaffLogin(trimmed, password);
-      if (err != null) return err;
+      if (err != null) {
+        _logAuth(
+          AuditActionType.failedLogin,
+          'Failed login attempt',
+          description: trimmed,
+        );
+        return err;
+      }
       notifyListeners();
+      _logAuth(AuditActionType.login, 'Login');
       return null;
     }
 
@@ -375,14 +468,24 @@ class AuthService extends ChangeNotifier {
         persist: true,
         authEmail: fbUser?.email ?? authEmail,
       );
-      return await _rejectBlockedAccount();
+      final block = await _rejectBlockedAccount();
+      if (block == null) {
+        _logAuth(AuditActionType.login, 'Login');
+      }
+      return block;
     } on FirebaseAuthException {
       if (_isKnownDemoCredential(trimmed, password)) {
         final err = await _demoStaffLogin(trimmed, password);
         if (err != null) return err;
         notifyListeners();
+        _logAuth(AuditActionType.login, 'Login');
         return null;
       }
+      _logAuth(
+        AuditActionType.failedLogin,
+        'Failed login attempt',
+        description: trimmed,
+      );
       return 'invalid_credentials';
     } on FirebaseException catch (e) {
       return e.message ?? 'invalid_credentials';
@@ -441,6 +544,12 @@ class AuthService extends ChangeNotifier {
         clinicId: clinicId,
       );
       await _backend.upsertStaff(account);
+      _logSecretary(
+        AuditActionType.patientRegistered,
+        'Patient registered',
+        description: name,
+        clinicId: clinicId,
+      );
       return SecretaryPatientRegistrationResult(patientId: id);
     }
 
@@ -458,6 +567,12 @@ class AuthService extends ChangeNotifier {
           .collection('users')
           .doc(uid)
           .set(account.toMap());
+      _logSecretary(
+        AuditActionType.patientRegistered,
+        'Patient registered',
+        description: name,
+        clinicId: clinicId,
+      );
       return SecretaryPatientRegistrationResult(patientId: uid);
     } on FirebaseAuthException catch (e) {
       return SecretaryPatientRegistrationResult(errorKey: e.message ?? e.code);
@@ -491,6 +606,11 @@ class AuthService extends ChangeNotifier {
         phone: phone.trim(),
       );
       await _backend.upsertStaff(updated);
+      _logSecretary(
+        AuditActionType.patientEdited,
+        'Patient information updated',
+        description: name,
+      );
       return null;
     }
 
@@ -501,6 +621,11 @@ class AuthService extends ChangeNotifier {
           'phone': phone.trim(),
         },
         SetOptions(merge: true),
+      );
+      _logSecretary(
+        AuditActionType.patientEdited,
+        'Patient information updated',
+        description: name,
       );
       return null;
     } on FirebaseException catch (e) {
@@ -523,6 +648,10 @@ class AuthService extends ChangeNotifier {
   }
 
   Future<void> logout() async {
+    final user = _currentUser;
+    if (user != null) {
+      _logAuth(AuditActionType.logout, 'Logout', actor: user);
+    }
     if (!_demoMode) {
       await _firebaseAuth!.signOut();
     }
@@ -631,6 +760,13 @@ class AuthService extends ChangeNotifier {
         password: password,
         authEmail: authEmail,
       );
+      _logOwner(
+        AuditActionType.userCreated,
+        accountType.isBusiness ? 'Business account created' : 'Doctor account created',
+        description: name,
+        clinicId: resolvedClinicId,
+        details: doctorId,
+      );
       return null;
     }
 
@@ -699,6 +835,13 @@ class AuthService extends ChangeNotifier {
           doctorId: doctorId,
           clinicId: resolvedClinicId,
         ),
+      );
+      _logOwner(
+        AuditActionType.userCreated,
+        accountType.isBusiness ? 'Business account created' : 'Doctor account created',
+        description: name,
+        clinicId: resolvedClinicId,
+        details: doctorId,
       );
       return null;
     } on FirebaseAuthException catch (e) {
@@ -774,6 +917,13 @@ class AuthService extends ChangeNotifier {
         password: password,
         authEmail: authEmail,
       );
+      _logOwner(
+        AuditActionType.userCreated,
+        'Secretary account created',
+        description: name,
+        clinicId: resolvedClinicId,
+        details: linkedDoctorId,
+      );
       return null;
     }
 
@@ -809,6 +959,13 @@ class AuthService extends ChangeNotifier {
           clinicId: resolvedClinicId,
           linkedDoctorId: linkedDoctorId,
         ),
+      );
+      _logOwner(
+        AuditActionType.userCreated,
+        'Secretary account created',
+        description: name,
+        clinicId: resolvedClinicId,
+        details: linkedDoctorId,
       );
       return null;
     } on FirebaseAuthException catch (e) {
@@ -933,6 +1090,14 @@ class AuthService extends ChangeNotifier {
     }
 
     await _backend.upsertStaff(account.copyWith(accountStatus: status));
+    _logOwner(
+      status.isActive
+          ? AuditActionType.userActivated
+          : AuditActionType.userDeactivated,
+      status.isActive ? 'User activated' : 'User deactivated',
+      description: AuditLogger.displayName(account),
+      details: accountId,
+    );
     return null;
   }
 
@@ -1082,11 +1247,21 @@ class AuthService extends ChangeNotifier {
         password: newPassword,
         authEmail: authEmail,
       );
+      _logOwner(
+        AuditActionType.passwordChanged,
+        'Password changed',
+        description: AuditLogger.displayName(account),
+      );
       return null;
     }
 
     try {
       await _firebaseAuth!.sendPasswordResetEmail(email: authEmail);
+      _logOwner(
+        AuditActionType.passwordChanged,
+        'Password reset email sent',
+        description: AuditLogger.displayName(account),
+      );
       return 'password_reset_email_sent';
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') return 'invalid_credentials';
@@ -1106,6 +1281,12 @@ class AuthService extends ChangeNotifier {
     }
 
     await _backend.deleteStaff(secretaryId);
+    _logOwner(
+      AuditActionType.userDeleted,
+      'User deleted',
+      description: AuditLogger.displayName(account),
+      details: secretaryId,
+    );
     return null;
   }
 

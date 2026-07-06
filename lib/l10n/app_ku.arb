@@ -1401,5 +1401,22 @@
   "firebaseConfigurationHint": "چاودێری بەکارهێنان و تەندروستی پەیوەندی Firebase",
   "printerSettings": "ڕێکخستنی چاپکەر",
   "printerSettingsHint": "سەرپەڕ و شێوازی چاپی ڕەچەتە",
-  "backupSettings": "ڕێکخستنی پاشەکەوت"
+  "backupSettings": "ڕێکخستنی پاشەکەوت",
+  "auditLogHint": "مێژووی چالاکی نەگۆڕدراو — تەنها بۆ ژمارداری و ئاسایش.",
+  "auditTotalEvents": "کۆی ڕووداوەکان",
+  "auditToday": "ئەمڕۆ",
+  "auditLastSevenDays": "7 ڕۆژی ڕابردوو",
+  "auditModule": "مۆدیول",
+  "auditModuleAuth": "دڵنیاکردنەوە",
+  "auditModuleOwner": "خاوەن",
+  "auditModuleSecretary": "سکرتێر",
+  "auditModuleDoctor": "دکتۆر",
+  "auditModulePatient": "نەخۆش",
+  "auditModuleSystem": "سیستەم",
+  "filterByDate": "مەودای بەروار",
+  "exportPdf": "هەناردەی PDF",
+  "exportExcel": "هەناردەی Excel",
+  "exportCsv": "هەناردەی CSV",
+  "role": "ڕۆڵ",
+  "action": "کردار"
 }

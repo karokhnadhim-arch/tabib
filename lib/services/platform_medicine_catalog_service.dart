@@ -6,6 +6,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 import '../data/medicine_catalog.dart';
+import '../models/audit_module.dart';
+import 'audit_logger.dart';
+import 'owner_audit_service.dart';
 import '../models/medicine.dart';
 
 /// Owner-managed medicine catalog — merges with built-in catalog for doctors.
@@ -18,6 +21,7 @@ class PlatformMedicineCatalogService extends ChangeNotifier {
   final bool _useFirestore;
   final List<Medicine> _custom = [];
   bool _loaded = false;
+  AuditLogger? _audit;
 
   List<Medicine> get customMedicines => List.unmodifiable(_custom);
 
@@ -41,6 +45,8 @@ class PlatformMedicineCatalogService extends ChangeNotifier {
     }
     return MedicineCatalog.instance.byId(id);
   }
+
+  void attachAudit(OwnerAuditService audit) => _audit = AuditLogger(audit);
 
   Future<void> load() async {
     if (_loaded) return;
@@ -97,6 +103,13 @@ class PlatformMedicineCatalogService extends ChangeNotifier {
       _custom.add(medicine);
     }
     await _persist();
+    _audit?.log(
+      module: AuditModule.owner,
+      actionType: id == null ? AuditActionType.medicineChanged : AuditActionType.medicineChanged,
+      action: id == null ? 'Medicine created' : 'Medicine updated',
+      description: genericName,
+      details: medicineId,
+    );
     notifyListeners();
   }
 
@@ -105,6 +118,12 @@ class PlatformMedicineCatalogService extends ChangeNotifier {
     if (index < 0) return;
     _custom[index] = _custom[index].copyWith(archived: archived);
     await _persist();
+    _audit?.log(
+      module: AuditModule.owner,
+      actionType: AuditActionType.medicineChanged,
+      action: archived ? 'Medicine archived' : 'Medicine restored',
+      details: id,
+    );
     notifyListeners();
   }
 
