@@ -58,7 +58,7 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
       }
       if (doctorId.isNotEmpty) {
         context.read<AppointmentProvider>().watchDoctor(doctorId);
-        context.read<QueueService>().watchDoctorQueue(doctorId);
+        context.read<QueueService>().watchSecretaryQueue(doctorId);
       }
     });
   }
@@ -366,7 +366,7 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
               segments: [
                 ButtonSegment(value: 0, label: Text(l10n.pendingRequests)),
                 ButtonSegment(value: 1, label: Text(l10n.acceptedAppointments)),
-                ButtonSegment(value: 2, label: Text(l10n.queueManagement)),
+                ButtonSegment(value: 2, label: Text(l10n.todaysQueue)),
                 ButtonSegment(value: 3, label: Text(l10n.patientRecords)),
               ],
               selected: {_tab},

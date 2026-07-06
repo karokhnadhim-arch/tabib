@@ -240,6 +240,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get queueManagement => 'إدارة الدور';
 
   @override
+  String get todaysQueue => 'دور اليوم';
+
+  @override
+  String get clinicalNotes => 'ملاحظات سريرية';
+
+  @override
+  String get notesAutoSaved => 'حُفظ تلقائياً';
+
+  @override
+  String get selectPatientFromQueue => 'اختر مريضاً من دور اليوم لعرض التفاصيل وكتابة الملاحظات.';
+
+  @override
+  String get doctorQueueViewOnlyHint => 'يُدار ترتيب الدور والحالة من قبل السكرتير. يمكنك عرض المرضى وكتابة الملاحظات السريرية فقط.';
+
+  @override
+  String get visitCompletedReadOnly => 'اكتملت هذه الزيارة. الملاحظات للقراءة فقط.';
+
+  @override
   String get currentPatient => 'المريض الحالي';
 
   @override

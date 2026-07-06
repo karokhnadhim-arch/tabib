@@ -240,6 +240,24 @@ class AppLocalizationsKu extends AppLocalizations {
   String get queueManagement => 'بەڕێوەبردنی سەرە';
 
   @override
+  String get todaysQueue => 'سەرەی ئەمڕۆ';
+
+  @override
+  String get clinicalNotes => 'تێبینییە پزیشکییەکان';
+
+  @override
+  String get notesAutoSaved => 'خۆکار پاشەکەوت کرا';
+
+  @override
+  String get selectPatientFromQueue => 'نەخۆشێک لە سەرەی ئەمڕۆ هەڵبژێرە بۆ بینینی وردەکاری و نووسینی تێبینی.';
+
+  @override
+  String get doctorQueueViewOnlyHint => 'ڕیزبەندی سەرە و دۆخ لەلایەن سکرتێرەوە بەڕێوە دەچێت. تەنها دەتوانیت نەخۆش ببینیت و تێبینی پزیشکی بنووسیت.';
+
+  @override
+  String get visitCompletedReadOnly => 'سەردانەکە تەواو بوو. تێبینییەکان تەنها بۆ خوێندنەوە.';
+
+  @override
   String get currentPatient => 'نەخۆشی ئێستا';
 
   @override

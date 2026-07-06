@@ -1,227 +1,430 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_theme.dart';
-import '../../../core/widgets/medical_ui.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../models/appointment.dart';
 import '../../../models/queue_entry.dart';
-import '../../../utils/localization_utils.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../services/queue_service.dart';
+import '../../../utils/localization_utils.dart';
 import '../../../utils/queue_status_utils.dart';
-import '../../providers/app_providers.dart';
-import '../../widgets/staff_patient_contact_bar.dart';
+import 'doctor_queue_patient_panel.dart';
+import 'doctor_today_queue.dart';
+import 'doctor_visit_notes_store.dart';
 
-class DoctorQueueTab extends StatelessWidget {
+/// Read-only today's queue with selectable patient workspace for the doctor.
+class DoctorQueueTab extends StatefulWidget {
   const DoctorQueueTab({super.key, required this.doctorId});
 
   final String doctorId;
 
-  Appointment? _findAppointment(AppointmentProvider provider, QueueEntry entry) {
-    for (final a in provider.appointments) {
-      if (a.patientId == entry.patientId && a.doctorId == doctorId) {
-        return a;
-      }
+  @override
+  State<DoctorQueueTab> createState() => _DoctorQueueTabState();
+}
+
+class _DoctorQueueTabState extends State<DoctorQueueTab> {
+  final _notesStore = DoctorVisitNotesStore();
+  final _aggregator = DoctorTodayQueueAggregator();
+  String? _selectedEntryId;
+  Stream<List<QueueEntry>>? _todayStream;
+  StreamSubscription<List<QueueEntry>>? _streamSub;
+  List<QueueEntry> _todayQueue = const [];
+  bool _streamReady = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _attachStream());
+  }
+
+  void _attachStream() {
+    final queueService = context.read<QueueService>();
+    final secretaryStream = Stream<List<QueueEntry>>.multi((multi) {
+      void emit() => multi.add(queueService.secretaryQueueForDoctor(widget.doctorId));
+      emit();
+      void listener() => emit();
+      queueService.addListener(listener);
+      multi.onCancel = () => queueService.removeListener(listener);
+    });
+
+    _todayStream = _aggregator.watchTodayQueue(
+      secretaryStream: secretaryStream,
+      doctorId: widget.doctorId,
+    );
+
+    _streamSub = _todayStream!.listen(
+      (entries) {
+        if (!mounted) return;
+        setState(() {
+          _todayQueue = entries;
+          _streamReady = true;
+          _selectedEntryId = _resolveSelection(entries, _selectedEntryId);
+        });
+      },
+      onError: (_) {
+        if (!mounted) return;
+        final fallback = doctorTodayQueueFromService(
+          secretaryQueue: queueService.secretaryQueueForDoctor(widget.doctorId),
+          activeQueue: queueService.queueForDoctor(widget.doctorId),
+        );
+        setState(() {
+          _todayQueue = fallback;
+          _streamReady = true;
+          _selectedEntryId = _resolveSelection(fallback, _selectedEntryId);
+        });
+      },
+    );
+  }
+
+  String? _resolveSelection(List<QueueEntry> entries, String? currentId) {
+    if (entries.isEmpty) return null;
+    if (currentId != null && entries.any((e) => e.id == currentId)) {
+      return currentId;
+    }
+    for (final e in entries) {
+      if (e.status == QueueStatus.inProgress) return e.id;
+    }
+    for (final e in entries) {
+      if (e.status == QueueStatus.waiting) return e.id;
+    }
+    return entries.first.id;
+  }
+
+  QueueEntry? get _selectedEntry {
+    final id = _selectedEntryId;
+    if (id == null) return null;
+    for (final e in _todayQueue) {
+      if (e.id == id) return e;
+    }
+    return null;
+  }
+
+  QueueEntry? get _roomPatient {
+    for (final e in _todayQueue) {
+      if (e.status == QueueStatus.inProgress) return e;
     }
     return null;
   }
 
   @override
+  void dispose() {
+    _streamSub?.cancel();
+    _notesStore.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final queueService = context.watch<QueueService>();
     final data = context.watch<ClinicDataService>();
-    final doctor = data.doctorById(doctorId);
-    final doctorName = doctor?.name.localized(context) ?? doctorId;
-    final queue = queueService.queueForDoctor(doctorId);
+    final doctor = data.doctorById(widget.doctorId);
+    final doctorName = doctor?.name.localized(context) ?? widget.doctorId;
+    final selected = _selectedEntry;
+    final roomPatient = _roomPatient;
 
-    if (queue.isEmpty) {
-      return Center(child: Text(l10n.noPatientsInQueue));
+    if (!_streamReady) {
+      return const Center(child: CircularProgressIndicator());
     }
 
-    QueueEntry? current;
-    for (final e in queue) {
-      if (e.status == QueueStatus.inProgress) {
-        current = e;
-        break;
-      }
+    if (_todayQueue.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Text(
+            l10n.noPatientsInQueue,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+        ),
+      );
     }
 
-    return ListView(
-      padding: const EdgeInsets.only(bottom: 24),
-      children: [
-        if (current != null)
-          Card(
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final wide = constraints.maxWidth >= 880;
+        final list = _QueueList(
+          entries: _todayQueue,
+          selectedId: _selectedEntryId,
+          roomPatientId: roomPatient?.id,
+          onSelect: (id) => setState(() => _selectedEntryId = id),
+        );
+
+        final panel = selected == null
+            ? _SelectPatientPlaceholder(message: l10n.selectPatientFromQueue)
+            : DoctorQueuePatientPanel(
+                key: ValueKey(selected.id),
+                entry: selected,
+                doctorId: widget.doctorId,
+                doctorName: doctorName,
+                notesStore: _notesStore,
+              );
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _QueueHintBanner(message: l10n.doctorQueueViewOnlyHint),
+            const SizedBox(height: 12),
+            Text(
+              l10n.todaysQueue,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
             ),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                gradient: LinearGradient(
-                  colors: [
-                    AppTheme.medicalGreen.withOpacity(0.12),
-                    AppTheme.medicalGreen.withOpacity(0.04),
+            const SizedBox(height: 10),
+            Expanded(
+              child: wide
+                  ? Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(flex: 5, child: list),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          flex: 7,
+                          child: SingleChildScrollView(child: panel),
+                        ),
+                      ],
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (selected != null) ...[
+                          panel,
+                          const SizedBox(height: 12),
+                        ],
+                        Expanded(child: list),
+                      ],
+                    ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _QueueHintBanner extends StatelessWidget {
+  const _QueueHintBanner({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: scheme.primaryContainer.withOpacity(0.35),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: scheme.outlineVariant.withOpacity(0.45)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.info_outline_rounded, color: scheme.primary, size: 20),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              message,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SelectPatientPlaceholder extends StatelessWidget {
+  const _SelectPatientPlaceholder({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+        side: BorderSide(color: scheme.outlineVariant.withOpacity(0.5)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(28),
+        child: Column(
+          children: [
+            Icon(Icons.touch_app_outlined, size: 40, color: scheme.primary),
+            const SizedBox(height: 12),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _QueueList extends StatelessWidget {
+  const _QueueList({
+    required this.entries,
+    required this.selectedId,
+    required this.roomPatientId,
+    required this.onSelect,
+  });
+
+  final List<QueueEntry> entries;
+  final String? selectedId;
+  final String? roomPatientId;
+  final ValueChanged<String> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      itemCount: entries.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 8),
+      itemBuilder: (context, index) {
+        final entry = entries[index];
+        return _QueueListTile(
+          entry: entry,
+          isSelected: entry.id == selectedId,
+          isInRoom: entry.id == roomPatientId,
+          onTap: () => onSelect(entry.id),
+        );
+      },
+    );
+  }
+}
+
+class _QueueListTile extends StatelessWidget {
+  const _QueueListTile({
+    required this.entry,
+    required this.isSelected,
+    required this.isInRoom,
+    required this.onTap,
+  });
+
+  final QueueEntry entry;
+  final bool isSelected;
+  final bool isInRoom;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final scheme = Theme.of(context).colorScheme;
+    final isCompleted = entry.status == QueueStatus.completed;
+    final statusColor = entry.status.color();
+
+    Color? background;
+    BorderSide border;
+    if (isSelected) {
+      background = AppTheme.doctorColor.withOpacity(0.12);
+      border = BorderSide(color: AppTheme.doctorColor, width: 2);
+    } else if (isInRoom) {
+      background = AppTheme.medicalGreen.withOpacity(0.08);
+      border = BorderSide(color: AppTheme.medicalGreen.withOpacity(0.55));
+    } else if (isCompleted) {
+      background = scheme.surfaceContainerHighest.withOpacity(0.55);
+      border = BorderSide(color: scheme.outlineVariant.withOpacity(0.35));
+    } else {
+      background = scheme.surface;
+      border = BorderSide(color: scheme.outlineVariant.withOpacity(0.45));
+    }
+
+    return Material(
+      color: background,
+      elevation: isSelected ? 1 : 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: border,
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          child: Row(
+            children: [
+              _PositionBadge(
+                position: entry.position,
+                isCompleted: isCompleted,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      entry.patientName,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                        decoration: isCompleted ? TextDecoration.lineThrough : null,
+                        color: isCompleted
+                            ? scheme.onSurfaceVariant
+                            : scheme.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      entry.status.label(l10n),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: statusColor,
+                      ),
+                    ),
                   ],
                 ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    l10n.currentPatient,
-                    style: const TextStyle(
-                      color: AppTheme.medicalGreen,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    current.patientName,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  StaffPatientContactBar(
-                    phone: current.patientPhone,
-                    patientName: current.patientName,
-                    doctorId: doctorId,
-                    doctorName: doctorName,
-                    patientId: current.patientId,
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      MedicalActionChip(
-                        icon: Icons.medical_services_outlined,
-                        label: l10n.sendToExamination,
-                        color: const Color(0xFF7B1FA2),
-                        onTap: () async {
-                          final queue = context.read<QueueService>();
-                          final provider = context.read<AppointmentProvider>();
-                          await queue.sendToExamination(current!.id, doctorId);
-                          final appt = _findAppointment(provider, current);
-                          if (appt != null) {
-                            await provider.sendToExamination(appt.id);
-                          }
-                        },
-                      ),
-                      MedicalActionChip(
-                        icon: Icons.check_circle_outline,
-                        label: l10n.completeVisit,
-                        color: AppTheme.medicalGreen,
-                        onTap: () => context
-                            .read<QueueService>()
-                            .completeCurrent(doctorId),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+              if (isCompleted)
+                const Icon(Icons.check_circle, color: AppTheme.medicalGreen)
+              else if (isInRoom)
+                Icon(Icons.meeting_room_outlined, color: AppTheme.medicalGreen, size: 22)
+              else if (isSelected)
+                Icon(Icons.arrow_forward_ios_rounded, size: 14, color: scheme.primary),
+            ],
           ),
-        if (current == null && queue.any((e) => e.status == QueueStatus.waiting))
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: FilledButton.icon(
-              onPressed: () =>
-                  context.read<QueueService>().callNext(doctorId),
-              style: FilledButton.styleFrom(
-                backgroundColor: AppTheme.doctorColor,
-                minimumSize: const Size(double.infinity, 48),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-              ),
-              icon: const Icon(Icons.call),
-              label: Text(l10n.callNext),
-            ),
-          ),
-        ...queue.map((entry) {
-          final color = entry.status.color();
-          return Card(
-            margin: const EdgeInsets.only(bottom: 10),
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(14),
-              child: Row(
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: AppTheme.doctorColor,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      '${entry.position}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          entry.patientName,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: color.withOpacity(0.12),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Text(
-                            entry.status.label(l10n),
-                            style: TextStyle(
-                              color: color,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        StaffPatientContactBar(
-                          phone: entry.patientPhone,
-                          patientName: entry.patientName,
-                          doctorId: doctorId,
-                          doctorName: doctorName,
-                          patientId: entry.patientId,
-                          compact: true,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PositionBadge extends StatelessWidget {
+  const _PositionBadge({
+    required this.position,
+    required this.isCompleted,
+  });
+
+  final int position;
+  final bool isCompleted;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 44,
+      height: 44,
+      decoration: BoxDecoration(
+        color: isCompleted
+            ? AppTheme.medicalGreen.withOpacity(0.15)
+            : AppTheme.doctorColor.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      alignment: Alignment.center,
+      child: isCompleted
+          ? const Icon(Icons.check_rounded, color: AppTheme.medicalGreen, size: 22)
+          : Text(
+              '$position',
+              style: TextStyle(
+                color: isCompleted ? AppTheme.medicalGreen : AppTheme.doctorColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 17,
               ),
             ),
-          );
-        }),
-      ],
     );
   }
 }

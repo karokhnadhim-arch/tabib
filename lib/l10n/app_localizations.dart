@@ -545,6 +545,42 @@ abstract class AppLocalizations {
   /// **'Queue management'**
   String get queueManagement;
 
+  /// No description provided for @todaysQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s queue'**
+  String get todaysQueue;
+
+  /// No description provided for @clinicalNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinical notes'**
+  String get clinicalNotes;
+
+  /// No description provided for @notesAutoSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-saved'**
+  String get notesAutoSaved;
+
+  /// No description provided for @selectPatientFromQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a patient from today\'s queue to view details and write notes.'**
+  String get selectPatientFromQueue;
+
+  /// No description provided for @doctorQueueViewOnlyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue order and status are managed by your secretary. You can view patients and write clinical notes only.'**
+  String get doctorQueueViewOnlyHint;
+
+  /// No description provided for @visitCompletedReadOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'This visit is completed. Notes are read-only.'**
+  String get visitCompletedReadOnly;
+
   /// No description provided for @currentPatient.
   ///
   /// In en, this message translates to:

@@ -240,6 +240,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get queueManagement => 'Queue management';
 
   @override
+  String get todaysQueue => 'Today\'s queue';
+
+  @override
+  String get clinicalNotes => 'Clinical notes';
+
+  @override
+  String get notesAutoSaved => 'Auto-saved';
+
+  @override
+  String get selectPatientFromQueue => 'Select a patient from today\'s queue to view details and write notes.';
+
+  @override
+  String get doctorQueueViewOnlyHint => 'Queue order and status are managed by your secretary. You can view patients and write clinical notes only.';
+
+  @override
+  String get visitCompletedReadOnly => 'This visit is completed. Notes are read-only.';
+
+  @override
   String get currentPatient => 'Current patient';
 
   @override
