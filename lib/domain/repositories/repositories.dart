@@ -4,6 +4,7 @@ import '../../models/visit_status.dart';
 import '../../models/doctor.dart';
 import '../../models/notification.dart';
 import '../../models/notification_channel.dart';
+import '../../models/prescription_line_item.dart';
 import '../../models/prescription.dart';
 import '../../models/queue_entry.dart';
 import '../../models/specialty.dart';
@@ -136,6 +137,7 @@ abstract class PrescriptionRepository {
     required String diagnosis,
     required String medications,
     String? notes,
+    List<PrescriptionLineItem> items = const [],
   });
 }
 

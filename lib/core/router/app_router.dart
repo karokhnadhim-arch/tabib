@@ -40,6 +40,7 @@ import '../../presentation/screens/patient/doctor_list_screen.dart';
 import '../../presentation/screens/patient/notifications_screen.dart';
 import '../../presentation/screens/patient/advertisement_detail_screen.dart';
 import '../../presentation/screens/patient/my_queues_screen.dart';
+import '../../presentation/screens/patient/patient_prescriptions_screen.dart';
 import '../../presentation/screens/patient/patient_profile_screen.dart';
 import '../../presentation/screens/patient/patient_home_screen.dart';
 import '../../presentation/screens/chat/chat_screen.dart';
@@ -127,6 +128,10 @@ class AppRouter {
           GoRoute(
             path: '/appointments',
             builder: (_, __) => const AppointmentHistoryScreen(),
+          ),
+          GoRoute(
+            path: '/prescriptions',
+            builder: (_, __) => const PatientPrescriptionsScreen(),
           ),
           GoRoute(
             path: '/notifications',

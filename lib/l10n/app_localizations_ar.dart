@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 /// The translations for Arabic (`ar`).
@@ -3472,4 +3474,86 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get syncingData => 'جاري المزامنة…';
+
+  @override
+  String get searchMedicine => 'ابحث عن دواء (اسم عام أو تجاري)';
+
+  @override
+  String get dosage => 'الجرعة';
+
+  @override
+  String get frequency => 'التكرار';
+
+  @override
+  String get duration => 'المدة';
+
+  @override
+  String get lineNotesOptional => 'ملاحظات إضافية (اختياري)';
+
+  @override
+  String get favoriteMedicines => 'الأدوية المفضلة';
+
+  @override
+  String get searchResults => 'نتائج البحث';
+
+  @override
+  String get addFavorite => 'إضافة للمفضلة';
+
+  @override
+  String get removeFavorite => 'إزالة من المفضلة';
+
+  @override
+  String get printPrescription => 'طباعة / نسخ';
+
+  @override
+  String get printPrescriptionHint => 'اختياري — انسخ نص الوصفة للمشاركة أو الطباعة.';
+
+  @override
+  String get copyPrescription => 'نسخ الوصفة';
+
+  @override
+  String get copiedToClipboard => 'تم النسخ';
+
+  @override
+  String get prescriptionLines => 'الوصفة';
+
+  @override
+  String get addMedicine => 'إضافة دواء';
+
+  @override
+  String get updateLine => 'تحديث';
+
+  @override
+  String get myPrescriptions => 'وصفاتي';
+
+  @override
+  String get noPrescriptionsYet => 'لا توجد وصفات بعد';
+
+  @override
+  String get prescriptionAutoSaved => 'تم حفظ الوصفة تلقائياً';
+
+  @override
+  String prescriptionMedicineCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count أدوية',
+      one: 'دواء واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String prescriptionRecordCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count وصفات',
+      one: 'وصفة واحدة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get date => 'التاريخ';
 }

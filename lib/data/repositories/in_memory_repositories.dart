@@ -5,6 +5,7 @@ import '../../models/chat_message.dart';
 import '../../models/notification.dart';
 import '../../models/notification_channel.dart';
 import '../../models/prescription.dart';
+import '../../models/prescription_line_item.dart';
 import '../../models/visit_status.dart';
 import '../../domain/repositories/repositories.dart';
 
@@ -318,6 +319,7 @@ class InMemoryPrescriptionRepository implements PrescriptionRepository {
     required String diagnosis,
     required String medications,
     String? notes,
+    List<PrescriptionLineItem> items = const [],
   }) async {
     _prescriptions.insert(
       0,
@@ -331,6 +333,7 @@ class InMemoryPrescriptionRepository implements PrescriptionRepository {
         medications: medications,
         createdAt: DateTime.now(),
         notes: notes,
+        items: items,
       ),
     );
     _notify();

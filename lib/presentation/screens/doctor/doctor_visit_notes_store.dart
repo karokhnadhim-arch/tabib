@@ -4,12 +4,16 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../models/prescription_line_item.dart';
+import 'prescription/prescription_formatter.dart';
+
 /// Local auto-save for in-visit clinical notes — doctor dashboard only.
 class DoctorVisitNotes {
   const DoctorVisitNotes({
     this.diagnosis = '',
     this.medications = '',
     this.clinicalNotes = '',
+    this.prescriptionItems = const [],
     this.prescriptionSynced = false,
     this.updatedAt,
   });
@@ -17,6 +21,7 @@ class DoctorVisitNotes {
   final String diagnosis;
   final String medications;
   final String clinicalNotes;
+  final List<PrescriptionLineItem> prescriptionItems;
   final bool prescriptionSynced;
   final DateTime? updatedAt;
 
@@ -24,6 +29,7 @@ class DoctorVisitNotes {
     String? diagnosis,
     String? medications,
     String? clinicalNotes,
+    List<PrescriptionLineItem>? prescriptionItems,
     bool? prescriptionSynced,
     DateTime? updatedAt,
   }) {
@@ -31,6 +37,7 @@ class DoctorVisitNotes {
       diagnosis: diagnosis ?? this.diagnosis,
       medications: medications ?? this.medications,
       clinicalNotes: clinicalNotes ?? this.clinicalNotes,
+      prescriptionItems: prescriptionItems ?? this.prescriptionItems,
       prescriptionSynced: prescriptionSynced ?? this.prescriptionSynced,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -40,15 +47,23 @@ class DoctorVisitNotes {
         'diagnosis': diagnosis,
         'medications': medications,
         'clinicalNotes': clinicalNotes,
+        'prescriptionItems':
+            prescriptionItems.map((e) => e.toMap()).toList(),
         'prescriptionSynced': prescriptionSynced,
         'updatedAt': updatedAt?.toUtc().millisecondsSinceEpoch,
       };
 
   factory DoctorVisitNotes.fromJson(Map<String, dynamic> json) {
+    final rawItems = json['prescriptionItems'];
+    final items = rawItems is List
+        ? PrescriptionFormatter.parseItems(rawItems)
+        : const <PrescriptionLineItem>[];
+
     return DoctorVisitNotes(
       diagnosis: json['diagnosis'] as String? ?? '',
       medications: json['medications'] as String? ?? '',
       clinicalNotes: json['clinicalNotes'] as String? ?? '',
+      prescriptionItems: items,
       prescriptionSynced: json['prescriptionSynced'] as bool? ?? false,
       updatedAt: json['updatedAt'] != null
           ? DateTime.fromMillisecondsSinceEpoch(
@@ -60,7 +75,8 @@ class DoctorVisitNotes {
   }
 
   bool get canSyncPrescription =>
-      diagnosis.trim().isNotEmpty && medications.trim().isNotEmpty;
+      diagnosis.trim().isNotEmpty &&
+      (prescriptionItems.isNotEmpty || medications.trim().isNotEmpty);
 }
 
 class DoctorVisitNotesStore extends ChangeNotifier {
@@ -109,12 +125,25 @@ class DoctorVisitNotesStore extends ChangeNotifier {
     String? diagnosis,
     String? medications,
     String? clinicalNotes,
+    List<PrescriptionLineItem>? prescriptionItems,
   }) {
     final current = _cache[storageKey] ?? const DoctorVisitNotes();
+    final items = prescriptionItems ?? current.prescriptionItems;
+    final meds = medications ??
+        (items.isNotEmpty
+            ? PrescriptionFormatter.formatItems(items)
+            : current.medications);
+
     _cache[storageKey] = current.copyWith(
       diagnosis: diagnosis ?? current.diagnosis,
-      medications: medications ?? current.medications,
+      medications: meds,
       clinicalNotes: clinicalNotes ?? current.clinicalNotes,
+      prescriptionItems: items,
+      prescriptionSynced: (diagnosis != null ||
+              medications != null ||
+              prescriptionItems != null)
+          ? false
+          : current.prescriptionSynced,
     );
     notifyListeners();
 

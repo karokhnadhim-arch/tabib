@@ -1323,5 +1323,41 @@
   "offlineMode": "Offline",
   "offlineModeHint": "You are offline — showing saved data. Changes sync when connection returns.",
   "offlineQueueHint": "Last known queue status (offline)",
-  "syncingData": "Syncing…"
+  "syncingData": "Syncing…",
+  "searchMedicine": "Search medicine (generic or brand)",
+  "dosage": "Dosage",
+  "frequency": "Frequency",
+  "duration": "Duration",
+  "lineNotesOptional": "Additional notes (optional)",
+  "favoriteMedicines": "Favorite medicines",
+  "searchResults": "Search results",
+  "addFavorite": "Add to favorites",
+  "removeFavorite": "Remove from favorites",
+  "printPrescription": "Print / copy",
+  "printPrescriptionHint": "Optional — copy the prescription text to share or print elsewhere.",
+  "copyPrescription": "Copy prescription",
+  "copiedToClipboard": "Copied to clipboard",
+  "prescriptionLines": "Prescription",
+  "addMedicine": "Add medicine",
+  "updateLine": "Update",
+  "myPrescriptions": "My prescriptions",
+  "noPrescriptionsYet": "No prescriptions yet",
+  "prescriptionAutoSaved": "Prescription saved automatically",
+  "prescriptionMedicineCount": "{count, plural, =1{1 medicine} other{{count} medicines}}",
+  "@prescriptionMedicineCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "prescriptionRecordCount": "{count, plural, =1{1 prescription} other{{count} prescriptions}}",
+  "@prescriptionRecordCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "date": "Date"
 }

@@ -1232,5 +1232,41 @@
   "offlineMode": "غير متصل",
   "offlineModeHint": "أنت غير متصل — يتم عرض البيانات المحفوظة. تتم المزامنة عند عودة الاتصال.",
   "offlineQueueHint": "آخر حالة معروفة للقائمة (غير متصل)",
-  "syncingData": "جاري المزامنة…"
+  "syncingData": "جاري المزامنة…",
+  "searchMedicine": "ابحث عن دواء (اسم عام أو تجاري)",
+  "dosage": "الجرعة",
+  "frequency": "التكرار",
+  "duration": "المدة",
+  "lineNotesOptional": "ملاحظات إضافية (اختياري)",
+  "favoriteMedicines": "الأدوية المفضلة",
+  "searchResults": "نتائج البحث",
+  "addFavorite": "إضافة للمفضلة",
+  "removeFavorite": "إزالة من المفضلة",
+  "printPrescription": "طباعة / نسخ",
+  "printPrescriptionHint": "اختياري — انسخ نص الوصفة للمشاركة أو الطباعة.",
+  "copyPrescription": "نسخ الوصفة",
+  "copiedToClipboard": "تم النسخ",
+  "prescriptionLines": "الوصفة",
+  "addMedicine": "إضافة دواء",
+  "updateLine": "تحديث",
+  "myPrescriptions": "وصفاتي",
+  "noPrescriptionsYet": "لا توجد وصفات بعد",
+  "prescriptionAutoSaved": "تم حفظ الوصفة تلقائياً",
+  "prescriptionMedicineCount": "{count, plural, =1{دواء واحد} other{{count} أدوية}}",
+  "@prescriptionMedicineCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "prescriptionRecordCount": "{count, plural, =1{وصفة واحدة} other{{count} وصفات}}",
+  "@prescriptionRecordCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "date": "التاريخ"
 }

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../core/constants/firestore_limits.dart';
 import '../../models/notification.dart';
+import '../../models/prescription_line_item.dart';
 import '../../models/prescription.dart';
 import '../../domain/repositories/repositories.dart';
 
@@ -46,6 +47,7 @@ class FirestorePrescriptionRepository implements PrescriptionRepository {
     required String diagnosis,
     required String medications,
     String? notes,
+    List<PrescriptionLineItem> items = const [],
   }) async {
     final ref = _db.collection('prescriptions').doc();
     final prescription = Prescription(
@@ -58,6 +60,7 @@ class FirestorePrescriptionRepository implements PrescriptionRepository {
       medications: medications,
       createdAt: DateTime.now(),
       notes: notes,
+      items: items,
     );
     await ref.set(prescription.toMap());
 

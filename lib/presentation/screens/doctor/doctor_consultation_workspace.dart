@@ -17,6 +17,8 @@ import '../../widgets/staff_patient_contact_bar.dart';
 import 'doctor_consultation_session.dart';
 import 'doctor_consultation_widgets.dart';
 import 'doctor_visit_notes_store.dart';
+import 'prescription/doctor_prescription_composer.dart';
+import 'prescription/prescription_print_sheet.dart';
 
 /// Material 3 consultation workspace — single-focus sections, auto-save.
 class DoctorConsultationWorkspace extends StatefulWidget {
@@ -113,6 +115,7 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
             notes: notes.clinicalNotes.trim().isEmpty
                 ? null
                 : notes.clinicalNotes.trim(),
+            items: notes.prescriptionItems,
           );
       await widget.session.notesStore.markPrescriptionSynced(_storageKey);
       if (mounted) setState(() {});
@@ -125,6 +128,14 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
 
   void _focusSection(ConsultationFocusSection section) {
     setState(() => _focused = section);
+  }
+
+  String? _prescriptionSubtitle(DoctorVisitNotes notes, AppLocalizations l10n) {
+    if (notes.prescriptionItems.isNotEmpty) {
+      return l10n.prescriptionMedicineCount(notes.prescriptionItems.length);
+    }
+    final text = notes.medications.trim();
+    return text.isEmpty ? null : text;
   }
 
   @override
@@ -261,23 +272,33 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
         DoctorConsultationSectionTile(
           icon: Icons.medication_outlined,
           title: l10n.writePrescription,
-          subtitle: controllers.medications.text.trim().isEmpty
-              ? null
-              : controllers.medications.text.trim(),
+          subtitle: _prescriptionSubtitle(notes, l10n),
           expanded: _focused == ConsultationFocusSection.prescription,
           onTap: () => _focusSection(ConsultationFocusSection.prescription),
-          child: TextField(
-            controller: controllers.medications,
-            onChanged: (_) => _onFieldChanged(),
+          child: DoctorPrescriptionComposer(
+            doctorId: widget.doctorId,
+            items: notes.prescriptionItems,
             readOnly: isCompleted,
-            autofocus: _focused == ConsultationFocusSection.prescription && !isCompleted,
-            decoration: _fieldDecoration(
-              context,
-              l10n.medications,
-              Icons.medication_outlined,
-            ),
-            minLines: 3,
-            maxLines: 8,
+            legacyMedications: notes.prescriptionItems.isEmpty
+                ? notes.medications
+                : null,
+            onItemsChanged: (items) {
+              widget.session.onPrescriptionItemsChanged(_storageKey, items);
+              _schedulePrescriptionSync();
+              setState(() {});
+            },
+            onPrint: notes.prescriptionItems.isEmpty
+                ? null
+                : () => showPrescriptionPrintSheet(
+                      context: context,
+                      patientName: widget.entry.patientName,
+                      doctorName: widget.doctorName,
+                      diagnosis: notes.diagnosis,
+                      items: notes.prescriptionItems,
+                      notes: notes.clinicalNotes.trim().isEmpty
+                          ? null
+                          : notes.clinicalNotes.trim(),
+                    ),
           ),
         ),
         DoctorConsultationSectionTile(
@@ -362,9 +383,11 @@ class _MedicalHistoryBody extends StatelessWidget {
                         style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                     ],
-                    if (rx.medications.isNotEmpty) ...[
+                    if (rx.medications.isNotEmpty || rx.items.isNotEmpty) ...[
                       const SizedBox(height: 4),
-                      Text('${l10n.medications}: ${rx.medications}'),
+                      Text(
+                        '${l10n.medications}: ${rx.items.isNotEmpty ? rx.items.map((e) => e.formatLine()).join('; ') : rx.medications}',
+                      ),
                     ],
                   ],
                 ),

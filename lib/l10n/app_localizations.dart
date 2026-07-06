@@ -6892,6 +6892,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Syncing…'**
   String get syncingData;
+
+  /// No description provided for @searchMedicine.
+  ///
+  /// In en, this message translates to:
+  /// **'Search medicine (generic or brand)'**
+  String get searchMedicine;
+
+  /// No description provided for @dosage.
+  ///
+  /// In en, this message translates to:
+  /// **'Dosage'**
+  String get dosage;
+
+  /// No description provided for @frequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequency'**
+  String get frequency;
+
+  /// No description provided for @duration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get duration;
+
+  /// No description provided for @lineNotesOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional notes (optional)'**
+  String get lineNotesOptional;
+
+  /// No description provided for @favoriteMedicines.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite medicines'**
+  String get favoriteMedicines;
+
+  /// No description provided for @searchResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Search results'**
+  String get searchResults;
+
+  /// No description provided for @addFavorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to favorites'**
+  String get addFavorite;
+
+  /// No description provided for @removeFavorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from favorites'**
+  String get removeFavorite;
+
+  /// No description provided for @printPrescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Print / copy'**
+  String get printPrescription;
+
+  /// No description provided for @printPrescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional — copy the prescription text to share or print elsewhere.'**
+  String get printPrescriptionHint;
+
+  /// No description provided for @copyPrescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy prescription'**
+  String get copyPrescription;
+
+  /// No description provided for @copiedToClipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to clipboard'**
+  String get copiedToClipboard;
+
+  /// No description provided for @prescriptionLines.
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription'**
+  String get prescriptionLines;
+
+  /// No description provided for @addMedicine.
+  ///
+  /// In en, this message translates to:
+  /// **'Add medicine'**
+  String get addMedicine;
+
+  /// No description provided for @updateLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get updateLine;
+
+  /// No description provided for @myPrescriptions.
+  ///
+  /// In en, this message translates to:
+  /// **'My prescriptions'**
+  String get myPrescriptions;
+
+  /// No description provided for @noPrescriptionsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No prescriptions yet'**
+  String get noPrescriptionsYet;
+
+  /// No description provided for @prescriptionAutoSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription saved automatically'**
+  String get prescriptionAutoSaved;
+
+  /// No description provided for @prescriptionMedicineCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 medicine} other{{count} medicines}}'**
+  String prescriptionMedicineCount(int count);
+
+  /// No description provided for @prescriptionRecordCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 prescription} other{{count} prescriptions}}'**
+  String prescriptionRecordCount(int count);
+
+  /// No description provided for @date.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get date;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

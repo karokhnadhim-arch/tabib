@@ -67,6 +67,7 @@ class _PatientProfileScreenState extends State<PatientProfileScreen> {
     _queueService = context.read<QueueService>();
     _queueService!.watchPatientQueues(patientId);
     context.read<AppointmentProvider>().watchPatient(patientId);
+    context.read<PrescriptionProvider>().watchPatient(patientId);
     await context.read<FavoritesService>().bindUser(patientId);
     await context.read<RecentlyVisitedService>().bindUser(patientId);
 
@@ -251,6 +252,7 @@ class _PatientProfileScreenState extends State<PatientProfileScreen> {
     final favorites = context.watch<FavoritesService>();
     final recentlyVisited = context.watch<RecentlyVisitedService>();
     final appointments = context.watch<AppointmentProvider>();
+    final prescriptions = context.watch<PrescriptionProvider>();
     final ads = context.watch<AdvertisementService>().advertisements;
 
     final patientId = auth.patientId;
@@ -349,6 +351,33 @@ class _PatientProfileScreenState extends State<PatientProfileScreen> {
                               height: 148,
                             ),
                           ],
+                          const SizedBox(height: _sectionSpacing),
+                          _SectionTitle(title: l10n.myPrescriptions),
+                          const SizedBox(height: 12),
+                          Card(
+                            elevation: 0,
+                            margin: EdgeInsets.zero,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              side: BorderSide(color: Colors.grey.shade200),
+                            ),
+                            child: ListTile(
+                              leading: Icon(
+                                Icons.medication_outlined,
+                                color: AppTheme.medicalBlue,
+                              ),
+                              title: Text(l10n.myPrescriptions),
+                              subtitle: Text(
+                                prescriptions.prescriptions.isEmpty
+                                    ? l10n.noPrescriptionsYet
+                                    : l10n.prescriptionRecordCount(
+                                        prescriptions.prescriptions.length,
+                                      ),
+                              ),
+                              trailing: const Icon(Icons.chevron_right_rounded),
+                              onTap: () => context.push('/prescriptions'),
+                            ),
+                          ),
                           const SizedBox(height: _sectionSpacing),
                           _SectionTitle(title: l10n.accountDetails),
                           const SizedBox(height: 12),

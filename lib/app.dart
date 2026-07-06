@@ -25,6 +25,7 @@ import 'services/clinic_data_service.dart';
 import 'services/business_type_usage_service.dart';
 import 'services/advertisement_service.dart';
 import 'services/favorites_service.dart';
+import 'services/doctor_medicine_favorites_service.dart';
 import 'services/patient_profile_service.dart';
 import 'services/recently_visited_service.dart';
 import 'services/firebase_bootstrap.dart';
@@ -101,6 +102,7 @@ class _TabibAppState extends State<TabibApp> {
   late final ThemeService _themeService;
   late final UserPreferencesService _userPreferencesService;
   late final FavoritesService _favoritesService;
+  late final DoctorMedicineFavoritesService _doctorMedicineFavoritesService;
   late final PatientProfileService _patientProfileService;
   late final RecentlyVisitedService _recentlyVisitedService;
   late final AdvertisementService _advertisementService;
@@ -216,6 +218,7 @@ class _TabibAppState extends State<TabibApp> {
       communicationLog: _staffCommunicationLog,
     );
     _favoritesService = FavoritesService();
+    _doctorMedicineFavoritesService = DoctorMedicineFavoritesService();
     _patientProfileService = PatientProfileService();
     _recentlyVisitedService = RecentlyVisitedService();
     _advertisementService = AdvertisementService(backend: _backend);
@@ -362,6 +365,7 @@ class _TabibAppState extends State<TabibApp> {
         Provider<PatientContactService>.value(value: _patientContactService),
         ChangeNotifierProvider.value(value: _staffCommunicationLog),
         ChangeNotifierProvider.value(value: _favoritesService),
+        ChangeNotifierProvider.value(value: _doctorMedicineFavoritesService),
         ChangeNotifierProvider.value(value: _patientProfileService),
         ChangeNotifierProvider.value(value: _recentlyVisitedService),
         ChangeNotifierProvider.value(value: _advertisementService),

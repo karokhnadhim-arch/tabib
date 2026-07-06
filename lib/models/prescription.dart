@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'prescription_line_item.dart';
+
 class Prescription {
   const Prescription({
     required this.id,
@@ -11,6 +13,7 @@ class Prescription {
     required this.medications,
     required this.createdAt,
     this.notes,
+    this.items = const [],
   });
 
   final String id;
@@ -22,6 +25,7 @@ class Prescription {
   final String medications;
   final DateTime createdAt;
   final String? notes;
+  final List<PrescriptionLineItem> items;
 
   Map<String, dynamic> toMap() => {
         'patientId': patientId,
@@ -32,9 +36,19 @@ class Prescription {
         'medications': medications,
         'createdAt': Timestamp.fromDate(createdAt),
         if (notes != null) 'notes': notes,
+        if (items.isNotEmpty) 'items': items.map((e) => e.toMap()).toList(),
       };
 
   factory Prescription.fromFirestore(String id, Map<String, dynamic> data) {
+    final rawItems = data['items'];
+    final items = rawItems is List
+        ? rawItems
+            .whereType<Map>()
+            .map((e) =>
+                PrescriptionLineItem.fromMap(Map<String, dynamic>.from(e)))
+            .toList()
+        : const <PrescriptionLineItem>[];
+
     return Prescription(
       id: id,
       patientId: data['patientId'] as String? ?? '',
@@ -45,6 +59,7 @@ class Prescription {
       medications: data['medications'] as String? ?? '',
       createdAt: _parseDate(data['createdAt']),
       notes: data['notes'] as String?,
+      items: items,
     );
   }
 

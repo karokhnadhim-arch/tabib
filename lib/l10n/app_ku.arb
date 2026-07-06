@@ -1232,5 +1232,41 @@
   "offlineMode": "Offline",
   "offlineModeHint": "Offline — داتای پاشەکەوتکراو پیشان دەدرێت. کاتێک پەیوەندی گەڕایەوە هاوکات دەبێت.",
   "offlineQueueHint": "دوایین دۆخی ڕیز (offline)",
-  "syncingData": "هاوکاتکردن…"
+  "syncingData": "هاوکاتکردن…",
+  "searchMedicine": "گەڕان بۆ دەرمان (ناوی گشتی یان بازرگانی)",
+  "dosage": "ژەمە",
+  "frequency": "دووبارەبوونەوە",
+  "duration": "ماوە",
+  "lineNotesOptional": "تێبینی زیادە (ئارەزوومەندانە)",
+  "favoriteMedicines": "دەرمانە دڵخوازەکان",
+  "searchResults": "ئەنجامەکانی گەڕان",
+  "addFavorite": "زیادکردن بۆ دڵخواز",
+  "removeFavorite": "لابردن لە دڵخواز",
+  "printPrescription": "چاپ / کۆپی",
+  "printPrescriptionHint": "ئارەزوومەندانە — دەقی ڕەچەتە کۆپی بکە بۆ هاوبەشکردن یان چاپ.",
+  "copyPrescription": "کۆپی ڕەچەتە",
+  "copiedToClipboard": "کۆپی کرا",
+  "prescriptionLines": "ڕەچەتە",
+  "addMedicine": "زیادکردنی دەرمان",
+  "updateLine": "نوێکردنەوە",
+  "myPrescriptions": "ڕەچەتەکانم",
+  "noPrescriptionsYet": "هێشتا ڕەچەتە نییە",
+  "prescriptionAutoSaved": "ڕەچەتە خۆکارانە پاشەکەوت کرا",
+  "prescriptionMedicineCount": "{count, plural, =1{1 دەرمان} other{{count} دەرمان}}",
+  "@prescriptionMedicineCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "prescriptionRecordCount": "{count, plural, =1{1 ڕەچەتە} other{{count} ڕەچەتە}}",
+  "@prescriptionRecordCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "date": "بەروار"
 }

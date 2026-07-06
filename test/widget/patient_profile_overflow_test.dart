@@ -30,6 +30,7 @@ void main() {
   late FavoritesService favoritesService;
   late RecentlyVisitedService recentlyVisitedService;
   late AppointmentProvider appointmentProvider;
+  late PrescriptionProvider prescriptionProvider;
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
@@ -53,6 +54,9 @@ void main() {
     await recentlyVisitedService.bindUser(auth.patientId);
     appointmentProvider = AppointmentProvider(
       repository: InMemoryAppointmentRepository(),
+    );
+    prescriptionProvider = PrescriptionProvider(
+      repository: InMemoryPrescriptionRepository(),
     );
   });
 
@@ -78,6 +82,9 @@ void main() {
         ),
         ChangeNotifierProvider<AppointmentProvider>.value(
           value: appointmentProvider,
+        ),
+        ChangeNotifierProvider<PrescriptionProvider>.value(
+          value: prescriptionProvider,
         ),
       ],
       child: MaterialApp(

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../../../models/prescription_line_item.dart';
 import 'doctor_visit_notes_store.dart';
 
 /// Per-patient text controllers — preserved when switching queue patients.
@@ -62,6 +63,17 @@ class DoctorConsultationSession extends ChangeNotifier {
     _prescriptionDebounce = Timer(const Duration(seconds: 2), () {
       notifyListeners();
     });
+  }
+
+  void onPrescriptionItemsChanged(
+    String storageKey,
+    List<PrescriptionLineItem> items,
+  ) {
+    final bundle = controllersFor(storageKey);
+    bundle.medications.text =
+        items.isEmpty ? bundle.medications.text : items.map((e) => e.formatLine()).join('\n');
+    notesStore.scheduleSave(storageKey, prescriptionItems: items);
+    onFieldChanged(storageKey);
   }
 
   @override

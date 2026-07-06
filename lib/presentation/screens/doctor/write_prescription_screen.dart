@@ -1,13 +1,19 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/responsive_scaffold.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../models/prescription_line_item.dart';
 import '../../../services/auth_service.dart';
+import '../../../services/doctor_medicine_favorites_service.dart';
 import '../../../utils/localization_utils.dart';
 import '../../providers/app_providers.dart';
+import 'prescription/doctor_prescription_composer.dart';
+import 'prescription/prescription_formatter.dart';
+import 'prescription/prescription_print_sheet.dart';
 
 class WritePrescriptionScreen extends StatefulWidget {
   const WritePrescriptionScreen({
@@ -25,57 +31,117 @@ class WritePrescriptionScreen extends StatefulWidget {
 
 class _WritePrescriptionScreenState extends State<WritePrescriptionScreen> {
   final _diagnosisController = TextEditingController();
-  final _medicationsController = TextEditingController();
   final _notesController = TextEditingController();
-  bool _loading = false;
+  List<PrescriptionLineItem> _items = [];
+  Timer? _autoSaveTimer;
+  bool _saving = false;
+  bool _saved = false;
+  String? _doctorId;
+
+  @override
+  void initState() {
+    super.initState();
+    _diagnosisController.addListener(_scheduleAutoSave);
+    _notesController.addListener(_scheduleAutoSave);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _bootstrap());
+  }
+
+  Future<void> _bootstrap() async {
+    final auth = context.read<AuthService>();
+    final user = auth.currentUser;
+    if (user == null) return;
+    _doctorId = user.doctorId ?? user.id;
+    await context.read<DoctorMedicineFavoritesService>().load(_doctorId!);
+    if (!mounted) return;
+    context.read<PrescriptionProvider>().watchPatient(widget.patientId);
+    setState(() {});
+  }
 
   @override
   void dispose() {
+    _autoSaveTimer?.cancel();
     _diagnosisController.dispose();
-    _medicationsController.dispose();
     _notesController.dispose();
     super.dispose();
   }
 
-  Future<void> _submit() async {
-    if (_diagnosisController.text.trim().isEmpty ||
-        _medicationsController.text.trim().isEmpty) {
-      return;
-    }
+  bool get _canSave =>
+      _diagnosisController.text.trim().isNotEmpty && _items.isNotEmpty;
 
-    setState(() => _loading = true);
+  void _scheduleAutoSave() {
+    _autoSaveTimer?.cancel();
+    _autoSaveTimer = Timer(const Duration(seconds: 2), _autoSave);
+  }
+
+  void _onItemsChanged(List<PrescriptionLineItem> items) {
+    setState(() => _items = items);
+    _scheduleAutoSave();
+  }
+
+  Future<void> _autoSave() async {
+    if (!_canSave || _saving) return;
+
+    setState(() {
+      _saving = true;
+      _saved = false;
+    });
+
     final auth = context.read<AuthService>();
     final user = auth.currentUser!;
+    final medications = PrescriptionFormatter.formatItems(_items);
 
-    await context.read<PrescriptionProvider>().write(
-      patientId: widget.patientId,
-      patientName: widget.patientName ?? 'Patient',
-      doctorId: user.doctorId ?? user.id,
-      doctorName: user.name.localized(context),
-      diagnosis: _diagnosisController.text.trim(),
-      medications: _medicationsController.text.trim(),
-      notes: _notesController.text.trim().isEmpty
-          ? null
-          : _notesController.text.trim(),
-    );
-
-    if (!mounted) return;
-    setState(() => _loading = false);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context).prescriptionSaved)),
-    );
-    context.pop();
+    try {
+      await context.read<PrescriptionProvider>().write(
+            patientId: widget.patientId,
+            patientName: widget.patientName ?? 'Patient',
+            doctorId: user.doctorId ?? user.id,
+            doctorName: user.name.localized(context),
+            diagnosis: _diagnosisController.text.trim(),
+            medications: medications,
+            notes: _notesController.text.trim().isEmpty
+                ? null
+                : _notesController.text.trim(),
+            items: _items,
+          );
+      if (mounted) {
+        setState(() {
+          _saving = false;
+          _saved = true;
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() => _saving = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final doctorId = _doctorId;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.writePrescription),
         backgroundColor: AppTheme.doctorColor,
+        actions: [
+          if (_items.isNotEmpty)
+            IconButton(
+              tooltip: l10n.printPrescription,
+              onPressed: () => showPrescriptionPrintSheet(
+                context: context,
+                patientName: widget.patientName ?? l10n.patientName,
+                doctorName: context.read<AuthService>().currentUser?.name
+                        .localized(context) ??
+                    '',
+                diagnosis: _diagnosisController.text.trim(),
+                items: _items,
+                notes: _notesController.text.trim().isEmpty
+                    ? null
+                    : _notesController.text.trim(),
+              ),
+              icon: const Icon(Icons.print_outlined),
+            ),
+        ],
       ),
       body: ScrollableResponsiveBody(
         child: Column(
@@ -88,6 +154,26 @@ class _WritePrescriptionScreenState extends State<WritePrescriptionScreen> {
                   title: Text(widget.patientName!),
                 ),
               ),
+            if (_saving || _saved) ...[
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  if (_saving)
+                    const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  else
+                    Icon(Icons.cloud_done_outlined, size: 18, color: Colors.green.shade700),
+                  const SizedBox(width: 8),
+                  Text(
+                    _saving ? l10n.syncingData : l10n.prescriptionAutoSaved,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ),
+            ],
             const SizedBox(height: 16),
             TextField(
               controller: _diagnosisController,
@@ -95,34 +181,36 @@ class _WritePrescriptionScreenState extends State<WritePrescriptionScreen> {
               maxLines: 2,
             ),
             const SizedBox(height: 16),
-            TextField(
-              controller: _medicationsController,
-              decoration: InputDecoration(labelText: l10n.medications),
-              maxLines: 4,
-            ),
+            if (doctorId != null)
+              DoctorPrescriptionComposer(
+                doctorId: doctorId,
+                items: _items,
+                onItemsChanged: _onItemsChanged,
+                onPrint: _items.isEmpty
+                    ? null
+                    : () => showPrescriptionPrintSheet(
+                          context: context,
+                          patientName: widget.patientName ?? l10n.patientName,
+                          doctorName: context
+                                  .read<AuthService>()
+                                  .currentUser
+                                  ?.name
+                                  .localized(context) ??
+                              '',
+                          diagnosis: _diagnosisController.text.trim(),
+                          items: _items,
+                          notes: _notesController.text.trim().isEmpty
+                              ? null
+                              : _notesController.text.trim(),
+                        ),
+              )
+            else
+              const Center(child: CircularProgressIndicator()),
             const SizedBox(height: 16),
             TextField(
               controller: _notesController,
               decoration: InputDecoration(labelText: l10n.notesOptional),
               maxLines: 2,
-            ),
-            const SizedBox(height: 24),
-            FilledButton(
-              onPressed: _loading ? null : _submit,
-              style: FilledButton.styleFrom(
-                backgroundColor: AppTheme.doctorColor,
-                minimumSize: const Size.fromHeight(52),
-              ),
-              child: _loading
-                  ? const SizedBox(
-                      height: 22,
-                      width: 22,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : Text(l10n.save),
             ),
           ],
         ),

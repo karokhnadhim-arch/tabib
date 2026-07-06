@@ -11,6 +11,7 @@ import '../../models/visit_status.dart';
 import '../../models/notification.dart';
 import '../../models/notification_channel.dart';
 import '../../models/appointment.dart';
+import '../../models/prescription_line_item.dart';
 import '../../services/smart_notification_service.dart';
 
 class AppointmentProvider extends ChangeNotifier {
@@ -325,6 +326,7 @@ class PrescriptionProvider extends ChangeNotifier {
     required String diagnosis,
     required String medications,
     String? notes,
+    List<PrescriptionLineItem> items = const [],
   }) =>
       _repository.writePrescription(
         patientId: patientId,
@@ -334,6 +336,7 @@ class PrescriptionProvider extends ChangeNotifier {
         diagnosis: diagnosis,
         medications: medications,
         notes: notes,
+        items: items,
       );
 }
 

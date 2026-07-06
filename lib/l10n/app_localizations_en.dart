@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 /// The translations for English (`en`).
@@ -3472,4 +3474,86 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get syncingData => 'Syncing…';
+
+  @override
+  String get searchMedicine => 'Search medicine (generic or brand)';
+
+  @override
+  String get dosage => 'Dosage';
+
+  @override
+  String get frequency => 'Frequency';
+
+  @override
+  String get duration => 'Duration';
+
+  @override
+  String get lineNotesOptional => 'Additional notes (optional)';
+
+  @override
+  String get favoriteMedicines => 'Favorite medicines';
+
+  @override
+  String get searchResults => 'Search results';
+
+  @override
+  String get addFavorite => 'Add to favorites';
+
+  @override
+  String get removeFavorite => 'Remove from favorites';
+
+  @override
+  String get printPrescription => 'Print / copy';
+
+  @override
+  String get printPrescriptionHint => 'Optional — copy the prescription text to share or print elsewhere.';
+
+  @override
+  String get copyPrescription => 'Copy prescription';
+
+  @override
+  String get copiedToClipboard => 'Copied to clipboard';
+
+  @override
+  String get prescriptionLines => 'Prescription';
+
+  @override
+  String get addMedicine => 'Add medicine';
+
+  @override
+  String get updateLine => 'Update';
+
+  @override
+  String get myPrescriptions => 'My prescriptions';
+
+  @override
+  String get noPrescriptionsYet => 'No prescriptions yet';
+
+  @override
+  String get prescriptionAutoSaved => 'Prescription saved automatically';
+
+  @override
+  String prescriptionMedicineCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count medicines',
+      one: '1 medicine',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String prescriptionRecordCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count prescriptions',
+      one: '1 prescription',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get date => 'Date';
 }

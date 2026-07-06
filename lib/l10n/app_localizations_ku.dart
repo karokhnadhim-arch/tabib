@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 /// The translations for Kurdish (`ku`).
@@ -3472,4 +3474,86 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get syncingData => 'هاوکاتکردن…';
+
+  @override
+  String get searchMedicine => 'گەڕان بۆ دەرمان (ناوی گشتی یان بازرگانی)';
+
+  @override
+  String get dosage => 'ژەمە';
+
+  @override
+  String get frequency => 'دووبارەبوونەوە';
+
+  @override
+  String get duration => 'ماوە';
+
+  @override
+  String get lineNotesOptional => 'تێبینی زیادە (ئارەزوومەندانە)';
+
+  @override
+  String get favoriteMedicines => 'دەرمانە دڵخوازەکان';
+
+  @override
+  String get searchResults => 'ئەنجامەکانی گەڕان';
+
+  @override
+  String get addFavorite => 'زیادکردن بۆ دڵخواز';
+
+  @override
+  String get removeFavorite => 'لابردن لە دڵخواز';
+
+  @override
+  String get printPrescription => 'چاپ / کۆپی';
+
+  @override
+  String get printPrescriptionHint => 'ئارەزوومەندانە — دەقی ڕەچەتە کۆپی بکە بۆ هاوبەشکردن یان چاپ.';
+
+  @override
+  String get copyPrescription => 'کۆپی ڕەچەتە';
+
+  @override
+  String get copiedToClipboard => 'کۆپی کرا';
+
+  @override
+  String get prescriptionLines => 'ڕەچەتە';
+
+  @override
+  String get addMedicine => 'زیادکردنی دەرمان';
+
+  @override
+  String get updateLine => 'نوێکردنەوە';
+
+  @override
+  String get myPrescriptions => 'ڕەچەتەکانم';
+
+  @override
+  String get noPrescriptionsYet => 'هێشتا ڕەچەتە نییە';
+
+  @override
+  String get prescriptionAutoSaved => 'ڕەچەتە خۆکارانە پاشەکەوت کرا';
+
+  @override
+  String prescriptionMedicineCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count دەرمان',
+      one: '1 دەرمان',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String prescriptionRecordCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ڕەچەتە',
+      one: '1 ڕەچەتە',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get date => 'بەروار';
 }
