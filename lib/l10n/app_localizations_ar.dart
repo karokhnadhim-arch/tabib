@@ -3503,7 +3503,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get removeFavorite => 'إزالة من المفضلة';
 
   @override
-  String get printPrescription => 'طباعة / نسخ';
+  String get printPrescription => 'طباعة الوصفة';
+
+  @override
+  String get savePrescription => 'حفظ الوصفة';
 
   @override
   String get printPrescriptionHint => 'اختياري — انسخ نص الوصفة للمشاركة أو الطباعة.';

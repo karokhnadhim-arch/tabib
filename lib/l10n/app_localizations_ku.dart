@@ -3503,7 +3503,10 @@ class AppLocalizationsKu extends AppLocalizations {
   String get removeFavorite => 'لابردن لە دڵخواز';
 
   @override
-  String get printPrescription => 'چاپ / کۆپی';
+  String get printPrescription => 'چاپکردنی ڕەچەتە';
+
+  @override
+  String get savePrescription => 'پاشەکەوتکردنی ڕەچەتە';
 
   @override
   String get printPrescriptionHint => 'ئارەزوومەندانە — دەقی ڕەچەتە کۆپی بکە بۆ هاوبەشکردن یان چاپ.';

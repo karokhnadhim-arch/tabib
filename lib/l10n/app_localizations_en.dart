@@ -3503,7 +3503,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get removeFavorite => 'Remove from favorites';
 
   @override
-  String get printPrescription => 'Print / copy';
+  String get printPrescription => 'Print prescription';
+
+  @override
+  String get savePrescription => 'Save prescription';
 
   @override
   String get printPrescriptionHint => 'Optional — copy the prescription text to share or print elsewhere.';

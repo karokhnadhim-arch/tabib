@@ -22,6 +22,7 @@ import 'doctor_visit_notes_store.dart';
 import 'investigation/investigation_print_sheet.dart';
 import 'investigation/investigation_request_panel.dart';
 import 'prescription/doctor_prescription_composer.dart';
+import 'prescription/prescription_action_bar.dart';
 import 'prescription/prescription_print_sheet.dart';
 
 /// Material 3 consultation workspace — single-focus sections, auto-save.
@@ -393,34 +394,48 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
           icon: Icons.medication_outlined,
           title: l10n.writePrescription,
           subtitle: _prescriptionSubtitle(notes, l10n),
-          child: DoctorPrescriptionComposer(
-            doctorId: widget.doctorId,
-            items: notes.prescriptionItems,
-            readOnly: isCompleted,
-            legacyMedications: notes.prescriptionItems.isEmpty
-                ? notes.medications
-                : null,
-            onItemsChanged: (items) {
-              widget.session.onPrescriptionItemsChanged(_storageKey, items);
-              _schedulePrescriptionSync();
-              setState(() {});
-            },
-            onPrint: notes.prescriptionItems.isEmpty
-                ? null
-                : () => showPrescriptionPrintSheet(
-                      context: context,
-                      patientName: widget.entry.patientName,
-                      doctorName: widget.doctorName,
-                      diagnosis: notes.diagnosis,
-                      items: notes.prescriptionItems,
-                      notes: notes.clinicalNotes.trim().isEmpty
-                          ? null
-                          : notes.clinicalNotes.trim(),
-                      clinicName: clinicName,
-                      clinicAddress: clinicAddress,
-                      clinicPhone: clinicPhone,
-                      doctorSpecialty: doctorSpecialty,
-                    ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              DoctorPrescriptionComposer(
+                doctorId: widget.doctorId,
+                items: notes.prescriptionItems,
+                readOnly: isCompleted,
+                legacyMedications: notes.prescriptionItems.isEmpty
+                    ? notes.medications
+                    : null,
+                onItemsChanged: (items) {
+                  widget.session.onPrescriptionItemsChanged(_storageKey, items);
+                  _schedulePrescriptionSync();
+                  setState(() {});
+                },
+              ),
+              DoctorPrescriptionActionBar(
+                saving: _saving,
+                saveEnabled: !isCompleted && notes.canSyncPrescription,
+                canPrint: prescriptionReadyToPrint(
+                  prescriptionSynced: notes.prescriptionSynced,
+                  investigationSynced: notes.investigationSynced,
+                  investigationCount: notes.investigationItems.length,
+                ),
+                onSave: isCompleted ? null : _saveNow,
+                onPrint: () => printPrescriptionDocument(
+                  context: context,
+                  patientName: widget.entry.patientName,
+                  doctorName: widget.doctorName,
+                  diagnosis: notes.diagnosis,
+                  items: notes.prescriptionItems,
+                  notes: notes.clinicalNotes.trim().isEmpty
+                      ? null
+                      : notes.clinicalNotes.trim(),
+                  clinicName: clinicName,
+                  clinicAddress: clinicAddress,
+                  clinicPhone: clinicPhone,
+                  doctorSpecialty: doctorSpecialty,
+                  investigations: notes.investigationItems,
+                ),
+              ),
+            ],
           ),
         ),
         _buildSection(
@@ -449,43 +464,20 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
           ),
         ),
         const SizedBox(height: DoctorConsultationTokens.sectionGap),
-        Wrap(
-          alignment: WrapAlignment.end,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: 12,
-          runSpacing: 10,
-          children: [
-            InvestigationRequestActionButton(
-              count: notes.investigationItems.length,
-              enabled: true,
-              onPressed: () => _openInvestigationPanel(
-                isCompleted: isCompleted,
-                notes: notes,
-                clinicName: clinicName,
-                clinicAddress: clinicAddress,
-                clinicPhone: clinicPhone,
-                doctorSpecialty: doctorSpecialty,
-              ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: InvestigationRequestActionButton(
+            count: notes.investigationItems.length,
+            enabled: true,
+            onPressed: () => _openInvestigationPanel(
+              isCompleted: isCompleted,
+              notes: notes,
+              clinicName: clinicName,
+              clinicAddress: clinicAddress,
+              clinicPhone: clinicPhone,
+              doctorSpecialty: doctorSpecialty,
             ),
-            FilledButton.icon(
-              onPressed: isCompleted || _saving ? null : _saveNow,
-              icon: _saving
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.save_outlined, size: 20),
-              label: Text(l10n.saveChanges),
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                textStyle: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
         if (notes.updatedAt != null) ...[
           const SizedBox(height: 8),

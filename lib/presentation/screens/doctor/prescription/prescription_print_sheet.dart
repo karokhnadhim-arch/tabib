@@ -4,8 +4,61 @@ import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
 
 import '../../../../l10n/app_localizations.dart';
+import '../../../../models/investigation_request_item.dart';
 import '../../../../models/prescription_line_item.dart';
+import '../../../../utils/investigation_category_utils.dart';
 import '../../../widgets/clinical/clinical_print_builder.dart';
+
+/// Prints the prescription directly (system print dialog). Shows feedback only on failure.
+Future<void> printPrescriptionDocument({
+  required BuildContext context,
+  required String patientName,
+  required String doctorName,
+  required String diagnosis,
+  required List<PrescriptionLineItem> items,
+  String? notes,
+  String? clinicName,
+  String? clinicAddress,
+  String? clinicPhone,
+  String? doctorSpecialty,
+  List<InvestigationRequestItem> investigations = const [],
+}) async {
+  final l10n = AppLocalizations.of(context);
+  final builder = ClinicalPrintBuilder(
+    clinicName: clinicName?.trim().isNotEmpty == true ? clinicName! : 'TABIB',
+    clinicAddress: clinicAddress,
+    clinicPhone: clinicPhone,
+    doctorName: doctorName,
+    doctorSpecialty: doctorSpecialty,
+  );
+
+  try {
+    final doc = await builder.buildPrescriptionPdf(
+      patientName: patientName,
+      diagnosisLabel: l10n.diagnosis,
+      diagnosis: diagnosis,
+      medicationsLabel: l10n.medications,
+      items: items,
+      patientLabel: l10n.patientName,
+      dateLabel: l10n.date,
+      notesLabel: l10n.notesOptional,
+      notes: notes,
+      investigationsLabel: investigations.isEmpty ? null : l10n.requestedInvestigations,
+      investigations: investigations.isEmpty ? null : investigations,
+      investigationLine: investigations.isEmpty
+          ? null
+          : (item) =>
+              '${item.name} (${item.category.label(l10n)})'
+              '${item.note != null && item.note!.trim().isNotEmpty ? ' — ${item.note!.trim()}' : ''}',
+    );
+    await Printing.layoutPdf(onLayout: (_) async => doc.save());
+  } catch (_) {
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.errorGeneric)),
+    );
+  }
+}
 
 /// Optional A4 prescription print / copy — never forced.
 Future<void> showPrescriptionPrintSheet({
@@ -19,6 +72,7 @@ Future<void> showPrescriptionPrintSheet({
   String? clinicAddress,
   String? clinicPhone,
   String? doctorSpecialty,
+  List<InvestigationRequestItem> investigations = const [],
 }) {
   final l10n = AppLocalizations.of(context);
   final body = _formatPrescriptionText(
@@ -34,6 +88,13 @@ Future<void> showPrescriptionPrintSheet({
     doctorLabel: l10n.doctor,
     patientLabel: l10n.patientName,
     dateLabel: l10n.date,
+    investigations: investigations,
+    investigationsLabel: investigations.isEmpty ? null : l10n.requestedInvestigations,
+    investigationLine: investigations.isEmpty
+        ? null
+        : (item) =>
+            '${item.name} (${item.category.label(l10n)})'
+            '${item.note != null && item.note!.trim().isNotEmpty ? ' — ${item.note!.trim()}' : ''}',
   );
 
   final builder = ClinicalPrintBuilder(
@@ -248,6 +309,9 @@ String _formatPrescriptionText({
   required String dateLabel,
   String? clinicName,
   String? notes,
+  List<InvestigationRequestItem> investigations = const [],
+  String? investigationsLabel,
+  String Function(InvestigationRequestItem)? investigationLine,
 }) {
   final dateFmt = DateFormat.yMMMd().add_jm();
   final buffer = StringBuffer();
@@ -272,6 +336,16 @@ String _formatPrescriptionText({
     buffer
       ..writeln()
       ..writeln('$notesLabel: ${notes.trim()}');
+  }
+  if (investigations.isNotEmpty &&
+      investigationsLabel != null &&
+      investigationLine != null) {
+    buffer
+      ..writeln()
+      ..writeln('$investigationsLabel:');
+    for (var i = 0; i < investigations.length; i++) {
+      buffer.writeln('${i + 1}. ${investigationLine(investigations[i])}');
+    }
   }
   return buffer.toString();
 }

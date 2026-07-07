@@ -6950,8 +6950,14 @@ abstract class AppLocalizations {
   /// No description provided for @printPrescription.
   ///
   /// In en, this message translates to:
-  /// **'Print / copy'**
+  /// **'Print prescription'**
   String get printPrescription;
+
+  /// No description provided for @savePrescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Save prescription'**
+  String get savePrescription;
 
   /// No description provided for @printPrescriptionHint.
   ///

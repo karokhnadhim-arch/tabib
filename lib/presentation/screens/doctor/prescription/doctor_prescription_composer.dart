@@ -21,7 +21,6 @@ class DoctorPrescriptionComposer extends StatefulWidget {
     required this.onItemsChanged,
     this.readOnly = false,
     this.legacyMedications,
-    this.onPrint,
   });
 
   final String doctorId;
@@ -29,7 +28,6 @@ class DoctorPrescriptionComposer extends StatefulWidget {
   final ValueChanged<List<PrescriptionLineItem>> onItemsChanged;
   final bool readOnly;
   final String? legacyMedications;
-  final VoidCallback? onPrint;
 
   @override
   State<DoctorPrescriptionComposer> createState() =>
@@ -286,23 +284,11 @@ class _DoctorPrescriptionComposerState extends State<DoctorPrescriptionComposer>
         ],
         if (widget.items.isNotEmpty) ...[
           const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  l10n.prescriptionLines,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+          Text(
+            l10n.prescriptionLines,
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
                 ),
-              ),
-              if (widget.onPrint != null && widget.items.isNotEmpty)
-                TextButton.icon(
-                  onPressed: widget.onPrint,
-                  icon: const Icon(Icons.print_outlined, size: 18),
-                  label: Text(l10n.printPrescription),
-                ),
-            ],
           ),
           const SizedBox(height: 8),
           for (var i = 0; i < widget.items.length; i++)

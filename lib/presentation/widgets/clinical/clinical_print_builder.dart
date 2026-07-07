@@ -63,6 +63,9 @@ class ClinicalPrintBuilder {
     required String dateLabel,
     String? notesLabel,
     String? notes,
+    String? investigationsLabel,
+    List<InvestigationRequestItem>? investigations,
+    String Function(InvestigationRequestItem)? investigationLine,
   }) async {
     final doc = pw.Document();
     final dateFmt = DateFormat.yMMMd().add_jm();
@@ -128,6 +131,28 @@ class ClinicalPrintBuilder {
                   ),
                 ),
                 pw.Text(notes.trim(), style: const pw.TextStyle(fontSize: 10)),
+              ],
+              if (investigations != null &&
+                  investigations.isNotEmpty &&
+                  investigationsLabel != null &&
+                  investigationLine != null) ...[
+                pw.SizedBox(height: 16),
+                pw.Text(
+                  investigationsLabel,
+                  style: pw.TextStyle(
+                    fontSize: 11,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                pw.SizedBox(height: 6),
+                for (var i = 0; i < investigations.length; i++)
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.only(bottom: 4),
+                    child: pw.Text(
+                      '${i + 1}. ${investigationLine(investigations[i])}',
+                      style: const pw.TextStyle(fontSize: 11),
+                    ),
+                  ),
               ],
             ],
           );
