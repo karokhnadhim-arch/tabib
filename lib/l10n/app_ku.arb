@@ -1354,6 +1354,8 @@
   "pending": "چاوەڕوان",
   "patientSummary": "پوختەی نەخۆش",
   "printDocument": "چاپکردن",
+  "prescriptionMedicineCopy": "ڕەچەتەی دەرمان",
+  "prescriptionBosoleCopy": "بۆسۆڵە",
   "printInvestigationRequest": "چاپکردنی داواکاری پشکنین",
   "clinicalAdministration": "بەڕێوەبردنی پزیشکی",
   "clinicalAdministrationHint": "داتابەیسی دەرمان و پشکنین، یاساکانی ڕیز، و قاڵبی ڕەچەتە",

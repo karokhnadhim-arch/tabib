@@ -3749,6 +3749,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get printDocument => 'Print';
 
   @override
+  String get prescriptionMedicineCopy => 'Medicine prescription';
+
+  @override
+  String get prescriptionBosoleCopy => 'Clinical slip';
+
+  @override
   String get printInvestigationRequest => 'Print investigation request';
 
   @override

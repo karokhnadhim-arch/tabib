@@ -3749,6 +3749,12 @@ class AppLocalizationsKu extends AppLocalizations {
   String get printDocument => 'چاپکردن';
 
   @override
+  String get prescriptionMedicineCopy => 'ڕەچەتەی دەرمان';
+
+  @override
+  String get prescriptionBosoleCopy => 'بۆسۆڵە';
+
+  @override
   String get printInvestigationRequest => 'چاپکردنی داواکاری پشکنین';
 
   @override

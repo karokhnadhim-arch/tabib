@@ -3749,6 +3749,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get printDocument => 'طباعة';
 
   @override
+  String get prescriptionMedicineCopy => 'وصفة الأدوية';
+
+  @override
+  String get prescriptionBosoleCopy => 'بوصلة';
+
+  @override
   String get printInvestigationRequest => 'طباعة طلب الفحص';
 
   @override

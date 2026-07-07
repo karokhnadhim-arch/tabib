@@ -1354,6 +1354,8 @@
   "pending": "معلق",
   "patientSummary": "ملخص المريض",
   "printDocument": "طباعة",
+  "prescriptionMedicineCopy": "وصفة الأدوية",
+  "prescriptionBosoleCopy": "بوصلة",
   "printInvestigationRequest": "طباعة طلب الفحص",
   "clinicalAdministration": "الإدارة السريرية",
   "clinicalAdministrationHint": "قواعد الأدوية والفحوصات والطابور وقوالب الوصفات",

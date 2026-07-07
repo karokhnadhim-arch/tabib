@@ -1445,6 +1445,8 @@
   "pending": "Pending",
   "patientSummary": "Patient summary",
   "printDocument": "Print",
+  "prescriptionMedicineCopy": "Medicine prescription",
+  "prescriptionBosoleCopy": "Clinical slip",
   "printInvestigationRequest": "Print investigation request",
   "clinicalAdministration": "Clinical administration",
   "clinicalAdministrationHint": "Medicine and investigation catalogs, queue rules, and prescription templates",

@@ -7367,6 +7367,18 @@ abstract class AppLocalizations {
   /// **'Print'**
   String get printDocument;
 
+  /// No description provided for @prescriptionMedicineCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine prescription'**
+  String get prescriptionMedicineCopy;
+
+  /// No description provided for @prescriptionBosoleCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinical slip'**
+  String get prescriptionBosoleCopy;
+
   /// No description provided for @printInvestigationRequest.
   ///
   /// In en, this message translates to:

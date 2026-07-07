@@ -50,6 +50,8 @@ Future<void> printPrescriptionDocument({
           : (item) =>
               '${item.name} (${item.category.label(l10n)})'
               '${item.note != null && item.note!.trim().isNotEmpty ? ' — ${item.note!.trim()}' : ''}',
+      medicineCopyTitle: l10n.prescriptionMedicineCopy,
+      bosoleCopyTitle: l10n.prescriptionBosoleCopy,
     );
     await Printing.layoutPdf(onLayout: (_) async => doc.save());
   } catch (_) {
@@ -75,13 +77,21 @@ Future<void> showPrescriptionPrintSheet({
   List<InvestigationRequestItem> investigations = const [],
 }) {
   final l10n = AppLocalizations.of(context);
-  final body = _formatPrescriptionText(
+  final investigationLine = investigations.isEmpty
+      ? null
+      : (InvestigationRequestItem item) =>
+          '${item.name} (${item.category.label(l10n)})'
+          '${item.note != null && item.note!.trim().isNotEmpty ? ' — ${item.note!.trim()}' : ''}';
+  final body = _formatDualPrescriptionText(
     patientName: patientName,
     doctorName: doctorName,
     diagnosis: diagnosis,
     items: items,
     notes: notes,
     clinicName: clinicName,
+    clinicAddress: clinicAddress,
+    clinicPhone: clinicPhone,
+    doctorSpecialty: doctorSpecialty,
     medicationsLabel: l10n.medications,
     diagnosisLabel: l10n.diagnosis,
     notesLabel: l10n.notesOptional,
@@ -90,11 +100,9 @@ Future<void> showPrescriptionPrintSheet({
     dateLabel: l10n.date,
     investigations: investigations,
     investigationsLabel: investigations.isEmpty ? null : l10n.requestedInvestigations,
-    investigationLine: investigations.isEmpty
-        ? null
-        : (item) =>
-            '${item.name} (${item.category.label(l10n)})'
-            '${item.note != null && item.note!.trim().isNotEmpty ? ' — ${item.note!.trim()}' : ''}',
+    investigationLine: investigationLine,
+    medicineCopyTitle: l10n.prescriptionMedicineCopy,
+    bosoleCopyTitle: l10n.prescriptionBosoleCopy,
   );
 
   final builder = ClinicalPrintBuilder(
@@ -126,11 +134,9 @@ Future<void> showPrescriptionPrintSheet({
         investigations: investigations,
         investigationsLabel:
             investigations.isEmpty ? null : l10n.requestedInvestigations,
-        investigationLine: investigations.isEmpty
-            ? null
-            : (item) =>
-                '${item.name} (${item.category.label(l10n)})'
-                '${item.note != null && item.note!.trim().isNotEmpty ? ' — ${item.note!.trim()}' : ''}',
+        investigationLine: investigationLine,
+        medicineCopyTitle: l10n.prescriptionMedicineCopy,
+        bosoleCopyTitle: l10n.prescriptionBosoleCopy,
       ),
     );
   }
@@ -155,11 +161,9 @@ Future<void> showPrescriptionPrintSheet({
       investigations: investigations,
       investigationsLabel:
           investigations.isEmpty ? null : l10n.requestedInvestigations,
-      investigationLine: investigations.isEmpty
-          ? null
-          : (item) =>
-              '${item.name} (${item.category.label(l10n)})'
-              '${item.note != null && item.note!.trim().isNotEmpty ? ' — ${item.note!.trim()}' : ''}',
+      investigationLine: investigationLine,
+      medicineCopyTitle: l10n.prescriptionMedicineCopy,
+      bosoleCopyTitle: l10n.prescriptionBosoleCopy,
       compact: true,
     ),
   );
@@ -182,6 +186,8 @@ class _PrescriptionPrintDialog extends StatelessWidget {
     this.investigations = const [],
     this.investigationsLabel,
     this.investigationLine,
+    required this.medicineCopyTitle,
+    required this.bosoleCopyTitle,
     this.compact = false,
   });
 
@@ -200,6 +206,8 @@ class _PrescriptionPrintDialog extends StatelessWidget {
   final List<InvestigationRequestItem> investigations;
   final String? investigationsLabel;
   final String Function(InvestigationRequestItem)? investigationLine;
+  final String medicineCopyTitle;
+  final String bosoleCopyTitle;
   final bool compact;
 
   @override
@@ -316,9 +324,78 @@ class _PrescriptionPrintDialog extends StatelessWidget {
       investigationsLabel: investigationsLabel,
       investigations: investigations,
       investigationLine: investigationLine,
+      medicineCopyTitle: medicineCopyTitle,
+      bosoleCopyTitle: bosoleCopyTitle,
     );
     await Printing.layoutPdf(onLayout: (_) async => doc.save());
   }
+}
+
+String _formatDualPrescriptionText({
+  required String patientName,
+  required String doctorName,
+  required String diagnosis,
+  required List<PrescriptionLineItem> items,
+  required String medicationsLabel,
+  required String diagnosisLabel,
+  required String notesLabel,
+  required String doctorLabel,
+  required String patientLabel,
+  required String dateLabel,
+  required String medicineCopyTitle,
+  required String bosoleCopyTitle,
+  String? clinicName,
+  String? clinicAddress,
+  String? clinicPhone,
+  String? doctorSpecialty,
+  String? notes,
+  List<InvestigationRequestItem> investigations = const [],
+  String? investigationsLabel,
+  String Function(InvestigationRequestItem)? investigationLine,
+}) {
+  final medicineCopy = _formatPrescriptionText(
+    copyTitle: medicineCopyTitle,
+    patientName: patientName,
+    doctorName: doctorName,
+    diagnosis: diagnosis,
+    items: items,
+    medicationsLabel: medicationsLabel,
+    diagnosisLabel: diagnosisLabel,
+    notesLabel: notesLabel,
+    doctorLabel: doctorLabel,
+    patientLabel: patientLabel,
+    dateLabel: dateLabel,
+    clinicName: clinicName,
+    clinicAddress: clinicAddress,
+    clinicPhone: clinicPhone,
+    doctorSpecialty: doctorSpecialty,
+    notes: notes,
+    investigations: investigations,
+    investigationsLabel: investigationsLabel,
+    investigationLine: investigationLine,
+  );
+  final bosoleCopy = _formatPrescriptionText(
+    copyTitle: bosoleCopyTitle,
+    patientName: patientName,
+    doctorName: doctorName,
+    diagnosis: diagnosis,
+    items: items,
+    medicationsLabel: medicationsLabel,
+    diagnosisLabel: diagnosisLabel,
+    notesLabel: notesLabel,
+    doctorLabel: doctorLabel,
+    patientLabel: patientLabel,
+    dateLabel: dateLabel,
+    clinicName: clinicName,
+    clinicAddress: clinicAddress,
+    clinicPhone: clinicPhone,
+    doctorSpecialty: doctorSpecialty,
+    notes: notes,
+    investigations: investigations,
+    investigationsLabel: investigationsLabel,
+    investigationLine: investigationLine,
+  );
+  return '$medicineCopy\n\n${'═' * 28}\n\n$bosoleCopy';
 }
 
 String _formatPrescriptionText({
@@ -332,7 +409,11 @@ String _formatPrescriptionText({
   required String doctorLabel,
   required String patientLabel,
   required String dateLabel,
+  String copyTitle = '',
   String? clinicName,
+  String? clinicAddress,
+  String? clinicPhone,
+  String? doctorSpecialty,
   String? notes,
   List<InvestigationRequestItem> investigations = const [],
   String? investigationsLabel,
@@ -342,14 +423,30 @@ String _formatPrescriptionText({
   final buffer = StringBuffer();
   if (clinicName != null && clinicName.trim().isNotEmpty) {
     buffer.writeln(clinicName.trim());
-    buffer.writeln('────────────────────────');
   } else {
     buffer.writeln('TABIB');
+  }
+  if (doctorName.trim().isNotEmpty) {
+    buffer.writeln('$doctorLabel: ${doctorName.trim()}');
+  }
+  if (doctorSpecialty != null && doctorSpecialty.trim().isNotEmpty) {
+    buffer.writeln(doctorSpecialty.trim());
+  }
+  if (clinicAddress != null && clinicAddress.trim().isNotEmpty) {
+    buffer.writeln(clinicAddress.trim());
+  }
+  if (clinicPhone != null && clinicPhone.trim().isNotEmpty) {
+    buffer.writeln(clinicPhone.trim());
+  }
+  buffer.writeln('────────────────────────');
+  if (copyTitle.trim().isNotEmpty) {
+    buffer
+      ..writeln(copyTitle.trim())
+      ..writeln();
   }
   buffer
     ..writeln('$dateLabel: ${dateFmt.format(DateTime.now())}')
     ..writeln('$patientLabel: $patientName')
-    ..writeln('$doctorLabel: $doctorName')
     ..writeln()
     ..writeln('$diagnosisLabel: $diagnosis')
     ..writeln()
