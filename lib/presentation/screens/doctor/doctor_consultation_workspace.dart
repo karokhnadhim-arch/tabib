@@ -369,7 +369,6 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
       clinicAddress: clinicAddress,
       clinicPhone: clinicPhone,
       doctorSpecialty: doctorSpecialty,
-      investigations: fresh.investigationItems,
     );
   }
 
