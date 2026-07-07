@@ -160,16 +160,21 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
   }) {
     if (!summaryBesideList) return queueList;
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Expanded(child: queueList),
-        const SizedBox(width: DoctorWorkspaceConstants.panelGap),
-        SizedBox(
-          width: DoctorWorkspaceConstants.queueSummaryPanelWidth,
-          child: queueSummary,
-        ),
-      ],
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        minWidth: DoctorWorkspaceConstants.queueListMinWidth,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(child: queueList),
+          const SizedBox(width: DoctorWorkspaceConstants.panelGap),
+          SizedBox(
+            width: DoctorWorkspaceConstants.queueSummaryPanelWidth,
+            child: queueSummary,
+          ),
+        ],
+      ),
     );
   }
 

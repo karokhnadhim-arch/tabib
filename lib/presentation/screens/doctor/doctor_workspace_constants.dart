@@ -10,8 +10,9 @@ abstract final class DoctorWorkspaceConstants {
   static const double queueTileHeight = 72;
 
   /// Desktop split: consultation center · queue + summary on the right.
-  static const int queuePanelFlex = 2;
-  static const int consultationPanelFlex = 3;
+  static const int queuePanelFlex = 3;
+  static const int consultationPanelFlex = 2;
+  static const double queueListMinWidth = 320;
 
   static bool isDesktopConsultation(double width) => width >= 880;
 

@@ -23,6 +23,7 @@ import 'investigation/investigation_print_sheet.dart';
 import 'investigation/investigation_request_panel.dart';
 import 'prescription/doctor_prescription_composer.dart';
 import 'prescription/prescription_action_bar.dart';
+import 'prescription/prescription_formatter.dart';
 import 'prescription/prescription_print_sheet.dart';
 
 /// Material 3 consultation workspace — single-focus sections, auto-save.
@@ -61,6 +62,7 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
   bool _syncingPrescription = false;
   bool _syncingInvestigation = false;
   bool _saving = false;
+  bool _savedForPrint = false;
   String? _watchedPatientId;
 
   String get _storageKey => DoctorVisitNotesStore.storageKey(
@@ -92,8 +94,32 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
     if (!mounted) return;
     _watchPatientHistory(widget.entry.patientId);
     _hydrateInvestigationsFromRemote();
+    final notes = widget.session.notesStore.notesFor(_storageKey);
+    _savedForPrint = notes.prescriptionSynced && notes.prescriptionItems.isNotEmpty;
     if (widget.entry.status == QueueStatus.inProgress) {
       setState(() => _focused = ConsultationFocusSection.diagnosis);
+    }
+  }
+
+  String _diagnosisText(
+    DoctorConsultationControllers controllers,
+    DoctorVisitNotes notes,
+  ) {
+    final fromController = controllers.diagnosis.text.trim();
+    return fromController.isNotEmpty ? fromController : notes.diagnosis.trim();
+  }
+
+  bool _canSave(
+    DoctorConsultationControllers controllers,
+    DoctorVisitNotes notes,
+  ) {
+    return _diagnosisText(controllers, notes).isNotEmpty &&
+        notes.prescriptionItems.isNotEmpty;
+  }
+
+  void _invalidatePrint() {
+    if (_savedForPrint) {
+      setState(() => _savedForPrint = false);
     }
   }
 
@@ -118,12 +144,14 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
   }
 
   void _onFieldChanged() {
+    _invalidatePrint();
     widget.session.onFieldChanged(_storageKey);
     _schedulePrescriptionSync();
     setState(() {});
   }
 
   void _onInvestigationItemsChanged(List<InvestigationRequestItem> items) {
+    _invalidatePrint();
     widget.session.onInvestigationItemsChanged(_storageKey, items);
     _scheduleInvestigationSync();
     setState(() {});
@@ -179,10 +207,31 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
   }
 
   Future<bool> _maybeSyncPrescription({bool force = false}) async {
-    if (!mounted || _syncingPrescription) return false;
+    if (!mounted) return false;
+    if (_syncingPrescription) {
+      if (!force) return false;
+      while (_syncingPrescription && mounted) {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+      if (!mounted) return false;
+    }
+    if (force) {
+      widget.session.onFieldChanged(_storageKey);
+    }
+    final controllers = widget.session.controllersFor(_storageKey);
     final notes = widget.session.notesStore.notesFor(_storageKey);
     if (!force && notes.prescriptionSynced) return true;
-    if (!notes.canSyncPrescription) return false;
+
+    final diagnosis = _diagnosisText(controllers, notes);
+    final clinicalNotes = controllers.clinicalNotes.text.trim().isNotEmpty
+        ? controllers.clinicalNotes.text.trim()
+        : notes.clinicalNotes.trim();
+    final items = notes.prescriptionItems;
+    final medications = items.isNotEmpty
+        ? PrescriptionFormatter.formatItems(items)
+        : notes.medications.trim();
+
+    if (diagnosis.isEmpty || items.isEmpty) return false;
 
     _syncingPrescription = true;
     final auth = context.read<AuthService>();
@@ -198,12 +247,10 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
             patientName: widget.entry.patientName,
             doctorId: widget.doctorId,
             doctorName: user.name.localized(context),
-            diagnosis: notes.diagnosis.trim(),
-            medications: notes.medications.trim(),
-            notes: notes.clinicalNotes.trim().isEmpty
-                ? null
-                : notes.clinicalNotes.trim(),
-            items: notes.prescriptionItems,
+            diagnosis: diagnosis,
+            medications: medications,
+            notes: clinicalNotes.isEmpty ? null : clinicalNotes,
+            items: items,
           );
       await widget.session.notesStore.markPrescriptionSynced(_storageKey);
       if (mounted) setState(() {});
@@ -222,16 +269,70 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
 
   Future<void> _saveNow() async {
     if (_saving || widget.entry.status == QueueStatus.completed) return;
-    setState(() => _saving = true);
+    final controllers = widget.session.controllersFor(_storageKey);
+    final notes = widget.session.notesStore.notesFor(_storageKey);
+    final l10n = AppLocalizations.of(context);
+
+    if (!_canSave(controllers, notes)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            notes.prescriptionItems.isEmpty
+                ? l10n.errorGeneric
+                : l10n.diagnosis,
+          ),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _saving = true;
+      _savedForPrint = false;
+    });
     widget.session.onFieldChanged(_storageKey);
+    final auth = context.read<AuthService>();
+    final prescriptionProvider = context.read<PrescriptionProvider>();
+    final user = auth.currentUser;
+    final doctorName = user?.name.localized(context) ?? widget.doctorName;
     await widget.session.notesStore.flushPersist(_storageKey);
+    if (!mounted) return;
     _prescriptionSyncTimer?.cancel();
     _investigationSyncTimer?.cancel();
-    final prescriptionSaved = await _maybeSyncPrescription(force: true);
+
+    var prescriptionSaved = false;
+    final diagnosis = _diagnosisText(controllers, notes);
+    final clinicalNotes = controllers.clinicalNotes.text.trim().isNotEmpty
+        ? controllers.clinicalNotes.text.trim()
+        : notes.clinicalNotes.trim();
+    final items = notes.prescriptionItems;
+    final medications = PrescriptionFormatter.formatItems(items);
+
+    if (user != null) {
+      try {
+        await prescriptionProvider.write(
+              patientId: widget.entry.patientId,
+              patientName: widget.entry.patientName,
+              doctorId: widget.doctorId,
+              doctorName: doctorName,
+              diagnosis: diagnosis,
+              medications: medications,
+              notes: clinicalNotes.isEmpty ? null : clinicalNotes,
+              items: items,
+            );
+        await widget.session.notesStore.markPrescriptionSynced(_storageKey);
+        prescriptionSaved = true;
+      } catch (_) {
+        prescriptionSaved = false;
+      }
+    }
+
     await _maybeSyncInvestigations(force: true);
     if (!mounted) return;
-    setState(() => _saving = false);
-    final l10n = AppLocalizations.of(context);
+    setState(() {
+      _saving = false;
+      if (prescriptionSaved) _savedForPrint = true;
+    });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
@@ -453,11 +554,12 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
             legacyMedications: notes.prescriptionItems.isEmpty
                 ? notes.medications
                 : null,
-            onItemsChanged: (items) {
-              widget.session.onPrescriptionItemsChanged(_storageKey, items);
-              _schedulePrescriptionSync();
-              setState(() {});
-            },
+                onItemsChanged: (items) {
+                  _invalidatePrint();
+                  widget.session.onPrescriptionItemsChanged(_storageKey, items);
+                  _schedulePrescriptionSync();
+                  setState(() {});
+                },
           ),
         ),
         _buildSection(
@@ -487,8 +589,8 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
         ),
         DoctorPrescriptionActionBar(
           saving: _saving,
-          saveEnabled: !isCompleted,
-          canPrint: notes.prescriptionSynced &&
+          saveEnabled: !isCompleted && _canSave(controllers, notes),
+          canPrint: (_savedForPrint || notes.prescriptionSynced) &&
               notes.prescriptionItems.isNotEmpty,
           onSave: isCompleted ? null : _saveNow,
           onPrint: () => _printPrescription(
