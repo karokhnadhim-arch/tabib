@@ -91,6 +91,9 @@ abstract class ClinicBackend {
     required String patientPhone,
   });
 
+  /// Toggle secretary "patient ready" indicator (visual only — no queue reorder).
+  Future<void> togglePatientReady(String entryId, String doctorId);
+
   Future<void> upsertSpecialty(Specialty specialty);
   Future<void> deleteSpecialty(String id);
   Future<void> upsertClinic(Clinic clinic);

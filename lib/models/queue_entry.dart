@@ -48,6 +48,7 @@ class QueueEntry {
     this.queueDate = '',
     this.slotStart = '',
     this.slotEnd = '',
+    this.patientReady = false,
   });
 
   final String id;
@@ -64,6 +65,8 @@ class QueueEntry {
   /// Slot start/end in 24h HH:mm — positions are scoped per day + slot.
   final String slotStart;
   final String slotEnd;
+  /// Secretary marked patient as physically present in the waiting hall.
+  bool patientReady;
 
   static String dateKey(DateTime date) {
     final d = DateTime(date.year, date.month, date.day);
@@ -109,6 +112,7 @@ class QueueEntry {
         if (queueDate.isNotEmpty) 'queueDate': queueDate,
         if (slotStart.isNotEmpty) 'slotStart': slotStart,
         if (slotEnd.isNotEmpty) 'slotEnd': slotEnd,
+        'patientReady': patientReady,
       };
 
   static String _persistedStatusName(QueueStatus status) {
@@ -141,6 +145,7 @@ class QueueEntry {
       queueDate: data['queueDate'] as String? ?? '',
       slotStart: data['slotStart'] as String? ?? '',
       slotEnd: data['slotEnd'] as String? ?? '',
+      patientReady: data['patientReady'] as bool? ?? false,
     );
   }
 }

@@ -7133,6 +7133,30 @@ abstract class AppLocalizations {
   /// **'In doctor room'**
   String get inDoctorRoom;
 
+  /// No description provided for @patientReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient ready'**
+  String get patientReady;
+
+  /// No description provided for @patientNotArrived.
+  ///
+  /// In en, this message translates to:
+  /// **'Not arrived'**
+  String get patientNotArrived;
+
+  /// No description provided for @patientReadyForConsultation.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready for consultation'**
+  String get patientReadyForConsultation;
+
+  /// No description provided for @patientInsideDoctorRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Inside doctor room'**
+  String get patientInsideDoctorRoom;
+
   /// No description provided for @callToDoctorRoom.
   ///
   /// In en, this message translates to:

@@ -486,9 +486,22 @@ class InMemoryClinicBackend implements ClinicBackend {
       queueDate: entry.queueDate,
       slotStart: entry.slotStart,
       slotEnd: entry.slotEnd,
+      patientReady: entry.patientReady,
     );
     final index = _queues.indexWhere((q) => q.id == entryId);
     if (index >= 0) _queues[index] = updated;
+    _notify();
+  }
+
+  @override
+  Future<void> togglePatientReady(String entryId, String doctorId) async {
+    final entry = _queues.where((q) => q.id == entryId).firstOrNull;
+    if (entry == null || entry.doctorId != doctorId) return;
+    if (entry.status == QueueStatus.completed ||
+        entry.status == QueueStatus.cancelled) {
+      return;
+    }
+    entry.patientReady = !entry.patientReady;
     _notify();
   }
 
@@ -1211,6 +1224,7 @@ class InMemoryClinicBackend implements ClinicBackend {
         queueDate: today,
         slotStart: slotStart,
         slotEnd: slotEnd,
+        patientReady: true,
       ),
       QueueEntry(
         id: 'demo_q_3',

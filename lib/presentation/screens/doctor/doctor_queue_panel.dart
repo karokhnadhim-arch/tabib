@@ -7,6 +7,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../models/patient_profile.dart';
 import '../../../models/queue_entry.dart';
 import '../../../services/patient_profile_service.dart';
+import '../../../utils/queue_status_utils.dart';
 import '../../providers/app_providers.dart';
 import 'doctor_workspace_constants.dart';
 
@@ -350,7 +351,7 @@ class _QueuePatientCardState extends State<_QueuePatientCard> {
     final scheme = Theme.of(context).colorScheme;
     final entry = widget.entry;
     final isCompleted = entry.status == QueueStatus.completed;
-    final status = _queueDisplayStatus(entry);
+    final status = entry.arrivalStatus;
     final timeFmt = DateFormat.jm();
     final profile = _profile ?? const PatientProfile();
     final genderIcon = _genderIcon(profile.gender);
@@ -494,49 +495,10 @@ class _QueuePatientCardState extends State<_QueuePatientCard> {
   }
 }
 
-enum _QueueDisplayStatus { waiting, inside, completed }
-
-_QueueDisplayStatus _queueDisplayStatus(QueueEntry entry) {
-  switch (entry.status) {
-    case QueueStatus.completed:
-      return _QueueDisplayStatus.completed;
-    case QueueStatus.inProgress:
-    case QueueStatus.examination:
-    case QueueStatus.sentForTests:
-      return _QueueDisplayStatus.inside;
-    default:
-      return _QueueDisplayStatus.waiting;
-  }
-}
-
-extension _QueueDisplayStatusUi on _QueueDisplayStatus {
-  String label(AppLocalizations l10n) {
-    switch (this) {
-      case _QueueDisplayStatus.waiting:
-        return l10n.queueStatusWaiting;
-      case _QueueDisplayStatus.inside:
-        return l10n.queueStatusInside;
-      case _QueueDisplayStatus.completed:
-        return l10n.queueStatusCompleted;
-    }
-  }
-
-  Color color() {
-    switch (this) {
-      case _QueueDisplayStatus.waiting:
-        return AppTheme.medicalBlue;
-      case _QueueDisplayStatus.inside:
-        return AppTheme.medicalGreen;
-      case _QueueDisplayStatus.completed:
-        return AppTheme.medicalGreenLight;
-    }
-  }
-}
-
 class _StatusPill extends StatelessWidget {
   const _StatusPill({required this.status, required this.l10n});
 
-  final _QueueDisplayStatus status;
+  final PatientArrivalStatus status;
   final AppLocalizations l10n;
 
   @override
@@ -552,11 +514,7 @@ class _StatusPill extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 7,
-            height: 7,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-          ),
+          Icon(status.icon(), size: 14, color: color),
           const SizedBox(width: 6),
           Text(
             status.label(l10n),

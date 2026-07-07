@@ -3630,6 +3630,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get inDoctorRoom => 'في غرفة الطبيب';
 
   @override
+  String get patientReady => 'المريض حاضر';
+
+  @override
+  String get patientNotArrived => 'لم يصل';
+
+  @override
+  String get patientReadyForConsultation => 'جاهز للمعاينة';
+
+  @override
+  String get patientInsideDoctorRoom => 'داخل غرفة الطبيب';
+
+  @override
   String get callToDoctorRoom => 'استدعاء';
 
   @override

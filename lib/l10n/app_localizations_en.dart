@@ -3630,6 +3630,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get inDoctorRoom => 'In doctor room';
 
   @override
+  String get patientReady => 'Patient ready';
+
+  @override
+  String get patientNotArrived => 'Not arrived';
+
+  @override
+  String get patientReadyForConsultation => 'Ready for consultation';
+
+  @override
+  String get patientInsideDoctorRoom => 'Inside doctor room';
+
+  @override
   String get callToDoctorRoom => 'Call in';
 
   @override

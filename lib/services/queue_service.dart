@@ -329,6 +329,15 @@ class QueueService extends ChangeNotifier {
     );
   }
 
+  Future<void> togglePatientReady(String entryId, String doctorId) async {
+    await _backend.togglePatientReady(entryId, doctorId);
+    _logQueue(
+      AuditActionType.queueModified,
+      'Patient ready toggled',
+      description: entryId,
+    );
+  }
+
   Future<void> syncPatientQueueStatus({
     required String patientId,
     required String doctorId,

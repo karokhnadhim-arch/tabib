@@ -742,6 +742,19 @@ class FirestoreClinicBackend implements ClinicBackend {
     });
   }
 
+  @override
+  Future<void> togglePatientReady(String entryId, String doctorId) async {
+    final doc = await _queues.doc(entryId).get();
+    if (!doc.exists || doc.data() == null) return;
+    final entry = QueueEntry.fromFirestore(entryId, doc.data()!);
+    if (entry.doctorId != doctorId) return;
+    if (entry.status == QueueStatus.completed ||
+        entry.status == QueueStatus.cancelled) {
+      return;
+    }
+    await _queues.doc(entryId).update({'patientReady': !entry.patientReady});
+  }
+
   Future<void> _reindexDoctorQueue(
     String doctorId, {
     String? queueDate,

@@ -3630,6 +3630,18 @@ class AppLocalizationsKu extends AppLocalizations {
   String get inDoctorRoom => 'لە ژووری دکتۆر';
 
   @override
+  String get patientReady => 'نەخۆش ئامادەیە';
+
+  @override
+  String get patientNotArrived => 'نەگەیشتووە';
+
+  @override
+  String get patientReadyForConsultation => 'ئامادەیە بۆ پشکنین';
+
+  @override
+  String get patientInsideDoctorRoom => 'لە ژووری دکتۆردایە';
+
+  @override
   String get callToDoctorRoom => 'بانگکردن';
 
   @override

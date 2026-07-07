@@ -431,15 +431,27 @@ class _SecretaryQueueTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     _StatusPill(entry: entry, l10n: l10n),
-                    IconButton(
-                      tooltip: l10n.editPatientInfo,
-                      icon: const Icon(Icons.edit_outlined, size: 20),
-                      visualDensity: VisualDensity.compact,
-                      onPressed: () => showSecretaryPatientEditSheet(
-                        context: context,
-                        entry: entry,
-                        doctorId: doctorId,
-                      ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (entry.status != QueueStatus.completed &&
+                            entry.status != QueueStatus.cancelled)
+                          _PatientReadyButton(
+                            entry: entry,
+                            doctorId: doctorId,
+                            l10n: l10n,
+                          ),
+                        IconButton(
+                          tooltip: l10n.editPatientInfo,
+                          icon: const Icon(Icons.edit_outlined, size: 20),
+                          visualDensity: VisualDensity.compact,
+                          onPressed: () => showSecretaryPatientEditSheet(
+                            context: context,
+                            entry: entry,
+                            doctorId: doctorId,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -504,6 +516,11 @@ class _StatusPill extends StatelessWidget {
   final AppLocalizations l10n;
 
   String _label() {
+    if (entry.arrivalStatus == PatientArrivalStatus.readyForConsultation &&
+        (entry.status == QueueStatus.waiting ||
+            entry.status == QueueStatus.review)) {
+      return l10n.patientReadyForConsultation;
+    }
     switch (entry.status) {
       case QueueStatus.inProgress:
         return l10n.inDoctorRoom;
@@ -527,20 +544,66 @@ class _StatusPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = entry.status.color();
+    final ready = entry.patientReady &&
+        entry.arrivalStatus == PatientArrivalStatus.readyForConsultation;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: (ready ? AppTheme.medicalGreen : color).withOpacity(0.1),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Text(
-        _label(),
-        style: TextStyle(
-          color: color,
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (ready) ...[
+            const Icon(Icons.waving_hand_rounded,
+                size: 12, color: AppTheme.medicalGreen),
+            const SizedBox(width: 4),
+          ],
+          Text(
+            _label(),
+            style: TextStyle(
+              color: ready ? AppTheme.medicalGreen : color,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
+    );
+  }
+}
+
+class _PatientReadyButton extends StatelessWidget {
+  const _PatientReadyButton({
+    required this.entry,
+    required this.doctorId,
+    required this.l10n,
+  });
+
+  final QueueEntry entry;
+  final String doctorId;
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final active = entry.patientReady;
+    return IconButton(
+      tooltip: l10n.patientReady,
+      visualDensity: VisualDensity.compact,
+      icon: Icon(
+        Icons.waving_hand_rounded,
+        size: 22,
+        color: active ? AppTheme.medicalGreen : scheme.onSurfaceVariant,
+      ),
+      style: IconButton.styleFrom(
+        backgroundColor: active
+            ? AppTheme.medicalGreen.withOpacity(0.12)
+            : scheme.surfaceContainerHighest.withOpacity(0.5),
+      ),
+      onPressed: () =>
+          context.read<QueueService>().togglePatientReady(entry.id, doctorId),
     );
   }
 }
