@@ -136,6 +136,56 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
     return null;
   }
 
+  int get _waitingCount => _todayQueue
+      .where((e) => e.status == QueueStatus.waiting)
+      .length;
+
+  int get _readyCount => _todayQueue
+      .where(
+        (e) =>
+            e.patientReady &&
+            (e.status == QueueStatus.waiting ||
+                e.status == QueueStatus.review),
+      )
+      .length;
+
+  int get _examiningCount => _todayQueue
+      .where((e) => e.status == QueueStatus.inProgress)
+      .length;
+
+  Widget _buildQueueSection({
+    required bool summaryBesideList,
+    required InvestigationRequestProvider investigationProvider,
+  }) {
+    final queuePanel = DoctorQueuePanel(
+      entries: _todayQueue,
+      selectedId: _selectedEntryId,
+      roomPatientId: _roomPatient?.id,
+      investigationProvider: investigationProvider,
+      onSelect: _selectPatient,
+      showSummary: !summaryBesideList,
+    );
+
+    if (!summaryBesideList) return queuePanel;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(child: queuePanel),
+        const SizedBox(width: DoctorWorkspaceConstants.panelGap),
+        SizedBox(
+          width: DoctorWorkspaceConstants.queueSummaryPanelWidth,
+          child: DoctorQueueSummaryPanel(
+            totalCount: _todayQueue.length,
+            waitingCount: _waitingCount,
+            readyCount: _readyCount,
+            examiningCount: _examiningCount,
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   void dispose() {
     _streamSub?.cancel();
@@ -151,7 +201,6 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
     final doctor = data.doctorById(widget.doctorId);
     final doctorName = doctor?.name.localized(context) ?? widget.doctorId;
     final selected = _selectedEntry;
-    final roomPatient = _roomPatient;
     final investigationProvider = context.watch<InvestigationRequestProvider>();
 
     if (!_streamReady) {
@@ -164,12 +213,9 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
         final threePane = DoctorWorkspaceConstants.isThreePane(width);
         final wide = DoctorWorkspaceConstants.isWideTwoPane(width);
 
-        final queuePanel = DoctorQueuePanel(
-          entries: _todayQueue,
-          selectedId: _selectedEntryId,
-          roomPatientId: roomPatient?.id,
+        final queuePanel = _buildQueueSection(
+          summaryBesideList: threePane || wide,
           investigationProvider: investigationProvider,
-          onSelect: _selectPatient,
         );
 
         final workspace = selected == null
@@ -217,38 +263,38 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
                 textDirection: TextDirection.ltr,
                 child: threePane
                     ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        SizedBox(
-                          width: DoctorWorkspaceConstants.queuePanelWidth,
-                          child: queuePanel,
-                        ),
-                        const SizedBox(width: DoctorWorkspaceConstants.panelGap),
-                        Expanded(
-                          child: _ConsultationScrollShell(child: workspace),
-                        ),
-                        const SizedBox(width: DoctorWorkspaceConstants.panelGap),
-                        SizedBox(
-                          width: DoctorWorkspaceConstants.summaryPanelWidth,
-                          child: summaryPanel,
-                        ),
-                      ],
-                    )
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          SizedBox(
+                            width: DoctorWorkspaceConstants.summaryPanelWidth,
+                            child: summaryPanel,
+                          ),
+                          const SizedBox(width: DoctorWorkspaceConstants.panelGap),
+                          Expanded(
+                            child: _ConsultationScrollShell(child: workspace),
+                          ),
+                          const SizedBox(width: DoctorWorkspaceConstants.panelGap),
+                          SizedBox(
+                            width: DoctorWorkspaceConstants.queuePanelWidth,
+                            child: queuePanel,
+                          ),
+                        ],
+                      )
                   : wide
                       ? Row(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Expanded(
-                              flex: DoctorWorkspaceConstants.queuePanelFlex,
-                              child: queuePanel,
+                              flex:
+                                  DoctorWorkspaceConstants.consultationPanelFlex,
+                              child: _ConsultationScrollShell(child: workspace),
                             ),
                             const SizedBox(
                               width: DoctorWorkspaceConstants.panelGap,
                             ),
                             Expanded(
-                              flex:
-                                  DoctorWorkspaceConstants.consultationPanelFlex,
-                              child: _ConsultationScrollShell(child: workspace),
+                              flex: DoctorWorkspaceConstants.queuePanelFlex,
+                              child: queuePanel,
                             ),
                           ],
                         )

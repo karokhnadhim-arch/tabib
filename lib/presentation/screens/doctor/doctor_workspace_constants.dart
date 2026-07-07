@@ -2,7 +2,8 @@ import '../../../core/constants/app_constants.dart';
 
 /// Layout tokens for the doctor clinical workspace.
 abstract final class DoctorWorkspaceConstants {
-  static const double queuePanelWidth = 300;
+  static const double queuePanelWidth = 520;
+  static const double queueSummaryPanelWidth = 160;
   static const double summaryPanelWidth = 340;
   static const double panelGap = 12;
   static const double panelRadius = 16;
@@ -10,8 +11,8 @@ abstract final class DoctorWorkspaceConstants {
   static const double queueTileHeight = 72;
 
   /// Desktop consultation split: queue 40% · workspace 60%.
-  static const int queuePanelFlex = 2;
-  static const int consultationPanelFlex = 3;
+  static const int queuePanelFlex = 3;
+  static const int consultationPanelFlex = 2;
 
   static bool isDesktopConsultation(double width) => width >= 880;
 

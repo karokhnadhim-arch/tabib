@@ -159,9 +159,13 @@ class DoctorVisitNotesStore extends ChangeNotifier {
             ? PrescriptionFormatter.formatItems(items)
             : current.medications);
 
-    final resetPrescriptionSync = diagnosis != null ||
-        medications != null ||
-        prescriptionItems != null;
+    final resetPrescriptionSync =
+        (prescriptionItems != null &&
+            !listEquals(prescriptionItems, current.prescriptionItems)) ||
+        (diagnosis != null &&
+            diagnosis.trim() != current.diagnosis.trim()) ||
+        (medications != null &&
+            medications.trim() != current.medications.trim());
     final resetInvestigationSync = investigationItems != null;
 
     _cache[storageKey] = current.copyWith(

@@ -446,37 +446,18 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
           icon: Icons.medication_outlined,
           title: l10n.writePrescription,
           subtitle: _prescriptionSubtitle(notes, l10n),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              DoctorPrescriptionComposer(
-                doctorId: widget.doctorId,
-                items: notes.prescriptionItems,
-                readOnly: isCompleted,
-                legacyMedications: notes.prescriptionItems.isEmpty
-                    ? notes.medications
-                    : null,
-                onItemsChanged: (items) {
-                  widget.session.onPrescriptionItemsChanged(_storageKey, items);
-                  _schedulePrescriptionSync();
-                  setState(() {});
-                },
-              ),
-              DoctorPrescriptionActionBar(
-                saving: _saving,
-                saveEnabled: !isCompleted && notes.canSyncPrescription,
-                canPrint: notes.prescriptionSynced &&
-                    notes.prescriptionItems.isNotEmpty,
-                onSave: isCompleted ? null : _saveNow,
-                onPrint: () => _printPrescription(
-                  controllers: controllers,
-                  clinicName: clinicName,
-                  clinicAddress: clinicAddress,
-                  clinicPhone: clinicPhone,
-                  doctorSpecialty: doctorSpecialty,
-                ),
-              ),
-            ],
+          child: DoctorPrescriptionComposer(
+            doctorId: widget.doctorId,
+            items: notes.prescriptionItems,
+            readOnly: isCompleted,
+            legacyMedications: notes.prescriptionItems.isEmpty
+                ? notes.medications
+                : null,
+            onItemsChanged: (items) {
+              widget.session.onPrescriptionItemsChanged(_storageKey, items);
+              _schedulePrescriptionSync();
+              setState(() {});
+            },
           ),
         ),
         _buildSection(
@@ -502,6 +483,20 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
             ),
             minLines: 3,
             maxLines: 8,
+          ),
+        ),
+        DoctorPrescriptionActionBar(
+          saving: _saving,
+          saveEnabled: !isCompleted,
+          canPrint: notes.prescriptionSynced &&
+              notes.prescriptionItems.isNotEmpty,
+          onSave: isCompleted ? null : _saveNow,
+          onPrint: () => _printPrescription(
+            controllers: controllers,
+            clinicName: clinicName,
+            clinicAddress: clinicAddress,
+            clinicPhone: clinicPhone,
+            doctorSpecialty: doctorSpecialty,
           ),
         ),
         const SizedBox(height: DoctorConsultationTokens.sectionGap),

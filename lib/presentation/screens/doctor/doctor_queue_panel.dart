@@ -19,6 +19,7 @@ class DoctorQueuePanel extends StatefulWidget {
     required this.roomPatientId,
     required this.investigationProvider,
     required this.onSelect,
+    this.showSummary = true,
   });
 
   final List<QueueEntry> entries;
@@ -26,6 +27,7 @@ class DoctorQueuePanel extends StatefulWidget {
   final String? roomPatientId;
   final InvestigationRequestProvider investigationProvider;
   final ValueChanged<String> onSelect;
+  final bool showSummary;
 
   @override
   State<DoctorQueuePanel> createState() => _DoctorQueuePanelState();
@@ -44,6 +46,19 @@ class _DoctorQueuePanelState extends State<DoctorQueuePanel> {
 
   int get _waitingCount => widget.entries
       .where((e) => e.status == QueueStatus.waiting)
+      .length;
+
+  int get _readyCount => widget.entries
+      .where(
+        (e) =>
+            e.patientReady &&
+            (e.status == QueueStatus.waiting ||
+                e.status == QueueStatus.review),
+      )
+      .length;
+
+  int get _examiningCount => widget.entries
+      .where((e) => e.status == QueueStatus.inProgress)
       .length;
 
   List<QueueEntry> get _filtered {
@@ -116,11 +131,16 @@ class _DoctorQueuePanelState extends State<DoctorQueuePanel> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
-                _WaitingSummaryBanner(
-                  waitingCount: _waitingCount,
-                  totalCount: widget.entries.length,
-                ),
+                if (widget.showSummary) ...[
+                  const SizedBox(height: 10),
+                  DoctorQueueSummaryPanel(
+                    totalCount: widget.entries.length,
+                    waitingCount: _waitingCount,
+                    readyCount: _readyCount,
+                    examiningCount: _examiningCount,
+                    compact: true,
+                  ),
+                ],
                 const SizedBox(height: 12),
                 SearchBar(
                   controller: _searchController,
@@ -236,56 +256,134 @@ class _DoctorQueuePanelState extends State<DoctorQueuePanel> {
   }
 }
 
-class _WaitingSummaryBanner extends StatelessWidget {
-  const _WaitingSummaryBanner({
-    required this.waitingCount,
+/// Today's queue stats — shown beside the patient list on desktop.
+class DoctorQueueSummaryPanel extends StatelessWidget {
+  const DoctorQueueSummaryPanel({
+    super.key,
     required this.totalCount,
+    required this.waitingCount,
+    required this.readyCount,
+    required this.examiningCount,
+    this.compact = false,
   });
 
-  final int waitingCount;
   final int totalCount;
+  final int waitingCount;
+  final int readyCount;
+  final int examiningCount;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: scheme.primaryContainer.withOpacity(0.45),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: scheme.primary.withOpacity(0.12)),
+
+    return Material(
+      color: scheme.surfaceContainerLowest,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius:
+            BorderRadius.circular(DoctorWorkspaceConstants.panelRadius),
+        side: BorderSide(color: scheme.outlineVariant.withOpacity(0.45)),
       ),
-      child: Row(
-        children: [
-          Icon(Icons.hourglass_top_rounded, color: scheme.primary, size: 22),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      clipBehavior: Clip.antiAlias,
+      child: Padding(
+        padding: EdgeInsets.all(compact ? 12 : 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
               children: [
-                Text(
-                  l10n.waitingPatients,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: scheme.onSurfaceVariant,
-                        fontWeight: FontWeight.w600,
-                      ),
-                ),
-                Text(
-                  '$waitingCount',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: scheme.primary,
-                      ),
+                Icon(Icons.insights_outlined, color: scheme.primary, size: 22),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    l10n.todaysQueue,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                  ),
                 ),
               ],
             ),
+            const SizedBox(height: 12),
+            _SummaryStatRow(
+              label: l10n.totalPatients,
+              value: totalCount,
+              icon: Icons.groups_outlined,
+              color: scheme.primary,
+            ),
+            const SizedBox(height: 8),
+            _SummaryStatRow(
+              label: l10n.patientReady,
+              value: readyCount,
+              icon: Icons.front_hand_outlined,
+              color: AppTheme.medicalGreen,
+            ),
+            const SizedBox(height: 8),
+            _SummaryStatRow(
+              label: l10n.waitingPatients,
+              value: waitingCount,
+              icon: Icons.hourglass_top_rounded,
+              color: AppTheme.medicalBlue,
+            ),
+            if (examiningCount > 0) ...[
+              const SizedBox(height: 8),
+              _SummaryStatRow(
+                label: l10n.queueStatusWithDoctor,
+                value: examiningCount,
+                icon: Icons.medical_services_outlined,
+                color: AppTheme.doctorColor,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SummaryStatRow extends StatelessWidget {
+  const _SummaryStatRow({
+    required this.label,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
+
+  final String label;
+  final int value;
+  final IconData icon;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.18)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 18, color: color),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
           ),
           Text(
-            '$totalCount',
+            '$value',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: scheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w800,
+                  color: color,
                 ),
           ),
         ],
@@ -414,49 +512,53 @@ class _QueuePatientCardState extends State<_QueuePatientCard> {
                             ),
                       ),
                       const SizedBox(height: 6),
-                      Row(
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 4,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          Icon(genderIcon, size: 18, color: scheme.primary),
-                          const SizedBox(width: 6),
-                          Text(
-                            _genderLabel(profile.gender, l10n),
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: scheme.onSurfaceVariant,
-                                ),
+                          _QueueMetaChip(
+                            icon: genderIcon,
+                            label: _genderLabel(profile.gender, l10n),
+                            iconColor: scheme.primary,
+                            textStyle:
+                                Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      color: scheme.onSurfaceVariant,
+                                    ),
                           ),
-                          const SizedBox(width: 12),
-                          Icon(Icons.cake_outlined,
-                              size: 16, color: scheme.onSurfaceVariant),
-                          const SizedBox(width: 4),
-                          Text(
-                            l10n.ageNotRecorded,
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: scheme.onSurfaceVariant,
-                                ),
+                          _QueueMetaChip(
+                            icon: Icons.cake_outlined,
+                            label: l10n.ageNotRecorded,
+                            iconColor: scheme.onSurfaceVariant,
+                            textStyle:
+                                Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      color: scheme.onSurfaceVariant,
+                                    ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 8),
-                      Row(
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 4,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          Flexible(
-                            child: _StatusPill(
-                              status: status,
-                              entry: entry,
-                              l10n: l10n,
-                            ),
+                          _StatusPill(
+                            status: status,
+                            entry: entry,
+                            l10n: l10n,
                           ),
-                          const SizedBox(width: 8),
-                          Icon(Icons.schedule_rounded,
-                              size: 15, color: scheme.onSurfaceVariant),
-                          const SizedBox(width: 4),
-                          Text(
-                            timeFmt.format(entry.bookedAt.toLocal()),
-                            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                                  color: scheme.onSurfaceVariant,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                          _QueueMetaChip(
+                            icon: Icons.schedule_rounded,
+                            label: timeFmt.format(entry.bookedAt.toLocal()),
+                            iconColor: scheme.onSurfaceVariant,
+                            iconSize: 15,
+                            textStyle:
+                                Theme.of(context).textTheme.labelLarge?.copyWith(
+                                      color: scheme.onSurfaceVariant,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                           ),
                         ],
                       ),
@@ -543,6 +645,42 @@ extension _QueueDisplayStatusUi on _QueueDisplayStatus {
       case _QueueDisplayStatus.completed:
         return AppTheme.medicalGreenLight;
     }
+  }
+}
+
+class _QueueMetaChip extends StatelessWidget {
+  const _QueueMetaChip({
+    required this.icon,
+    required this.label,
+    required this.iconColor,
+    this.iconSize = 16,
+    this.textStyle,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color iconColor;
+  final double iconSize;
+  final TextStyle? textStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: iconSize, color: iconColor),
+        const SizedBox(width: 4),
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 140),
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: textStyle,
+          ),
+        ),
+      ],
+    );
   }
 }
 
