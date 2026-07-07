@@ -71,7 +71,12 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
   @override
   void initState() {
     super.initState();
+    widget.session.notesStore.addListener(_onNotesStoreChanged);
     _bootstrap();
+  }
+
+  void _onNotesStoreChanged() {
+    if (mounted) setState(() {});
   }
 
   @override
@@ -222,19 +227,21 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
     await widget.session.notesStore.flushPersist(_storageKey);
     _prescriptionSyncTimer?.cancel();
     _investigationSyncTimer?.cancel();
-    final rxSaved = await _maybeSyncPrescription(force: true);
+    final prescriptionSaved = await _maybeSyncPrescription(force: true);
     await _maybeSyncInvestigations(force: true);
     if (!mounted) return;
     setState(() => _saving = false);
-    if (rxSaved || widget.session.notesStore.notesFor(_storageKey).prescriptionSynced) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).savedSuccessfully)),
-      );
-    }
+    final l10n = AppLocalizations.of(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          prescriptionSaved ? l10n.savedSuccessfully : l10n.errorGeneric,
+        ),
+      ),
+    );
   }
 
   void _printPrescription({
-    required DoctorVisitNotes notes,
     required DoctorConsultationControllers controllers,
     String? clinicName,
     String? clinicAddress,
@@ -306,6 +313,7 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
 
   @override
   void dispose() {
+    widget.session.notesStore.removeListener(_onNotesStoreChanged);
     _prescriptionSyncTimer?.cancel();
     _investigationSyncTimer?.cancel();
     super.dispose();
@@ -456,15 +464,11 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
               ),
               DoctorPrescriptionActionBar(
                 saving: _saving,
-                saveEnabled: !isCompleted,
-                canPrint: prescriptionReadyToPrint(
-                  prescriptionSynced: notes.prescriptionSynced,
-                  investigationSynced: notes.investigationSynced,
-                  investigationCount: notes.investigationItems.length,
-                ),
+                saveEnabled: !isCompleted && notes.canSyncPrescription,
+                canPrint: notes.prescriptionSynced &&
+                    notes.prescriptionItems.isNotEmpty,
                 onSave: isCompleted ? null : _saveNow,
                 onPrint: () => _printPrescription(
-                  notes: notes,
                   controllers: controllers,
                   clinicName: clinicName,
                   clinicAddress: clinicAddress,

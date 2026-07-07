@@ -440,8 +440,14 @@ class _QueuePatientCardState extends State<_QueuePatientCard> {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          _StatusPill(status: status, entry: entry, l10n: l10n),
-                          const Spacer(),
+                          Flexible(
+                            child: _StatusPill(
+                              status: status,
+                              entry: entry,
+                              l10n: l10n,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
                           Icon(Icons.schedule_rounded,
                               size: 15, color: scheme.onSurfaceVariant),
                           const SizedBox(width: 4),
@@ -516,7 +522,7 @@ extension _QueueDisplayStatusUi on _QueueDisplayStatus {
         entry.patientReady &&
         (entry.status == QueueStatus.waiting ||
             entry.status == QueueStatus.review)) {
-      return l10n.patientReadyForConsultation;
+      return l10n.patientReady;
     }
     switch (this) {
       case _QueueDisplayStatus.waiting:
@@ -572,6 +578,8 @@ class _StatusPill extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             status.label(l10n, entry: entry),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
                   color: color,
                   fontWeight: FontWeight.w700,

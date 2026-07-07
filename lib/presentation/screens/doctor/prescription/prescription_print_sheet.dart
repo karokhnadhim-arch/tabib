@@ -123,6 +123,14 @@ Future<void> showPrescriptionPrintSheet({
         medicationsLabel: l10n.medications,
         dateLabel: l10n.date,
         notesLabel: l10n.notesOptional,
+        investigations: investigations,
+        investigationsLabel:
+            investigations.isEmpty ? null : l10n.requestedInvestigations,
+        investigationLine: investigations.isEmpty
+            ? null
+            : (item) =>
+                '${item.name} (${item.category.label(l10n)})'
+                '${item.note != null && item.note!.trim().isNotEmpty ? ' — ${item.note!.trim()}' : ''}',
       ),
     );
   }
@@ -144,6 +152,14 @@ Future<void> showPrescriptionPrintSheet({
       medicationsLabel: l10n.medications,
       dateLabel: l10n.date,
       notesLabel: l10n.notesOptional,
+      investigations: investigations,
+      investigationsLabel:
+          investigations.isEmpty ? null : l10n.requestedInvestigations,
+      investigationLine: investigations.isEmpty
+          ? null
+          : (item) =>
+              '${item.name} (${item.category.label(l10n)})'
+              '${item.note != null && item.note!.trim().isNotEmpty ? ' — ${item.note!.trim()}' : ''}',
       compact: true,
     ),
   );
@@ -163,6 +179,9 @@ class _PrescriptionPrintDialog extends StatelessWidget {
     required this.medicationsLabel,
     required this.dateLabel,
     required this.notesLabel,
+    this.investigations = const [],
+    this.investigationsLabel,
+    this.investigationLine,
     this.compact = false,
   });
 
@@ -178,6 +197,9 @@ class _PrescriptionPrintDialog extends StatelessWidget {
   final String medicationsLabel;
   final String dateLabel;
   final String? notesLabel;
+  final List<InvestigationRequestItem> investigations;
+  final String? investigationsLabel;
+  final String Function(InvestigationRequestItem)? investigationLine;
   final bool compact;
 
   @override
@@ -291,6 +313,9 @@ class _PrescriptionPrintDialog extends StatelessWidget {
       dateLabel: dateLabel,
       notesLabel: notesLabel,
       notes: notes,
+      investigationsLabel: investigationsLabel,
+      investigations: investigations,
+      investigationLine: investigationLine,
     );
     await Printing.layoutPdf(onLayout: (_) async => doc.save());
   }
