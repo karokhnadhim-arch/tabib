@@ -153,26 +153,23 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
       .where((e) => e.status == QueueStatus.inProgress)
       .length;
 
-  Widget _buildQueueList({
-    required InvestigationRequestProvider investigationProvider,
-    required bool showInlineSummary,
+  Widget _buildQueueArea({
+    required Widget queueList,
+    required Widget queueSummary,
+    required bool summaryBesideList,
   }) {
-    return DoctorQueuePanel(
-      entries: _todayQueue,
-      selectedId: _selectedEntryId,
-      roomPatientId: _roomPatient?.id,
-      investigationProvider: investigationProvider,
-      onSelect: _selectPatient,
-      showSummary: showInlineSummary,
-    );
-  }
+    if (!summaryBesideList) return queueList;
 
-  Widget _buildQueueSummaryPanel() {
-    return DoctorQueueSummaryPanel(
-      totalCount: _todayQueue.length,
-      waitingCount: _waitingCount,
-      readyCount: _readyCount,
-      examiningCount: _examiningCount,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(child: queueList),
+        const SizedBox(width: DoctorWorkspaceConstants.panelGap),
+        SizedBox(
+          width: DoctorWorkspaceConstants.queueSummaryPanelWidth,
+          child: queueSummary,
+        ),
+      ],
     );
   }
 
@@ -204,11 +201,25 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
         final wide = DoctorWorkspaceConstants.isWideTwoPane(width);
 
         final desktopSummaryBesideList = threePane || wide;
-        final queueList = _buildQueueList(
+        final queueList = DoctorQueuePanel(
+          entries: _todayQueue,
+          selectedId: _selectedEntryId,
+          roomPatientId: _roomPatient?.id,
           investigationProvider: investigationProvider,
-          showInlineSummary: !desktopSummaryBesideList,
+          onSelect: _selectPatient,
+          showSummary: !desktopSummaryBesideList,
         );
-        final queueSummary = _buildQueueSummaryPanel();
+        final queueSummary = DoctorQueueSummaryPanel(
+          totalCount: _todayQueue.length,
+          waitingCount: _waitingCount,
+          readyCount: _readyCount,
+          examiningCount: _examiningCount,
+        );
+        final queueArea = _buildQueueArea(
+          queueList: queueList,
+          queueSummary: queueSummary,
+          summaryBesideList: desktopSummaryBesideList,
+        );
 
         final workspace = selected == null
             ? _SelectPatientPlaceholder(message: l10n.selectPatientFromQueue)
@@ -263,17 +274,13 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
                           ),
                           const SizedBox(width: DoctorWorkspaceConstants.panelGap),
                           Expanded(
+                            flex: DoctorWorkspaceConstants.consultationPanelFlex,
                             child: _ConsultationScrollShell(child: workspace),
                           ),
                           const SizedBox(width: DoctorWorkspaceConstants.panelGap),
-                          SizedBox(
-                            width: DoctorWorkspaceConstants.queueListWidth,
-                            child: queueList,
-                          ),
-                          const SizedBox(width: DoctorWorkspaceConstants.panelGap),
-                          SizedBox(
-                            width: DoctorWorkspaceConstants.queueSummaryPanelWidth,
-                            child: queueSummary,
+                          Expanded(
+                            flex: DoctorWorkspaceConstants.queuePanelFlex,
+                            child: queueArea,
                           ),
                         ],
                       )
@@ -289,17 +296,9 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
                             const SizedBox(
                               width: DoctorWorkspaceConstants.panelGap,
                             ),
-                            SizedBox(
-                              width: DoctorWorkspaceConstants.queueListWidth,
-                              child: queueList,
-                            ),
-                            const SizedBox(
-                              width: DoctorWorkspaceConstants.panelGap,
-                            ),
-                            SizedBox(
-                              width:
-                                  DoctorWorkspaceConstants.queueSummaryPanelWidth,
-                              child: queueSummary,
+                            Expanded(
+                              flex: DoctorWorkspaceConstants.queuePanelFlex,
+                              child: queueArea,
                             ),
                           ],
                         )

@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 import '../../../models/investigation_request_item.dart';
 import '../../../models/prescription_line_item.dart';
@@ -21,31 +22,40 @@ class ClinicalPrintBuilder {
   final String? doctorName;
   final String? doctorSpecialty;
 
+  static pw.Font? _regular;
+  static pw.Font? _bold;
+
+  static Future<void> _ensureFonts() async {
+    _regular ??= await PdfGoogleFonts.notoSansArabicRegular();
+    _bold ??= await PdfGoogleFonts.notoSansArabicBold();
+  }
+
+  pw.TextStyle _textStyle({
+    double fontSize = 11,
+    bool bold = false,
+  }) {
+    return pw.TextStyle(
+      fontSize: fontSize,
+      font: bold ? _bold : _regular,
+    );
+  }
+
   pw.Widget _header(pw.Context context) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
         pw.Text(
           clinicName,
-          style: pw.TextStyle(
-            fontSize: 18,
-            fontWeight: pw.FontWeight.bold,
-          ),
+          style: _textStyle(fontSize: 18, bold: true),
         ),
         if (doctorName != null && doctorName!.isNotEmpty)
-          pw.Text(
-            doctorName!,
-            style: const pw.TextStyle(fontSize: 12),
-          ),
+          pw.Text(doctorName!, style: _textStyle(fontSize: 12)),
         if (doctorSpecialty != null && doctorSpecialty!.isNotEmpty)
-          pw.Text(
-            doctorSpecialty!,
-            style: const pw.TextStyle(fontSize: 10),
-          ),
+          pw.Text(doctorSpecialty!, style: _textStyle(fontSize: 10)),
         if (clinicAddress != null && clinicAddress!.isNotEmpty)
-          pw.Text(clinicAddress!, style: const pw.TextStyle(fontSize: 9)),
+          pw.Text(clinicAddress!, style: _textStyle(fontSize: 9)),
         if (clinicPhone != null && clinicPhone!.isNotEmpty)
-          pw.Text(clinicPhone!, style: const pw.TextStyle(fontSize: 9)),
+          pw.Text(clinicPhone!, style: _textStyle(fontSize: 9)),
         pw.SizedBox(height: 8),
         pw.Divider(thickness: 1),
         pw.SizedBox(height: 8),
@@ -67,6 +77,7 @@ class ClinicalPrintBuilder {
     List<InvestigationRequestItem>? investigations,
     String Function(InvestigationRequestItem)? investigationLine,
   }) async {
+    await _ensureFonts();
     final doc = pw.Document();
     final dateFmt = DateFormat.yMMMd().add_jm();
 
@@ -79,38 +90,26 @@ class ClinicalPrintBuilder {
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
               _header(context),
-              pw.Text(
-                dateLabel,
-                style: const pw.TextStyle(fontSize: 10),
-              ),
+              pw.Text(dateLabel, style: _textStyle(fontSize: 10)),
               pw.Text(
                 dateFmt.format(DateTime.now()),
-                style: const pw.TextStyle(fontSize: 10),
+                style: _textStyle(fontSize: 10),
               ),
               pw.SizedBox(height: 12),
               pw.Text(
                 '$patientLabel: $patientName',
-                style: pw.TextStyle(
-                  fontSize: 12,
-                  fontWeight: pw.FontWeight.bold,
-                ),
+                style: _textStyle(fontSize: 12, bold: true),
               ),
               pw.SizedBox(height: 16),
               pw.Text(
                 diagnosisLabel,
-                style: pw.TextStyle(
-                  fontSize: 11,
-                  fontWeight: pw.FontWeight.bold,
-                ),
+                style: _textStyle(fontSize: 11, bold: true),
               ),
-              pw.Text(diagnosis, style: const pw.TextStyle(fontSize: 11)),
+              pw.Text(diagnosis, style: _textStyle(fontSize: 11)),
               pw.SizedBox(height: 16),
               pw.Text(
                 medicationsLabel,
-                style: pw.TextStyle(
-                  fontSize: 11,
-                  fontWeight: pw.FontWeight.bold,
-                ),
+                style: _textStyle(fontSize: 11, bold: true),
               ),
               pw.SizedBox(height: 6),
               for (var i = 0; i < items.length; i++)
@@ -118,19 +117,16 @@ class ClinicalPrintBuilder {
                   padding: const pw.EdgeInsets.only(bottom: 4),
                   child: pw.Text(
                     '${i + 1}. ${items[i].formatLine()}',
-                    style: const pw.TextStyle(fontSize: 11),
+                    style: _textStyle(fontSize: 11),
                   ),
                 ),
               if (notes != null && notes.trim().isNotEmpty) ...[
                 pw.SizedBox(height: 16),
                 pw.Text(
                   notesLabel ?? 'Notes',
-                  style: pw.TextStyle(
-                    fontSize: 11,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
+                  style: _textStyle(fontSize: 11, bold: true),
                 ),
-                pw.Text(notes.trim(), style: const pw.TextStyle(fontSize: 10)),
+                pw.Text(notes.trim(), style: _textStyle(fontSize: 10)),
               ],
               if (investigations != null &&
                   investigations.isNotEmpty &&
@@ -139,10 +135,7 @@ class ClinicalPrintBuilder {
                 pw.SizedBox(height: 16),
                 pw.Text(
                   investigationsLabel,
-                  style: pw.TextStyle(
-                    fontSize: 11,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
+                  style: _textStyle(fontSize: 11, bold: true),
                 ),
                 pw.SizedBox(height: 6),
                 for (var i = 0; i < investigations.length; i++)
@@ -150,7 +143,7 @@ class ClinicalPrintBuilder {
                     padding: const pw.EdgeInsets.only(bottom: 4),
                     child: pw.Text(
                       '${i + 1}. ${investigationLine(investigations[i])}',
-                      style: const pw.TextStyle(fontSize: 11),
+                      style: _textStyle(fontSize: 11),
                     ),
                   ),
               ],
@@ -170,6 +163,7 @@ class ClinicalPrintBuilder {
     required List<InvestigationRequestItem> items,
     required String Function(InvestigationRequestItem) itemLine,
   }) async {
+    await _ensureFonts();
     final doc = pw.Document();
     final dateFmt = DateFormat.yMMMd().add_jm();
 
@@ -182,26 +176,20 @@ class ClinicalPrintBuilder {
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
               _header(context),
-              pw.Text(dateLabel, style: const pw.TextStyle(fontSize: 10)),
+              pw.Text(dateLabel, style: _textStyle(fontSize: 10)),
               pw.Text(
                 dateFmt.format(DateTime.now()),
-                style: const pw.TextStyle(fontSize: 10),
+                style: _textStyle(fontSize: 10),
               ),
               pw.SizedBox(height: 12),
               pw.Text(
                 '$patientLabel: $patientName',
-                style: pw.TextStyle(
-                  fontSize: 12,
-                  fontWeight: pw.FontWeight.bold,
-                ),
+                style: _textStyle(fontSize: 12, bold: true),
               ),
               pw.SizedBox(height: 16),
               pw.Text(
                 investigationsLabel,
-                style: pw.TextStyle(
-                  fontSize: 11,
-                  fontWeight: pw.FontWeight.bold,
-                ),
+                style: _textStyle(fontSize: 11, bold: true),
               ),
               pw.SizedBox(height: 6),
               for (var i = 0; i < items.length; i++)
@@ -209,7 +197,7 @@ class ClinicalPrintBuilder {
                   padding: const pw.EdgeInsets.only(bottom: 4),
                   child: pw.Text(
                     '${i + 1}. ${itemLine(items[i])}',
-                    style: const pw.TextStyle(fontSize: 11),
+                    style: _textStyle(fontSize: 11),
                   ),
                 ),
             ],
