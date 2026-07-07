@@ -631,6 +631,16 @@ class _QuickActions extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
+          if (entry.status != QueueStatus.completed &&
+              entry.status != QueueStatus.cancelled)
+            _ActionButton(
+              icon: Icons.waving_hand_rounded,
+              label: l10n.patientReady,
+              filled: entry.patientReady,
+              onPressed: () => context
+                  .read<QueueService>()
+                  .togglePatientReady(entry.id, doctorId),
+            ),
           if (entry.isInExamination)
             _ActionButton(
               icon: Icons.replay_rounded,

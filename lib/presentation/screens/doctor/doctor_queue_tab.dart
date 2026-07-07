@@ -181,7 +181,7 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
                 doctorName: doctorName,
                 session: _session,
                 hidePatientSummary: threePane,
-                hideMedicalHistory: threePane,
+                hideMedicalHistory: true,
                 expandedSections: true,
               );
 
@@ -213,8 +213,10 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
               ),
             if (!isClinicalDesktop(context)) const SizedBox(height: 10),
             Expanded(
-              child: threePane
-                  ? Row(
+              child: Directionality(
+                textDirection: TextDirection.ltr,
+                child: threePane
+                    ? Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         SizedBox(
@@ -267,6 +269,7 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
                             ),
                           ],
                         ),
+              ),
             ),
           ],
         );

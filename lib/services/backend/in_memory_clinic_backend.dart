@@ -16,10 +16,19 @@ import '../../models/doctor_page.dart';
 import '../../models/platform_dashboard_summary.dart';
 import '../../models/system_monitoring.dart';
 import 'clinic_backend.dart';
+import 'demo_queue_ready_sync.dart';
 
 /// Local demo backend — works without Firebase.
 class InMemoryClinicBackend implements ClinicBackend {
-  InMemoryClinicBackend() {
+  static InMemoryClinicBackend? _shared;
+
+  factory InMemoryClinicBackend() {
+    return _shared ??= InMemoryClinicBackend._();
+  }
+
+  InMemoryClinicBackend._() {
+    DemoQueueReadySync.bindQueues(() => _queues);
+    DemoQueueReadySync.startPolling(_notify);
     _seedDemoDataSync();
   }
 
@@ -502,6 +511,7 @@ class InMemoryClinicBackend implements ClinicBackend {
       return;
     }
     entry.patientReady = !entry.patientReady;
+    await DemoQueueReadySync.persist(_queues);
     _notify();
   }
 
@@ -1185,6 +1195,7 @@ class InMemoryClinicBackend implements ClinicBackend {
 
     _seedDemoDoctorQueues();
 
+    unawaited(DemoQueueReadySync.persist(_queues));
     _notify();
   }
 
