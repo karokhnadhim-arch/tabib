@@ -19,8 +19,8 @@ import '../../widgets/staff_patient_contact_bar.dart';
 import 'doctor_consultation_session.dart';
 import 'doctor_consultation_widgets.dart';
 import 'doctor_visit_notes_store.dart';
-import 'investigation/doctor_investigation_composer.dart';
 import 'investigation/investigation_print_sheet.dart';
+import 'investigation/investigation_request_panel.dart';
 import 'prescription/doctor_prescription_composer.dart';
 import 'prescription/prescription_print_sheet.dart';
 
@@ -228,9 +228,35 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
     return text.isEmpty ? null : text;
   }
 
-  String? _investigationSubtitle(DoctorVisitNotes notes, AppLocalizations l10n) {
-    if (notes.investigationItems.isEmpty) return null;
-    return l10n.investigationRequestCount(notes.investigationItems.length);
+  Future<void> _openInvestigationPanel({
+    required bool isCompleted,
+    required DoctorVisitNotes notes,
+    String? clinicName,
+    String? clinicAddress,
+    String? clinicPhone,
+    String? doctorSpecialty,
+  }) async {
+    await showInvestigationRequestPanel(
+      context: context,
+      initialItems: notes.investigationItems,
+      readOnly: isCompleted,
+      onPrint: (items) => showInvestigationPrintSheet(
+        context: context,
+        patientName: widget.entry.patientName,
+        doctorName: widget.doctorName,
+        items: items,
+        clinicName: clinicName,
+        clinicAddress: clinicAddress,
+        clinicPhone: clinicPhone,
+        doctorSpecialty: doctorSpecialty,
+      ),
+      onSave: (items) async {
+        _onInvestigationItemsChanged(items);
+        _investigationSyncTimer?.cancel();
+        await _maybeSyncInvestigations();
+      },
+    );
+    if (mounted) setState(() {});
   }
 
   @override
@@ -400,44 +426,6 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
         _buildSection(
           context: context,
           l10n: l10n,
-          section: ConsultationFocusSection.investigations,
-          icon: Icons.biotech_outlined,
-          title: l10n.requestInvestigation,
-          subtitle: _investigationSubtitle(notes, l10n),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              DoctorInvestigationComposer(
-                items: notes.investigationItems,
-                readOnly: isCompleted,
-                onItemsChanged: _onInvestigationItemsChanged,
-              ),
-              if (notes.investigationItems.isNotEmpty) ...[
-                const SizedBox(height: 12),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: OutlinedButton.icon(
-                    onPressed: () => showInvestigationPrintSheet(
-                      context: context,
-                      patientName: widget.entry.patientName,
-                      doctorName: widget.doctorName,
-                      items: notes.investigationItems,
-                      clinicName: clinicName,
-                      clinicAddress: clinicAddress,
-                      clinicPhone: clinicPhone,
-                      doctorSpecialty: doctorSpecialty,
-                    ),
-                    icon: const Icon(Icons.print_outlined, size: 18),
-                    label: Text(l10n.printInvestigationRequest),
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-        _buildSection(
-          context: context,
-          l10n: l10n,
           section: ConsultationFocusSection.clinicalNotes,
           icon: Icons.notes_outlined,
           title: l10n.clinicalNotes,
@@ -461,19 +449,43 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
           ),
         ),
         const SizedBox(height: DoctorConsultationTokens.sectionGap),
-        Align(
-          alignment: Alignment.centerRight,
-          child: FilledButton.icon(
-            onPressed: isCompleted || _saving ? null : _saveNow,
-            icon: _saving
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.save_outlined, size: 20),
-            label: Text(l10n.saveChanges),
-          ),
+        Wrap(
+          alignment: WrapAlignment.end,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 12,
+          runSpacing: 10,
+          children: [
+            InvestigationRequestActionButton(
+              count: notes.investigationItems.length,
+              enabled: true,
+              onPressed: () => _openInvestigationPanel(
+                isCompleted: isCompleted,
+                notes: notes,
+                clinicName: clinicName,
+                clinicAddress: clinicAddress,
+                clinicPhone: clinicPhone,
+                doctorSpecialty: doctorSpecialty,
+              ),
+            ),
+            FilledButton.icon(
+              onPressed: isCompleted || _saving ? null : _saveNow,
+              icon: _saving
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.save_outlined, size: 20),
+              label: Text(l10n.saveChanges),
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                textStyle: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
         ),
         if (notes.updatedAt != null) ...[
           const SizedBox(height: 8),
