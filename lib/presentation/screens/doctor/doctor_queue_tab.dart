@@ -136,6 +136,23 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
     return null;
   }
 
+  int get _waitingCount => _todayQueue
+      .where((e) => e.status == QueueStatus.waiting)
+      .length;
+
+  int get _readyCount => _todayQueue
+      .where(
+        (e) =>
+            e.patientReady &&
+            (e.status == QueueStatus.waiting ||
+                e.status == QueueStatus.review),
+      )
+      .length;
+
+  int get _examiningCount => _todayQueue
+      .where((e) => e.status == QueueStatus.inProgress)
+      .length;
+
   @override
   void dispose() {
     _streamSub?.cancel();
@@ -170,6 +187,15 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
           roomPatientId: roomPatient?.id,
           investigationProvider: investigationProvider,
           onSelect: _selectPatient,
+          showSummary: false,
+        );
+
+        final queueStatsBar = DoctorQueueSummaryPanel(
+          totalCount: _todayQueue.length,
+          waitingCount: _waitingCount,
+          readyCount: _readyCount,
+          examiningCount: _examiningCount,
+          horizontal: true,
         );
 
         final workspace = selected == null
@@ -212,6 +238,8 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
                     ),
               ),
             if (!isClinicalDesktop(context)) const SizedBox(height: 10),
+            queueStatsBar,
+            const SizedBox(height: 12),
             Expanded(
               child: Directionality(
                 textDirection: TextDirection.ltr,

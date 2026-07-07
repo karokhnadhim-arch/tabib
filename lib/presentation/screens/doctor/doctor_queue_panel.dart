@@ -265,6 +265,7 @@ class DoctorQueueSummaryPanel extends StatelessWidget {
     required this.readyCount,
     required this.examiningCount,
     this.compact = false,
+    this.horizontal = false,
   });
 
   final int totalCount;
@@ -272,11 +273,50 @@ class DoctorQueueSummaryPanel extends StatelessWidget {
   final int readyCount;
   final int examiningCount;
   final bool compact;
+  final bool horizontal;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
+
+    final stats = [
+      _SummaryStatRow(
+        label: l10n.totalPatients,
+        value: totalCount,
+        icon: Icons.groups_outlined,
+        color: scheme.primary,
+      ),
+      _SummaryStatRow(
+        label: l10n.patientReady,
+        value: readyCount,
+        icon: Icons.front_hand_outlined,
+        color: AppTheme.medicalGreen,
+      ),
+      _SummaryStatRow(
+        label: l10n.waitingPatients,
+        value: waitingCount,
+        icon: Icons.hourglass_top_rounded,
+        color: AppTheme.medicalBlue,
+      ),
+      _SummaryStatRow(
+        label: l10n.queueStatusWithDoctor,
+        value: examiningCount,
+        icon: Icons.medical_services_outlined,
+        color: AppTheme.doctorColor,
+      ),
+    ];
+
+    if (horizontal) {
+      return Row(
+        children: [
+          for (var i = 0; i < stats.length; i++) ...[
+            if (i > 0) const SizedBox(width: 8),
+            Expanded(child: stats[i]),
+          ],
+        ],
+      );
+    }
 
     return Material(
       color: scheme.surfaceContainerLowest,
@@ -308,34 +348,14 @@ class DoctorQueueSummaryPanel extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            _SummaryStatRow(
-              label: l10n.totalPatients,
-              value: totalCount,
-              icon: Icons.groups_outlined,
-              color: scheme.primary,
-            ),
+            stats[0],
             const SizedBox(height: 8),
-            _SummaryStatRow(
-              label: l10n.patientReady,
-              value: readyCount,
-              icon: Icons.front_hand_outlined,
-              color: AppTheme.medicalGreen,
-            ),
+            stats[1],
             const SizedBox(height: 8),
-            _SummaryStatRow(
-              label: l10n.waitingPatients,
-              value: waitingCount,
-              icon: Icons.hourglass_top_rounded,
-              color: AppTheme.medicalBlue,
-            ),
+            stats[2],
             if (examiningCount > 0) ...[
               const SizedBox(height: 8),
-              _SummaryStatRow(
-                label: l10n.queueStatusWithDoctor,
-                value: examiningCount,
-                icon: Icons.medical_services_outlined,
-                color: AppTheme.doctorColor,
-              ),
+              stats[3],
             ],
           ],
         ),

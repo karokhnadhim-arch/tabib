@@ -109,12 +109,21 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
     return fromController.isNotEmpty ? fromController : notes.diagnosis.trim();
   }
 
+  String _clinicalNotesText(
+    DoctorConsultationControllers controllers,
+    DoctorVisitNotes notes,
+  ) {
+    final fromController = controllers.clinicalNotes.text.trim();
+    return fromController.isNotEmpty ? fromController : notes.clinicalNotes.trim();
+  }
+
   bool _canSave(
     DoctorConsultationControllers controllers,
     DoctorVisitNotes notes,
   ) {
-    return _diagnosisText(controllers, notes).isNotEmpty &&
-        notes.prescriptionItems.isNotEmpty;
+    return notes.prescriptionItems.isNotEmpty ||
+        _diagnosisText(controllers, notes).isNotEmpty ||
+        _clinicalNotesText(controllers, notes).isNotEmpty;
   }
 
   void _invalidatePrint() {
@@ -275,13 +284,7 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
 
     if (!_canSave(controllers, notes)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            notes.prescriptionItems.isEmpty
-                ? l10n.errorGeneric
-                : l10n.diagnosis,
-          ),
-        ),
+        SnackBar(content: Text(l10n.errorGeneric)),
       );
       return;
     }
