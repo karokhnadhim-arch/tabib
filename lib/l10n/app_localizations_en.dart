@@ -3992,4 +3992,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recoverLatestBackup => 'Recover from latest healthy backup';
+
+  @override
+  String get allergies => 'Allergies';
+
+  @override
+  String get noAllergiesRecorded => 'No allergies recorded';
+
+  @override
+  String get age => 'Age';
+
+  @override
+  String get ageNotRecorded => 'Not recorded';
+
+  @override
+  String get completedToday => 'Completed today';
+
+  @override
+  String get activeQueueSection => 'Active patients';
+
+  @override
+  String get consultationWorkspace => 'Consultation';
+
+  @override
+  String get genderLabel => 'Gender';
 }

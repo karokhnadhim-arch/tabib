@@ -1435,5 +1435,13 @@
   "restoreCompleted": "گەڕاندنەوە تەواو بوو",
   "restoreFailed": "گەڕاندنەوە سەرنەکەوت",
   "restoreInProgress": "گەڕاندنەوە لە جێبەجێکردندایە",
-  "recoverLatestBackup": "گەڕاندنەوە لە کۆتا پاشەکەوتی تەندروست"
+  "recoverLatestBackup": "گەڕاندنەوە لە کۆتا پاشەکەوتی تەندروست",
+  "allergies": "هەستیاری",
+  "noAllergiesRecorded": "هیچ هەستیارییەک تۆمار نەکراوە",
+  "age": "تەمەن",
+  "ageNotRecorded": "تۆمار نەکراوە",
+  "completedToday": "تەواوکراو ئەمڕۆ",
+  "activeQueueSection": "نەخۆشە چالاکەکان",
+  "consultationWorkspace": "ڕاوێژکاری",
+  "genderLabel": "ڕەگەز"
 }

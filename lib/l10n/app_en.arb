@@ -1531,5 +1531,13 @@
   "restoreCompleted": "Restore completed successfully",
   "restoreFailed": "Restore failed — backup may be corrupted or incompatible",
   "restoreInProgress": "Restore in progress",
-  "recoverLatestBackup": "Recover from latest healthy backup"
+  "recoverLatestBackup": "Recover from latest healthy backup",
+  "allergies": "Allergies",
+  "noAllergiesRecorded": "No allergies recorded",
+  "age": "Age",
+  "ageNotRecorded": "Not recorded",
+  "completedToday": "Completed today",
+  "activeQueueSection": "Active patients",
+  "consultationWorkspace": "Consultation",
+  "genderLabel": "Gender"
 }

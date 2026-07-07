@@ -32,14 +32,18 @@ class DoctorConsultationWorkspace extends StatefulWidget {
     required this.doctorId,
     required this.doctorName,
     required this.session,
-    this.hidePatientSummary = false,
+    this.hideMedicalHistory = false,
+    this.expandedSections = false,
   });
 
   final QueueEntry entry;
   final String doctorId;
   final String doctorName;
   final DoctorConsultationSession session;
-  final bool hidePatientSummary;
+  /// When true, medical history is shown in the right panel instead.
+  final bool hideMedicalHistory;
+  /// Desktop scroll layout — all sections visible without accordion taps.
+  final bool expandedSections;
 
   @override
   State<DoctorConsultationWorkspace> createState() =>
@@ -236,7 +240,6 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final scheme = Theme.of(context).colorScheme;
     final isCompleted = widget.entry.status == QueueStatus.completed;
     final notes = widget.session.notesStore.notesFor(_storageKey);
     final controllers = widget.session.controllersFor(_storageKey);
@@ -266,15 +269,6 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (!widget.hidePatientSummary) ...[
-        Text(
-          l10n.patientInformation,
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: scheme.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
-              ),
-        ),
-        const SizedBox(height: 8),
         DoctorPatientSummaryCard(
           patientName: widget.entry.patientName,
           position: widget.entry.position,
@@ -290,82 +284,41 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
             patientId: widget.entry.patientId,
             compact: true,
           ),
-          completedBanner: isCompleted
-              ? Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: AppTheme.medicalGreen.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.check_circle, color: AppTheme.medicalGreen, size: 20),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          l10n.visitCompletedReadOnly,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : widget.entry.status == QueueStatus.review
-                  ? Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.orange.shade50,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.orange.shade200),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.replay_rounded,
-                              color: Colors.orange.shade800, size: 20),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              l10n.patientReturnedForReview,
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : null,
+          completedBanner: _statusBanner(context, l10n, isCompleted),
         ),
-        const SizedBox(height: 14),
-        ],
-        DoctorConsultationSectionTile(
-          icon: Icons.history_rounded,
-          title: l10n.medicalHistory,
-          subtitle: prescriptions.isEmpty
-              ? l10n.noMedicalHistoryYet
-              : l10n.medicalHistoryEntryCount(prescriptions.length),
-          expanded: _focused == ConsultationFocusSection.medicalHistory,
-          onTap: () => _focusSection(ConsultationFocusSection.medicalHistory),
-          child: _MedicalHistoryBody(
-            prescriptions: prescriptions,
-            appointments: appointments,
-            emptyLabel: l10n.noMedicalHistoryYet,
+        const SizedBox(height: DoctorConsultationTokens.sectionGap),
+        if (!widget.hideMedicalHistory)
+          _buildSection(
+            context: context,
+            l10n: l10n,
+            section: ConsultationFocusSection.medicalHistory,
+            icon: Icons.history_rounded,
+            title: l10n.medicalHistory,
+            subtitle: prescriptions.isEmpty
+                ? l10n.noMedicalHistoryYet
+                : l10n.medicalHistoryEntryCount(prescriptions.length),
+            child: _MedicalHistoryBody(
+              prescriptions: prescriptions,
+              appointments: appointments,
+              emptyLabel: l10n.noMedicalHistoryYet,
+            ),
           ),
-        ),
-        DoctorConsultationSectionTile(
+        _buildSection(
+          context: context,
+          l10n: l10n,
+          section: ConsultationFocusSection.diagnosis,
           icon: Icons.medical_information_outlined,
           title: l10n.diagnosis,
           subtitle: controllers.diagnosis.text.trim().isEmpty
               ? null
               : controllers.diagnosis.text.trim(),
-          expanded: _focused == ConsultationFocusSection.diagnosis,
-          onTap: () => _focusSection(ConsultationFocusSection.diagnosis),
           child: TextField(
             controller: controllers.diagnosis,
             onChanged: (_) => _onFieldChanged(),
             readOnly: isCompleted,
-            autofocus: _focused == ConsultationFocusSection.diagnosis && !isCompleted,
+            autofocus: !widget.expandedSections &&
+                _focused == ConsultationFocusSection.diagnosis &&
+                !isCompleted,
             decoration: _fieldDecoration(
               context,
               l10n.diagnosis,
@@ -376,12 +329,13 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
             textInputAction: TextInputAction.next,
           ),
         ),
-        DoctorConsultationSectionTile(
+        _buildSection(
+          context: context,
+          l10n: l10n,
+          section: ConsultationFocusSection.prescription,
           icon: Icons.medication_outlined,
           title: l10n.writePrescription,
           subtitle: _prescriptionSubtitle(notes, l10n),
-          expanded: _focused == ConsultationFocusSection.prescription,
-          onTap: () => _focusSection(ConsultationFocusSection.prescription),
           child: DoctorPrescriptionComposer(
             doctorId: widget.doctorId,
             items: notes.prescriptionItems,
@@ -412,52 +366,60 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
                     ),
           ),
         ),
-        DoctorConsultationSectionTile(
+        _buildSection(
+          context: context,
+          l10n: l10n,
+          section: ConsultationFocusSection.investigations,
           icon: Icons.biotech_outlined,
           title: l10n.requestInvestigation,
           subtitle: _investigationSubtitle(notes, l10n),
-          expanded: _focused == ConsultationFocusSection.investigations,
-          onTap: () => _focusSection(ConsultationFocusSection.investigations),
-          child: DoctorInvestigationComposer(
-            items: notes.investigationItems,
-            readOnly: isCompleted,
-            onItemsChanged: _onInvestigationItemsChanged,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              DoctorInvestigationComposer(
+                items: notes.investigationItems,
+                readOnly: isCompleted,
+                onItemsChanged: _onInvestigationItemsChanged,
+              ),
+              if (notes.investigationItems.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: OutlinedButton.icon(
+                    onPressed: () => showInvestigationPrintSheet(
+                      context: context,
+                      patientName: widget.entry.patientName,
+                      doctorName: widget.doctorName,
+                      items: notes.investigationItems,
+                      clinicName: clinicName,
+                      clinicAddress: clinicAddress,
+                      clinicPhone: clinicPhone,
+                      doctorSpecialty: doctorSpecialty,
+                    ),
+                    icon: const Icon(Icons.print_outlined, size: 18),
+                    label: Text(l10n.printInvestigationRequest),
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
-        if (notes.investigationItems.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(bottom: DoctorConsultationTokens.sectionGap),
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: OutlinedButton.icon(
-                onPressed: () => showInvestigationPrintSheet(
-                  context: context,
-                  patientName: widget.entry.patientName,
-                  doctorName: widget.doctorName,
-                  items: notes.investigationItems,
-                  clinicName: clinicName,
-                  clinicAddress: clinicAddress,
-                  clinicPhone: clinicPhone,
-                  doctorSpecialty: doctorSpecialty,
-                ),
-                icon: const Icon(Icons.print_outlined, size: 18),
-                label: Text(l10n.printInvestigationRequest),
-              ),
-            ),
-          ),
-        DoctorConsultationSectionTile(
+        _buildSection(
+          context: context,
+          l10n: l10n,
+          section: ConsultationFocusSection.clinicalNotes,
           icon: Icons.notes_outlined,
           title: l10n.clinicalNotes,
           subtitle: controllers.clinicalNotes.text.trim().isEmpty
               ? null
               : controllers.clinicalNotes.text.trim(),
-          expanded: _focused == ConsultationFocusSection.clinicalNotes,
-          onTap: () => _focusSection(ConsultationFocusSection.clinicalNotes),
           child: TextField(
             controller: controllers.clinicalNotes,
             onChanged: (_) => _onFieldChanged(),
             readOnly: isCompleted,
-            autofocus: _focused == ConsultationFocusSection.clinicalNotes && !isCompleted,
+            autofocus: !widget.expandedSections &&
+                _focused == ConsultationFocusSection.clinicalNotes &&
+                !isCompleted,
             decoration: _fieldDecoration(
               context,
               l10n.clinicalNotes,
@@ -466,6 +428,90 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
             minLines: 3,
             maxLines: 8,
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget? _statusBanner(
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isCompleted,
+  ) {
+    if (isCompleted) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: AppTheme.medicalGreen.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.check_circle, color: AppTheme.medicalGreen, size: 20),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                l10n.visitCompletedReadOnly,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    if (widget.entry.status == QueueStatus.review) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.orange.shade50,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.orange.shade200),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.replay_rounded, color: Colors.orange.shade800, size: 20),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                l10n.patientReturnedForReview,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    return null;
+  }
+
+  Widget _buildSection({
+    required BuildContext context,
+    required AppLocalizations l10n,
+    required ConsultationFocusSection section,
+    required IconData icon,
+    required String title,
+    required Widget child,
+    String? subtitle,
+  }) {
+    if (widget.expandedSections) {
+      return DoctorConsultationSectionCard(
+        icon: icon,
+        title: title,
+        subtitle: subtitle,
+        child: child,
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        DoctorConsultationSectionTile(
+          icon: icon,
+          title: title,
+          subtitle: subtitle,
+          expanded: _focused == section,
+          onTap: () => _focusSection(section),
+          child: child,
         ),
       ],
     );

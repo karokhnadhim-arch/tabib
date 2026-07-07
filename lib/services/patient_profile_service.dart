@@ -14,6 +14,36 @@ class PatientProfileService extends ChangeNotifier {
 
   PatientProfile get profile => _profile;
 
+  Future<PatientProfile> readProfileForUser(String userId) async {
+    if (userId.isEmpty) return const PatientProfile();
+
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_prefsKey(userId));
+    if (raw != null) {
+      return PatientProfile.fromMap(
+        jsonDecode(raw) as Map<String, dynamic>,
+      );
+    }
+
+    if (!FirebaseBootstrap.shouldUseDemoMode) {
+      try {
+        final doc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .get();
+        final profile = PatientProfile.fromMap(
+          doc.data()?['patientProfile'] as Map<String, dynamic>?,
+        );
+        await prefs.setString(_prefsKey(userId), jsonEncode(profile.toMap()));
+        return profile;
+      } catch (error) {
+        debugPrint('PatientProfileService read failed: $error');
+      }
+    }
+
+    return const PatientProfile();
+  }
+
   Future<void> bindUser(String? userId) async {
     if (_userId == userId) return;
     _userId = userId;

@@ -3992,4 +3992,28 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get recoverLatestBackup => 'گەڕاندنەوە لە کۆتا پاشەکەوتی تەندروست';
+
+  @override
+  String get allergies => 'هەستیاری';
+
+  @override
+  String get noAllergiesRecorded => 'هیچ هەستیارییەک تۆمار نەکراوە';
+
+  @override
+  String get age => 'تەمەن';
+
+  @override
+  String get ageNotRecorded => 'تۆمار نەکراوە';
+
+  @override
+  String get completedToday => 'تەواوکراو ئەمڕۆ';
+
+  @override
+  String get activeQueueSection => 'نەخۆشە چالاکەکان';
+
+  @override
+  String get consultationWorkspace => 'ڕاوێژکاری';
+
+  @override
+  String get genderLabel => 'ڕەگەز';
 }

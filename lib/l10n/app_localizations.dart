@@ -7852,6 +7852,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Recover from latest healthy backup'**
   String get recoverLatestBackup;
+
+  /// No description provided for @allergies.
+  ///
+  /// In en, this message translates to:
+  /// **'Allergies'**
+  String get allergies;
+
+  /// No description provided for @noAllergiesRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'No allergies recorded'**
+  String get noAllergiesRecorded;
+
+  /// No description provided for @age.
+  ///
+  /// In en, this message translates to:
+  /// **'Age'**
+  String get age;
+
+  /// No description provided for @ageNotRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Not recorded'**
+  String get ageNotRecorded;
+
+  /// No description provided for @completedToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed today'**
+  String get completedToday;
+
+  /// No description provided for @activeQueueSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Active patients'**
+  String get activeQueueSection;
+
+  /// No description provided for @consultationWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Consultation'**
+  String get consultationWorkspace;
+
+  /// No description provided for @genderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get genderLabel;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

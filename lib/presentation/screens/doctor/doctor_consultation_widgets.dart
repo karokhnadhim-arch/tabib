@@ -3,12 +3,154 @@ import 'package:flutter/material.dart';
 /// Visual tokens for the doctor consultation workspace.
 abstract final class DoctorConsultationTokens {
   static const double radius = 16;
-  static const double sectionGap = 10;
+  static const double sectionGap = 14;
   static const EdgeInsets sectionPadding =
-      EdgeInsets.symmetric(horizontal: 16, vertical: 14);
+      EdgeInsets.symmetric(horizontal: 18, vertical: 16);
   static const double iconSize = 22;
 
   static BorderRadius get cardRadius => BorderRadius.circular(radius);
+}
+
+/// Professional panel chrome for desktop workspace columns.
+class DoctorWorkspacePanel extends StatelessWidget {
+  const DoctorWorkspacePanel({
+    super.key,
+    required this.title,
+    required this.icon,
+    required this.child,
+    this.trailing,
+    this.scrollable = true,
+  });
+
+  final String title;
+  final IconData icon;
+  final Widget child;
+  final Widget? trailing;
+  final bool scrollable;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final body = scrollable
+        ? SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: child,
+          )
+        : Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: child,
+          );
+
+    return Material(
+      color: scheme.surfaceContainerLowest,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: DoctorConsultationTokens.cardRadius,
+        side: BorderSide(color: scheme.outlineVariant.withOpacity(0.45)),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+            child: Row(
+              children: [
+                Icon(icon, color: scheme.primary, size: 22),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.2,
+                        ),
+                  ),
+                ),
+                if (trailing != null) trailing!,
+              ],
+            ),
+          ),
+          Expanded(child: body),
+        ],
+      ),
+    );
+  }
+}
+
+/// Always-visible consultation section for desktop scroll layout.
+class DoctorConsultationSectionCard extends StatelessWidget {
+  const DoctorConsultationSectionCard({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.child,
+    this.subtitle,
+    this.trailing,
+  });
+
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+  final Widget child;
+  final Widget? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: DoctorConsultationTokens.sectionGap),
+      decoration: BoxDecoration(
+        color: scheme.surface,
+        borderRadius: DoctorConsultationTokens.cardRadius,
+        border: Border.all(color: scheme.outlineVariant.withOpacity(0.4)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: DoctorConsultationTokens.sectionPadding,
+            child: Row(
+              children: [
+                Icon(icon, size: DoctorConsultationTokens.iconSize, color: scheme.primary),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      if (subtitle != null) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          subtitle!,
+                          style: textTheme.bodySmall?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                if (trailing != null) trailing!,
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: child,
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 /// Compact patient header card — always visible during consultation.

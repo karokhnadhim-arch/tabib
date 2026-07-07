@@ -3992,4 +3992,28 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get recoverLatestBackup => 'الاستعادة من آخر نسخة سليمة';
+
+  @override
+  String get allergies => 'الحساسية';
+
+  @override
+  String get noAllergiesRecorded => 'لا توجد حساسية مسجلة';
+
+  @override
+  String get age => 'العمر';
+
+  @override
+  String get ageNotRecorded => 'غير مسجل';
+
+  @override
+  String get completedToday => 'مكتمل اليوم';
+
+  @override
+  String get activeQueueSection => 'المرضى النشطون';
+
+  @override
+  String get consultationWorkspace => 'الاستشارة';
+
+  @override
+  String get genderLabel => 'الجنس';
 }

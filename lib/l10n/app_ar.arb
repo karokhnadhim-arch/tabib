@@ -1435,5 +1435,13 @@
   "restoreCompleted": "اكتملت الاستعادة بنجاح",
   "restoreFailed": "فشلت الاستعادة",
   "restoreInProgress": "الاستعادة قيد التنفيذ",
-  "recoverLatestBackup": "الاستعادة من آخر نسخة سليمة"
+  "recoverLatestBackup": "الاستعادة من آخر نسخة سليمة",
+  "allergies": "الحساسية",
+  "noAllergiesRecorded": "لا توجد حساسية مسجلة",
+  "age": "العمر",
+  "ageNotRecorded": "غير مسجل",
+  "completedToday": "مكتمل اليوم",
+  "activeQueueSection": "المرضى النشطون",
+  "consultationWorkspace": "الاستشارة",
+  "genderLabel": "الجنس"
 }
