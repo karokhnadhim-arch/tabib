@@ -4016,4 +4016,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get genderLabel => 'الجنس';
+
+  @override
+  String get queueStatusInside => 'داخل';
+
+  @override
+  String get arrivalTime => 'وقت الوصول';
+
+  @override
+  String get searchQueueHint => 'بحث بالاسم أو رقم الدور';
 }

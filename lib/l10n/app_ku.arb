@@ -1443,5 +1443,8 @@
   "completedToday": "تەواوکراو ئەمڕۆ",
   "activeQueueSection": "نەخۆشە چالاکەکان",
   "consultationWorkspace": "ڕاوێژکاری",
-  "genderLabel": "ڕەگەز"
+  "genderLabel": "ڕەگەز",
+  "queueStatusInside": "لەناو",
+  "arrivalTime": "کاتی گەیشتن",
+  "searchQueueHint": "گەڕان بە ناو یان ژمارەی نۆر"
 }

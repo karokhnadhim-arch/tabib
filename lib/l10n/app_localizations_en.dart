@@ -4016,4 +4016,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get genderLabel => 'Gender';
+
+  @override
+  String get queueStatusInside => 'Inside';
+
+  @override
+  String get arrivalTime => 'Arrival';
+
+  @override
+  String get searchQueueHint => 'Search name or queue #';
 }

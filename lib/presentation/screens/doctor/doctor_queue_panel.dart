@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../models/patient_profile.dart';
 import '../../../models/queue_entry.dart';
-import '../../../utils/queue_status_utils.dart';
+import '../../../services/patient_profile_service.dart';
 import '../../providers/app_providers.dart';
 import 'doctor_workspace_constants.dart';
 
-/// Left panel — today's queue with active patients and collapsed completed list.
+/// Left panel — professional today's queue for the doctor workspace.
 class DoctorQueuePanel extends StatefulWidget {
   const DoctorQueuePanel({
     super.key,
@@ -29,30 +32,64 @@ class DoctorQueuePanel extends StatefulWidget {
 }
 
 class _DoctorQueuePanelState extends State<DoctorQueuePanel> {
-  bool _completedExpanded = false;
+  final _searchController = TextEditingController();
+  final _profileCache = _QueueProfileCache();
+  String _query = '';
 
-  List<QueueEntry> get _active => widget.entries
-      .where(
-        (e) =>
-            e.status != QueueStatus.completed &&
-            e.status != QueueStatus.cancelled,
-      )
-      .toList();
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
-  List<QueueEntry> get _completed => widget.entries
-      .where((e) => e.status == QueueStatus.completed)
-      .toList();
+  int get _waitingCount => widget.entries
+      .where((e) => e.status == QueueStatus.waiting)
+      .length;
+
+  List<QueueEntry> get _filtered {
+    final q = _query.trim().toLowerCase();
+    if (q.isEmpty) return widget.entries;
+    return widget.entries.where((e) {
+      if (e.patientName.toLowerCase().contains(q)) return true;
+      if ('${e.position}'.contains(q)) return true;
+      return false;
+    }).toList();
+  }
+
+  List<QueueEntry> get _activeOrdered {
+    final list = _filtered
+        .where(
+          (e) =>
+              e.status != QueueStatus.completed &&
+              e.status != QueueStatus.cancelled,
+        )
+        .toList();
+    list.sort((a, b) => a.position.compareTo(b.position));
+    return list;
+  }
+
+  List<QueueEntry> get _completedOrdered {
+    final list =
+        _filtered.where((e) => e.status == QueueStatus.completed).toList();
+    list.sort((a, b) => a.position.compareTo(b.position));
+    return list;
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
+    final profileService = context.read<PatientProfileService>();
+    final active = _activeOrdered;
+    final completed = _completedOrdered;
+    final itemCount = active.length + (completed.isEmpty ? 0 : completed.length + 1);
 
     return Material(
       color: scheme.surfaceContainerLowest,
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(DoctorWorkspaceConstants.panelRadius),
+        borderRadius:
+            BorderRadius.circular(DoctorWorkspaceConstants.panelRadius),
         side: BorderSide(color: scheme.outlineVariant.withOpacity(0.45)),
       ),
       clipBehavior: Clip.antiAlias,
@@ -60,116 +97,138 @@ class _DoctorQueuePanelState extends State<DoctorQueuePanel> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: Row(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Icon(Icons.people_outline_rounded, color: scheme.primary, size: 22),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    l10n.todaysQueue,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -0.2,
-                        ),
+                Row(
+                  children: [
+                    Icon(Icons.groups_outlined, color: scheme.primary, size: 24),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        l10n.todaysQueue,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.3,
+                            ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                _WaitingSummaryBanner(
+                  waitingCount: _waitingCount,
+                  totalCount: widget.entries.length,
+                ),
+                const SizedBox(height: 12),
+                SearchBar(
+                  controller: _searchController,
+                  hintText: l10n.searchQueueHint,
+                  leading: const Icon(Icons.search_rounded, size: 22),
+                  onChanged: (value) => setState(() => _query = value),
+                  trailing: _query.isEmpty
+                      ? null
+                      : [
+                          IconButton(
+                            icon: const Icon(Icons.close_rounded, size: 20),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() => _query = '');
+                            },
+                          ),
+                        ],
+                  elevation: WidgetStateProperty.all(0),
+                  backgroundColor:
+                      WidgetStateProperty.all(scheme.surfaceContainerLow),
+                  shape: WidgetStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      side: BorderSide(
+                        color: scheme.outlineVariant.withOpacity(0.35),
+                      ),
+                    ),
                   ),
                 ),
-                _CountChip(label: '${_active.length}', emphasized: true),
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              l10n.activeQueueSection,
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
-          ),
-          const SizedBox(height: 8),
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
-              children: [
-                if (_active.isEmpty)
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Text(
-                      l10n.noPatientsInQueue,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: scheme.onSurfaceVariant,
-                          ),
+            child: itemCount == 0
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Text(
+                        l10n.noSearchResults,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              color: scheme.onSurfaceVariant,
+                            ),
+                      ),
                     ),
                   )
-                else
-                  ..._active.map(
-                    (entry) => Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: _QueuePatientTile(
-                        entry: entry,
-                        isSelected: entry.id == widget.selectedId,
-                        isInRoom: entry.id == widget.roomPatientId,
-                        pendingInvestigationCount: widget.investigationProvider
-                                .requestForQueueEntry(entry.id)
-                                ?.pendingItems
-                                .length ??
-                            0,
-                        onTap: () => widget.onSelect(entry.id),
-                      ),
-                    ),
-                  ),
-                if (_completed.isNotEmpty) ...[
-                  const SizedBox(height: 4),
-                  InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () =>
-                        setState(() => _completedExpanded = !_completedExpanded),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 10,
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            _completedExpanded
-                                ? Icons.expand_less_rounded
-                                : Icons.expand_more_rounded,
-                            color: scheme.onSurfaceVariant,
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              l10n.completedToday,
-                              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                : ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                    itemCount: itemCount,
+                    cacheExtent: 480,
+                    itemBuilder: (context, index) {
+                      if (index < active.length) {
+                        final entry = active[index];
+                        return RepaintBoundary(
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: _QueuePatientCard(
+                              entry: entry,
+                              isSelected: entry.id == widget.selectedId,
+                              isInRoom: entry.id == widget.roomPatientId,
+                              pendingInvestigationCount: widget
+                                      .investigationProvider
+                                      .requestForQueueEntry(entry.id)
+                                      ?.pendingItems
+                                      .length ??
+                                  0,
+                              profileCache: _profileCache,
+                              profileService: profileService,
+                              onTap: () => widget.onSelect(entry.id),
                             ),
                           ),
-                          _CountChip(label: '${_completed.length}'),
-                        ],
-                      ),
-                    ),
-                  ),
-                  if (_completedExpanded)
-                    ..._completed.map(
-                      (entry) => Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: _QueuePatientTile(
-                          entry: entry,
-                          isSelected: entry.id == widget.selectedId,
-                          isInRoom: false,
-                          pendingInvestigationCount: 0,
-                          onTap: () => widget.onSelect(entry.id),
-                          compact: true,
+                        );
+                      }
+
+                      final completedIndex = index - active.length;
+                      if (completed.isEmpty) return const SizedBox.shrink();
+
+                      if (completedIndex == 0) {
+                        return Padding(
+                          padding: const EdgeInsets.fromLTRB(4, 4, 4, 10),
+                          child: Text(
+                            l10n.completedToday,
+                            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                  color: scheme.onSurfaceVariant,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                          ),
+                        );
+                      }
+
+                      final entry = completed[completedIndex - 1];
+                      return RepaintBoundary(
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: _QueuePatientCard(
+                            entry: entry,
+                            isSelected: entry.id == widget.selectedId,
+                            isInRoom: false,
+                            pendingInvestigationCount: 0,
+                            profileCache: _profileCache,
+                            profileService: profileService,
+                            muted: true,
+                            onTap: () => widget.onSelect(entry.id),
+                          ),
                         ),
-                      ),
-                    ),
-                ],
-              ],
-            ),
+                      );
+                    },
+                  ),
           ),
         ],
       ),
@@ -177,162 +236,336 @@ class _DoctorQueuePanelState extends State<DoctorQueuePanel> {
   }
 }
 
-class _CountChip extends StatelessWidget {
-  const _CountChip({required this.label, this.emphasized = false});
+class _WaitingSummaryBanner extends StatelessWidget {
+  const _WaitingSummaryBanner({
+    required this.waitingCount,
+    required this.totalCount,
+  });
 
-  final String label;
-  final bool emphasized;
+  final int waitingCount;
+  final int totalCount;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: emphasized
-            ? scheme.primaryContainer.withOpacity(0.65)
-            : scheme.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(20),
+        color: scheme.primaryContainer.withOpacity(0.45),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: scheme.primary.withOpacity(0.12)),
       ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              fontWeight: FontWeight.w700,
-              color: emphasized ? scheme.primary : scheme.onSurfaceVariant,
+      child: Row(
+        children: [
+          Icon(Icons.hourglass_top_rounded, color: scheme.primary, size: 22),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.waitingPatients,
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+                Text(
+                  '$waitingCount',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: scheme.primary,
+                      ),
+                ),
+              ],
             ),
+          ),
+          Text(
+            '$totalCount',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: scheme.onSurfaceVariant,
+                ),
+          ),
+        ],
       ),
     );
   }
 }
 
-class _QueuePatientTile extends StatelessWidget {
-  const _QueuePatientTile({
+class _QueuePatientCard extends StatefulWidget {
+  const _QueuePatientCard({
     required this.entry,
     required this.isSelected,
     required this.isInRoom,
     required this.pendingInvestigationCount,
+    required this.profileCache,
+    required this.profileService,
     required this.onTap,
-    this.compact = false,
+    this.muted = false,
   });
 
   final QueueEntry entry;
   final bool isSelected;
   final bool isInRoom;
   final int pendingInvestigationCount;
+  final _QueueProfileCache profileCache;
+  final PatientProfileService profileService;
   final VoidCallback onTap;
-  final bool compact;
+  final bool muted;
+
+  @override
+  State<_QueuePatientCard> createState() => _QueuePatientCardState();
+}
+
+class _QueuePatientCardState extends State<_QueuePatientCard> {
+  PatientProfile? _profile;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfile();
+  }
+
+  @override
+  void didUpdateWidget(covariant _QueuePatientCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.entry.patientId != widget.entry.patientId) {
+      _loadProfile();
+    }
+  }
+
+  Future<void> _loadProfile() async {
+    final profile = await widget.profileCache.load(
+      widget.entry.patientId,
+      widget.profileService,
+    );
+    if (mounted) setState(() => _profile = profile);
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
+    final entry = widget.entry;
     final isCompleted = entry.status == QueueStatus.completed;
-    final isReturned = entry.status == QueueStatus.review;
-    final statusColor = entry.status.color();
+    final status = _queueDisplayStatus(entry);
+    final timeFmt = DateFormat.jm();
+    final profile = _profile ?? const PatientProfile();
+    final genderIcon = _genderIcon(profile.gender);
+    final opacity = widget.muted ? 0.72 : 1.0;
 
-    final background = isSelected
-        ? AppTheme.doctorColor.withOpacity(0.12)
-        : isInRoom
-            ? AppTheme.medicalGreen.withOpacity(0.08)
-            : isReturned
-                ? Colors.orange.shade50.withOpacity(0.7)
-                : scheme.surfaceContainerLow;
+    final background = widget.isSelected
+        ? AppTheme.doctorColor.withOpacity(0.14 * opacity)
+        : widget.isInRoom
+            ? AppTheme.medicalGreen.withOpacity(0.1 * opacity)
+            : scheme.surfaceContainerLow.withOpacity(opacity);
 
-    final borderColor = isSelected
+    final borderColor = widget.isSelected
         ? AppTheme.doctorColor
-        : isInRoom
-            ? AppTheme.medicalGreen.withOpacity(0.45)
+        : widget.isInRoom
+            ? AppTheme.medicalGreen.withOpacity(0.5)
             : scheme.outlineVariant.withOpacity(0.35);
 
-    return Material(
-      color: background,
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: borderColor, width: isSelected ? 1.5 : 1),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: compact ? 8 : 12,
+    return Opacity(
+      opacity: opacity,
+      child: Material(
+        color: background,
+        elevation: widget.isSelected ? 1 : 0,
+        shadowColor: scheme.primary.withOpacity(0.15),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: borderColor,
+            width: widget.isSelected ? 2 : 1,
           ),
-          child: Row(
-            children: [
-              _QueueNumberBadge(
-                position: entry.position,
-                isCompleted: isCompleted,
-                compact: compact,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      entry.patientName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            fontSize: compact ? 13 : 15,
-                            decoration: isCompleted
-                                ? TextDecoration.lineThrough
-                                : null,
-                            color: isCompleted
-                                ? scheme.onSurfaceVariant
-                                : scheme.onSurface,
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: widget.onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _QueueNumberBadge(
+                  position: entry.position,
+                  isCompleted: isCompleted,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        entry.patientName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 16,
+                              decoration: isCompleted
+                                  ? TextDecoration.lineThrough
+                                  : null,
+                              color: widget.muted
+                                  ? scheme.onSurfaceVariant
+                                  : scheme.onSurface,
+                            ),
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Icon(genderIcon, size: 18, color: scheme.primary),
+                          const SizedBox(width: 6),
+                          Text(
+                            _genderLabel(profile.gender, l10n),
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: scheme.onSurfaceVariant,
+                                ),
                           ),
-                    ),
-                    const SizedBox(height: 2),
-                    Row(
-                      children: [
-                        Container(
-                          width: 7,
-                          height: 7,
-                          decoration: BoxDecoration(
-                            color: statusColor,
-                            shape: BoxShape.circle,
+                          const SizedBox(width: 12),
+                          Icon(Icons.cake_outlined,
+                              size: 16, color: scheme.onSurfaceVariant),
+                          const SizedBox(width: 4),
+                          Text(
+                            l10n.ageNotRecorded,
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  color: scheme.onSurfaceVariant,
+                                ),
                           ),
-                        ),
-                        const SizedBox(width: 6),
-                        Flexible(
-                          child: Text(
-                            entry.status.label(l10n),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                                  color: statusColor,
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          _StatusPill(status: status, l10n: l10n),
+                          const Spacer(),
+                          Icon(Icons.schedule_rounded,
+                              size: 15, color: scheme.onSurfaceVariant),
+                          const SizedBox(width: 4),
+                          Text(
+                            timeFmt.format(entry.bookedAt.toLocal()),
+                            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                  color: scheme.onSurfaceVariant,
                                   fontWeight: FontWeight.w600,
                                 ),
                           ),
+                        ],
+                      ),
+                      if (widget.pendingInvestigationCount > 0) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          l10n.investigationRequestCount(
+                            widget.pendingInvestigationCount,
+                          ),
+                          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                color: AppTheme.medicalBlue,
+                                fontWeight: FontWeight.w700,
+                              ),
                         ),
                       ],
-                    ),
-                    if (pendingInvestigationCount > 0) ...[
-                      const SizedBox(height: 2),
-                      Text(
-                        l10n.investigationRequestCount(pendingInvestigationCount),
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: AppTheme.medicalBlue,
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
                     ],
-                  ],
+                  ),
                 ),
-              ),
-              if (isCompleted)
-                Icon(Icons.check_circle_rounded,
-                    color: AppTheme.medicalGreen.withOpacity(0.85), size: 20)
-              else if (isInRoom)
-                Icon(Icons.meeting_room_outlined,
-                    color: AppTheme.medicalGreen, size: 20),
-            ],
+              ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+
+  IconData _genderIcon(String? gender) {
+    final g = (gender ?? '').trim().toLowerCase();
+    if (g == 'male' || g == 'm' || g == 'ذكر' || g == 'نێر') {
+      return Icons.male_rounded;
+    }
+    if (g == 'female' || g == 'f' || g == 'أنثى' || g == 'مێ') {
+      return Icons.female_rounded;
+    }
+    return Icons.person_outline_rounded;
+  }
+
+  String _genderLabel(String? gender, AppLocalizations l10n) {
+    final g = (gender ?? '').trim();
+    return g.isEmpty ? l10n.notAvailable : g;
+  }
+}
+
+enum _QueueDisplayStatus { waiting, inside, completed }
+
+_QueueDisplayStatus _queueDisplayStatus(QueueEntry entry) {
+  switch (entry.status) {
+    case QueueStatus.completed:
+      return _QueueDisplayStatus.completed;
+    case QueueStatus.inProgress:
+    case QueueStatus.examination:
+    case QueueStatus.sentForTests:
+      return _QueueDisplayStatus.inside;
+    default:
+      return _QueueDisplayStatus.waiting;
+  }
+}
+
+extension _QueueDisplayStatusUi on _QueueDisplayStatus {
+  String label(AppLocalizations l10n) {
+    switch (this) {
+      case _QueueDisplayStatus.waiting:
+        return l10n.queueStatusWaiting;
+      case _QueueDisplayStatus.inside:
+        return l10n.queueStatusInside;
+      case _QueueDisplayStatus.completed:
+        return l10n.queueStatusCompleted;
+    }
+  }
+
+  Color color() {
+    switch (this) {
+      case _QueueDisplayStatus.waiting:
+        return AppTheme.medicalBlue;
+      case _QueueDisplayStatus.inside:
+        return AppTheme.medicalGreen;
+      case _QueueDisplayStatus.completed:
+        return AppTheme.medicalGreenLight;
+    }
+  }
+}
+
+class _StatusPill extends StatelessWidget {
+  const _StatusPill({required this.status, required this.l10n});
+
+  final _QueueDisplayStatus status;
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = status.color();
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withOpacity(0.35)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 7,
+            height: 7,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            status.label(l10n),
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: color,
+                  fontWeight: FontWeight.w700,
+                ),
+          ),
+        ],
       ),
     );
   }
@@ -342,37 +575,53 @@ class _QueueNumberBadge extends StatelessWidget {
   const _QueueNumberBadge({
     required this.position,
     required this.isCompleted,
-    this.compact = false,
   });
 
   final int position;
   final bool isCompleted;
-  final bool compact;
 
   @override
   Widget build(BuildContext context) {
-    final size = compact ? 36.0 : 44.0;
     return Container(
-      width: size,
-      height: size,
+      width: 48,
+      height: 48,
       decoration: BoxDecoration(
         color: isCompleted
             ? AppTheme.medicalGreen.withOpacity(0.15)
             : AppTheme.doctorColor.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
       ),
       alignment: Alignment.center,
       child: isCompleted
-          ? Icon(Icons.check_rounded,
-              color: AppTheme.medicalGreen, size: compact ? 18 : 22)
+          ? const Icon(Icons.check_rounded, color: AppTheme.medicalGreen, size: 24)
           : Text(
               '$position',
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppTheme.doctorColor,
-                fontWeight: FontWeight.w800,
-                fontSize: compact ? 14 : 16,
+                fontWeight: FontWeight.w900,
+                fontSize: 18,
               ),
             ),
     );
+  }
+}
+
+class _QueueProfileCache {
+  final Map<String, PatientProfile> _profiles = {};
+  final Map<String, Future<PatientProfile>> _inFlight = {};
+
+  Future<PatientProfile> load(
+    String patientId,
+    PatientProfileService service,
+  ) {
+    if (_profiles.containsKey(patientId)) {
+      return Future.value(_profiles[patientId]);
+    }
+    return _inFlight.putIfAbsent(patientId, () async {
+      final profile = await service.readProfileForUser(patientId);
+      _profiles[patientId] = profile;
+      _inFlight.remove(patientId);
+      return profile;
+    });
   }
 }

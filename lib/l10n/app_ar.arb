@@ -1443,5 +1443,8 @@
   "completedToday": "مكتمل اليوم",
   "activeQueueSection": "المرضى النشطون",
   "consultationWorkspace": "الاستشارة",
-  "genderLabel": "الجنس"
+  "genderLabel": "الجنس",
+  "queueStatusInside": "داخل",
+  "arrivalTime": "وقت الوصول",
+  "searchQueueHint": "بحث بالاسم أو رقم الدور"
 }

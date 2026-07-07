@@ -7900,6 +7900,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Gender'**
   String get genderLabel;
+
+  /// No description provided for @queueStatusInside.
+  ///
+  /// In en, this message translates to:
+  /// **'Inside'**
+  String get queueStatusInside;
+
+  /// No description provided for @arrivalTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrival'**
+  String get arrivalTime;
+
+  /// No description provided for @searchQueueHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search name or queue #'**
+  String get searchQueueHint;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -4016,4 +4016,13 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get genderLabel => 'ڕەگەز';
+
+  @override
+  String get queueStatusInside => 'لەناو';
+
+  @override
+  String get arrivalTime => 'کاتی گەیشتن';
+
+  @override
+  String get searchQueueHint => 'گەڕان بە ناو یان ژمارەی نۆر';
 }
