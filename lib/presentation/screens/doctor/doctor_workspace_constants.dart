@@ -2,9 +2,9 @@ import '../../../core/constants/app_constants.dart';
 
 /// Layout tokens for the doctor clinical workspace.
 abstract final class DoctorWorkspaceConstants {
-  static const double queuePanelWidth = 520;
-  static const double queueSummaryPanelWidth = 160;
-  static const double summaryPanelWidth = 340;
+  static const double queueListWidth = 300;
+  static const double queueSummaryPanelWidth = 170;
+  static const double summaryPanelWidth = 280;
   static const double panelGap = 12;
   static const double panelRadius = 16;
   static const double sectionSpacing = 16;

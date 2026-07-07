@@ -290,6 +290,7 @@ class DoctorQueueSummaryPanel extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.all(compact ? 12 : 16),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
