@@ -7,7 +7,6 @@ import '../../../l10n/app_localizations.dart';
 import '../../../models/patient_profile.dart';
 import '../../../models/queue_entry.dart';
 import '../../../services/patient_profile_service.dart';
-import '../../../utils/queue_status_utils.dart';
 import '../../providers/app_providers.dart';
 import 'doctor_workspace_constants.dart';
 
@@ -351,7 +350,7 @@ class _QueuePatientCardState extends State<_QueuePatientCard> {
     final scheme = Theme.of(context).colorScheme;
     final entry = widget.entry;
     final isCompleted = entry.status == QueueStatus.completed;
-    final status = entry.arrivalStatus;
+    final status = _queueDisplayStatus(entry);
     final timeFmt = DateFormat.jm();
     final profile = _profile ?? const PatientProfile();
     final genderIcon = _genderIcon(profile.gender);
@@ -441,7 +440,7 @@ class _QueuePatientCardState extends State<_QueuePatientCard> {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          _StatusPill(status: status, l10n: l10n),
+                          _StatusPill(status: status, entry: entry, l10n: l10n),
                           const Spacer(),
                           Icon(Icons.schedule_rounded,
                               size: 15, color: scheme.onSurfaceVariant),
@@ -495,10 +494,61 @@ class _QueuePatientCardState extends State<_QueuePatientCard> {
   }
 }
 
-class _StatusPill extends StatelessWidget {
-  const _StatusPill({required this.status, required this.l10n});
+enum _QueueDisplayStatus { waiting, inside, completed }
 
-  final PatientArrivalStatus status;
+_QueueDisplayStatus _queueDisplayStatus(QueueEntry entry) {
+  switch (entry.status) {
+    case QueueStatus.completed:
+      return _QueueDisplayStatus.completed;
+    case QueueStatus.inProgress:
+    case QueueStatus.examination:
+    case QueueStatus.sentForTests:
+      return _QueueDisplayStatus.inside;
+    default:
+      return _QueueDisplayStatus.waiting;
+  }
+}
+
+extension _QueueDisplayStatusUi on _QueueDisplayStatus {
+  String label(AppLocalizations l10n, {QueueEntry? entry}) {
+    if (this == _QueueDisplayStatus.waiting &&
+        entry != null &&
+        entry.patientReady &&
+        (entry.status == QueueStatus.waiting ||
+            entry.status == QueueStatus.review)) {
+      return l10n.patientReadyForConsultation;
+    }
+    switch (this) {
+      case _QueueDisplayStatus.waiting:
+        return l10n.queueStatusWaiting;
+      case _QueueDisplayStatus.inside:
+        return l10n.queueStatusInside;
+      case _QueueDisplayStatus.completed:
+        return l10n.queueStatusCompleted;
+    }
+  }
+
+  Color color() {
+    switch (this) {
+      case _QueueDisplayStatus.waiting:
+        return AppTheme.medicalBlue;
+      case _QueueDisplayStatus.inside:
+        return AppTheme.medicalGreen;
+      case _QueueDisplayStatus.completed:
+        return AppTheme.medicalGreenLight;
+    }
+  }
+}
+
+class _StatusPill extends StatelessWidget {
+  const _StatusPill({
+    required this.status,
+    required this.entry,
+    required this.l10n,
+  });
+
+  final _QueueDisplayStatus status;
+  final QueueEntry entry;
   final AppLocalizations l10n;
 
   @override
@@ -514,10 +564,14 @@ class _StatusPill extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(status.icon(), size: 14, color: color),
+          Container(
+            width: 7,
+            height: 7,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          ),
           const SizedBox(width: 6),
           Text(
-            status.label(l10n),
+            status.label(l10n, entry: entry),
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
                   color: color,
                   fontWeight: FontWeight.w700,

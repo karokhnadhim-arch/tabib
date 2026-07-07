@@ -155,12 +155,12 @@ class _WritePrescriptionScreenState extends State<WritePrescriptionScreen> {
   }
 
   Future<void> _printPrescription() async {
-    final auth = context.read<AuthService>();
-    final user = auth.currentUser;
-    await printPrescriptionDocument(
+    showPrescriptionPrintSheet(
       context: context,
       patientName: widget.patientName ?? AppLocalizations.of(context).patientName,
-      doctorName: user?.name.localized(context) ?? '',
+      doctorName: context.read<AuthService>().currentUser?.name
+              .localized(context) ??
+          '',
       diagnosis: _diagnosisController.text.trim(),
       items: _items,
       notes: _notesController.text.trim().isEmpty
