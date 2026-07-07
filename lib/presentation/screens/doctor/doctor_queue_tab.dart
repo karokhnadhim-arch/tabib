@@ -220,8 +220,8 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         SizedBox(
-                          width: DoctorWorkspaceConstants.queuePanelWidth,
-                          child: queuePanel,
+                          width: DoctorWorkspaceConstants.summaryPanelWidth,
+                          child: summaryPanel,
                         ),
                         const SizedBox(width: DoctorWorkspaceConstants.panelGap),
                         Expanded(
@@ -229,8 +229,8 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
                         ),
                         const SizedBox(width: DoctorWorkspaceConstants.panelGap),
                         SizedBox(
-                          width: DoctorWorkspaceConstants.summaryPanelWidth,
-                          child: summaryPanel,
+                          width: DoctorWorkspaceConstants.queuePanelWidth,
+                          child: queuePanel,
                         ),
                       ],
                     )
@@ -239,16 +239,16 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Expanded(
-                              flex: DoctorWorkspaceConstants.queuePanelFlex,
-                              child: queuePanel,
+                              flex:
+                                  DoctorWorkspaceConstants.consultationPanelFlex,
+                              child: _ConsultationScrollShell(child: workspace),
                             ),
                             const SizedBox(
                               width: DoctorWorkspaceConstants.panelGap,
                             ),
                             Expanded(
-                              flex:
-                                  DoctorWorkspaceConstants.consultationPanelFlex,
-                              child: _ConsultationScrollShell(child: workspace),
+                              flex: DoctorWorkspaceConstants.queuePanelFlex,
+                              child: queuePanel,
                             ),
                           ],
                         )

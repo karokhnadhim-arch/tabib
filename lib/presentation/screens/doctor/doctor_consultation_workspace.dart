@@ -589,8 +589,7 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
         DoctorPrescriptionActionBar(
           saving: _saving,
           saveEnabled: !isCompleted && _canSave(controllers, notes),
-          canPrint: (_savedForPrint || notes.prescriptionSynced) &&
-              notes.prescriptionItems.isNotEmpty,
+          canPrint: !isCompleted && notes.prescriptionItems.isNotEmpty,
           onSave: isCompleted ? null : _saveNow,
           onPrint: () => _printPrescription(
             controllers: controllers,
