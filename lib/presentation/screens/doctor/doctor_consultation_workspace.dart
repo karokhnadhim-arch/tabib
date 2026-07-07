@@ -32,6 +32,7 @@ class DoctorConsultationWorkspace extends StatefulWidget {
     required this.doctorId,
     required this.doctorName,
     required this.session,
+    this.hidePatientSummary = false,
     this.hideMedicalHistory = false,
     this.expandedSections = false,
   });
@@ -40,6 +41,8 @@ class DoctorConsultationWorkspace extends StatefulWidget {
   final String doctorId;
   final String doctorName;
   final DoctorConsultationSession session;
+  /// Hides duplicate patient card when the right summary panel is visible.
+  final bool hidePatientSummary;
   /// When true, medical history is shown in the right panel instead.
   final bool hideMedicalHistory;
   /// Desktop scroll layout — all sections visible without accordion taps.
@@ -282,54 +285,39 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
     final clinicAddress = clinic?.address.localized(context);
     final clinicPhone = doctor?.effectiveContactPhone ?? clinic?.phone;
     final doctorSpecialty = doctor?.specialty.name.localized(context);
+    final scheme = Theme.of(context).colorScheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (widget.expandedSections)
-          Padding(
-            padding: const EdgeInsets.only(bottom: DoctorConsultationTokens.sectionGap),
-            child: Row(
-              children: [
-                Text(
-                  l10n.patientInformation,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                      ),
+        if (!widget.hidePatientSummary) ...[
+          Text(
+            l10n.patientInformation,
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: scheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w600,
                 ),
-                const Spacer(),
-                FilledButton.icon(
-                  onPressed: isCompleted || _saving ? null : _saveNow,
-                  icon: _saving
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.save_outlined, size: 20),
-                  label: Text(l10n.save),
-                ),
-              ],
-            ),
           ),
-        DoctorPatientSummaryCard(
-          patientName: widget.entry.patientName,
-          position: widget.entry.position,
-          statusLabel: widget.entry.status.label(l10n),
-          statusColor: widget.entry.status.color(),
-          autoSaved: notes.updatedAt != null,
-          autoSavedLabel: l10n.notesAutoSaved,
-          contactBar: StaffPatientContactBar(
-            phone: widget.entry.patientPhone,
+          const SizedBox(height: 8),
+          DoctorPatientSummaryCard(
             patientName: widget.entry.patientName,
-            doctorId: widget.doctorId,
-            doctorName: widget.doctorName,
-            patientId: widget.entry.patientId,
-            compact: true,
+            position: widget.entry.position,
+            statusLabel: widget.entry.status.label(l10n),
+            statusColor: widget.entry.status.color(),
+            autoSaved: notes.updatedAt != null,
+            autoSavedLabel: l10n.notesAutoSaved,
+            contactBar: StaffPatientContactBar(
+              phone: widget.entry.patientPhone,
+              patientName: widget.entry.patientName,
+              doctorId: widget.doctorId,
+              doctorName: widget.doctorName,
+              patientId: widget.entry.patientId,
+              compact: true,
+            ),
+            completedBanner: _statusBanner(context, l10n, isCompleted),
           ),
-          completedBanner: _statusBanner(context, l10n, isCompleted),
-        ),
-        const SizedBox(height: DoctorConsultationTokens.sectionGap),
+          const SizedBox(height: DoctorConsultationTokens.sectionGap),
+        ],
         if (!widget.hideMedicalHistory)
           _buildSection(
             context: context,
@@ -472,14 +460,30 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
             maxLines: 8,
           ),
         ),
-        if (widget.expandedSections) ...[
-          const SizedBox(height: DoctorConsultationTokens.sectionGap),
+        const SizedBox(height: DoctorConsultationTokens.sectionGap),
+        Align(
+          alignment: Alignment.centerRight,
+          child: FilledButton.icon(
+            onPressed: isCompleted || _saving ? null : _saveNow,
+            icon: _saving
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.save_outlined, size: 20),
+            label: Text(l10n.saveChanges),
+          ),
+        ),
+        if (notes.updatedAt != null) ...[
+          const SizedBox(height: 8),
           Align(
             alignment: Alignment.centerRight,
-            child: FilledButton.icon(
-              onPressed: isCompleted || _saving ? null : _saveNow,
-              icon: const Icon(Icons.save_outlined),
-              label: Text(l10n.saveChanges),
+            child: Text(
+              l10n.notesAutoSaved,
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: scheme.primary,
+                  ),
             ),
           ),
         ],

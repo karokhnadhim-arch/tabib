@@ -12,8 +12,8 @@ import '../../../services/firebase_bootstrap.dart';
 import '../../../services/queue_service.dart';
 import '../../../utils/localization_utils.dart';
 import '../../providers/app_providers.dart';
+import '../../widgets/doctor_patient_summary_panel.dart';
 import 'doctor_consultation_session.dart';
-import 'doctor_consultation_widgets.dart';
 import 'doctor_consultation_workspace.dart';
 import 'doctor_queue_panel.dart';
 import 'doctor_today_queue.dart';
@@ -173,9 +173,9 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final desktop = DoctorWorkspaceConstants.isDesktopConsultation(
-          constraints.maxWidth,
-        );
+        final width = constraints.maxWidth;
+        final threePane = DoctorWorkspaceConstants.isThreePane(width);
+        final wide = DoctorWorkspaceConstants.isWideTwoPane(width);
 
         final queuePanel = DoctorQueuePanel(
           entries: _todayQueue,
@@ -185,7 +185,7 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
           onSelect: _selectPatient,
         );
 
-        final consultationPanel = selected == null
+        final workspace = selected == null
             ? _SelectPatientPlaceholder(message: l10n.selectPatientFromQueue)
             : DoctorConsultationWorkspace(
                 key: ValueKey(selected.id),
@@ -193,7 +193,22 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
                 doctorId: widget.doctorId,
                 doctorName: doctorName,
                 session: _session,
-                expandedSections: desktop,
+                hidePatientSummary: threePane,
+                hideMedicalHistory: threePane,
+                expandedSections: true,
+              );
+
+        final summaryPanel = selected == null
+            ? const SizedBox.shrink()
+            : DoctorPatientSummaryPanel(
+                entry: selected,
+                doctorId: widget.doctorId,
+                doctorName: doctorName,
+                notesStore: _notesStore,
+                storageKey: DoctorVisitNotesStore.storageKey(
+                  doctorId: widget.doctorId,
+                  queueEntryId: selected.id,
+                ),
               );
 
         return Column(
@@ -201,46 +216,70 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
           children: [
             if (!isClinicalDesktop(context))
               _QueueHintBanner(message: l10n.doctorQueueViewOnlyHint),
-            if (!isClinicalDesktop(context)) const SizedBox(height: 8),
+            if (!isClinicalDesktop(context)) const SizedBox(height: 12),
+            if (!isClinicalDesktop(context))
+              Text(
+                l10n.todaysQueue,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+            if (!isClinicalDesktop(context)) const SizedBox(height: 10),
             Expanded(
-              child: desktop
+              child: threePane
                   ? Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Expanded(
-                          flex: DoctorWorkspaceConstants.queuePanelFlex,
+                        SizedBox(
+                          width: DoctorWorkspaceConstants.queuePanelWidth,
                           child: queuePanel,
                         ),
-                        const SizedBox(
-                          width: DoctorWorkspaceConstants.panelGap,
-                        ),
+                        const SizedBox(width: DoctorWorkspaceConstants.panelGap),
                         Expanded(
-                          flex: DoctorWorkspaceConstants.consultationPanelFlex,
-                          child: _ConsultationPanelShell(
-                            title: l10n.consultationWorkspace,
-                            child: consultationPanel,
-                          ),
+                          child: _ConsultationScrollShell(child: workspace),
+                        ),
+                        const SizedBox(width: DoctorWorkspaceConstants.panelGap),
+                        SizedBox(
+                          width: DoctorWorkspaceConstants.summaryPanelWidth,
+                          child: summaryPanel,
                         ),
                       ],
                     )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        if (selected != null)
-                          Flexible(
-                            flex: 5,
-                            child: _ConsultationPanelShell(
-                              title: l10n.consultationWorkspace,
-                              child: consultationPanel,
+                  : wide
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              flex: DoctorWorkspaceConstants.queuePanelFlex,
+                              child: queuePanel,
                             ),
-                          ),
-                        if (selected != null) const SizedBox(height: 8),
-                        Expanded(
-                          flex: selected == null ? 1 : 4,
-                          child: queuePanel,
+                            const SizedBox(
+                              width: DoctorWorkspaceConstants.panelGap,
+                            ),
+                            Expanded(
+                              flex:
+                                  DoctorWorkspaceConstants.consultationPanelFlex,
+                              child: _ConsultationScrollShell(child: workspace),
+                            ),
+                          ],
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            if (selected != null)
+                              Flexible(
+                                flex: 5,
+                                child: _ConsultationScrollShell(
+                                  child: workspace,
+                                ),
+                              ),
+                            const SizedBox(height: 10),
+                            Expanded(
+                              flex: selected == null ? 1 : 4,
+                              child: queuePanel,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
             ),
           ],
         );
@@ -249,22 +288,30 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
   }
 }
 
-/// Right-hand consultation column — fills available height on desktop.
-class _ConsultationPanelShell extends StatelessWidget {
-  const _ConsultationPanelShell({
-    required this.title,
-    required this.child,
-  });
+/// Scrollable consultation column — keeps all sections reachable.
+class _ConsultationScrollShell extends StatelessWidget {
+  const _ConsultationScrollShell({required this.child});
 
-  final String title;
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    return DoctorWorkspacePanel(
-      title: title,
-      icon: Icons.medical_services_outlined,
-      child: child,
+    return Material(
+      color: Theme.of(context).colorScheme.surfaceContainerLowest,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius:
+            BorderRadius.circular(DoctorWorkspaceConstants.panelRadius),
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.45),
+        ),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
+        padding: const EdgeInsets.all(16),
+        child: child,
+      ),
     );
   }
 }
@@ -308,21 +355,24 @@ class _SelectPatientPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.touch_app_outlined, size: 48, color: scheme.primary),
-            const SizedBox(height: 16),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ],
-        ),
+    return Container(
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: scheme.outlineVariant.withOpacity(0.45)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.touch_app_outlined, size: 36, color: scheme.primary),
+          const SizedBox(height: 12),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ],
       ),
     );
   }
