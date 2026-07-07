@@ -37,7 +37,7 @@ class DoctorDashboardScreen extends StatefulWidget {
 }
 
 class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
-  int _tab = 0;
+  int _tab = 2;
   bool _recordsOnlyMode = false;
   final _searchFocusNode = FocusNode();
 
@@ -45,9 +45,6 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (isClinicalDesktop(context)) {
-        setState(() => _tab = 2);
-      }
       final auth = context.read<AuthService>();
       final data = context.read<ClinicDataService>();
       data.ensureCatalogLoaded();

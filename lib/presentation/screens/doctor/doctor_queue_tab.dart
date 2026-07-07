@@ -158,19 +158,6 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (_todayQueue.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Text(
-            l10n.noPatientsInQueue,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-        ),
-      );
-    }
-
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth;

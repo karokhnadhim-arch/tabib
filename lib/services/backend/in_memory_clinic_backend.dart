@@ -1170,7 +1170,77 @@ class InMemoryClinicBackend implements ClinicBackend {
       ),
     ]);
 
+    _seedDemoDoctorQueues();
+
     _notify();
+  }
+
+  void _seedDemoDoctorQueues() {
+    _queues.removeWhere((q) => q.id.startsWith('demo_q_'));
+    final today = QueueEntry.dateKey(DateTime.now());
+    final now = DateTime.now();
+    const doctorId = 'doc_1';
+    const slotStart = '09:00';
+    const slotEnd = '17:00';
+
+    _queues.addAll([
+      QueueEntry(
+        id: 'demo_q_1',
+        patientId: 'demo_patient_seed',
+        patientName: 'نەخۆشی نموونە',
+        patientPhone: '07501111111',
+        doctorId: doctorId,
+        position: 1,
+        status: QueueStatus.inProgress,
+        bookedAt: now.subtract(const Duration(minutes: 28)),
+        estimatedWaitMinutes: 0,
+        queueDate: today,
+        slotStart: slotStart,
+        slotEnd: slotEnd,
+      ),
+      QueueEntry(
+        id: 'demo_q_2',
+        patientId: 'demo_patient_2',
+        patientName: 'سارا ئەحمەد',
+        patientPhone: '07502222222',
+        doctorId: doctorId,
+        position: 2,
+        status: QueueStatus.waiting,
+        bookedAt: now.subtract(const Duration(minutes: 18)),
+        estimatedWaitMinutes: 15,
+        queueDate: today,
+        slotStart: slotStart,
+        slotEnd: slotEnd,
+      ),
+      QueueEntry(
+        id: 'demo_q_3',
+        patientId: 'demo_patient_3',
+        patientName: 'کەریم ڕەشید',
+        patientPhone: '07503333333',
+        doctorId: doctorId,
+        position: 3,
+        status: QueueStatus.waiting,
+        bookedAt: now.subtract(const Duration(minutes: 12)),
+        estimatedWaitMinutes: 30,
+        queueDate: today,
+        slotStart: slotStart,
+        slotEnd: slotEnd,
+      ),
+      QueueEntry(
+        id: 'demo_q_4',
+        patientId: 'demo_patient_4',
+        patientName: 'فاتمە عەلی',
+        patientPhone: '07504444444',
+        doctorId: doctorId,
+        position: 4,
+        status: QueueStatus.completed,
+        bookedAt: now.subtract(const Duration(hours: 2)),
+        estimatedWaitMinutes: null,
+        queueDate: today,
+        slotStart: slotStart,
+        slotEnd: slotEnd,
+      ),
+    ]);
   }
 
   @override
