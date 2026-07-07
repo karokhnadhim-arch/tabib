@@ -12,7 +12,6 @@ import '../../../services/firebase_bootstrap.dart';
 import '../../../services/queue_service.dart';
 import '../../../utils/localization_utils.dart';
 import '../../providers/app_providers.dart';
-import '../../widgets/doctor_patient_summary_panel.dart';
 import 'doctor_consultation_session.dart';
 import 'doctor_consultation_widgets.dart';
 import 'doctor_consultation_workspace.dart';
@@ -21,7 +20,7 @@ import 'doctor_today_queue.dart';
 import 'doctor_visit_notes_store.dart';
 import 'doctor_workspace_constants.dart';
 
-/// Read-only today's queue with consultation workspace for the doctor.
+/// Read-only today's queue with in-place consultation workspace (no navigation).
 class DoctorQueueTab extends StatefulWidget {
   const DoctorQueueTab({super.key, required this.doctorId});
 
@@ -174,10 +173,9 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final width = constraints.maxWidth;
-        final threePane = DoctorWorkspaceConstants.isThreePane(width);
-        final wide = width >= 880;
-        final desktopExpanded = threePane || wide;
+        final desktop = DoctorWorkspaceConstants.isDesktopConsultation(
+          constraints.maxWidth,
+        );
 
         final queuePanel = DoctorQueuePanel(
           entries: _todayQueue,
@@ -187,7 +185,7 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
           onSelect: _selectPatient,
         );
 
-        final workspace = selected == null
+        final consultationPanel = selected == null
             ? _SelectPatientPlaceholder(message: l10n.selectPatientFromQueue)
             : DoctorConsultationWorkspace(
                 key: ValueKey(selected.id),
@@ -195,15 +193,7 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
                 doctorId: widget.doctorId,
                 doctorName: doctorName,
                 session: _session,
-                hideMedicalHistory: threePane,
-                expandedSections: desktopExpanded,
-              );
-
-        final summaryPanel = selected == null
-            ? const SizedBox.shrink()
-            : DoctorPatientSummaryPanel(
-                entry: selected,
-                doctorId: widget.doctorId,
+                expandedSections: desktop,
               );
 
         return Column(
@@ -211,73 +201,70 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
           children: [
             if (!isClinicalDesktop(context))
               _QueueHintBanner(message: l10n.doctorQueueViewOnlyHint),
-            if (!isClinicalDesktop(context)) const SizedBox(height: 12),
+            if (!isClinicalDesktop(context)) const SizedBox(height: 8),
             Expanded(
-              child: threePane
+              child: desktop
                   ? Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        SizedBox(
-                          width: DoctorWorkspaceConstants.queuePanelWidth,
+                        Expanded(
+                          flex: DoctorWorkspaceConstants.queuePanelFlex,
                           child: queuePanel,
                         ),
-                        const SizedBox(width: DoctorWorkspaceConstants.panelGap),
-                        Expanded(
-                          child: DoctorWorkspacePanel(
-                            title: l10n.consultationWorkspace,
-                            icon: Icons.medical_services_outlined,
-                            child: workspace,
-                          ),
+                        const SizedBox(
+                          width: DoctorWorkspaceConstants.panelGap,
                         ),
-                        const SizedBox(width: DoctorWorkspaceConstants.panelGap),
-                        SizedBox(
-                          width: DoctorWorkspaceConstants.summaryPanelWidth,
-                          child: summaryPanel,
+                        Expanded(
+                          flex: DoctorWorkspaceConstants.consultationPanelFlex,
+                          child: _ConsultationPanelShell(
+                            title: l10n.consultationWorkspace,
+                            child: consultationPanel,
+                          ),
                         ),
                       ],
                     )
-                  : wide
-                      ? Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(
-                              flex: 4,
-                              child: queuePanel,
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (selected != null)
+                          Flexible(
+                            flex: 5,
+                            child: _ConsultationPanelShell(
+                              title: l10n.consultationWorkspace,
+                              child: consultationPanel,
                             ),
-                            const SizedBox(width: DoctorWorkspaceConstants.panelGap),
-                            Expanded(
-                              flex: 6,
-                              child: DoctorWorkspacePanel(
-                                title: l10n.consultationWorkspace,
-                                icon: Icons.medical_services_outlined,
-                                child: workspace,
-                              ),
-                            ),
-                          ],
-                        )
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            if (selected != null)
-                              Flexible(
-                                flex: 5,
-                                child: DoctorWorkspacePanel(
-                                  title: l10n.consultationWorkspace,
-                                  icon: Icons.medical_services_outlined,
-                                  child: workspace,
-                                ),
-                              ),
-                            const SizedBox(height: 10),
-                            Expanded(
-                              flex: selected == null ? 1 : 4,
-                              child: queuePanel,
-                            ),
-                          ],
+                          ),
+                        if (selected != null) const SizedBox(height: 8),
+                        Expanded(
+                          flex: selected == null ? 1 : 4,
+                          child: queuePanel,
                         ),
+                      ],
+                    ),
             ),
           ],
         );
       },
+    );
+  }
+}
+
+/// Right-hand consultation column — fills available height on desktop.
+class _ConsultationPanelShell extends StatelessWidget {
+  const _ConsultationPanelShell({
+    required this.title,
+    required this.child,
+  });
+
+  final String title;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return DoctorWorkspacePanel(
+      title: title,
+      icon: Icons.medical_services_outlined,
+      child: child,
     );
   }
 }
@@ -321,24 +308,21 @@ class _SelectPatientPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.all(32),
-      decoration: BoxDecoration(
-        color: scheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: scheme.outlineVariant.withOpacity(0.45)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.touch_app_outlined, size: 40, color: scheme.primary),
-          const SizedBox(height: 14),
-          Text(
-            message,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-        ],
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.touch_app_outlined, size: 48, color: scheme.primary),
+            const SizedBox(height: 16),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -56,6 +56,7 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
   Timer? _investigationSyncTimer;
   bool _syncingPrescription = false;
   bool _syncingInvestigation = false;
+  bool _saving = false;
   String? _watchedPatientId;
 
   String get _storageKey => DoctorVisitNotesStore.storageKey(
@@ -200,6 +201,22 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
     setState(() => _focused = section);
   }
 
+  Future<void> _saveNow() async {
+    if (_saving || widget.entry.status == QueueStatus.completed) return;
+    setState(() => _saving = true);
+    widget.session.onFieldChanged(_storageKey);
+    await widget.session.notesStore.flushPersist(_storageKey);
+    _prescriptionSyncTimer?.cancel();
+    _investigationSyncTimer?.cancel();
+    await _maybeSyncPrescription();
+    await _maybeSyncInvestigations();
+    if (!mounted) return;
+    setState(() => _saving = false);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(AppLocalizations.of(context).savedSuccessfully)),
+    );
+  }
+
   String? _prescriptionSubtitle(DoctorVisitNotes notes, AppLocalizations l10n) {
     if (notes.prescriptionItems.isNotEmpty) {
       return l10n.prescriptionMedicineCount(notes.prescriptionItems.length);
@@ -269,6 +286,32 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        if (widget.expandedSections)
+          Padding(
+            padding: const EdgeInsets.only(bottom: DoctorConsultationTokens.sectionGap),
+            child: Row(
+              children: [
+                Text(
+                  l10n.patientInformation,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
+                const Spacer(),
+                FilledButton.icon(
+                  onPressed: isCompleted || _saving ? null : _saveNow,
+                  icon: _saving
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.save_outlined, size: 20),
+                  label: Text(l10n.save),
+                ),
+              ],
+            ),
+          ),
         DoctorPatientSummaryCard(
           patientName: widget.entry.patientName,
           position: widget.entry.position,
@@ -429,6 +472,17 @@ class _DoctorConsultationWorkspaceState extends State<DoctorConsultationWorkspac
             maxLines: 8,
           ),
         ),
+        if (widget.expandedSections) ...[
+          const SizedBox(height: DoctorConsultationTokens.sectionGap),
+          Align(
+            alignment: Alignment.centerRight,
+            child: FilledButton.icon(
+              onPressed: isCompleted || _saving ? null : _saveNow,
+              icon: const Icon(Icons.save_outlined),
+              label: Text(l10n.saveChanges),
+            ),
+          ),
+        ],
       ],
     );
   }

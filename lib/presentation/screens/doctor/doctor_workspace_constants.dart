@@ -9,6 +9,12 @@ abstract final class DoctorWorkspaceConstants {
   static const double sectionSpacing = 16;
   static const double queueTileHeight = 72;
 
+  /// Desktop consultation split: queue 40% · workspace 60%.
+  static const int queuePanelFlex = 2;
+  static const int consultationPanelFlex = 3;
+
+  static bool isDesktopConsultation(double width) => width >= 880;
+
   static bool isThreePane(double width) =>
       width >= AppConstants.threePaneBreakpoint;
 
