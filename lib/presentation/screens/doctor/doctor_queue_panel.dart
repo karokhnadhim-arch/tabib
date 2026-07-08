@@ -7,6 +7,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../models/patient_profile.dart';
 import '../../../models/queue_entry.dart';
 import '../../../services/patient_profile_service.dart';
+import '../../../utils/queue_status_utils.dart';
 import '../../providers/app_providers.dart';
 import 'doctor_workspace_constants.dart';
 
@@ -20,6 +21,8 @@ class DoctorQueuePanel extends StatefulWidget {
     required this.investigationProvider,
     required this.onSelect,
     this.showSummary = true,
+    this.selectedEntry,
+    this.mergeSelectedPatient = false,
   });
 
   final List<QueueEntry> entries;
@@ -28,6 +31,8 @@ class DoctorQueuePanel extends StatefulWidget {
   final InvestigationRequestProvider investigationProvider;
   final ValueChanged<String> onSelect;
   final bool showSummary;
+  final QueueEntry? selectedEntry;
+  final bool mergeSelectedPatient;
 
   @override
   State<DoctorQueuePanel> createState() => _DoctorQueuePanelState();
@@ -98,6 +103,8 @@ class _DoctorQueuePanelState extends State<DoctorQueuePanel> {
     final active = _activeOrdered;
     final completed = _completedOrdered;
     final itemCount = active.length + (completed.isEmpty ? 0 : completed.length + 1);
+    final compactHeader = !widget.showSummary;
+    final mergedPatient = widget.mergeSelectedPatient && widget.selectedEntry != null;
 
     return Material(
       color: scheme.surfaceContainerLowest,
@@ -108,150 +115,248 @@ class _DoctorQueuePanelState extends State<DoctorQueuePanel> {
         side: BorderSide(color: scheme.outlineVariant.withOpacity(0.45)),
       ),
       clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.groups_outlined, color: scheme.primary, size: 24),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        l10n.todaysQueue,
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: -0.3,
-                            ),
-                      ),
+      child: CustomScrollView(
+        physics: const ClampingScrollPhysics(),
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(
+                16,
+                mergedPatient ? 12 : (compactHeader ? 10 : 16),
+                16,
+                10,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (mergedPatient) ...[
+                    _MergedSelectedPatientRow(
+                      entry: widget.selectedEntry!,
+                      l10n: l10n,
                     ),
-                  ],
-                ),
-                if (widget.showSummary) ...[
-                  const SizedBox(height: 10),
-                  DoctorQueueSummaryPanel(
-                    totalCount: widget.entries.length,
-                    waitingCount: _waitingCount,
-                    readyCount: _readyCount,
-                    examiningCount: _examiningCount,
-                    compact: true,
-                  ),
-                ],
-                const SizedBox(height: 12),
-                SearchBar(
-                  controller: _searchController,
-                  hintText: l10n.searchQueueHint,
-                  leading: const Icon(Icons.search_rounded, size: 22),
-                  onChanged: (value) => setState(() => _query = value),
-                  trailing: _query.isEmpty
-                      ? null
-                      : [
-                          IconButton(
-                            icon: const Icon(Icons.close_rounded, size: 20),
-                            onPressed: () {
-                              _searchController.clear();
-                              setState(() => _query = '');
-                            },
+                    const SizedBox(height: 10),
+                    _buildSearchField(scheme),
+                  ] else ...[
+                    if (!compactHeader)
+                      Row(
+                        children: [
+                          Icon(Icons.groups_outlined,
+                              color: scheme.primary, size: 24),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              l10n.todaysQueue,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: -0.3,
+                                  ),
+                            ),
                           ),
                         ],
-                  elevation: WidgetStateProperty.all(0),
-                  backgroundColor:
-                      WidgetStateProperty.all(scheme.surfaceContainerLow),
-                  shape: WidgetStateProperty.all(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      side: BorderSide(
-                        color: scheme.outlineVariant.withOpacity(0.35),
                       ),
-                    ),
-                  ),
-                ),
-              ],
+                    if (widget.showSummary) ...[
+                      if (!compactHeader) const SizedBox(height: 10),
+                      DoctorQueueSummaryPanel(
+                        totalCount: widget.entries.length,
+                        waitingCount: _waitingCount,
+                        readyCount: _readyCount,
+                        examiningCount: _examiningCount,
+                        compact: true,
+                      ),
+                    ],
+                    SizedBox(height: compactHeader ? 8 : 12),
+                    _buildSearchField(scheme),
+                  ],
+                ],
+              ),
             ),
           ),
-          Expanded(
-            child: itemCount == 0
-                ? Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Text(
-                        l10n.noSearchResults,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: scheme.onSurfaceVariant,
-                            ),
-                      ),
-                    ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-                    itemCount: itemCount,
-                    cacheExtent: 480,
-                    itemBuilder: (context, index) {
-                      if (index < active.length) {
-                        final entry = active[index];
-                        return RepaintBoundary(
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: _QueuePatientCard(
-                              entry: entry,
-                              isSelected: entry.id == widget.selectedId,
-                              isInRoom: entry.id == widget.roomPatientId,
-                              pendingInvestigationCount: widget
-                                      .investigationProvider
-                                      .requestForQueueEntry(entry.id)
-                                      ?.pendingItems
-                                      .length ??
-                                  0,
-                              profileCache: _profileCache,
-                              profileService: profileService,
-                              onTap: () => widget.onSelect(entry.id),
-                            ),
-                          ),
-                        );
-                      }
-
-                      final completedIndex = index - active.length;
-                      if (completed.isEmpty) return const SizedBox.shrink();
-
-                      if (completedIndex == 0) {
-                        return Padding(
-                          padding: const EdgeInsets.fromLTRB(4, 4, 4, 10),
-                          child: Text(
-                            l10n.completedToday,
-                            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                                  color: scheme.onSurfaceVariant,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                          ),
-                        );
-                      }
-
-                      final entry = completed[completedIndex - 1];
+          if (itemCount == 0)
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text(
+                    l10n.noSearchResults,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: scheme.onSurfaceVariant,
+                        ),
+                  ),
+                ),
+              ),
+            )
+          else
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    if (index < active.length) {
+                      final entry = active[index];
                       return RepaintBoundary(
                         child: Padding(
                           padding: const EdgeInsets.only(bottom: 10),
                           child: _QueuePatientCard(
                             entry: entry,
                             isSelected: entry.id == widget.selectedId,
-                            isInRoom: false,
-                            pendingInvestigationCount: 0,
+                            isInRoom: entry.id == widget.roomPatientId,
+                            pendingInvestigationCount: widget
+                                    .investigationProvider
+                                    .requestForQueueEntry(entry.id)
+                                    ?.pendingItems
+                                    .length ??
+                                0,
                             profileCache: _profileCache,
                             profileService: profileService,
-                            muted: true,
                             onTap: () => widget.onSelect(entry.id),
                           ),
                         ),
                       );
-                    },
-                  ),
-          ),
+                    }
+
+                    final completedIndex = index - active.length;
+                    if (completed.isEmpty) return const SizedBox.shrink();
+
+                    if (completedIndex == 0) {
+                      return Padding(
+                        padding: const EdgeInsets.fromLTRB(4, 4, 4, 10),
+                        child: Text(
+                          l10n.completedToday,
+                          style:
+                              Theme.of(context).textTheme.labelLarge?.copyWith(
+                                    color: scheme.onSurfaceVariant,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                        ),
+                      );
+                    }
+
+                    final entry = completed[completedIndex - 1];
+                    return RepaintBoundary(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: _QueuePatientCard(
+                          entry: entry,
+                          isSelected: entry.id == widget.selectedId,
+                          isInRoom: false,
+                          pendingInvestigationCount: 0,
+                          profileCache: _profileCache,
+                          profileService: profileService,
+                          muted: true,
+                          onTap: () => widget.onSelect(entry.id),
+                        ),
+                      ),
+                    );
+                  },
+                  childCount: itemCount,
+                ),
+              ),
+            ),
         ],
       ),
+    );
+  }
+
+  Widget _buildSearchField(ColorScheme scheme) {
+    return TextField(
+      controller: _searchController,
+      onChanged: (value) => setState(() => _query = value),
+      style: const TextStyle(fontSize: 14),
+      decoration: InputDecoration(
+        hintText: AppLocalizations.of(context).searchQueueHint,
+        isDense: true,
+        prefixIcon: const Icon(Icons.search_rounded, size: 20),
+        suffixIcon: _query.isEmpty
+            ? null
+            : IconButton(
+                icon: const Icon(Icons.close_rounded, size: 18),
+                onPressed: () {
+                  _searchController.clear();
+                  setState(() => _query = '');
+                },
+              ),
+        filled: true,
+        fillColor: scheme.surfaceContainerLow,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+            color: scheme.outlineVariant.withOpacity(0.35),
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+            color: scheme.outlineVariant.withOpacity(0.35),
+          ),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      ),
+    );
+  }
+}
+
+class _MergedSelectedPatientRow extends StatelessWidget {
+  const _MergedSelectedPatientRow({
+    required this.entry,
+    required this.l10n,
+  });
+
+  final QueueEntry entry;
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final statusColor = entry.status.color();
+
+    return Row(
+      children: [
+        Container(
+          width: 38,
+          height: 38,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: scheme.primaryContainer.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Text(
+            '${entry.position}',
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: scheme.primary,
+                ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                entry.patientName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                entry.status.label(l10n),
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: statusColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -308,13 +413,42 @@ class DoctorQueueSummaryPanel extends StatelessWidget {
     ];
 
     if (horizontal) {
-      return Row(
-        children: [
-          for (var i = 0; i < stats.length; i++) ...[
-            if (i > 0) const SizedBox(width: 8),
-            Expanded(child: stats[i]),
-          ],
-        ],
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          final narrow = constraints.maxWidth < 720;
+          final tiles = [
+            for (final stat in stats) Expanded(child: stat),
+          ];
+          if (!narrow) {
+            return Row(
+              children: [
+                for (var i = 0; i < tiles.length; i++) ...[
+                  if (i > 0) const SizedBox(width: 8),
+                  tiles[i],
+                ],
+              ],
+            );
+          }
+          return Column(
+            children: [
+              Row(
+                children: [
+                  tiles[0],
+                  const SizedBox(width: 8),
+                  tiles[1],
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  tiles[2],
+                  const SizedBox(width: 8),
+                  tiles[3],
+                ],
+              ),
+            ],
+          );
+        },
       );
     }
 
@@ -394,6 +528,8 @@ class _SummaryStatRow extends StatelessWidget {
           Expanded(
             child: Text(
               label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.labelMedium?.copyWith(
                     color: scheme.onSurfaceVariant,
                     fontWeight: FontWeight.w600,

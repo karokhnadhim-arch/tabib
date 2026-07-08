@@ -181,6 +181,7 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
         final threePane = DoctorWorkspaceConstants.isThreePane(width);
         final wide = DoctorWorkspaceConstants.isWideTwoPane(width);
 
+        final mergePatientInQueue = !threePane && !wide;
         final queuePanel = DoctorQueuePanel(
           entries: _todayQueue,
           selectedId: _selectedEntryId,
@@ -188,6 +189,8 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
           investigationProvider: investigationProvider,
           onSelect: _selectPatient,
           showSummary: false,
+          selectedEntry: selected,
+          mergeSelectedPatient: mergePatientInQueue,
         );
 
         final queueStatsBar = DoctorQueueSummaryPanel(
@@ -206,13 +209,13 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
                 doctorId: widget.doctorId,
                 doctorName: doctorName,
                 session: _session,
-                hidePatientSummary: threePane,
+                hidePatientSummary: threePane || !wide,
                 hideMedicalHistory: true,
                 expandedSections: true,
               );
 
         final summaryPanel = selected == null
-            ? const SizedBox.shrink()
+            ? null
             : DoctorPatientSummaryPanel(
                 entry: selected,
                 doctorId: widget.doctorId,
@@ -222,6 +225,7 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
                   doctorId: widget.doctorId,
                   queueEntryId: selected.id,
                 ),
+                embedded: threePane,
               );
 
         return Column(
@@ -247,13 +251,16 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
                     ? Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        SizedBox(
-                          width: DoctorWorkspaceConstants.summaryPanelWidth,
-                          child: summaryPanel,
-                        ),
-                        const SizedBox(width: DoctorWorkspaceConstants.panelGap),
                         Expanded(
-                          child: _ConsultationScrollShell(child: workspace),
+                          child: summaryPanel == null
+                              ? _ConsultationScrollShell(child: workspace)
+                              : _UnifiedConsultationPanel(
+                                  summaryPanel: summaryPanel,
+                                  workspace: _ConsultationScrollShell(
+                                    embedded: true,
+                                    child: workspace,
+                                  ),
+                                ),
                         ),
                         const SizedBox(width: DoctorWorkspaceConstants.panelGap),
                         SizedBox(
@@ -308,27 +315,75 @@ class _DoctorQueueTabState extends State<DoctorQueueTab> {
 
 /// Scrollable consultation column — keeps all sections reachable.
 class _ConsultationScrollShell extends StatelessWidget {
-  const _ConsultationScrollShell({required this.child});
+  const _ConsultationScrollShell({
+    required this.child,
+    this.embedded = false,
+  });
 
   final Widget child;
+  final bool embedded;
 
   @override
   Widget build(BuildContext context) {
+    final scroll = SingleChildScrollView(
+      physics: const ClampingScrollPhysics(),
+      padding: const EdgeInsets.all(16),
+      child: child,
+    );
+
+    if (embedded) return scroll;
+
+    final scheme = Theme.of(context).colorScheme;
     return Material(
-      color: Theme.of(context).colorScheme.surfaceContainerLowest,
+      color: scheme.surfaceContainerLowest,
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius:
             BorderRadius.circular(DoctorWorkspaceConstants.panelRadius),
-        side: BorderSide(
-          color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.45),
-        ),
+        side: BorderSide(color: scheme.outlineVariant.withOpacity(0.45)),
       ),
       clipBehavior: Clip.antiAlias,
-      child: SingleChildScrollView(
-        physics: const ClampingScrollPhysics(),
-        padding: const EdgeInsets.all(16),
-        child: child,
+      child: scroll,
+    );
+  }
+}
+
+/// Patient summary + consultation in one seamless panel (desktop three-pane).
+class _UnifiedConsultationPanel extends StatelessWidget {
+  const _UnifiedConsultationPanel({
+    required this.summaryPanel,
+    required this.workspace,
+  });
+
+  final DoctorPatientSummaryPanel summaryPanel;
+  final Widget workspace;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Material(
+      color: scheme.surfaceContainerLowest,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius:
+            BorderRadius.circular(DoctorWorkspaceConstants.panelRadius),
+        side: BorderSide(color: scheme.outlineVariant.withOpacity(0.45)),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(
+            width: DoctorWorkspaceConstants.summaryPanelWidth,
+            child: summaryPanel,
+          ),
+          VerticalDivider(
+            width: 1,
+            thickness: 1,
+            color: scheme.outlineVariant.withOpacity(0.45),
+          ),
+          Expanded(child: workspace),
+        ],
       ),
     );
   }

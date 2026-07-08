@@ -14,6 +14,10 @@ class ClinicalWorkspaceShell extends StatelessWidget {
     required this.body,
     this.actions = const [],
     this.leading,
+    this.showNavigationRail = true,
+    this.headerTitle,
+    this.scaffoldKey,
+    this.endDrawer,
   });
 
   final String title;
@@ -24,6 +28,56 @@ class ClinicalWorkspaceShell extends StatelessWidget {
   final Widget body;
   final List<Widget> actions;
   final Widget? leading;
+  final bool showNavigationRail;
+  final String? headerTitle;
+  final GlobalKey<ScaffoldState>? scaffoldKey;
+  final Widget? endDrawer;
+
+  String _headerLabel() {
+    if (headerTitle != null && headerTitle!.isNotEmpty) return headerTitle!;
+    if (destinations.isEmpty) return title;
+    final index = selectedIndex.clamp(0, destinations.length - 1);
+    return destinations[index].label;
+  }
+
+  Widget _headerBar(BuildContext context) {
+    return Material(
+      color: accentColor,
+      elevation: 0,
+      child: SafeArea(
+        bottom: false,
+        child: SizedBox(
+          height: 56,
+          child: Row(
+            children: [
+              const SizedBox(width: 20),
+              Expanded(
+                child: Text(
+                  _headerLabel(),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+              ),
+              ...actions,
+              const SizedBox(width: 8),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _mainColumn(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _headerBar(context),
+        Expanded(child: body),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +87,10 @@ class ClinicalWorkspaceShell extends StatelessWidget {
             constraints.maxWidth >= AppConstants.clinicalDesktopBreakpoint;
         if (!wide) {
           return Scaffold(
+            key: scaffoldKey,
+            endDrawer: endDrawer,
             appBar: AppBar(
-              title: Text(title),
+              title: Text(_headerLabel()),
               backgroundColor: accentColor,
               leading: leading,
               actions: actions,
@@ -43,10 +99,22 @@ class ClinicalWorkspaceShell extends StatelessWidget {
           );
         }
 
+        if (!showNavigationRail) {
+          return Scaffold(
+            key: scaffoldKey,
+            endDrawer: endDrawer,
+            backgroundColor:
+                Theme.of(context).colorScheme.surfaceContainerLowest,
+            body: _mainColumn(context),
+          );
+        }
+
         final extended =
             constraints.maxWidth >= AppConstants.threePaneBreakpoint;
 
         return Scaffold(
+          key: scaffoldKey,
+          endDrawer: endDrawer,
           backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
           body: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -77,43 +145,7 @@ class ClinicalWorkspaceShell extends StatelessWidget {
                 ],
               ),
               const VerticalDivider(width: 1),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Material(
-                      color: accentColor,
-                      elevation: 0,
-                      child: SafeArea(
-                        bottom: false,
-                        child: SizedBox(
-                          height: 56,
-                          child: Row(
-                            children: [
-                              const SizedBox(width: 20),
-                              Expanded(
-                                child: Text(
-                                  destinations[selectedIndex].label,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
-                                      ?.copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                ),
-                              ),
-                              ...actions,
-                              const SizedBox(width: 8),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(child: body),
-                  ],
-                ),
-              ),
+              Expanded(child: _mainColumn(context)),
             ],
           ),
         );

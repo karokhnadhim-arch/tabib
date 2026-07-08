@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_theme.dart';
-import '../../../core/utils/responsive.dart';
 import '../../../core/widgets/responsive_scaffold.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/appointment.dart';
@@ -12,14 +11,12 @@ import '../../../models/doctor.dart';
 import '../../../core/utils/clinic_subscription.dart';
 import '../../../models/clinic.dart';
 import '../../../presentation/screens/subscription/subscription_expired_screen.dart';
-import '../../../presentation/widgets/subscription_status_badge.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/clinic_data_service.dart';
 import '../../../services/queue_service.dart';
 import '../../../utils/localization_utils.dart';
 import '../../../utils/provider_labels.dart';
 import '../../../utils/schedule_utils.dart';
-import '../../../widgets/language_picker.dart';
 import '../../widgets/staff_patient_contact_bar.dart';
 import '../../layouts/clinical_workspace_shell.dart';
 import '../../widgets/desktop/clinical_shortcuts.dart';
@@ -37,9 +34,12 @@ class DoctorDashboardScreen extends StatefulWidget {
 }
 
 class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
-  int _tab = 2;
   bool _recordsOnlyMode = false;
-  final _searchFocusNode = FocusNode();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  void _openPatientRecords() {
+    _scaffoldKey.currentState?.openEndDrawer();
+  }
 
   @override
   void initState() {
@@ -69,7 +69,6 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
 
   @override
   void dispose() {
-    _searchFocusNode.dispose();
     final auth = context.read<AuthService>();
     final doctorId = auth.currentUser?.doctorId;
     if (doctorId != null && doctorId.isNotEmpty) {
@@ -83,79 +82,42 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
     final l10n = AppLocalizations.of(context);
     final auth = context.watch<AuthService>();
     final data = context.watch<ClinicDataService>();
-    final appointments = context.watch<AppointmentProvider>();
     final doctorId = auth.currentUser?.doctorId ?? '';
     final doctor = doctorId.isEmpty ? null : data.doctorById(doctorId);
     final clinic = _clinicForUser(data, auth);
-    final subscriptionStatus =
-        clinic != null ? ClinicSubscriptionHelper.statusFor(clinic) : null;
-    final remainingDays =
-        clinic != null ? ClinicSubscriptionHelper.remainingDays(clinic) : 0;
 
     if (clinic != null &&
         ClinicSubscriptionHelper.isExpired(clinic) &&
         !_recordsOnlyMode) {
       return SubscriptionExpiredScreen(
         clinic: clinic,
-        onViewRecords: () => setState(() {
-          _recordsOnlyMode = true;
-          _tab = 3;
-        }),
+        onViewRecords: () => setState(() => _recordsOnlyMode = true),
         onRenewed: () => setState(() => _recordsOnlyMode = false),
       );
     }
 
-    final pending = appointments.appointments
-        .where((a) => a.isPending && a.doctorId == doctorId)
-        .toList();
-    final accepted = appointments.appointments
-        .where((a) => a.isAccepted && a.doctorId == doctorId)
-        .toList();
-    final desktop = isClinicalDesktop(context);
-
-    Widget tabBody;
-    if (_tab == 0) {
-      tabBody = _AppointmentList(
-        appointments: pending,
-        showActions: true,
-        doctorId: doctorId,
-      );
-    } else if (_tab == 1) {
-      tabBody = _AppointmentList(
-        appointments: accepted,
-        showActions: false,
-        doctorId: doctorId,
-      );
-    } else if (_tab == 2) {
-      tabBody = DoctorQueueTab(doctorId: doctorId);
-    } else {
-      tabBody = const PatientRecordsScreen();
-    }
-
-    final destinations = [
-      ClinicalNavDestination(
-        icon: Icons.pending_actions_outlined,
-        selectedIcon: Icons.pending_actions,
-        label: l10n.pendingRequests,
-      ),
-      ClinicalNavDestination(
-        icon: Icons.event_available_outlined,
-        selectedIcon: Icons.event_available,
-        label: l10n.acceptedAppointments,
-      ),
-      ClinicalNavDestination(
-        icon: Icons.people_outline,
-        selectedIcon: Icons.people,
-        label: l10n.todaysQueue,
-      ),
-      ClinicalNavDestination(
-        icon: Icons.folder_shared_outlined,
-        selectedIcon: Icons.folder_shared,
-        label: l10n.patientRecords,
-      ),
-    ];
+    final body = _recordsOnlyMode
+        ? const PatientRecordsScreen()
+        : DoctorQueueTab(doctorId: doctorId);
 
     final appBarActions = [
+      if (!_recordsOnlyMode)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: TextButton.icon(
+            onPressed: _openPatientRecords,
+            icon: const Icon(Icons.folder_shared_rounded, size: 22),
+            label: Text(l10n.patientRecords),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.white.withOpacity(0.18),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          ),
+        ),
       if (auth.canAccessAdminPanel && !auth.isSystemOwner)
         IconButton(
           icon: const Icon(Icons.admin_panel_settings_outlined, color: Colors.white),
@@ -182,304 +144,109 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
       ),
     ];
 
-    if (desktop) {
-      return ClinicalShortcutScope(
-        shortcuts: ClinicalShortcuts.doctorMap(),
-        onAction: (index) {
-          if (index >= 1 && index <= 4) {
-            setState(() => _tab = index - 1);
-          }
-        },
-        child: ClinicalWorkspaceShell(
-          title: ProviderLabels.dashboardTitle(l10n, doctor),
-          accentColor: AppTheme.doctorColor,
-          selectedIndex: _tab,
-          destinations: destinations,
-          onDestinationSelected: (i) => setState(() => _tab = i),
-          actions: appBarActions,
-          body: Padding(
-            padding: const EdgeInsets.all(16),
-            child: SizedBox.expand(child: tabBody),
-          ),
+    return ClinicalShortcutScope(
+      shortcuts: ClinicalShortcuts.doctorMap(),
+      onAction: (index) {
+        if (index == 4) _openPatientRecords();
+      },
+      child: ClinicalWorkspaceShell(
+        scaffoldKey: _scaffoldKey,
+        endDrawer: _recordsOnlyMode
+            ? null
+            : _DoctorPatientRecordsDrawer(l10n: l10n),
+        title: ProviderLabels.dashboardTitle(l10n, doctor),
+        headerTitle: _recordsOnlyMode ? l10n.patientRecords : l10n.todaysQueue,
+        accentColor: AppTheme.doctorColor,
+        showNavigationRail: false,
+        selectedIndex: 0,
+        destinations: const [],
+        onDestinationSelected: (_) {},
+        actions: appBarActions,
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: SizedBox.expand(child: body),
         ),
-      );
-    }
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(ProviderLabels.dashboardTitle(l10n, doctor)),
-        backgroundColor: AppTheme.doctorColor,
-        actions: [
-          if (auth.canAccessAdminPanel && !auth.isSystemOwner)
-            IconButton(
-              icon: const Icon(Icons.admin_panel_settings_outlined),
-              tooltip: l10n.adminControlPanel,
-              onPressed: () => context.push('/owner/console'),
-            ),
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            tooltip: l10n.settings,
-            onPressed: () => context.push('/settings'),
-          ),
-          IconButton(
-            icon: const Icon(Icons.edit),
-            tooltip: ProviderLabels.editProfileTitle(l10n, doctor),
-            onPressed: () => context.push('/doctor/profile'),
-          ),
-          const LanguagePicker(),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await auth.logout();
-              if (!context.mounted) return;
-              context.go('/login');
-            },
-          ),
-        ],
       ),
-      body: ResponsiveBody(
-        child: CustomScrollView(
-          slivers: [
-            if (subscriptionStatus == ClinicSubscriptionStatus.expiringSoon &&
-                clinic != null)
-              SliverToBoxAdapter(
-                child: ResponsiveInfoBanner(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  icon: const Icon(Icons.warning_amber_rounded,
-                      color: Color(0xFFF9A825)),
-                  message: Text(
-                    l10n.subscriptionExpiringBanner(remainingDays),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  backgroundColor: const Color(0xFFFFF8E1),
-                  borderColor: const Color(0xFFF9A825),
-                  trailing: SubscriptionStatusBadge(
-                    status: subscriptionStatus!,
-                    remainingDays: remainingDays,
-                    compact: true,
-                  ),
-                ),
+    );
+  }
+}
+
+class _DoctorPatientRecordsDrawer extends StatelessWidget {
+  const _DoctorPatientRecordsDrawer({required this.l10n});
+
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    return Drawer(
+      width: width >= 480 ? 400 : width * 0.92,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            padding: const EdgeInsets.fromLTRB(20, 20, 8, 20),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppTheme.doctorColor, AppTheme.medicalGreen],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-            if (doctor != null && doctor.needsProfileCompletion)
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: ResponsiveInfoBanner(
-                    icon: const Icon(Icons.info_outline,
-                        color: AppTheme.primaryDark),
-                    message: Text(
-                      l10n.completeProfileBanner,
-                      maxLines: 4,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    backgroundColor: const Color(0xFFE3F2FD),
-                    borderColor: AppTheme.primaryDark.withOpacity(0.4),
-                    trailing: TextButton(
-                      onPressed: () => context.push('/doctor/profile'),
-                      child: Text(l10n.completeProfileAction),
-                    ),
-                  ),
-                ),
-              ),
-            SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+            ),
+            child: SafeArea(
+              bottom: false,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (auth.canAccessAdminPanel && !auth.isSystemOwner) ...[
-                    Card(
-                      color: AppTheme.primaryDark.withOpacity(0.08),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        side: BorderSide(
-                          color: AppTheme.primaryDark.withOpacity(0.35),
-                        ),
-                      ),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(16),
-                        onTap: () => context.push('/owner/console'),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: AppTheme.primaryDark.withOpacity(0.12),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: const Icon(
-                                  Icons.admin_panel_settings_outlined,
-                                  color: AppTheme.primaryDark,
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      l10n.adminControlPanel,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: AppTheme.primaryDark,
-                                          ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(l10n.adminControlPanelHint),
-                                  ],
-                                ),
-                              ),
-                              const Icon(
-                                Icons.chevron_right,
-                                color: AppTheme.primaryDark,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    const SizedBox(height: 12),
-                  ],
-                  Card(
-              color: AppTheme.doctorColor.withOpacity(0.06),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-                side: BorderSide(color: AppTheme.doctorColor.withOpacity(0.35)),
-              ),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(16),
-                onTap: () => context.push('/doctor/profile'),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: AppTheme.doctorColor.withOpacity(0.12),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.manage_accounts_outlined,
-                          color: AppTheme.doctorColor,
-                          size: 28,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              l10n.manageProfile,
-                              style: const TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              l10n.manageProfileHint,
-                              style: TextStyle(
-                                color: Colors.grey.shade700,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Icon(
-                        Icons.chevron_right,
-                        color: AppTheme.doctorColor.withOpacity(0.8),
-                      ),
-                    ],
+                    child: const Icon(
+                      Icons.folder_shared_outlined,
+                      color: Colors.white,
+                      size: 26,
+                    ),
                   ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            if (doctor != null)
-              _DoctorProfilePreview(
-                doctor: doctor,
-                onEdit: () => context.push('/doctor/profile'),
-                onViewPublic: () => context.push('/doctors/${doctor.id}'),
-              )
-            else
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 28,
-                            backgroundColor:
-                                AppTheme.doctorColor.withOpacity(0.1),
-                            child: const Icon(
-                              Icons.medical_services,
-                              color: AppTheme.doctorColor,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  auth.currentUser?.name.localized(context) ??
-                                      '',
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(l10n.roleDoctor),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      FilledButton.icon(
-                        onPressed: () => context.push('/doctor/profile'),
-                        icon: const Icon(Icons.edit_outlined),
-                        label: Text(ProviderLabels.editProfileTitle(l10n, doctor)),
-                        style: FilledButton.styleFrom(
-                          backgroundColor: AppTheme.doctorColor,
-                          minimumSize: const Size.fromHeight(44),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.patientRecords,
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 4),
+                        Text(
+                          l10n.searchPatientsHint,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: Colors.white.withOpacity(0.9),
+                              ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ),
-            const SizedBox(height: 12),
-            ResponsiveSegmentedButton<int>(
-              segments: [
-                ButtonSegment(value: 0, label: Text(l10n.pendingRequests)),
-                ButtonSegment(value: 1, label: Text(l10n.acceptedAppointments)),
-                ButtonSegment(value: 2, label: Text(l10n.todaysQueue)),
-                ButtonSegment(value: 3, label: Text(l10n.patientRecords)),
-              ],
-              selected: {_tab},
-              onSelectionChanged: (v) => setState(() => _tab = v.first),
-            ),
-            const SizedBox(height: 12),
+                  IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const Icon(Icons.close_rounded, color: Colors.white),
+                  ),
                 ],
               ),
             ),
-            SliverFillRemaining(
-              hasScrollBody: true,
-              child: tabBody,
+          ),
+          const Expanded(
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: PatientRecordsScreen(),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

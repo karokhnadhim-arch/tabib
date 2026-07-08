@@ -165,6 +165,7 @@ class DoctorPatientSummaryCard extends StatelessWidget {
     this.autoSaved = false,
     this.autoSavedLabel,
     this.completedBanner,
+    this.embedded = false,
   });
 
   final String patientName;
@@ -175,11 +176,93 @@ class DoctorPatientSummaryCard extends StatelessWidget {
   final bool autoSaved;
   final String? autoSavedLabel;
   final Widget? completedBanner;
+  final bool embedded;
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+
+    final content = Padding(
+      padding: EdgeInsets.all(embedded ? 0 : 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: scheme.primaryContainer.withOpacity(0.55),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  '$position',
+                  style: textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: scheme.primary,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      patientName,
+                      style: textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.2,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: statusColor,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          statusLabel,
+                          style: textTheme.labelLarge?.copyWith(
+                            color: statusColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              if (autoSaved && autoSavedLabel != null)
+                Icon(
+                  Icons.cloud_done_outlined,
+                  size: 20,
+                  color: scheme.primary,
+                  semanticLabel: autoSavedLabel,
+                ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          contactBar,
+          if (completedBanner != null) ...[
+            const SizedBox(height: 12),
+            completedBanner!,
+          ],
+        ],
+      ),
+    );
+
+    if (embedded) return content;
 
     return Card(
       elevation: 0,
@@ -188,84 +271,7 @@ class DoctorPatientSummaryCard extends StatelessWidget {
         borderRadius: DoctorConsultationTokens.cardRadius,
         side: BorderSide(color: scheme.outlineVariant.withOpacity(0.5)),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: scheme.primaryContainer.withOpacity(0.55),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    '$position',
-                    style: textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: scheme.primary,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        patientName,
-                        style: textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -0.2,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Container(
-                            width: 8,
-                            height: 8,
-                            decoration: BoxDecoration(
-                              color: statusColor,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            statusLabel,
-                            style: textTheme.labelLarge?.copyWith(
-                              color: statusColor,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                if (autoSaved && autoSavedLabel != null)
-                  Icon(
-                    Icons.cloud_done_outlined,
-                    size: 20,
-                    color: scheme.primary,
-                    semanticLabel: autoSavedLabel,
-                  ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            contactBar,
-            if (completedBanner != null) ...[
-              const SizedBox(height: 12),
-              completedBanner!,
-            ],
-          ],
-        ),
-      ),
+      child: content,
     );
   }
 }
