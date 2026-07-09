@@ -3815,6 +3815,27 @@ class AppLocalizationsKu extends AppLocalizations {
   String get noMedicinesInDatabase => 'هێشتا دەرمانی تایبەت نییە. + بکە بۆ زیادکردن.';
 
   @override
+  String get addNewMedicine => '+ زیادکردنی دەرمانی نوێ';
+
+  @override
+  String get medicineName => 'ناوی دەرمان';
+
+  @override
+  String get saveAndUse => 'پاشەکەوت و بەکارهێنان';
+
+  @override
+  String get medicineNameAlreadyExists => 'دەرمانێک بەم ناوە پێشتر هەیە';
+
+  @override
+  String get genericNameOptional => 'ناوی گشتی (ئارەزوومەندانە)';
+
+  @override
+  String get strengthOptional => 'توندی (ئارەزوومەندانە)';
+
+  @override
+  String get medicineNotesOptional => 'تێبینی (ئارەزوومەندانە)';
+
+  @override
   String get noInvestigationsInDatabase => 'هێشتا پشکنینی تایبەت نییە. + بکە بۆ زیادکردن.';
 
   @override

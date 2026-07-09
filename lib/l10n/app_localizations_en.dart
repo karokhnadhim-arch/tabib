@@ -3815,6 +3815,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noMedicinesInDatabase => 'No custom medicines yet. Tap + to add.';
 
   @override
+  String get addNewMedicine => '+ Add New Medicine';
+
+  @override
+  String get medicineName => 'Medicine Name';
+
+  @override
+  String get saveAndUse => 'Save & Use';
+
+  @override
+  String get medicineNameAlreadyExists => 'A medicine with this name already exists';
+
+  @override
+  String get genericNameOptional => 'Generic Name (Optional)';
+
+  @override
+  String get strengthOptional => 'Strength (Optional)';
+
+  @override
+  String get medicineNotesOptional => 'Notes (Optional)';
+
+  @override
   String get noInvestigationsInDatabase => 'No custom investigations yet. Tap + to add.';
 
   @override

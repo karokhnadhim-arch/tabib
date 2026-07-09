@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -215,6 +216,57 @@ class _DoctorPrescriptionComposerState extends State<DoctorPrescriptionComposer>
     _refreshSuggestions();
   }
 
+  Future<void> _openAddNewMedicineDialog({required String initialName}) async {
+    if (widget.readOnly) return;
+    final l10n = AppLocalizations.of(context);
+    final catalog = context.read<PlatformMedicineCatalogService>();
+
+    final result = await showDialog<_NewMedicineDraft>(
+      context: context,
+      builder: (ctx) => _AddNewMedicineDialog(
+        initialName: initialName,
+        l10n: l10n,
+        findDuplicate: catalog.findDuplicateByName,
+      ),
+    );
+
+    if (result == null || !mounted) return;
+
+    final medicineName = result.medicineName.trim();
+    final generic = result.genericName.trim().isEmpty
+        ? medicineName
+        : result.genericName.trim();
+    final medicineId = 'med_${const Uuid().v4()}';
+
+    await catalog.upsert(
+      id: medicineId,
+      genericName: generic,
+      brandNames: [medicineName],
+      strength: result.strength.trim(),
+      form: 'Other',
+    );
+
+    if (!mounted) return;
+
+    final created = catalog.byId(medicineId);
+    if (created == null) return;
+
+    setState(() {
+      _pendingMedicine = created;
+      _editingIndex = null;
+      _dosageController.text = _defaultDosage(created);
+      _frequencyController.text = _frequencyOptions.first;
+      _durationController.text = '7 days';
+      _lineNotesController.text = result.notes.trim();
+      _searchController.clear();
+      _suggestions = _searchService(context).search(
+        query: '',
+        doctorId: widget.doctorId,
+      );
+    });
+    _commitLine();
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -265,6 +317,14 @@ class _DoctorPrescriptionComposerState extends State<DoctorPrescriptionComposer>
                 favoriteLabel: l10n.favoriteMedicines,
                 showFavoriteHeader: _searchController.text.trim().isEmpty &&
                     favorites.favoritesFor(widget.doctorId).isNotEmpty,
+              ),
+            ] else if (_searchController.text.trim().isNotEmpty) ...[
+              const SizedBox(height: 8),
+              _AddNewMedicineTile(
+                label: l10n.addNewMedicine,
+                onTap: () => _openAddNewMedicineDialog(
+                  initialName: _searchController.text.trim(),
+                ),
               ),
             ],
           ] else
@@ -323,6 +383,186 @@ class _DoctorPrescriptionComposerState extends State<DoctorPrescriptionComposer>
             ),
           ),
         ],
+      ],
+    );
+  }
+}
+
+class _NewMedicineDraft {
+  const _NewMedicineDraft({
+    required this.medicineName,
+    required this.genericName,
+    required this.strength,
+    required this.notes,
+  });
+
+  final String medicineName;
+  final String genericName;
+  final String strength;
+  final String notes;
+}
+
+class _AddNewMedicineTile extends StatelessWidget {
+  const _AddNewMedicineTile({
+    required this.label,
+    required this.onTap,
+  });
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
+    return Material(
+      elevation: 0,
+      color: scheme.surfaceContainerLow,
+      borderRadius: DoctorConsultationTokens.cardRadius,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: DoctorConsultationTokens.cardRadius,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Icon(Icons.add_rounded, color: scheme.primary),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  label,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: scheme.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AddNewMedicineDialog extends StatefulWidget {
+  const _AddNewMedicineDialog({
+    required this.initialName,
+    required this.l10n,
+    required this.findDuplicate,
+  });
+
+  final String initialName;
+  final AppLocalizations l10n;
+  final Medicine? Function(String name) findDuplicate;
+
+  @override
+  State<_AddNewMedicineDialog> createState() => _AddNewMedicineDialogState();
+}
+
+class _AddNewMedicineDialogState extends State<_AddNewMedicineDialog> {
+  late final TextEditingController _nameController;
+  late final TextEditingController _genericController;
+  late final TextEditingController _strengthController;
+  late final TextEditingController _notesController;
+  String? _nameError;
+  bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.initialName);
+    _genericController = TextEditingController();
+    _strengthController = TextEditingController();
+    _notesController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _genericController.dispose();
+    _strengthController.dispose();
+    _notesController.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    final name = _nameController.text.trim();
+    if (name.isEmpty) {
+      setState(() => _nameError = widget.l10n.fieldRequired);
+      return;
+    }
+    final duplicate = widget.findDuplicate(name);
+    if (duplicate != null) {
+      setState(() => _nameError = widget.l10n.medicineNameAlreadyExists);
+      return;
+    }
+    setState(() {
+      _nameError = null;
+      _saving = true;
+    });
+    Navigator.pop(
+      context,
+      _NewMedicineDraft(
+        medicineName: name,
+        genericName: _genericController.text,
+        strength: _strengthController.text,
+        notes: _notesController.text,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = widget.l10n;
+
+    return AlertDialog(
+      title: Text(l10n.addNewMedicine),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _nameController,
+              autofocus: true,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: InputDecoration(
+                labelText: l10n.medicineName,
+                errorText: _nameError,
+              ),
+              onChanged: (_) {
+                if (_nameError != null) setState(() => _nameError = null);
+              },
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _genericController,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: InputDecoration(labelText: l10n.genericNameOptional),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _strengthController,
+              decoration: InputDecoration(labelText: l10n.strengthOptional),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _notesController,
+              decoration: InputDecoration(labelText: l10n.medicineNotesOptional),
+              maxLines: 2,
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: _saving ? null : () => Navigator.pop(context),
+          child: Text(l10n.cancelLabel),
+        ),
+        FilledButton(
+          onPressed: _saving ? null : _submit,
+          child: Text(l10n.saveAndUse),
+        ),
       ],
     );
   }

@@ -3815,6 +3815,27 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noMedicinesInDatabase => 'لا توجد أدوية مخصصة بعد. اضغط + للإضافة.';
 
   @override
+  String get addNewMedicine => '+ إضافة دواء جديد';
+
+  @override
+  String get medicineName => 'اسم الدواء';
+
+  @override
+  String get saveAndUse => 'حفظ واستخدام';
+
+  @override
+  String get medicineNameAlreadyExists => 'يوجد دواء بهذا الاسم مسبقاً';
+
+  @override
+  String get genericNameOptional => 'الاسم العلمي (اختياري)';
+
+  @override
+  String get strengthOptional => 'التركيز (اختياري)';
+
+  @override
+  String get medicineNotesOptional => 'ملاحظات (اختياري)';
+
+  @override
   String get noInvestigationsInDatabase => 'لا توجد فحوصات مخصصة بعد. اضغط + للإضافة.';
 
   @override

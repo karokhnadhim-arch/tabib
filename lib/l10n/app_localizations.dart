@@ -7499,6 +7499,48 @@ abstract class AppLocalizations {
   /// **'No custom medicines yet. Tap + to add.'**
   String get noMedicinesInDatabase;
 
+  /// No description provided for @addNewMedicine.
+  ///
+  /// In en, this message translates to:
+  /// **'+ Add New Medicine'**
+  String get addNewMedicine;
+
+  /// No description provided for @medicineName.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine Name'**
+  String get medicineName;
+
+  /// No description provided for @saveAndUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Save & Use'**
+  String get saveAndUse;
+
+  /// No description provided for @medicineNameAlreadyExists.
+  ///
+  /// In en, this message translates to:
+  /// **'A medicine with this name already exists'**
+  String get medicineNameAlreadyExists;
+
+  /// No description provided for @genericNameOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Generic Name (Optional)'**
+  String get genericNameOptional;
+
+  /// No description provided for @strengthOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Strength (Optional)'**
+  String get strengthOptional;
+
+  /// No description provided for @medicineNotesOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (Optional)'**
+  String get medicineNotesOptional;
+
   /// No description provided for @noInvestigationsInDatabase.
   ///
   /// In en, this message translates to:

@@ -50,6 +50,17 @@ class PlatformMedicineCatalogService extends ChangeNotifier {
     return MedicineCatalog.instance.byId(id);
   }
 
+  /// Case-insensitive match on generic or brand name across built-in + custom.
+  Medicine? findDuplicateByName(String name) {
+    final n = name.trim().toLowerCase();
+    if (n.isEmpty) return null;
+    for (final m in allForSearch) {
+      if (m.genericName.trim().toLowerCase() == n) return m;
+      if (m.brandNames.any((b) => b.trim().toLowerCase() == n)) return m;
+    }
+    return null;
+  }
+
   void attachAudit(OwnerAuditService audit) => _audit = AuditLogger(audit);
 
   Future<void> load() async {
