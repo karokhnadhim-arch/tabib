@@ -7367,6 +7367,18 @@ abstract class AppLocalizations {
   /// **'Print'**
   String get printDocument;
 
+  /// No description provided for @printQueueList.
+  ///
+  /// In en, this message translates to:
+  /// **'Print queue list'**
+  String get printQueueList;
+
+  /// No description provided for @printQueueListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient queue list'**
+  String get printQueueListTitle;
+
   /// No description provided for @prescriptionMedicineCopy.
   ///
   /// In en, this message translates to:

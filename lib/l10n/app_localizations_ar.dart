@@ -3749,6 +3749,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get printDocument => 'طباعة';
 
   @override
+  String get printQueueList => 'طباعة قائمة الطابور';
+
+  @override
+  String get printQueueListTitle => 'قائمة مرضى الطابور';
+
+  @override
   String get prescriptionMedicineCopy => 'وصفة الأدوية';
 
   @override

@@ -1354,6 +1354,8 @@
   "pending": "چاوەڕوان",
   "patientSummary": "پوختەی نەخۆش",
   "printDocument": "چاپکردن",
+  "printQueueList": "چاپکردنی لیستی ڕیز",
+  "printQueueListTitle": "لیستی نەخۆشانی ڕیز",
   "prescriptionMedicineCopy": "ڕەچەتەی دەرمان",
   "prescriptionBosoleCopy": "بۆسۆڵە",
   "printInvestigationRequest": "چاپکردنی داواکاری پشکنین",

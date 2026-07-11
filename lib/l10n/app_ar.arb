@@ -1354,6 +1354,8 @@
   "pending": "معلق",
   "patientSummary": "ملخص المريض",
   "printDocument": "طباعة",
+  "printQueueList": "طباعة قائمة الطابور",
+  "printQueueListTitle": "قائمة مرضى الطابور",
   "prescriptionMedicineCopy": "وصفة الأدوية",
   "prescriptionBosoleCopy": "بوصلة",
   "printInvestigationRequest": "طباعة طلب الفحص",

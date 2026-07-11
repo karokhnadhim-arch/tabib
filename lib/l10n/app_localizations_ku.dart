@@ -3749,6 +3749,12 @@ class AppLocalizationsKu extends AppLocalizations {
   String get printDocument => 'چاپکردن';
 
   @override
+  String get printQueueList => 'چاپکردنی لیستی ڕیز';
+
+  @override
+  String get printQueueListTitle => 'لیستی نەخۆشانی ڕیز';
+
+  @override
   String get prescriptionMedicineCopy => 'ڕەچەتەی دەرمان';
 
   @override

@@ -16,6 +16,7 @@ import '../../providers/app_providers.dart';
 import '../../widgets/pending_investigations_panel.dart';
 import 'secretary_patient_edit_sheet.dart';
 import 'secretary_queue_actions.dart';
+import 'secretary_queue_print.dart';
 
 /// Material 3 secretary queue workspace — search, one-click actions, live updates.
 class SecretaryQueueManagementTab extends StatefulWidget {
@@ -80,6 +81,11 @@ class _SecretaryQueueManagementTabState extends State<SecretaryQueueManagementTa
     // Move Up / Move Down and Patient Ready must remain available.
     final doctorName = doctor?.name.localized(context) ?? widget.doctorId;
 
+    final clinic = clinicData.clinicById(widget.clinicId);
+    final clinicName = clinic?.name.localized(context) ??
+        doctor?.clinic.name.localized(context);
+    final clinicPhone = clinic?.phone;
+
     final inRoom = queue.where((e) => e.status == QueueStatus.inProgress).toList();
     final waitingCount =
         queue.where((e) => e.status == QueueStatus.waiting || e.status == QueueStatus.review).length;
@@ -100,6 +106,14 @@ class _SecretaryQueueManagementTabState extends State<SecretaryQueueManagementTa
           inRoomCount: inRoom.length,
           totalCount: queue.length,
           l10n: l10n,
+          canPrint: filtered.isNotEmpty,
+          onPrint: () => printSecretaryQueueList(
+            context: context,
+            entries: filtered,
+            doctorName: doctorName,
+            clinicName: clinicName,
+            clinicPhone: clinicPhone,
+          ),
         ),
         const SizedBox(height: 14),
         SearchBar(
@@ -218,6 +232,8 @@ class _QueueStatsBar extends StatelessWidget {
     required this.inRoomCount,
     required this.totalCount,
     required this.l10n,
+    required this.canPrint,
+    required this.onPrint,
   });
 
   final int waitingCount;
@@ -225,6 +241,8 @@ class _QueueStatsBar extends StatelessWidget {
   final int inRoomCount;
   final int totalCount;
   final AppLocalizations l10n;
+  final bool canPrint;
+  final VoidCallback onPrint;
 
   @override
   Widget build(BuildContext context) {
@@ -268,6 +286,15 @@ class _QueueStatsBar extends StatelessWidget {
                   ),
             ),
           ],
+        ),
+        FilledButton.tonalIcon(
+          onPressed: canPrint ? onPrint : null,
+          icon: const Icon(Icons.print_outlined, size: 18),
+          label: Text(l10n.printQueueList),
+          style: FilledButton.styleFrom(
+            visualDensity: VisualDensity.compact,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          ),
         ),
       ],
     );
