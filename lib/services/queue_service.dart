@@ -329,8 +329,45 @@ class QueueService extends ChangeNotifier {
     );
   }
 
+  QueueEntry? _entryInDoctorCaches(String entryId, String doctorId) {
+    for (final e in _secretaryQueuesByDoctor[doctorId] ?? const <QueueEntry>[]) {
+      if (e.id == entryId) return e;
+    }
+    for (final e in _queuesByDoctor[doctorId] ?? const <QueueEntry>[]) {
+      if (e.id == entryId) return e;
+    }
+    return null;
+  }
+
+  /// Toggles ready flag without changing queue order.
+  /// Applies an optimistic local update so the secretary status refreshes
+  /// immediately; rolls back if the backend write fails.
   Future<void> togglePatientReady(String entryId, String doctorId) async {
-    await _backend.togglePatientReady(entryId, doctorId);
+    final local = _entryInDoctorCaches(entryId, doctorId);
+    final previous = local?.patientReady;
+    final next = previous == null ? null : !previous;
+
+    if (local != null && next != null) {
+      local.patientReady = next;
+      notifyListeners();
+    }
+
+    try {
+      await _backend.togglePatientReady(entryId, doctorId);
+    } catch (_) {
+      if (local != null && previous != null) {
+        local.patientReady = previous;
+        notifyListeners();
+      }
+      rethrow;
+    }
+
+    // In-memory backends mutate the shared instance again; re-assert intent.
+    if (local != null && next != null && local.patientReady != next) {
+      local.patientReady = next;
+      notifyListeners();
+    }
+
     _logQueue(
       AuditActionType.queueModified,
       'Patient ready toggled',

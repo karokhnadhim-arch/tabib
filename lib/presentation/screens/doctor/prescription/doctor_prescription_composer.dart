@@ -74,7 +74,12 @@ class _DoctorPrescriptionComposerState extends State<DoctorPrescriptionComposer>
   void didUpdateWidget(covariant DoctorPrescriptionComposer oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.doctorId != widget.doctorId) {
-      _refreshSuggestions();
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await context
+            .read<DoctorMedicineFavoritesService>()
+            .load(widget.doctorId);
+        if (mounted) _refreshSuggestions();
+      });
     }
   }
 
@@ -315,8 +320,9 @@ class _DoctorPrescriptionComposerState extends State<DoctorPrescriptionComposer>
                 onSelect: _selectMedicine,
                 onToggleFavorite: _toggleFavorite,
                 favoriteLabel: l10n.favoriteMedicines,
-                showFavoriteHeader: _searchController.text.trim().isEmpty &&
-                    favorites.favoritesFor(widget.doctorId).isNotEmpty,
+                showFavoriteHeader: _suggestions.any(
+                  (m) => favorites.isFavorite(widget.doctorId, m.id),
+                ),
               ),
             ] else if (_searchController.text.trim().isNotEmpty) ...[
               const SizedBox(height: 8),

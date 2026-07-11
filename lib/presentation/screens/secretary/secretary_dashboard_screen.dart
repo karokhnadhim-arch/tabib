@@ -1,8 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/utils/responsive.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/responsive_scaffold.dart';
 import '../../../l10n/app_localizations.dart';
@@ -16,7 +17,6 @@ import '../../../core/utils/account_code_resolver.dart';
 import '../../../presentation/widgets/account_code_badge.dart';
 import '../../../utils/localization_utils.dart';
 import '../../../utils/provider_labels.dart';
-import '../../layouts/clinical_workspace_shell.dart';
 import '../../widgets/desktop/clinical_shortcuts.dart';
 import '../../providers/app_providers.dart';
 import 'daily_schedule_screen.dart';
@@ -55,6 +55,11 @@ class _SecretaryDashboardScreenState extends State<SecretaryDashboardScreen> {
     final data = context.read<ClinicDataService>();
     data.ensureCatalogLoaded();
     data.startRealtimeCatalog();
+    // Linked doctor may not be in the in-memory list yet — fetch so the
+    // queue tab can resolve the provider instead of showing a blank error.
+    unawaited(data.fetchDoctorById(doctorId).then((_) {
+      if (mounted) setState(() {});
+    }));
 
     _queueService = context.read<QueueService>();
     _queueService!.watchSecretaryQueue(doctorId);
@@ -107,272 +112,236 @@ class _SecretaryDashboardScreenState extends State<SecretaryDashboardScreen> {
       );
     }
 
-    final desktop = isClinicalDesktop(context);
-    final destinations = [
-      ClinicalNavDestination(
-        icon: Icons.queue_play_next_outlined,
-        selectedIcon: Icons.queue_play_next,
-        label: l10n.queueManagement,
-      ),
-      ClinicalNavDestination(
-        icon: Icons.person_add_outlined,
-        selectedIcon: Icons.person_add,
-        label: l10n.registerPatient,
-      ),
-      ClinicalNavDestination(
-        icon: Icons.calendar_month_outlined,
-        selectedIcon: Icons.calendar_month,
-        label: l10n.dailySchedule,
-      ),
-    ];
+    /// Keep the compact secretary layout in fullscreen (same look as a
+    /// narrower window), centered with a professional max content width.
+    const maxContentWidth = 720.0;
 
-    Widget tabContent;
-    if (_tab == 0) {
-      tabContent = linkedDoctorId != null && linkedDoctorId.isNotEmpty
-          ? SecretaryQueueManagementTab(
-              doctorId: linkedDoctorId,
-              clinicId: clinicId,
-              expanded: desktop,
-              searchFocusNode: _searchFocusNode,
-            )
-          : Padding(
-              padding: const EdgeInsets.symmetric(vertical: 32),
-              child: Center(child: Text(l10n.noAssignedDoctor)),
-            );
-    } else if (_tab == 1) {
-      tabContent = linkedDoctorId != null && linkedDoctorId.isNotEmpty
-          ? RegisterPatientScreen(
-              clinicId: clinicId,
-              doctorId: linkedDoctorId,
-            )
-          : Padding(
-              padding: const EdgeInsets.symmetric(vertical: 32),
-              child: Center(child: Text(l10n.noAssignedDoctor)),
-            );
-    } else {
-      tabContent = linkedDoctorId != null && linkedDoctorId.isNotEmpty
-          ? DailyScheduleScreen(
-              clinicId: clinicId,
-              doctorId: linkedDoctorId,
-              embedded: true,
-            )
-          : Padding(
-              padding: const EdgeInsets.symmetric(vertical: 32),
-              child: Center(child: Text(l10n.noAssignedDoctor)),
-            );
-    }
-
-    if (desktop) {
-      return ClinicalShortcutScope(
-        shortcuts: ClinicalShortcuts.secretaryMap(),
-        onAction: (index) {
-          if (index == 0) {
-            setState(() => _tab = 0);
-            _searchFocusNode.requestFocus();
-          } else if (index >= 1 && index <= 3) {
-            setState(() => _tab = index - 1);
-          }
-        },
-        child: ClinicalWorkspaceShell(
-          title: l10n.secretaryDashboard,
-          accentColor: AppTheme.secretaryColor,
-          selectedIndex: _tab,
-          destinations: destinations,
-          onDestinationSelected: (i) => setState(() => _tab = i),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.settings_outlined, color: Colors.white),
-              tooltip: l10n.settings,
-              onPressed: () => context.push('/settings'),
-            ),
-          ],
-          body: Padding(
-            padding: const EdgeInsets.all(16),
-            child: SizedBox.expand(child: tabContent),
-          ),
-        ),
-      );
-    }
-
-    return Scaffold(
-      backgroundColor: AppTheme.medicalWhite,
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child:             MedicalGradientHeader(
-              title: l10n.secretaryDashboard,
-              subtitle: doctor != null
-                  ? doctor.name.localized(context)
-                  : l10n.roleSecretary,
-              height: 140,
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.settings_outlined, color: Colors.white),
-                  tooltip: l10n.settings,
-                  onPressed: () => context.push('/settings'),
-                ),
-              ],
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.all(16),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                if (subscriptionStatus == ClinicSubscriptionStatus.expiringSoon &&
-                    clinic != null)
-                  ResponsiveInfoBanner(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    icon: const Icon(Icons.warning_amber_rounded,
-                        color: Color(0xFFF9A825)),
-                    message: Text(
-                      l10n.subscriptionExpiringBanner(remainingDays),
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    backgroundColor: const Color(0xFFFFF8E1),
-                    borderColor: const Color(0xFFF9A825),
-                    trailing: SubscriptionStatusBadge(
-                      status: subscriptionStatus!,
-                      remainingDays: remainingDays,
-                      compact: true,
-                    ),
-                  ),
-                Card(
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(color: Colors.grey.shade200),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(14),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.link,
-                          color: AppTheme.primaryDark.withOpacity(0.7),
+    return ClinicalShortcutScope(
+      shortcuts: ClinicalShortcuts.secretaryMap(),
+      onAction: (index) {
+        if (index == 0) {
+          setState(() => _tab = 0);
+          _searchFocusNode.requestFocus();
+        } else if (index >= 1 && index <= 3) {
+          setState(() => _tab = index - 1);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppTheme.medicalWhite,
+        body: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: maxContentWidth),
+                  child: MedicalGradientHeader(
+                    title: l10n.secretaryDashboard,
+                    subtitle: doctor != null
+                        ? doctor.name.localized(context)
+                        : l10n.roleSecretary,
+                    height: 140,
+                    actions: [
+                      IconButton(
+                        icon: const Icon(
+                          Icons.settings_outlined,
+                          color: Colors.white,
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                ProviderLabels.linkedProviderLabel(
-                                  l10n,
-                                  doctor,
+                        tooltip: l10n.settings,
+                        onPressed: () => context.push('/settings'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.all(16),
+              sliver: SliverToBoxAdapter(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: maxContentWidth),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (subscriptionStatus ==
+                                ClinicSubscriptionStatus.expiringSoon &&
+                            clinic != null)
+                          ResponsiveInfoBanner(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            icon: const Icon(
+                              Icons.warning_amber_rounded,
+                              color: Color(0xFFF9A825),
+                            ),
+                            message: Text(
+                              l10n.subscriptionExpiringBanner(remainingDays),
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            backgroundColor: const Color(0xFFFFF8E1),
+                            borderColor: const Color(0xFFF9A825),
+                            trailing: SubscriptionStatusBadge(
+                              status: subscriptionStatus!,
+                              remainingDays: remainingDays,
+                              compact: true,
+                            ),
+                          ),
+                        Card(
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: BorderSide(color: Colors.grey.shade200),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(14),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.link,
+                                  color: AppTheme.primaryDark.withOpacity(0.7),
                                 ),
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                              Text(
-                                doctor != null
-                                    ? doctor.name.localized(context)
-                                    : l10n.noAssignedDoctor,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              if (doctor != null) ...[
-                                const SizedBox(height: 8),
-                                Builder(
-                                  builder: (context) {
-                                    final code = AccountCodeResolver.forDoctor(
-                                      doctor,
-                                    );
-                                    if (code == null) {
-                                      return const SizedBox.shrink();
-                                    }
-                                    return Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          l10n.doctorAccountCodeLabel(code),
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            color: Colors.grey.shade700,
-                                          ),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        ProviderLabels.linkedProviderLabel(
+                                          l10n,
+                                          doctor,
                                         ),
-                                        const SizedBox(height: 6),
-                                        AccountCodeBadge(
-                                          code: code,
-                                          compact: true,
-                                          onCopy: () => AccountCodeBadge
-                                              .copyToClipboard(context, code),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey.shade600,
+                                        ),
+                                      ),
+                                      Text(
+                                        doctor != null
+                                            ? doctor.name.localized(context)
+                                            : l10n.noAssignedDoctor,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      if (doctor != null) ...[
+                                        const SizedBox(height: 8),
+                                        Builder(
+                                          builder: (context) {
+                                            final code =
+                                                AccountCodeResolver.forDoctor(
+                                              doctor,
+                                            );
+                                            if (code == null) {
+                                              return const SizedBox.shrink();
+                                            }
+                                            return Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  l10n.doctorAccountCodeLabel(
+                                                    code,
+                                                  ),
+                                                  style: TextStyle(
+                                                    fontSize: 13,
+                                                    color: Colors.grey.shade700,
+                                                  ),
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                                const SizedBox(height: 6),
+                                                AccountCodeBadge(
+                                                  code: code,
+                                                  compact: true,
+                                                  onCopy: () =>
+                                                      AccountCodeBadge
+                                                          .copyToClipboard(
+                                                    context,
+                                                    code,
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          },
                                         ),
                                       ],
-                                    );
-                                  },
+                                    ],
+                                  ),
                                 ),
                               ],
-                            ],
+                            ),
                           ),
                         ),
+                        const SizedBox(height: 12),
+                        ResponsiveSegmentedButton<int>(
+                          segments: [
+                            ButtonSegment(
+                              value: 0,
+                              label: Text(l10n.queueManagement),
+                            ),
+                            ButtonSegment(
+                              value: 1,
+                              label: Text(l10n.registerPatient),
+                            ),
+                            ButtonSegment(
+                              value: 2,
+                              label: Text(l10n.dailySchedule),
+                            ),
+                          ],
+                          selected: {_tab},
+                          onSelectionChanged: (v) =>
+                              setState(() => _tab = v.first),
+                        ),
+                        const SizedBox(height: 16),
+                        if (_tab == 0)
+                          linkedDoctorId != null && linkedDoctorId.isNotEmpty
+                              ? SecretaryQueueManagementTab(
+                                  doctorId: linkedDoctorId,
+                                  clinicId: clinicId,
+                                  searchFocusNode: _searchFocusNode,
+                                )
+                              : Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 32),
+                                  child:
+                                      Center(child: Text(l10n.noAssignedDoctor)),
+                                )
+                        else if (_tab == 1)
+                          linkedDoctorId != null && linkedDoctorId.isNotEmpty
+                              ? RegisterPatientScreen(
+                                  clinicId: clinicId,
+                                  doctorId: linkedDoctorId,
+                                )
+                              : Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 32),
+                                  child:
+                                      Center(child: Text(l10n.noAssignedDoctor)),
+                                )
+                        else
+                          linkedDoctorId != null && linkedDoctorId.isNotEmpty
+                              ? DailyScheduleScreen(
+                                  clinicId: clinicId,
+                                  doctorId: linkedDoctorId,
+                                  embedded: true,
+                                )
+                              : Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 32),
+                                  child:
+                                      Center(child: Text(l10n.noAssignedDoctor)),
+                                ),
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
-                ResponsiveSegmentedButton<int>(
-                  segments: [
-                    ButtonSegment(
-                      value: 0,
-                      label: Text(l10n.queueManagement),
-                    ),
-                    ButtonSegment(
-                      value: 1,
-                      label: Text(l10n.registerPatient),
-                    ),
-                    ButtonSegment(
-                      value: 2,
-                      label: Text(l10n.dailySchedule),
-                    ),
-                  ],
-                  selected: {_tab},
-                  onSelectionChanged: (v) => setState(() => _tab = v.first),
-                ),
-                const SizedBox(height: 16),
-                if (_tab == 0)
-                  linkedDoctorId != null && linkedDoctorId.isNotEmpty
-                      ? SecretaryQueueManagementTab(
-                          doctorId: linkedDoctorId,
-                          clinicId: clinicId,
-                        )
-                      : Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 32),
-                          child: Center(child: Text(l10n.noAssignedDoctor)),
-                        )
-                else if (_tab == 1)
-                  linkedDoctorId != null && linkedDoctorId.isNotEmpty
-                      ? RegisterPatientScreen(
-                          clinicId: clinicId,
-                          doctorId: linkedDoctorId,
-                        )
-                      : Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 32),
-                          child: Center(child: Text(l10n.noAssignedDoctor)),
-                        )
-                else
-                  linkedDoctorId != null && linkedDoctorId.isNotEmpty
-                      ? DailyScheduleScreen(
-                          clinicId: clinicId,
-                          doctorId: linkedDoctorId,
-                          embedded: true,
-                        )
-                      : Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 32),
-                          child: Center(child: Text(l10n.noAssignedDoctor)),
-                        ),
-              ]),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

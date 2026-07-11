@@ -160,110 +160,129 @@ class _RegisterPatientScreenState extends State<RegisterPatientScreen> {
 
     return Form(
       key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            l10n.searchExistingPatients,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final content = Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                l10n.searchExistingPatients,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _searchController,
+                onChanged: (_) => setState(() {}),
+                decoration: InputDecoration(
+                  hintText: l10n.searchPatientsHint,
+                  prefixIcon: const Icon(Icons.search_rounded),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  isDense: true,
                 ),
-          ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _searchController,
-            onChanged: (_) => setState(() {}),
-            decoration: InputDecoration(
-              hintText: l10n.searchPatientsHint,
-              prefixIcon: const Icon(Icons.search_rounded),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              isDense: true,
-            ),
-          ),
-          if (filtered.isNotEmpty) ...[
-            const SizedBox(height: 10),
-            for (final patient in filtered)
-              Card(
-                elevation: 0,
-                margin: const EdgeInsets.only(bottom: 6),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  side: BorderSide(color: Colors.grey.shade200),
-                ),
-                child: ListTile(
-                  dense: true,
-                  title: Text(patient.name, style: const TextStyle(fontWeight: FontWeight.w600)),
-                  subtitle: Text(patient.phone),
-                  trailing: FilledButton.tonal(
-                    onPressed: () => _bookPatient(patient),
-                    child: Text(l10n.addToQueue),
+              ),
+              if (filtered.isNotEmpty) ...[
+                const SizedBox(height: 10),
+                for (final patient in filtered)
+                  Card(
+                    elevation: 0,
+                    margin: const EdgeInsets.only(bottom: 6),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(color: Colors.grey.shade200),
+                    ),
+                    child: ListTile(
+                      dense: true,
+                      title: Text(
+                        patient.name,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      subtitle: Text(patient.phone),
+                      trailing: FilledButton.tonal(
+                        onPressed: () => _bookPatient(patient),
+                        child: Text(l10n.addToQueue),
+                      ),
+                    ),
+                  ),
+              ],
+              const SizedBox(height: 20),
+              Text(
+                l10n.registerPatientPrompt,
+                style: TextStyle(color: Colors.grey.shade600),
+              ),
+              const SizedBox(height: 12),
+              AuthTextField(
+                controller: _nameController,
+                label: l10n.patientName,
+                prefixIcon: Icons.person_outline,
+                validator: (v) {
+                  if (v == null || v.trim().length < 2) return l10n.invalidName;
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              AuthTextField(
+                controller: _phoneController,
+                label: l10n.phoneNumber,
+                prefixIcon: Icons.phone_outlined,
+                keyboardType: TextInputType.phone,
+                validator: (v) {
+                  if (v == null || v.trim().length < 10) {
+                    return l10n.invalidPhone;
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 8),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(l10n.addToQueueAfterRegister),
+                value: _addToQueue,
+                onChanged: (v) => setState(() => _addToQueue = v),
+              ),
+              if (_message != null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  _message!,
+                  style: TextStyle(
+                    color: _message == l10n.patientRegistered
+                        ? AppTheme.medicalGreen
+                        : Colors.red,
                   ),
                 ),
+              ],
+              const SizedBox(height: 16),
+              FilledButton(
+                onPressed: _loading ? null : _submit,
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppTheme.secretaryColor,
+                  minimumSize: const Size.fromHeight(48),
+                ),
+                child: _loading
+                    ? const SizedBox(
+                        height: 22,
+                        width: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Text(l10n.registerPatient),
               ),
-          ],
-          const SizedBox(height: 20),
-          Text(
-            l10n.registerPatientPrompt,
-            style: TextStyle(color: Colors.grey.shade600),
-          ),
-          const SizedBox(height: 12),
-          AuthTextField(
-            controller: _nameController,
-            label: l10n.patientName,
-            prefixIcon: Icons.person_outline,
-            validator: (v) {
-              if (v == null || v.trim().length < 2) return l10n.invalidName;
-              return null;
-            },
-          ),
-          const SizedBox(height: 16),
-          AuthTextField(
-            controller: _phoneController,
-            label: l10n.phoneNumber,
-            prefixIcon: Icons.phone_outlined,
-            keyboardType: TextInputType.phone,
-            validator: (v) {
-              if (v == null || v.trim().length < 10) return l10n.invalidPhone;
-              return null;
-            },
-          ),
-          const SizedBox(height: 8),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(l10n.addToQueueAfterRegister),
-            value: _addToQueue,
-            onChanged: (v) => setState(() => _addToQueue = v),
-          ),
-          if (_message != null) ...[
-            const SizedBox(height: 8),
-            Text(
-              _message!,
-              style: TextStyle(
-                color: _message == l10n.patientRegistered
-                    ? AppTheme.medicalGreen
-                    : Colors.red,
-              ),
-            ),
-          ],
-          const SizedBox(height: 16),
-          FilledButton(
-            onPressed: _loading ? null : _submit,
-            style: FilledButton.styleFrom(
-              backgroundColor: AppTheme.secretaryColor,
-              minimumSize: const Size.fromHeight(48),
-            ),
-            child: _loading
-                ? const SizedBox(
-                    height: 22,
-                    width: 22,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                : Text(l10n.registerPatient),
-          ),
-        ],
+            ],
+          );
+
+          if (constraints.maxHeight.isFinite) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: content,
+            );
+          }
+          return content;
+        },
       ),
     );
   }

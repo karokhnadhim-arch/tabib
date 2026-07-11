@@ -41,6 +41,15 @@ class _SecretaryQueueManagementTabState extends State<SecretaryQueueManagementTa
   final _searchController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<ClinicDataService>().fetchDoctorById(widget.doctorId);
+    });
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
@@ -67,29 +76,32 @@ class _SecretaryQueueManagementTabState extends State<SecretaryQueueManagementTa
     final doctor = clinicData.doctorById(widget.doctorId);
     final queue = queueService.secretaryQueueForDoctor(widget.doctorId);
     final filtered = _filterQueue(queue, _searchController.text);
+    // Do not block the queue UI if the catalog entry is still loading —
+    // Move Up / Move Down and Patient Ready must remain available.
     final doctorName = doctor?.name.localized(context) ?? widget.doctorId;
-
-    if (doctor == null) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 32),
-        child: Center(child: Text(l10n.errorGeneric)),
-      );
-    }
 
     final inRoom = queue.where((e) => e.status == QueueStatus.inProgress).toList();
     final waitingCount =
         queue.where((e) => e.status == QueueStatus.waiting || e.status == QueueStatus.review).length;
+    final readyCount = queue
+        .where(
+          (e) =>
+              e.patientReady &&
+              (e.status == QueueStatus.waiting || e.status == QueueStatus.review),
+        )
+        .length;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _QueueStatsBar(
           waitingCount: waitingCount,
+          readyCount: readyCount,
           inRoomCount: inRoom.length,
           totalCount: queue.length,
           l10n: l10n,
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 14),
         SearchBar(
           focusNode: widget.searchFocusNode,
           controller: _searchController,
@@ -113,7 +125,7 @@ class _SecretaryQueueManagementTabState extends State<SecretaryQueueManagementTa
           ),
         ),
         if (inRoom.isNotEmpty) ...[
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           _InRoomBanner(
             entry: inRoom.first,
             l10n: l10n,
@@ -124,7 +136,7 @@ class _SecretaryQueueManagementTabState extends State<SecretaryQueueManagementTa
             ),
           ),
         ],
-        const SizedBox(height: 12),
+        const SizedBox(height: 14),
         if (queue.isEmpty)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 32),
@@ -147,7 +159,7 @@ class _SecretaryQueueManagementTabState extends State<SecretaryQueueManagementTa
               ? Expanded(
                   child: ListView.separated(
                     itemCount: filtered.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    separatorBuilder: (_, __) => const SizedBox(height: 10),
                     itemBuilder: (context, index) {
                       final entry = filtered[index];
                       return RepaintBoundary(
@@ -173,7 +185,7 @@ class _SecretaryQueueManagementTabState extends State<SecretaryQueueManagementTa
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: filtered.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 8),
+                  separatorBuilder: (_, __) => const SizedBox(height: 10),
                   itemBuilder: (context, index) {
                     final entry = filtered[index];
                     return RepaintBoundary(
@@ -202,12 +214,14 @@ class _SecretaryQueueManagementTabState extends State<SecretaryQueueManagementTa
 class _QueueStatsBar extends StatelessWidget {
   const _QueueStatsBar({
     required this.waitingCount,
+    required this.readyCount,
     required this.inRoomCount,
     required this.totalCount,
     required this.l10n,
   });
 
   final int waitingCount;
+  final int readyCount;
   final int inRoomCount;
   final int totalCount;
   final AppLocalizations l10n;
@@ -215,35 +229,45 @@ class _QueueStatsBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return Row(
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         _StatChip(
           label: l10n.waiting,
           value: '$waitingCount',
           color: scheme.outline,
         ),
-        const SizedBox(width: 8),
+        _StatChip(
+          label: l10n.patientReady,
+          value: '$readyCount',
+          color: AppTheme.medicalGreen,
+        ),
         _StatChip(
           label: l10n.inDoctorRoom,
           value: '$inRoomCount',
-          color: AppTheme.medicalGreen,
+          color: AppTheme.secretaryColor,
         ),
-        const Spacer(),
         Text(
           l10n.patientsInQueue(totalCount),
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
                 color: scheme.onSurfaceVariant,
               ),
         ),
-        const SizedBox(width: 6),
-        const Icon(Icons.circle, size: 8, color: AppTheme.medicalGreen),
-        const SizedBox(width: 4),
-        Text(
-          l10n.live,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: AppTheme.medicalGreen,
-                fontWeight: FontWeight.w600,
-              ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.circle, size: 8, color: AppTheme.medicalGreen),
+            const SizedBox(width: 4),
+            Text(
+              l10n.live,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: AppTheme.medicalGreen,
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+          ],
         ),
       ],
     );
@@ -373,6 +397,11 @@ class _SecretaryQueueTile extends StatelessWidget {
         ? DateFormat.jm().format(appointment!.dateTime)
         : DateFormat.jm().format(entry.bookedAt);
     final isInRoom = entry.status == QueueStatus.inProgress;
+    final isReady = entry.patientReady &&
+        (entry.status == QueueStatus.waiting ||
+            entry.status == QueueStatus.review);
+    final canMarkReady = entry.status != QueueStatus.completed &&
+        entry.status != QueueStatus.cancelled;
 
     return Card(
       elevation: 0,
@@ -382,13 +411,19 @@ class _SecretaryQueueTile extends StatelessWidget {
         side: BorderSide(
           color: isInRoom
               ? AppTheme.medicalGreen.withOpacity(0.45)
-              : scheme.outlineVariant.withOpacity(0.45),
-          width: isInRoom ? 1.5 : 1,
+              : isReady
+                  ? AppTheme.medicalGreen.withOpacity(0.35)
+                  : scheme.outlineVariant.withOpacity(0.45),
+          width: isInRoom || isReady ? 1.5 : 1,
         ),
       ),
-      color: isInRoom ? AppTheme.medicalGreen.withOpacity(0.04) : null,
+      color: isInRoom
+          ? AppTheme.medicalGreen.withOpacity(0.04)
+          : isReady
+              ? AppTheme.medicalGreen.withOpacity(0.03)
+              : null,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 12, 8, 10),
+        padding: const EdgeInsets.fromLTRB(14, 14, 12, 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -405,12 +440,12 @@ class _SecretaryQueueTile extends StatelessWidget {
                         entry.patientName,
                         style: const TextStyle(
                           fontWeight: FontWeight.w700,
-                          fontSize: 15,
+                          fontSize: 16,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 4),
                       Text(
                         entry.patientPhone,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -424,47 +459,48 @@ class _SecretaryQueueTile extends StatelessWidget {
                               color: scheme.onSurfaceVariant,
                             ),
                       ),
+                      const SizedBox(height: 8),
+                      _StatusPill(entry: entry, l10n: l10n),
+                      if (entry.status != QueueStatus.completed &&
+                          entry.status != QueueStatus.cancelled) ...[
+                        const SizedBox(height: 10),
+                        _ReorderControls(
+                          entry: entry,
+                          doctorId: doctorId,
+                          l10n: l10n,
+                        ),
+                      ],
                     ],
                   ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    _StatusPill(entry: entry, l10n: l10n),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (entry.status != QueueStatus.completed &&
-                            entry.status != QueueStatus.cancelled)
-                          _PatientReadyButton(
-                            entry: entry,
-                            doctorId: doctorId,
-                            l10n: l10n,
-                          ),
-                        IconButton(
-                          tooltip: l10n.editPatientInfo,
-                          icon: const Icon(Icons.edit_outlined, size: 20),
-                          visualDensity: VisualDensity.compact,
-                          onPressed: () => showSecretaryPatientEditSheet(
-                            context: context,
-                            entry: entry,
-                            doctorId: doctorId,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                IconButton(
+                  tooltip: l10n.editPatientInfo,
+                  icon: const Icon(Icons.edit_outlined, size: 20),
+                  visualDensity: VisualDensity.compact,
+                  onPressed: () => showSecretaryPatientEditSheet(
+                    context: context,
+                    entry: entry,
+                    doctorId: doctorId,
+                  ),
                 ),
               ],
             ),
+            if (canMarkReady) ...[
+              const SizedBox(height: 12),
+              _PatientReadyButton(
+                entry: entry,
+                doctorId: doctorId,
+                l10n: l10n,
+              ),
+            ],
             if (investigationRequest != null && investigationRequest!.hasPending) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
               PendingInvestigationsPanel(
                 requests: [investigationRequest!],
                 compact: true,
               ),
             ],
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             _QuickActions(
               entry: entry,
               doctorId: doctorId,
@@ -488,23 +524,83 @@ class _QueueNumber extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final show = entry.isActive || entry.status == QueueStatus.review;
+    final show = entry.isActive ||
+        entry.status == QueueStatus.review ||
+        entry.status == QueueStatus.examination ||
+        entry.status == QueueStatus.sentForTests;
     return Container(
-      width: 40,
-      height: 40,
+      width: 52,
+      height: 52,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: scheme.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(10),
+        color: AppTheme.secretaryColor.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppTheme.secretaryColor.withOpacity(0.35)),
       ),
       child: Text(
         show ? '$position' : '—',
         style: TextStyle(
-          fontWeight: FontWeight.w700,
-          fontSize: 16,
-          color: scheme.onSurface,
+          fontWeight: FontWeight.w800,
+          fontSize: 22,
+          height: 1,
+          color: show ? AppTheme.secretaryColor : scheme.onSurfaceVariant,
         ),
       ),
+    );
+  }
+}
+
+class _ReorderControls extends StatelessWidget {
+  const _ReorderControls({
+    required this.entry,
+    required this.doctorId,
+    required this.l10n,
+  });
+
+  final QueueEntry entry;
+  final String doctorId;
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton.icon(
+            onPressed: () =>
+                context.read<QueueService>().moveUp(entry.id, doctorId),
+            icon: const Icon(Icons.arrow_upward_rounded, size: 18),
+            label: Text(
+              l10n.moveAppointmentUp,
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+            ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppTheme.secretaryColor,
+              side: BorderSide(color: AppTheme.secretaryColor.withOpacity(0.45)),
+              visualDensity: VisualDensity.compact,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: OutlinedButton.icon(
+            onPressed: () =>
+                context.read<QueueService>().moveDown(entry.id, doctorId),
+            icon: const Icon(Icons.arrow_downward_rounded, size: 18),
+            label: Text(
+              l10n.moveAppointmentDown,
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+            ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppTheme.secretaryColor,
+              side: BorderSide(color: AppTheme.secretaryColor.withOpacity(0.45)),
+              visualDensity: VisualDensity.compact,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -587,23 +683,42 @@ class _PatientReadyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final active = entry.patientReady;
-    return IconButton(
-      tooltip: l10n.patientReady,
-      visualDensity: VisualDensity.compact,
-      icon: Icon(
-        Icons.waving_hand_rounded,
-        size: 22,
-        color: active ? AppTheme.medicalGreen : scheme.onSurfaceVariant,
+    void onPressed() =>
+        context.read<QueueService>().togglePatientReady(entry.id, doctorId);
+
+    return SizedBox(
+      width: double.infinity,
+      child: FilledButton.icon(
+        onPressed: onPressed,
+        icon: Icon(
+          Icons.waving_hand_rounded,
+          size: 20,
+          color: active ? Colors.white : AppTheme.medicalGreen,
+        ),
+        label: Text(
+          l10n.patientReady,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: active ? Colors.white : AppTheme.medicalGreen,
+          ),
+        ),
+        style: FilledButton.styleFrom(
+          backgroundColor: active
+              ? AppTheme.medicalGreen
+              : AppTheme.medicalGreen.withOpacity(0.14),
+          foregroundColor: active ? Colors.white : AppTheme.medicalGreen,
+          minimumSize: const Size.fromHeight(44),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(
+              color: AppTheme.medicalGreen.withOpacity(active ? 0 : 0.45),
+            ),
+          ),
+        ),
       ),
-      style: IconButton.styleFrom(
-        backgroundColor: active
-            ? AppTheme.medicalGreen.withOpacity(0.12)
-            : scheme.surfaceContainerHighest.withOpacity(0.5),
-      ),
-      onPressed: () =>
-          context.read<QueueService>().togglePatientReady(entry.id, doctorId),
     );
   }
 }
@@ -631,16 +746,6 @@ class _QuickActions extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          if (entry.status != QueueStatus.completed &&
-              entry.status != QueueStatus.cancelled)
-            _ActionButton(
-              icon: Icons.waving_hand_rounded,
-              label: l10n.patientReady,
-              filled: entry.patientReady,
-              onPressed: () => context
-                  .read<QueueService>()
-                  .togglePatientReady(entry.id, doctorId),
-            ),
           if (entry.isInExamination)
             _ActionButton(
               icon: Icons.replay_rounded,
@@ -702,20 +807,6 @@ class _QuickActions extends StatelessWidget {
                 entry: entry,
                 doctorId: doctorId,
               ),
-            ),
-          ],
-          if (entry.status == QueueStatus.waiting) ...[
-            _ActionButton(
-              icon: Icons.arrow_upward_rounded,
-              label: l10n.moveAppointmentUp,
-              onPressed: () =>
-                  context.read<QueueService>().moveUp(entry.id, doctorId),
-            ),
-            _ActionButton(
-              icon: Icons.arrow_downward_rounded,
-              label: l10n.moveAppointmentDown,
-              onPressed: () =>
-                  context.read<QueueService>().moveDown(entry.id, doctorId),
             ),
           ],
           if (entry.status == QueueStatus.absent) ...[
